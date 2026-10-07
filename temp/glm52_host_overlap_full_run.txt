@@ -1,0 +1,324 @@
+Benchmarking native, layout=random
+layout=random context=131072 rounds=10/40
+layout=random context=131072 rounds=20/40
+layout=random context=131072 rounds=30/40
+layout=random context=131072 rounds=40/40
+layout=random context=131072 host=0% graph_us=27.443 cold_us=36.864 eager_us=29.542
+layout=random context=131072 host=10% graph_us=31.877 cold_us=41.984 eager_us=35.738
+layout=random context=131072 host=15% graph_us=33.772 cold_us=44.032 eager_us=37.376
+layout=random context=131072 host=20% graph_us=37.432 cold_us=47.616 eager_us=41.677
+layout=random context=131072 host=30% graph_us=46.131 cold_us=56.320 eager_us=50.381
+layout=random context=131072 host=40% graph_us=54.861 cold_us=65.536 eager_us=59.187
+layout=random context=131072 host=60% graph_us=72.300 cold_us=82.944 eager_us=76.595
+layout=random context=131072 host=80% graph_us=89.784 cold_us=100.352 eager_us=94.106
+layout=random context=131072 host=100% graph_us=107.233 cold_us=117.760 eager_us=111.616
+layout=random context=262144 rounds=10/40
+layout=random context=262144 rounds=20/40
+layout=random context=262144 rounds=30/40
+layout=random context=262144 rounds=40/40
+layout=random context=262144 host=0% graph_us=27.387 cold_us=36.864 eager_us=29.440
+layout=random context=262144 host=10% graph_us=31.841 cold_us=41.984 eager_us=35.456
+layout=random context=262144 host=15% graph_us=33.628 cold_us=44.032 eager_us=37.171
+layout=random context=262144 host=20% graph_us=37.366 cold_us=47.104 eager_us=41.523
+layout=random context=262144 host=30% graph_us=46.060 cold_us=55.296 eager_us=50.278
+layout=random context=262144 host=40% graph_us=54.764 cold_us=64.512 eager_us=58.982
+layout=random context=262144 host=60% graph_us=72.233 cold_us=81.920 eager_us=76.493
+layout=random context=262144 host=80% graph_us=89.723 cold_us=99.328 eager_us=93.952
+layout=random context=262144 host=100% graph_us=107.213 cold_us=116.736 eager_us=111.462
+layout=random context=524288 rounds=10/40
+layout=random context=524288 rounds=20/40
+layout=random context=524288 rounds=30/40
+layout=random context=524288 rounds=40/40
+layout=random context=524288 host=0% graph_us=27.402 cold_us=35.840 eager_us=29.338
+layout=random context=524288 host=10% graph_us=31.744 cold_us=40.960 eager_us=35.302
+layout=random context=524288 host=15% graph_us=33.736 cold_us=41.984 eager_us=37.120
+layout=random context=524288 host=20% graph_us=37.396 cold_us=46.080 eager_us=41.421
+layout=random context=524288 host=30% graph_us=46.054 cold_us=55.296 eager_us=50.125
+layout=random context=524288 host=40% graph_us=54.743 cold_us=63.488 eager_us=58.931
+layout=random context=524288 host=60% graph_us=72.243 cold_us=80.896 eager_us=76.339
+layout=random context=524288 host=80% graph_us=89.713 cold_us=98.304 eager_us=93.850
+layout=random context=524288 host=100% graph_us=107.203 cold_us=115.712 eager_us=111.258
+layout=random context=1048576 rounds=10/40
+layout=random context=1048576 rounds=20/40
+layout=random context=1048576 rounds=30/40
+layout=random context=1048576 rounds=40/40
+layout=random context=1048576 host=0% graph_us=27.402 cold_us=35.840 eager_us=29.338
+layout=random context=1048576 host=10% graph_us=31.764 cold_us=40.960 eager_us=35.584
+layout=random context=1048576 host=15% graph_us=33.751 cold_us=43.008 eager_us=37.222
+layout=random context=1048576 host=20% graph_us=37.427 cold_us=46.080 eager_us=41.523
+layout=random context=1048576 host=30% graph_us=46.131 cold_us=55.296 eager_us=50.227
+layout=random context=1048576 host=40% graph_us=54.881 cold_us=63.488 eager_us=58.957
+layout=random context=1048576 host=60% graph_us=72.407 cold_us=80.896 eager_us=76.544
+layout=random context=1048576 host=80% graph_us=89.876 cold_us=98.816 eager_us=94.106
+layout=random context=1048576 host=100% graph_us=107.377 cold_us=116.736 eager_us=111.616
+results=/mnt/data/rtx/projects/flashinfer/temp/glm52_host_native_final_random.json
+Benchmarking overlap, layout=random
+layout=random context=131072 rounds=10/40
+layout=random context=131072 rounds=20/40
+layout=random context=131072 rounds=30/40
+layout=random context=131072 rounds=40/40
+layout=random context=131072 host=0% graph_us=27.802 cold_us=37.888 eager_us=31.130
+layout=random context=131072 host=10% graph_us=28.851 cold_us=39.936 eager_us=34.432
+layout=random context=131072 host=15% graph_us=28.805 cold_us=41.984 eager_us=34.432
+layout=random context=131072 host=20% graph_us=32.768 cold_us=46.080 eager_us=38.400
+layout=random context=131072 host=30% graph_us=45.276 cold_us=55.296 eager_us=50.995
+layout=random context=131072 host=40% graph_us=55.071 cold_us=64.512 eager_us=60.544
+layout=random context=131072 host=60% graph_us=75.878 cold_us=86.016 eager_us=81.587
+layout=random context=131072 host=80% graph_us=97.311 cold_us=107.008 eager_us=102.989
+layout=random context=131072 host=100% graph_us=117.847 cold_us=128.000 eager_us=123.571
+layout=random context=262144 rounds=10/40
+layout=random context=262144 rounds=20/40
+layout=random context=262144 rounds=30/40
+layout=random context=262144 rounds=40/40
+layout=random context=262144 host=0% graph_us=28.134 cold_us=37.888 eager_us=31.078
+layout=random context=262144 host=10% graph_us=29.225 cold_us=39.936 eager_us=34.278
+layout=random context=262144 host=15% graph_us=28.995 cold_us=40.960 eager_us=34.253
+layout=random context=262144 host=20% graph_us=32.753 cold_us=46.080 eager_us=38.195
+layout=random context=262144 host=30% graph_us=45.281 cold_us=55.296 eager_us=50.739
+layout=random context=262144 host=40% graph_us=55.204 cold_us=64.512 eager_us=60.416
+layout=random context=262144 host=60% graph_us=75.899 cold_us=86.016 eager_us=81.357
+layout=random context=262144 host=80% graph_us=97.295 cold_us=106.496 eager_us=102.758
+layout=random context=262144 host=100% graph_us=117.960 cold_us=126.976 eager_us=123.238
+layout=random context=524288 rounds=10/40
+layout=random context=524288 rounds=20/40
+layout=random context=524288 rounds=30/40
+layout=random context=524288 rounds=40/40
+layout=random context=524288 host=0% graph_us=28.114 cold_us=36.864 eager_us=30.413
+layout=random context=524288 host=10% graph_us=29.184 cold_us=38.400 eager_us=33.638
+layout=random context=524288 host=15% graph_us=28.969 cold_us=39.936 eager_us=33.587
+layout=random context=524288 host=20% graph_us=32.707 cold_us=45.056 eager_us=37.402
+layout=random context=524288 host=30% graph_us=45.240 cold_us=54.272 eager_us=50.074
+layout=random context=524288 host=40% graph_us=55.153 cold_us=63.488 eager_us=59.648
+layout=random context=524288 host=60% graph_us=75.878 cold_us=83.968 eager_us=80.691
+layout=random context=524288 host=80% graph_us=97.260 cold_us=105.472 eager_us=102.093
+layout=random context=524288 host=100% graph_us=117.924 cold_us=125.952 eager_us=122.624
+layout=random context=1048576 rounds=10/40
+layout=random context=1048576 rounds=20/40
+layout=random context=1048576 rounds=30/40
+layout=random context=1048576 rounds=40/40
+layout=random context=1048576 host=0% graph_us=28.191 cold_us=37.888 eager_us=31.130
+layout=random context=1048576 host=10% graph_us=29.256 cold_us=39.936 eager_us=34.406
+layout=random context=1048576 host=15% graph_us=29.036 cold_us=41.984 eager_us=34.458
+layout=random context=1048576 host=20% graph_us=32.809 cold_us=46.080 eager_us=38.400
+layout=random context=1048576 host=30% graph_us=45.343 cold_us=55.296 eager_us=50.944
+layout=random context=1048576 host=40% graph_us=55.235 cold_us=64.512 eager_us=60.621
+layout=random context=1048576 host=60% graph_us=75.971 cold_us=86.016 eager_us=81.562
+layout=random context=1048576 host=80% graph_us=97.362 cold_us=106.496 eager_us=102.989
+layout=random context=1048576 host=100% graph_us=118.159 cold_us=128.000 eager_us=123.648
+results=/mnt/data/rtx/projects/flashinfer/temp/glm52_host_overlap_final_random.json
+Benchmarking native, layout=head
+layout=head context=131072 rounds=10/40
+layout=head context=131072 rounds=20/40
+layout=head context=131072 rounds=30/40
+layout=head context=131072 rounds=40/40
+layout=head context=131072 host=0% graph_us=27.387 cold_us=37.888 eager_us=29.440
+layout=head context=131072 host=10% graph_us=30.956 cold_us=42.496 eager_us=35.226
+layout=head context=131072 host=15% graph_us=34.314 cold_us=45.056 eager_us=37.274
+layout=head context=131072 host=20% graph_us=38.333 cold_us=49.152 eager_us=41.472
+layout=head context=131072 host=30% graph_us=46.484 cold_us=57.344 eager_us=50.125
+layout=head context=131072 host=40% graph_us=54.758 cold_us=64.512 eager_us=58.982
+layout=head context=131072 host=60% graph_us=72.264 cold_us=82.944 eager_us=76.442
+layout=head context=131072 host=80% graph_us=89.759 cold_us=100.352 eager_us=93.952
+layout=head context=131072 host=100% graph_us=107.259 cold_us=117.760 eager_us=111.462
+layout=head context=262144 rounds=10/40
+layout=head context=262144 rounds=20/40
+layout=head context=262144 rounds=30/40
+layout=head context=262144 rounds=40/40
+layout=head context=262144 host=0% graph_us=27.423 cold_us=36.864 eager_us=29.338
+layout=head context=262144 host=10% graph_us=30.884 cold_us=41.984 eager_us=35.046
+layout=head context=262144 host=15% graph_us=34.053 cold_us=44.032 eager_us=37.069
+layout=head context=262144 host=20% graph_us=38.139 cold_us=48.128 eager_us=41.421
+layout=head context=262144 host=30% graph_us=46.111 cold_us=56.320 eager_us=50.022
+layout=head context=262144 host=40% graph_us=54.784 cold_us=64.512 eager_us=58.854
+layout=head context=262144 host=60% graph_us=72.243 cold_us=81.920 eager_us=76.237
+layout=head context=262144 host=80% graph_us=89.702 cold_us=99.328 eager_us=93.747
+layout=head context=262144 host=100% graph_us=107.203 cold_us=117.760 eager_us=111.334
+layout=head context=524288 rounds=10/40
+layout=head context=524288 rounds=20/40
+layout=head context=524288 rounds=30/40
+layout=head context=524288 rounds=40/40
+layout=head context=524288 host=0% graph_us=27.412 cold_us=35.328 eager_us=29.082
+layout=head context=524288 host=10% graph_us=30.853 cold_us=39.936 eager_us=34.739
+layout=head context=524288 host=15% graph_us=33.997 cold_us=42.496 eager_us=36.787
+layout=head context=524288 host=20% graph_us=38.164 cold_us=47.104 eager_us=41.165
+layout=head context=524288 host=30% graph_us=46.152 cold_us=55.296 eager_us=49.715
+layout=head context=524288 host=40% graph_us=54.774 cold_us=63.488 eager_us=58.573
+layout=head context=524288 host=60% graph_us=72.192 cold_us=80.896 eager_us=76.006
+layout=head context=524288 host=80% graph_us=89.651 cold_us=98.304 eager_us=93.491
+layout=head context=524288 host=100% graph_us=107.131 cold_us=115.712 eager_us=110.950
+layout=head context=1048576 rounds=10/40
+layout=head context=1048576 rounds=20/40
+layout=head context=1048576 rounds=30/40
+layout=head context=1048576 rounds=40/40
+layout=head context=1048576 host=0% graph_us=27.474 cold_us=34.816 eager_us=29.133
+layout=head context=1048576 host=10% graph_us=30.874 cold_us=39.936 eager_us=34.765
+layout=head context=1048576 host=15% graph_us=34.109 cold_us=41.984 eager_us=36.813
+layout=head context=1048576 host=20% graph_us=38.241 cold_us=46.080 eager_us=41.114
+layout=head context=1048576 host=30% graph_us=46.367 cold_us=54.272 eager_us=49.715
+layout=head context=1048576 host=40% graph_us=54.774 cold_us=62.464 eager_us=58.522
+layout=head context=1048576 host=60% graph_us=72.294 cold_us=80.384 eager_us=75.930
+layout=head context=1048576 host=80% graph_us=89.728 cold_us=97.280 eager_us=93.440
+layout=head context=1048576 host=100% graph_us=107.249 cold_us=114.688 eager_us=111.053
+results=/mnt/data/rtx/projects/flashinfer/temp/glm52_host_native_final_head.json
+Benchmarking overlap, layout=head
+layout=head context=131072 rounds=10/40
+layout=head context=131072 rounds=20/40
+layout=head context=131072 rounds=30/40
+layout=head context=131072 rounds=40/40
+layout=head context=131072 host=0% graph_us=27.909 cold_us=40.960 eager_us=31.130
+layout=head context=131072 host=10% graph_us=28.815 cold_us=44.032 eager_us=34.304
+layout=head context=131072 host=15% graph_us=29.804 cold_us=46.080 eager_us=34.483
+layout=head context=131072 host=20% graph_us=33.341 cold_us=50.176 eager_us=39.014
+layout=head context=131072 host=30% graph_us=46.044 cold_us=58.880 eager_us=51.507
+layout=head context=131072 host=40% graph_us=55.460 cold_us=67.584 eager_us=61.030
+layout=head context=131072 host=60% graph_us=76.713 cold_us=90.112 eager_us=81.946
+layout=head context=131072 host=80% graph_us=98.401 cold_us=110.592 eager_us=102.963
+layout=head context=131072 host=100% graph_us=119.624 cold_us=135.680 eager_us=124.288
+layout=head context=262144 rounds=10/40
+layout=head context=262144 rounds=20/40
+layout=head context=262144 rounds=30/40
+layout=head context=262144 rounds=40/40
+layout=head context=262144 host=0% graph_us=28.206 cold_us=38.912 eager_us=31.078
+layout=head context=262144 host=10% graph_us=28.867 cold_us=41.984 eager_us=34.304
+layout=head context=262144 host=15% graph_us=28.851 cold_us=44.032 eager_us=34.534
+layout=head context=262144 host=20% graph_us=33.014 cold_us=48.640 eager_us=38.630
+layout=head context=262144 host=30% graph_us=46.034 cold_us=57.344 eager_us=51.507
+layout=head context=262144 host=40% graph_us=55.373 cold_us=66.560 eager_us=60.954
+layout=head context=262144 host=60% graph_us=76.626 cold_us=88.064 eager_us=82.099
+layout=head context=262144 host=80% graph_us=97.439 cold_us=111.616 eager_us=103.270
+layout=head context=262144 host=100% graph_us=118.446 cold_us=130.048 eager_us=123.827
+layout=head context=524288 rounds=10/40
+layout=head context=524288 rounds=20/40
+layout=head context=524288 rounds=30/40
+layout=head context=524288 rounds=40/40
+layout=head context=524288 host=0% graph_us=28.134 cold_us=36.864 eager_us=30.464
+layout=head context=524288 host=10% graph_us=28.795 cold_us=37.888 eager_us=33.587
+layout=head context=524288 host=15% graph_us=28.785 cold_us=39.936 eager_us=33.587
+layout=head context=524288 host=20% graph_us=32.804 cold_us=45.056 eager_us=37.632
+layout=head context=524288 host=30% graph_us=45.245 cold_us=54.272 eager_us=50.202
+layout=head context=524288 host=40% graph_us=55.188 cold_us=63.488 eager_us=59.546
+layout=head context=524288 host=60% graph_us=75.899 cold_us=83.968 eager_us=80.742
+layout=head context=524288 host=80% graph_us=97.157 cold_us=105.472 eager_us=102.016
+layout=head context=524288 host=100% graph_us=117.898 cold_us=125.952 eager_us=122.803
+layout=head context=1048576 rounds=10/40
+layout=head context=1048576 rounds=20/40
+layout=head context=1048576 rounds=30/40
+layout=head context=1048576 rounds=40/40
+layout=head context=1048576 host=0% graph_us=28.114 cold_us=36.864 eager_us=30.438
+layout=head context=1048576 host=10% graph_us=28.795 cold_us=38.912 eager_us=33.485
+layout=head context=1048576 host=15% graph_us=28.780 cold_us=40.448 eager_us=33.536
+layout=head context=1048576 host=20% graph_us=32.850 cold_us=44.032 eager_us=37.632
+layout=head context=1048576 host=30% graph_us=45.210 cold_us=54.272 eager_us=50.125
+layout=head context=1048576 host=40% graph_us=55.178 cold_us=63.488 eager_us=59.648
+layout=head context=1048576 host=60% graph_us=75.899 cold_us=83.968 eager_us=80.742
+layout=head context=1048576 host=80% graph_us=97.147 cold_us=105.472 eager_us=102.042
+layout=head context=1048576 host=100% graph_us=117.827 cold_us=125.952 eager_us=122.675
+results=/mnt/data/rtx/projects/flashinfer/temp/glm52_host_overlap_final_head.json
+Benchmarking native, layout=tail
+layout=tail context=131072 rounds=10/40
+layout=tail context=131072 rounds=20/40
+layout=tail context=131072 rounds=30/40
+layout=tail context=131072 rounds=40/40
+layout=tail context=131072 host=0% graph_us=27.402 cold_us=36.864 eager_us=29.389
+layout=tail context=131072 host=10% graph_us=32.527 cold_us=43.008 eager_us=36.506
+layout=tail context=131072 host=15% graph_us=35.154 cold_us=45.056 eager_us=37.837
+layout=tail context=131072 host=20% graph_us=38.605 cold_us=48.128 eager_us=41.318
+layout=tail context=131072 host=30% graph_us=46.572 cold_us=56.320 eager_us=50.074
+layout=tail context=131072 host=40% graph_us=54.671 cold_us=64.512 eager_us=58.675
+layout=tail context=131072 host=60% graph_us=72.090 cold_us=81.920 eager_us=76.186
+layout=tail context=131072 host=80% graph_us=89.631 cold_us=99.328 eager_us=93.798
+layout=tail context=131072 host=100% graph_us=107.136 cold_us=117.760 eager_us=111.360
+layout=tail context=262144 rounds=10/40
+layout=tail context=262144 rounds=20/40
+layout=tail context=262144 rounds=30/40
+layout=tail context=262144 rounds=40/40
+layout=tail context=262144 host=0% graph_us=27.412 cold_us=35.840 eager_us=29.286
+layout=tail context=262144 host=10% graph_us=32.691 cold_us=40.960 eager_us=36.557
+layout=tail context=262144 host=15% graph_us=35.651 cold_us=44.032 eager_us=37.990
+layout=tail context=262144 host=20% graph_us=38.687 cold_us=47.104 eager_us=41.574
+layout=tail context=262144 host=30% graph_us=46.981 cold_us=55.296 eager_us=50.355
+layout=tail context=262144 host=40% graph_us=55.040 cold_us=64.000 eager_us=58.854
+layout=tail context=262144 host=60% graph_us=72.663 cold_us=80.896 eager_us=77.005
+layout=tail context=262144 host=80% graph_us=90.409 cold_us=98.304 eager_us=94.464
+layout=tail context=262144 host=100% graph_us=108.052 cold_us=116.736 eager_us=112.666
+layout=tail context=524288 rounds=10/40
+layout=tail context=524288 rounds=20/40
+layout=tail context=524288 rounds=30/40
+layout=tail context=524288 rounds=40/40
+layout=tail context=524288 host=0% graph_us=27.418 cold_us=35.840 eager_us=29.286
+layout=tail context=524288 host=10% graph_us=32.650 cold_us=40.960 eager_us=36.506
+layout=tail context=524288 host=15% graph_us=35.717 cold_us=44.032 eager_us=37.888
+layout=tail context=524288 host=20% graph_us=38.753 cold_us=47.104 eager_us=41.370
+layout=tail context=524288 host=30% graph_us=46.848 cold_us=55.296 eager_us=50.022
+layout=tail context=524288 host=40% graph_us=54.753 cold_us=64.512 eager_us=58.701
+layout=tail context=524288 host=60% graph_us=72.146 cold_us=80.896 eager_us=76.186
+layout=tail context=524288 host=80% graph_us=89.713 cold_us=98.304 eager_us=93.696
+layout=tail context=524288 host=100% graph_us=107.197 cold_us=115.712 eager_us=111.309
+layout=tail context=1048576 rounds=10/40
+layout=tail context=1048576 rounds=20/40
+layout=tail context=1048576 rounds=30/40
+layout=tail context=1048576 rounds=40/40
+layout=tail context=1048576 host=0% graph_us=27.433 cold_us=36.864 eager_us=29.491
+layout=tail context=1048576 host=10% graph_us=32.614 cold_us=43.008 eager_us=36.659
+layout=tail context=1048576 host=15% graph_us=35.569 cold_us=45.056 eager_us=38.042
+layout=tail context=1048576 host=20% graph_us=38.415 cold_us=47.616 eager_us=41.472
+layout=tail context=1048576 host=30% graph_us=46.643 cold_us=56.320 eager_us=50.176
+layout=tail context=1048576 host=40% graph_us=54.687 cold_us=64.512 eager_us=58.803
+layout=tail context=1048576 host=60% graph_us=72.161 cold_us=81.920 eager_us=76.365
+layout=tail context=1048576 host=80% graph_us=89.723 cold_us=99.328 eager_us=93.901
+layout=tail context=1048576 host=100% graph_us=107.187 cold_us=116.736 eager_us=111.411
+results=/mnt/data/rtx/projects/flashinfer/temp/glm52_host_native_final_tail.json
+Benchmarking overlap, layout=tail
+layout=tail context=131072 rounds=10/40
+layout=tail context=131072 rounds=20/40
+layout=tail context=131072 rounds=30/40
+layout=tail context=131072 rounds=40/40
+layout=tail context=131072 host=0% graph_us=27.802 cold_us=37.888 eager_us=31.334
+layout=tail context=131072 host=10% graph_us=28.780 cold_us=39.936 eager_us=34.458
+layout=tail context=131072 host=15% graph_us=28.754 cold_us=41.472 eager_us=34.458
+layout=tail context=131072 host=20% graph_us=32.814 cold_us=46.080 eager_us=38.605
+layout=tail context=131072 host=30% graph_us=45.276 cold_us=55.808 eager_us=51.046
+layout=tail context=131072 host=40% graph_us=54.687 cold_us=65.536 eager_us=60.800
+layout=tail context=131072 host=60% graph_us=75.878 cold_us=86.016 eager_us=81.894
+layout=tail context=131072 host=80% graph_us=97.208 cold_us=107.520 eager_us=103.117
+layout=tail context=131072 host=100% graph_us=117.873 cold_us=128.000 eager_us=123.750
+layout=tail context=262144 rounds=10/40
+layout=tail context=262144 rounds=20/40
+layout=tail context=262144 rounds=30/40
+layout=tail context=262144 rounds=40/40
+layout=tail context=262144 host=0% graph_us=28.140 cold_us=37.888 eager_us=31.232
+layout=tail context=262144 host=10% graph_us=28.841 cold_us=40.448 eager_us=34.355
+layout=tail context=262144 host=15% graph_us=28.795 cold_us=41.984 eager_us=34.304
+layout=tail context=262144 host=20% graph_us=32.799 cold_us=47.104 eager_us=38.400
+layout=tail context=262144 host=30% graph_us=45.281 cold_us=55.296 eager_us=50.893
+layout=tail context=262144 host=40% graph_us=54.666 cold_us=65.536 eager_us=60.570
+layout=tail context=262144 host=60% graph_us=75.868 cold_us=86.016 eager_us=81.869
+layout=tail context=262144 host=80% graph_us=97.224 cold_us=107.520 eager_us=103.014
+layout=tail context=262144 host=100% graph_us=117.975 cold_us=128.000 eager_us=123.648
+layout=tail context=524288 rounds=10/40
+layout=tail context=524288 rounds=20/40
+layout=tail context=524288 rounds=30/40
+layout=tail context=524288 rounds=40/40
+layout=tail context=524288 host=0% graph_us=28.155 cold_us=37.888 eager_us=31.130
+layout=tail context=524288 host=10% graph_us=28.805 cold_us=39.936 eager_us=34.227
+layout=tail context=524288 host=15% graph_us=28.790 cold_us=41.472 eager_us=34.227
+layout=tail context=524288 host=20% graph_us=32.804 cold_us=46.080 eager_us=38.246
+layout=tail context=524288 host=30% graph_us=45.281 cold_us=55.296 eager_us=50.867
+layout=tail context=524288 host=40% graph_us=54.789 cold_us=64.512 eager_us=60.365
+layout=tail context=524288 host=60% graph_us=75.878 cold_us=86.016 eager_us=81.587
+layout=tail context=524288 host=80% graph_us=97.254 cold_us=107.008 eager_us=102.912
+layout=tail context=524288 host=100% graph_us=118.011 cold_us=128.000 eager_us=123.392
+layout=tail context=1048576 rounds=10/40
+layout=tail context=1048576 rounds=20/40
+layout=tail context=1048576 rounds=30/40
+layout=tail context=1048576 rounds=40/40
+layout=tail context=1048576 host=0% graph_us=28.201 cold_us=37.888 eager_us=31.283
+layout=tail context=1048576 host=10% graph_us=28.846 cold_us=39.936 eager_us=34.509
+layout=tail context=1048576 host=15% graph_us=28.805 cold_us=41.984 eager_us=34.458
+layout=tail context=1048576 host=20% graph_us=32.814 cold_us=46.592 eager_us=38.554
+layout=tail context=1048576 host=30% graph_us=45.307 cold_us=55.296 eager_us=51.021
+layout=tail context=1048576 host=40% graph_us=54.728 cold_us=65.536 eager_us=60.774
+layout=tail context=1048576 host=60% graph_us=75.889 cold_us=86.016 eager_us=81.818
+layout=tail context=1048576 host=80% graph_us=97.249 cold_us=107.520 eager_us=103.168
+layout=tail context=1048576 host=100% graph_us=118.016 cold_us=128.000 eager_us=123.750
+results=/mnt/data/rtx/projects/flashinfer/temp/glm52_host_overlap_final_tail.json

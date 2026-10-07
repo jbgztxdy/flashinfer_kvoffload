@@ -1,0 +1,142 @@
+{
+  "timestamp": "2026-10-07T21:41:44+0800",
+  "torch_version": "2.11.0+cu130",
+  "cuda_version": "13.0",
+  "device_name": "NVIDIA A100-SXM4-40GB",
+  "configuration": {
+    "contexts": [
+      1048576
+    ],
+    "fractions": [
+      0.0,
+      0.2
+    ],
+    "layout": "random",
+    "device": 1,
+    "topk": 2048,
+    "rounds": 1,
+    "index_sets": 1,
+    "hot_repeats": 100,
+    "eager_repeats": 20,
+    "flush_mib": 64,
+    "profile_fraction": 0.2,
+    "host_prefetch": true,
+    "record_host_trace": false,
+    "seed": 42,
+    "output": "temp/glm52_overlap_host_final_trace_nodes_check.json"
+  },
+  "access": "First cache half in HBM, second half in pinned Host NUMA DRAM; one fused MLA kernel reads Host rows into internal HBM scratch concurrently with local attention",
+  "git_commit": "000361e388181eca817ddfb70943cb586c9fd85c",
+  "source_sha256": {
+    "include/flashinfer/attention/mla.cuh": "990677b45dc4ee6b1d47c930d9b42c97de1ec9b7838fa9cbbf6cc519109bd277",
+    "include/flashinfer/attention/mla_params.cuh": "6eab9dd37dc7f91c87d00288737861b942efa900e9a55fa13dffa19f8cc0a882",
+    "csrc/batch_mla_run.cu": "2c8a6f85cdcc225a6aacd12b00a5947bcb68e9d9a28c5fb2ec104256e2700fbb",
+    "flashinfer/mla/_core.py": "3c12b46242feb56cfe618325e440f9be757a6cd5c9694fe320495ea63b125bfc",
+    "flashinfer/jit/attention/modules.py": "01945628bd6c0176210931a3a96f45d9fc0eed99504bdb671410fe57afd68dec"
+  },
+  "timing": "hot_graph: 100 attention calls per CUDA Graph, GPU events around replay; eager: Python launches including GPU idle gaps; cold_single_graph: one call after L2 eviction, including graph launch gap",
+  "exclusions": [
+    "top-k selection",
+    "plan",
+    "index metadata update",
+    "correctness reference",
+    "initialization"
+  ],
+  "results": [
+    {
+      "context_tokens": 1048576,
+      "kv_cache_bytes": 1207959552,
+      "residency": [
+        {
+          "tier": "hbm",
+          "allocation_type": 1,
+          "location_type": 1,
+          "location_id": 1,
+          "address": "0x602000000",
+          "bytes": 603979776
+        },
+        {
+          "tier": "pinned_host_dram",
+          "allocation_type": 1,
+          "location_type": 3,
+          "location_id": 0,
+          "address": "0x626000000",
+          "bytes": 603979776
+        }
+      ],
+      "gpu_before": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 39607 MiB, 835 MiB, 0 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 4630 MiB, 35812 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 39607 MiB, 835 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz",
+      "gpu_after": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 39607 MiB, 835 MiB, 0 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 5454 MiB, 34988 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 39607 MiB, 835 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz",
+      "cases": [
+        {
+          "host_fraction_requested": 0.0,
+          "host_tokens": 0,
+          "host_fraction_actual": 0.0,
+          "host_kv_bytes": 0,
+          "correctness_max_abs_error": 0.001467376947402954,
+          "hot_graph": {
+            "median_us": 28.592000007629395,
+            "p10_us": 28.592000007629395,
+            "p90_us": 28.592000007629395,
+            "samples_us": [
+              28.592000007629395
+            ],
+            "relative_to_hbm": 1.0
+          },
+          "cold_single_graph": {
+            "median_us": 69.37599927186966,
+            "p10_us": 69.37599927186966,
+            "p90_us": 69.37599927186966,
+            "samples_us": [
+              69.37599927186966
+            ],
+            "relative_to_hbm": 1.0
+          },
+          "eager": {
+            "median_us": 34.460800886154175,
+            "p10_us": 34.460800886154175,
+            "p90_us": 34.460800886154175,
+            "samples_us": [
+              34.460800886154175
+            ],
+            "relative_to_hbm": 1.0
+          }
+        },
+        {
+          "host_fraction_requested": 0.2,
+          "host_tokens": 410,
+          "host_fraction_actual": 0.2001953125,
+          "host_kv_bytes": 472320,
+          "correctness_max_abs_error": 0.0015148520469665527,
+          "hot_graph": {
+            "median_us": 36.375999450683594,
+            "p10_us": 36.375999450683594,
+            "p90_us": 36.375999450683594,
+            "samples_us": [
+              36.375999450683594
+            ],
+            "relative_to_hbm": 1.2722439647795587
+          },
+          "cold_single_graph": {
+            "median_us": 56.76800012588501,
+            "p10_us": 56.76800012588501,
+            "p90_us": 56.76800012588501,
+            "samples_us": [
+              56.76800012588501
+            ],
+            "relative_to_hbm": 0.8182656930594022
+          },
+          "eager": {
+            "median_us": 79.63520288467407,
+            "p10_us": 79.63520288467407,
+            "p90_us": 79.63520288467407,
+            "samples_us": [
+              79.63520288467407
+            ],
+            "relative_to_hbm": 2.310892400549817
+          }
+        }
+      ],
+      "phase_timings_ns": {}
+    }
+  ]
+}

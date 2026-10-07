@@ -64,9 +64,15 @@ lines = [
     "",
     "## Scope and measured outcome",
     "",
-    "A100-SXM4-40GB GPU 1; BF16; one decode query; 64 heads; latent rank 512; RoPE 64; page size one; top-k 2048. Total cache contexts: 131072, 262144, 524288, 1048576 tokens. The first physical half resides in GPU HBM and the second in pinned NUMA-0 Host DRAM, mapped into one CUDA VMM address range. Host selections occupy random, head, or tail positions among the selected 2048 keys; physical token addresses remain sampled across each tier.",
+    "A100-SXM4-40GB GPU 1; BF16; one decode query; 64 heads; latent rank 512; RoPE 64; page size one; top-k 2048. A single attention layer is tested; model projections, the sparse indexer, and other layers are excluded. Total cache contexts: 131072, 262144, 524288, 1048576 tokens. The first physical half resides in GPU HBM and the second in pinned NUMA-0 Host DRAM, mapped into one CUDA VMM address range. Host selections occupy random, head, or tail positions among the selected 2048 keys; physical token addresses remain sampled across each tier. Requested hit fractions are rounded to the nearest selected row; the 20% case contains 410 of 2048 rows (20.0195%).",
     "",
-    "The acceptance assumption is at most 5% latency increase relative to the same operator with 0% Host hits. This is a benchmark result, not a claim that every Host transfer is hidden. The table aggregates the median of 12 independently measured context/layout medians; the range and per-case results below retain variation.",
+    "The acceptance assumption is at most 5% latency increase relative to the same operator with 0% Host hits. The table aggregates the median of 12 independently measured context/layout medians; the range and per-case results below retain variation.",
+    "",
+    (
+        "The 20% target is fully met in all measured cases."
+        if summary["fully_met_at_20_percent"]
+        else "**The 20% target is not met.** At 10% and 15%, aggregate medians are close to the new operator's local baseline; the worst 15% context/layout case exceeds 5%. The new operator's 0% latency is also approximately 2.6% above the native local baseline. At high Host fractions, the fused design regresses relative to native direct attention; native execution remains available as the baseline."
+    ),
     "",
     "## Latency and transfer model",
     "",
@@ -85,9 +91,9 @@ lines += [
     "",
     "The opt-in `host_page_start` path adds one fused cooperative CUDA attention kernel. It partitions selected keys into 16 local compute tasks and 28 Host compute tasks. The other 64 CTAs use one warp group to issue independent packed PCIe reads and another to merge local attention states. Epoch-tagged ready flags publish staged rows and partial attention results with release/acquire ordering. Host attention uses tensor cores and a one-tile path for small chunks. CPU values retain their original BF16/FP16 representation.",
     "",
-    "The kernel reads mapped Host memory directly, then writes those rows into internal HBM scratch before tensor-core attention consumes them. This buffering happens inside attention. There is no external gather kernel or CUDA memcpy in the timed path. Internal allocation is 5.25 MiB of HBM plus 32 KiB synchronization state, allocated and initialized during warmup. It is not a GPU tensor allocation that happens to contain previously copied CPU data.",
+    "The kernel reads mapped Host memory directly, then writes those rows into internal HBM scratch before tensor-core attention consumes them. This buffering happens inside attention. There is no external gather kernel or CUDA memcpy in the timed path. Internal allocation is 5.25 MiB of HBM plus 32 KiB synchronization state, allocated and initialized during warmup.",
     "",
-    "Phase instrumentation in `glm52_overlap_host_v22_trace.json` shows that local attention and CPU reads overlap. At 20%, final Host row readiness occurs around 21 us, followed by Host QK/PV, output writes, and partial-state reduction. Instrumentation is a separate debug run and is not used as the final latency measurement. A write-combined Host allocation was also measured; it did not materially improve sparse transfer time (`sparse_host_allocators.json`).",
+    "Final phase instrumentation (`glm52_overlap_host_final_phase_summary.json`) shows local computation ending around 21.5 us, Host rows becoming ready around 22.5 us, and Host partial writes ending at 25.6-27.6 us at 20%. Thus CPU reads overlap local computation, while Host attention and the final reduction still extend the critical path. The timer has approximately 1 us granularity, and these are separate debug runs, not the final latency measurements. A write-combined Host allocation was also measured; it did not materially improve sparse transfer time (`sparse_host_allocators.json`).",
     "",
     "The trial history keeps rejected designs, including scalar final PV, duplicated QK, smaller/larger tiles, staged probability sharing, and parallel partial reductions. The final implementation restores the best balanced packed-load design and adds explicit warp synchronization around shared output conversion. Racecheck originally identified warp-local shared-memory write/read hazards in the reused native output helper; the Host path now synchronizes before reading and before reusing that tile. Native calls retain their original default path.",
     "",
@@ -96,6 +102,8 @@ lines += [
     "Each case uses 40 rounds, eight distinct index sets, 100 attention calls per hot CUDA Graph, 20 eager calls, and a separate one-call measurement after 64 MiB L2 eviction. Host fractions are shuffled in each round. Top-k selection, plan, index updates, cache initialization, graph construction, and independent FP32 references are excluded. Host reads, HBM staging, attention computation, and output merging are included. Eager GPU events also contain CPU launch gaps; cold single-call timing includes graph launch gaps.",
     "",
     "`glm52_overlap_correctness.json` records 228 independent FP32 comparisons covering BF16/FP16, all fractions, random/head/tail layouts, two seeds, base-2/base-e LSE, graph reuse, and CPU-side Host mutations. `glm52_overlap_api_correctness.json` records native page-size-16, causal, multi-request, multi-query, 128-head regressions and rejected invalid Host inputs. Sanitizer logs are retained separately. The nine historical baseline hashes are preserved in `glm52_host_historical_baselines_manifest.json`.",
+    "",
+    "`glm52_overlap_host_direct_verification.json` combines a CUDA graph node trace with a system-memory traffic counter. The timed graph contains exactly 100 attention kernels, zero GPU memcpy activities, and zero memset activities. At 20%, the final kernel reads 14760 system-memory fill sectors of 32 bytes each, exactly 472320 bytes for 410 selected Host rows. The profiled durations are excluded from the performance table. Resource inspection records 238 registers and zero stack/local memory for the BF16 kernel.",
     "",
     "GPU 1 was selected for serial measurements. Other GPUs ran unrelated jobs, and GPU 1 contained two idle EngineCore processes. Before/after GPU snapshots, source hashes, and the Git commit are stored in each result. Hardware was shared; these results do not establish single-tenant production behavior or H800 performance.",
     "",
