@@ -1266,7 +1266,7 @@ __device__ __forceinline__ void merge_host_group(
   const uint32_t tid = threadIdx.y * 32 + threadIdx.x, lane = threadIdx.x;
   const uint32_t head = blockIdx.y - 44;
   extern __shared__ uint8_t smem[];
-  auto* weights = reinterpret_cast<float*>(smem + 36864 + (START == 0 ? 0 : 256));
+  auto* weights = reinterpret_cast<float*>(smem + 36864);
   if (tid < 32) {
     uint32_t mask;
     do {
@@ -1298,8 +1298,7 @@ __device__ __forceinline__ void merge_host_group(
     if (lane < COUNT) weights[lane] = sum > 0.f ? weight / sum : 0.f;
     if (lane == 0) weights[32] = maximum == -math::inf ? -math::inf : maximum + math::ptx_log2(sum);
   }
-  if constexpr (START == 0) asm volatile("bar.sync 1, 128;" ::: "memory");
-  else asm volatile("bar.sync 2, 128;" ::: "memory");
+  asm volatile("bar.sync 1, 128;" ::: "memory");
   lse_output = weights[32];
   uint2 packed_values[COUNT];
 #pragma unroll
@@ -1322,36 +1321,82 @@ __device__ __forceinline__ void merge_host_group(
       for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = fmaf(values[feature], weight, output[feature]);
     }
   }
-  if constexpr (START == 0) asm volatile("bar.sync 1, 128;" ::: "memory");
-  else asm volatile("bar.sync 2, 128;" ::: "memory");
+  asm volatile("bar.sync 1, 128;" ::: "memory");
 }
 
 template <typename KTraits, typename Params>
 __device__ __forceinline__ void merge_ready_host_states(
     typename KTraits::SharedStorage& storage, const Params& params) {
   const uint32_t tid = threadIdx.y * 32 + threadIdx.x, head = blockIdx.y - 44;
+  const uint32_t lane = threadIdx.x;
   extern __shared__ uint8_t smem[];
+  auto* weights = reinterpret_cast<float*>(smem + 37120);
   auto* host_output = reinterpret_cast<float*>(smem + 40960);
-  float output[4], lse;
+  float local[4], local_lse;
+  if (threadIdx.z == 0) merge_host_group<0, 16, KTraits>(storage, params, local, local_lse);
+  __syncthreads();
+  if (threadIdx.z == 0 && tid < 32) {
+    uint32_t mask;
+    do {
+      unsigned long long ready = storage.epoch;
+      if (lane < 28) {
+        asm volatile("ld.global.cg.u64 %0, [%1];" : "=l"(ready)
+                     : "l"(params.host_prefetch_state + gridDim.y + 2048 + 16 + lane) : "memory");
+      }
+      mask = __ballot_sync(0xffffffff, ready == storage.epoch);
+      if (mask != 0xffffffff) __nanosleep(128);
+    } while (mask != 0xffffffff);
+    if (lane < 28) {
+      unsigned long long ready;
+      asm volatile("ld.acquire.gpu.global.u64 %0, [%1];" : "=l"(ready)
+                   : "l"(params.host_prefetch_state + gridDim.y + 2048 + 16 + lane) : "memory");
+    }
+    const float lse = lane < 28 ? params.partial_lse[(16 + lane) * 64 + head] : -math::inf;
+    float maximum = lse;
+#pragma unroll
+    for (uint32_t offset = 16; offset > 0; offset /= 2) maximum = max(maximum, __shfl_xor_sync(0xffffffff, maximum, offset));
+    const float weight = maximum == -math::inf ? 0.f : math::ptx_exp2(lse - maximum);
+    float sum = weight;
+#pragma unroll
+    for (uint32_t offset = 16; offset > 0; offset /= 2) sum += __shfl_xor_sync(0xffffffff, sum, offset);
+    if (lane < 28) weights[lane] = sum > 0.f ? weight / sum : 0.f;
+    if (lane == 0) weights[32] = maximum == -math::inf ? -math::inf : maximum + math::ptx_log2(sum);
+  }
+  __syncthreads();
+  uint2 packed_values[14];
+#pragma unroll
+  for (uint32_t split = 0; split < 14; ++split) {
+    asm volatile("ld.global.cg.v2.u32 {%0, %1}, [%2];"
+                 : "=r"(packed_values[split].x), "=r"(packed_values[split].y)
+                 : "l"(params.partial_o + ((16 + threadIdx.z * 14 + split) * 64 + head) * 512 + tid * 4)
+                 : "memory");
+  }
+  float output[4] = {};
+#pragma unroll
+  for (uint32_t split = 0; split < 14; ++split) {
+    const float weight = weights[threadIdx.z * 14 + split];
+    if (weight > 0.f) {
+      float values[4];
+      vec_cast<float, typename KTraits::DTypeO>::template cast<4>(values, reinterpret_cast<const typename KTraits::DTypeO*>(packed_values + split));
+#pragma unroll
+      for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = fmaf(values[feature], weight, output[feature]);
+    }
+  }
   if (threadIdx.z == 1) {
-    merge_host_group<16, 28, KTraits>(storage, params, output, lse);
 #pragma unroll
     for (uint32_t feature = 0; feature < 4; ++feature) host_output[tid * 4 + feature] = output[feature];
-    if (tid == 0) host_output[512] = lse;
-  } else {
-    merge_host_group<0, 16, KTraits>(storage, params, output, lse);
   }
   __syncthreads();
   if (threadIdx.z == 0) {
-    const float host_lse = host_output[512];
-    const float maximum = max(lse, host_lse);
-    const float local_weight = math::ptx_exp2(lse - maximum);
+    const float host_lse = weights[32];
+    const float maximum = max(local_lse, host_lse);
+    const float local_weight = math::ptx_exp2(local_lse - maximum);
     const float host_weight = math::ptx_exp2(host_lse - maximum);
     const float denominator = local_weight + host_weight;
 #pragma unroll
     for (uint32_t feature = 0; feature < 4; ++feature) {
       params.final_o[head * params.o_stride_h + tid * 4 + feature] = typename KTraits::DTypeO(
-          (output[feature] * local_weight + host_output[tid * 4 + feature] * host_weight) / denominator);
+          (local[feature] * local_weight + (output[feature] + host_output[tid * 4 + feature]) * host_weight) / denominator);
     }
     if (tid == 0 && params.final_lse) {
       float value = maximum + math::ptx_log2(denominator);
