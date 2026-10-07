@@ -170,23 +170,39 @@ __device__ __forceinline__ void run_host_prefetch_agent(
     agents += idle;
     rank += idle && block < blockIdx.y;
   }
-  for (uint32_t position = rank; position < 2048; position += agents) {
-    const auto page = params.kv_indices[position];
-    if (page >= params.host_page_start) {
-      if (tid < 72) {
-        const auto* source = tid < 64
-                                 ? params.ckv + page * params.ckv_stride_page + tid * 8
-                                 : params.kpe + page * params.kpe_stride_page + (tid - 64) * 8;
-        const uint4 value = *reinterpret_cast<const uint4*>(source);
-        *reinterpret_cast<uint4*>(params.host_prefetch_buffer + position * 576 + tid * 8) = value;
+  extern __shared__ uint8_t agent_smem[];
+  auto* positions = reinterpret_cast<uint32_t*>(agent_smem);
+  auto* pages = positions + 32;
+  auto* count = pages + 32;
+  if (tid == 0) {
+    uint32_t selected = 0;
+    for (uint32_t position = rank; position < 2048; position += agents) {
+      const auto page = params.kv_indices[position];
+      if (page >= params.host_page_start) {
+        positions[selected] = position;
+        pages[selected++] = page;
       }
-      // Publish only after every thread's vector store is visible device-wide.
-      __threadfence();
-      __syncthreads();
-      if (tid == 0) atomicExch(params.host_prefetch_state + gridDim.y + position, epoch);
-      __syncthreads();
+    }
+    *count = selected;
+  }
+  __syncthreads();
+  for (uint32_t vector = tid; vector < *count * 72; vector += KTraits::NUM_THREADS) {
+    const uint32_t row = vector / 72, feature = vector % 72;
+    const auto page = pages[row];
+    const auto* source = feature < 64
+                             ? params.ckv + page * params.ckv_stride_page + feature * 8
+                             : params.kpe + page * params.kpe_stride_page + (feature - 64) * 8;
+    const uint4 value = *reinterpret_cast<const uint4*>(source);
+    *reinterpret_cast<uint4*>(params.host_prefetch_buffer + positions[row] * 576 + feature * 8) = value;
+  }
+  __threadfence();
+  __syncthreads();
+  if (tid == 0) {
+    for (uint32_t row = 0; row < *count; ++row) {
+      atomicExch(params.host_prefetch_state + gridDim.y + positions[row], epoch);
     }
   }
+
 }
 
 template <bool HOST_ONLY, typename KTraits, typename Params>
