@@ -216,28 +216,100 @@ __device__ __forceinline__ void run_host_prefetch_agent(
     }
     cp_async::commit_group();
   }
-  cp_async::wait_group<0>();
-#pragma unroll
-  for (uint32_t i = 0; i < 6; ++i) {
-    if (positions[i] < 2048) {
-      const auto* source = staging + (i * 8 + warp) * 576;
-      auto* destination = params.host_prefetch_buffer + positions[i] * 576;
-      *reinterpret_cast<uint4*>(destination + lane * 8) = *reinterpret_cast<const uint4*>(source + lane * 8);
-      *reinterpret_cast<uint4*>(destination + 256 + lane * 8) = *reinterpret_cast<const uint4*>(source + 256 + lane * 8);
-      if (lane < 8) *reinterpret_cast<uint4*>(destination + 512 + lane * 8) = *reinterpret_cast<const uint4*>(source + 512 + lane * 8);
+  cp_async::wait_group<5>();
+  if (positions[0] < 2048) {
+    const auto* source = staging + (0 * 8 + warp) * 576;
+    auto* destination = params.host_prefetch_buffer + positions[0] * 576;
+    *reinterpret_cast<uint4*>(destination + lane * 8) = *reinterpret_cast<const uint4*>(source + lane * 8);
+    *reinterpret_cast<uint4*>(destination + 256 + lane * 8) = *reinterpret_cast<const uint4*>(source + 256 + lane * 8);
+    if (lane < 8) *reinterpret_cast<uint4*>(destination + 512 + lane * 8) = *reinterpret_cast<const uint4*>(source + 512 + lane * 8);
+    __threadfence();
+    __syncwarp();
+    if (lane == 0) {
+      asm volatile("st.release.gpu.global.u64 [%0], %1;"
+                   :
+                   : "l"(params.host_prefetch_state + gridDim.y + positions[0]), "l"(epoch)
+                   : "memory");
     }
   }
-  __threadfence();
-  __syncwarp();
-  if (lane == 0) {
-#pragma unroll
-    for (uint32_t i = 0; i < 6; ++i) {
-      if (positions[i] < 2048) {
-        asm volatile("st.release.gpu.global.u64 [%0], %1;"
-                     :
-                     : "l"(params.host_prefetch_state + gridDim.y + positions[i]), "l"(epoch)
-                     : "memory");
-      }
+  cp_async::wait_group<4>();
+  if (positions[1] < 2048) {
+    const auto* source = staging + (1 * 8 + warp) * 576;
+    auto* destination = params.host_prefetch_buffer + positions[1] * 576;
+    *reinterpret_cast<uint4*>(destination + lane * 8) = *reinterpret_cast<const uint4*>(source + lane * 8);
+    *reinterpret_cast<uint4*>(destination + 256 + lane * 8) = *reinterpret_cast<const uint4*>(source + 256 + lane * 8);
+    if (lane < 8) *reinterpret_cast<uint4*>(destination + 512 + lane * 8) = *reinterpret_cast<const uint4*>(source + 512 + lane * 8);
+    __threadfence();
+    __syncwarp();
+    if (lane == 0) {
+      asm volatile("st.release.gpu.global.u64 [%0], %1;"
+                   :
+                   : "l"(params.host_prefetch_state + gridDim.y + positions[1]), "l"(epoch)
+                   : "memory");
+    }
+  }
+  cp_async::wait_group<3>();
+  if (positions[2] < 2048) {
+    const auto* source = staging + (2 * 8 + warp) * 576;
+    auto* destination = params.host_prefetch_buffer + positions[2] * 576;
+    *reinterpret_cast<uint4*>(destination + lane * 8) = *reinterpret_cast<const uint4*>(source + lane * 8);
+    *reinterpret_cast<uint4*>(destination + 256 + lane * 8) = *reinterpret_cast<const uint4*>(source + 256 + lane * 8);
+    if (lane < 8) *reinterpret_cast<uint4*>(destination + 512 + lane * 8) = *reinterpret_cast<const uint4*>(source + 512 + lane * 8);
+    __threadfence();
+    __syncwarp();
+    if (lane == 0) {
+      asm volatile("st.release.gpu.global.u64 [%0], %1;"
+                   :
+                   : "l"(params.host_prefetch_state + gridDim.y + positions[2]), "l"(epoch)
+                   : "memory");
+    }
+  }
+  cp_async::wait_group<2>();
+  if (positions[3] < 2048) {
+    const auto* source = staging + (3 * 8 + warp) * 576;
+    auto* destination = params.host_prefetch_buffer + positions[3] * 576;
+    *reinterpret_cast<uint4*>(destination + lane * 8) = *reinterpret_cast<const uint4*>(source + lane * 8);
+    *reinterpret_cast<uint4*>(destination + 256 + lane * 8) = *reinterpret_cast<const uint4*>(source + 256 + lane * 8);
+    if (lane < 8) *reinterpret_cast<uint4*>(destination + 512 + lane * 8) = *reinterpret_cast<const uint4*>(source + 512 + lane * 8);
+    __threadfence();
+    __syncwarp();
+    if (lane == 0) {
+      asm volatile("st.release.gpu.global.u64 [%0], %1;"
+                   :
+                   : "l"(params.host_prefetch_state + gridDim.y + positions[3]), "l"(epoch)
+                   : "memory");
+    }
+  }
+  cp_async::wait_group<1>();
+  if (positions[4] < 2048) {
+    const auto* source = staging + (4 * 8 + warp) * 576;
+    auto* destination = params.host_prefetch_buffer + positions[4] * 576;
+    *reinterpret_cast<uint4*>(destination + lane * 8) = *reinterpret_cast<const uint4*>(source + lane * 8);
+    *reinterpret_cast<uint4*>(destination + 256 + lane * 8) = *reinterpret_cast<const uint4*>(source + 256 + lane * 8);
+    if (lane < 8) *reinterpret_cast<uint4*>(destination + 512 + lane * 8) = *reinterpret_cast<const uint4*>(source + 512 + lane * 8);
+    __threadfence();
+    __syncwarp();
+    if (lane == 0) {
+      asm volatile("st.release.gpu.global.u64 [%0], %1;"
+                   :
+                   : "l"(params.host_prefetch_state + gridDim.y + positions[4]), "l"(epoch)
+                   : "memory");
+    }
+  }
+  cp_async::wait_group<0>();
+  if (positions[5] < 2048) {
+    const auto* source = staging + (5 * 8 + warp) * 576;
+    auto* destination = params.host_prefetch_buffer + positions[5] * 576;
+    *reinterpret_cast<uint4*>(destination + lane * 8) = *reinterpret_cast<const uint4*>(source + lane * 8);
+    *reinterpret_cast<uint4*>(destination + 256 + lane * 8) = *reinterpret_cast<const uint4*>(source + 256 + lane * 8);
+    if (lane < 8) *reinterpret_cast<uint4*>(destination + 512 + lane * 8) = *reinterpret_cast<const uint4*>(source + 512 + lane * 8);
+    __threadfence();
+    __syncwarp();
+    if (lane == 0) {
+      asm volatile("st.release.gpu.global.u64 [%0], %1;"
+                   :
+                   : "l"(params.host_prefetch_state + gridDim.y + positions[5]), "l"(epoch)
+                   : "memory");
     }
   }
   record_host_phase(params, 6);
