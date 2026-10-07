@@ -1303,12 +1303,10 @@ __device__ __forceinline__ void merge_host_group(
   uint2 packed_values[COUNT];
 #pragma unroll
   for (uint32_t split = 0; split < COUNT; ++split) {
-    if (weights[split] > 0.f) {
-      asm volatile("ld.global.cg.v2.u32 {%0, %1}, [%2];"
-                   : "=r"(packed_values[split].x), "=r"(packed_values[split].y)
-                   : "l"(params.partial_o + ((START + split) * 64 + head) * 512 + tid * 4)
-                   : "memory");
-    }
+    asm volatile("ld.global.cg.v2.u32 {%0, %1}, [%2];"
+                 : "=r"(packed_values[split].x), "=r"(packed_values[split].y)
+                 : "l"(params.partial_o + ((START + split) * 64 + head) * 512 + tid * 4)
+                 : "memory");
   }
 #pragma unroll
   for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = 0.f;

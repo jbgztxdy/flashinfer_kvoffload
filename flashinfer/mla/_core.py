@@ -600,7 +600,7 @@ class BatchMLAPagedAttentionWrapper:
             if self._host_prefetch_buffer is None:
                 if torch.cuda.is_current_stream_capturing():
                     raise RuntimeError("Warm up Host prefetch before CUDA Graph capture")
-                self._host_prefetch_buffer = torch.empty(
+                self._host_prefetch_buffer = torch.zeros(
                     (5376, 512), dtype=ckv_cache.dtype, device=self.device
                 )
                 self._host_prefetch_state = torch.zeros(
