@@ -15,7 +15,6 @@
  */
 #ifndef FLASHINFER_MLA_FA2_CUH_
 #define FLASHINFER_MLA_FA2_CUH_
-#define FLASHINFER_MLA_HOST_TRACE
 #include <cooperative_groups.h>
 
 #include <cstdint>
@@ -214,21 +213,37 @@ __device__ __forceinline__ void run_host_prefetch_agent(
   record_host_phase(params, 3);
   if (tid == 0) params.host_prefetch_state[gridDim.y + 2048 + blockIdx.y * 10 + 8] = *count;
   record_host_phase(params, 4);
-  for (uint32_t vector = tid; vector < *count * 72; vector += KTraits::NUM_THREADS) {
-    const uint32_t row = vector / 72, feature = vector % 72;
-    const auto page = pages[row];
-    const auto* source = feature < 64
-                             ? params.ckv + page * params.ckv_stride_page + feature * 8
-                             : params.kpe + page * params.kpe_stride_page + (feature - 64) * 8;
-    const uint4 value = *reinterpret_cast<const uint4*>(source);
-    *reinterpret_cast<uint4*>(params.host_prefetch_buffer + positions[row] * 576 + feature * 8) = value;
+  uint4 values[16];
+#pragma unroll
+  for (uint32_t i = 0; i < 16; ++i) {
+    const uint32_t vector = tid + i * KTraits::NUM_THREADS;
+    if (vector < *count * 72) {
+      const uint32_t row = vector / 72, feature = vector % 72;
+      const auto page = pages[row];
+      const auto* source = feature < 64
+                               ? params.ckv + page * params.ckv_stride_page + feature * 8
+                               : params.kpe + page * params.kpe_stride_page + (feature - 64) * 8;
+      values[i] = *reinterpret_cast<const uint4*>(source);
+    }
+  }
+  asm volatile("" ::: "memory");
+#pragma unroll
+  for (uint32_t i = 0; i < 16; ++i) {
+    const uint32_t vector = tid + i * KTraits::NUM_THREADS;
+    if (vector < *count * 72) {
+      const uint32_t row = vector / 72, feature = vector % 72;
+      *reinterpret_cast<uint4*>(params.host_prefetch_buffer + positions[row] * 576 + feature * 8) = values[i];
+    }
   }
   __threadfence();
   __syncthreads();
   record_host_phase(params, 5);
   if (tid == 0) {
     for (uint32_t row = 0; row < *count; ++row) {
-      atomicExch(params.host_prefetch_state + gridDim.y + positions[row], epoch);
+      asm volatile("st.release.gpu.global.u64 [%0], %1;"
+                   :
+                   : "l"(params.host_prefetch_state + gridDim.y + positions[row]), "l"(epoch)
+                   : "memory");
     }
   }
   record_host_phase(params, 6);
