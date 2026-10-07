@@ -1423,7 +1423,7 @@ __device__ __forceinline__ void merge_ready_host_states(
           const uint32_t split = first + lane;
           unsigned long long ready = 0;
           if (split < 48 && !(processed & (1ULL << split))) {
-            asm volatile("ld.acquire.gpu.global.u64 %0, [%1];"
+            asm volatile("ld.global.cg.u64 %0, [%1];"
                          : "=l"(ready)
                          : "l"(params.host_prefetch_state + gridDim.y + 2048 + split)
                          : "memory");
@@ -1431,8 +1431,19 @@ __device__ __forceinline__ void merge_ready_host_states(
           const uint32_t mask = __ballot_sync(0xffffffff, split < 48 && ready == storage.epoch);
           ready_mask |= static_cast<unsigned long long>(mask) << first;
         }
-        if (__popcll(ready_mask) < 8 && (processed | ready_mask) != complete) __nanosleep(32);
+        if (__popcll(ready_mask) < 8 && (processed | ready_mask) != complete) __nanosleep(256);
       } while (__popcll(ready_mask) < 8 && (processed | ready_mask) != complete);
+#pragma unroll
+      for (uint32_t first = 0; first < 48; first += 32) {
+        const uint32_t split = first + lane;
+        if (split < 48 && (ready_mask & (1ULL << split))) {
+          unsigned long long ready;
+          asm volatile("ld.acquire.gpu.global.u64 %0, [%1];"
+                       : "=l"(ready)
+                       : "l"(params.host_prefetch_state + gridDim.y + 2048 + split)
+                       : "memory");
+        }
+      }
       if (lane == 0) storage.ready_mask = ready_mask;
     }
     __syncthreads();
