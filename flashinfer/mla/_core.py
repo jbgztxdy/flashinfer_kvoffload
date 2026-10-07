@@ -427,6 +427,8 @@ class BatchMLAPagedAttentionWrapper:
         self._host_prefetch_shape = (
             len(kv_len_arr_host) == 1 and kv_len_arr_host[0].item() == 2048
         )
+        self._host_prefetch_buffer = None
+        self._host_prefetch_state = None
 
         self._plan_info = self._cached_module.plan(
             self._float_workspace_buffer,
@@ -520,7 +522,9 @@ class BatchMLAPagedAttentionWrapper:
             Enable in-kernel Host prefetch for FA2 sparse decode. Pages at or above
             this boundary must reside in mapped pinned Host memory. This path
             requires one noncausal query, 64 heads, rank 512, RoPE 64, page size 1,
-            and 2048 selected pages. Host rows are buffered in shared memory.
+            and 2048 selected pages. Idle CTAs directly read Host rows into an
+            internal 2.25 MiB HBM buffer while attention computes on local rows.
+            Call once before CUDA Graph capture to allocate the internal buffers.
         """
         if self._backend == "cutlass":
             if return_lse:
@@ -593,7 +597,20 @@ class BatchMLAPagedAttentionWrapper:
             if not 0 <= host_page_start <= ckv_cache.shape[0]:
                 raise ValueError("host_page_start must lie within the KV cache")
             run_function = self._cached_module.run_host_prefetch
-            host_args = (host_page_start,)
+            if self._host_prefetch_buffer is None:
+                if torch.cuda.is_current_stream_capturing():
+                    raise RuntimeError("Warm up Host prefetch before CUDA Graph capture")
+                self._host_prefetch_buffer = torch.empty(
+                    (2048, 576), dtype=ckv_cache.dtype, device=self.device
+                )
+                self._host_prefetch_state = torch.zeros(
+                    2048 + self._plan_info[1], dtype=torch.int64, device=self.device
+                )
+            host_args = (
+                host_page_start,
+                self._host_prefetch_buffer,
+                self._host_prefetch_state,
+            )
         run_function(
             self._float_workspace_buffer,
             self._int_workspace_buffer,

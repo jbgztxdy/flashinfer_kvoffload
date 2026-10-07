@@ -73,6 +73,8 @@ struct MLAParams {
   float sm_scale;
   bool return_lse_base_on_e;
   IdType host_page_start = -1;
+  DTypeKV* host_prefetch_buffer = nullptr;
+  unsigned long long* host_prefetch_state = nullptr;
 };
 
 };  // namespace flashinfer
