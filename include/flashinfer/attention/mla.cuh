@@ -1246,8 +1246,8 @@ __device__ __forceinline__ void merge_ready_host_states(
           const uint32_t mask = __ballot_sync(0xffffffff, split < 44 && ready == storage.epoch);
           ready_mask |= static_cast<unsigned long long>(mask) << first;
         }
-        if (__popcll(ready_mask) < 4 && (processed | ready_mask) != complete) __nanosleep(256);
-      } while (__popcll(ready_mask) < 4 && (processed | ready_mask) != complete);
+        if (__popcll(ready_mask) < 16 && (processed | ready_mask) != complete) __nanosleep(256);
+      } while (__popcll(ready_mask) < 16 && (processed | ready_mask) != complete);
 #pragma unroll
       for (uint32_t first = 0; first < 44; first += 32) {
         const uint32_t split = first + lane;
@@ -1288,22 +1288,25 @@ __device__ __forceinline__ void merge_ready_host_states(
     }
     asm volatile("bar.sync 1, 128;" ::: "memory");
     denominator += sums[group * 2] + sums[group * 2 + 1];
-    float values[44][4];
+    for (uint32_t first = 0; first < 44; first += 8) {
+      float values[8][4];
 #pragma unroll
-    for (uint32_t split = 0; split < 44; ++split) {
-      const float weight = weights[split];
-      if ((ready_mask & (1ULL << split)) && weight > 0.f) {
-        vec_cast<float, typename KTraits::DTypeO>::template cast<4>(
-            values[split], params.partial_o + (split * 64 + head) * 512 + local * 4);
+      for (uint32_t i = 0; i < 8; ++i) {
+        const uint32_t split = first + i;
+        if (split < 44 && (ready_mask & (1ULL << split)) && weights[split] > 0.f) {
+          vec_cast<float, typename KTraits::DTypeO>::template cast<4>(
+              values[i], params.partial_o + (split * 64 + head) * 512 + local * 4);
+        }
       }
-    }
-    asm volatile("" ::: "memory");
+      asm volatile("" ::: "memory");
 #pragma unroll
-    for (uint32_t split = 0; split < 44; ++split) {
-      const float weight = weights[split];
-      if ((ready_mask & (1ULL << split)) && weight > 0.f) {
+      for (uint32_t i = 0; i < 8; ++i) {
+        const uint32_t split = first + i;
+        if (split < 44 && (ready_mask & (1ULL << split)) && weights[split] > 0.f) {
+          const float weight = weights[split];
 #pragma unroll
-        for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = fmaf(values[split][feature], weight, output[feature]);
+          for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = fmaf(values[i][feature], weight, output[feature]);
+        }
       }
     }
     processed |= ready_mask;
