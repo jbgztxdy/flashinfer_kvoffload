@@ -1144,6 +1144,25 @@ struct HostNarrowKernelTraits : BaseTraits {
   static constexpr uint32_t UPCAST_STRIDE_P = 2;
 };
 
+template <uint32_t PASS, typename KTraits>
+__device__ __forceinline__ void compute_small_host_pv(
+    typename KTraits::SharedStorage* storage, float (*s_frag)[8], float* d, float (*o_frag)[8]) {
+  const uint32_t lane = threadIdx.x;
+  smem_t<KTraits::SWIZZLE_MODE_CKV> ckv_smem(storage->ckv_smem[0]);
+  uint32_t offset = ckv_smem.template get_permuted_offset<KTraits::UPCAST_STRIDE_CKV>(
+      lane % 16, PASS * KTraits::NUM_MMA_D_CKV + lane / 16);
+  alignas(16) typename KTraits::DTypeKV p[8];
+  vec_cast<typename KTraits::DTypeKV, float>::template cast<8>(p, s_frag[0]);
+  if constexpr (PASS == 0) mma::m16k16_rowsum_f16f16f32(d, p);
+#pragma unroll
+  for (uint32_t feature = 0; feature < 16; ++feature) {
+    uint32_t value[4];
+    ckv_smem.ldmatrix_m8n8x4_trans(offset, value);
+    mma::mma_sync_m16n16k16_row_col_f16f16f32<typename KTraits::DTypeKV>(o_frag[feature], reinterpret_cast<uint32_t*>(p), value);
+    offset = ckv_smem.template advance_offset_by_column<2>(offset, feature);
+  }
+}
+
 template <typename KTraits, typename Params>
 __device__ __forceinline__ void compute_host_split(
     typename KTraits::SharedStorage& storage, Params params, uint32_t length, uint8_t* smem) {
@@ -1187,6 +1206,34 @@ __device__ __forceinline__ void compute_host_split(
       }
       cp_async::wait_group<0>();
       __syncthreads();
+      if constexpr (!KTraits::QK_SHARD) {
+        if (length <= 16) {
+          if (threadIdx.z == 0) {
+            compute_mla_qk<KTraits>(&storage, 0, s_frag);
+            logits_mask_<KTraits>(0, 0, 1, length, length, params.num_heads, s_frag);
+            update_mdo_states_<KTraits>(&storage, 0, variant, s_frag, o_frag, m, d);
+            compute_small_host_pv<0, KTraits>(&storage, s_frag, d, o_frag);
+            normalize_d_<KTraits>(&storage, 0, o_frag, m, d);
+            finalize_m_<KTraits>(variant, m);
+            write_o<KTraits>(&storage, params.final_o, params.final_lse,
+                            params.partial_o + blockIdx.y * 64 * 512,
+                            params.partial_lse + blockIdx.y * 64, o_frag, m, d,
+                            params.o_stride_n, params.o_stride_h, 1, 0, params.num_heads, false);
+#pragma unroll
+            for (uint32_t feature = 0; feature < 16; ++feature) {
+#pragma unroll
+              for (uint32_t reg = 0; reg < 8; ++reg) o_frag[feature][reg] = 0.f;
+            }
+            compute_small_host_pv<1, KTraits>(&storage, s_frag, d, o_frag);
+            normalize_d_<KTraits>(&storage, 0, o_frag, m, d);
+            write_o<KTraits>(&storage, params.final_o, params.final_lse,
+                            params.partial_o + blockIdx.y * 64 * 512 + 256,
+                            params.partial_lse + blockIdx.y * 64, o_frag, m, d,
+                            params.o_stride_n, params.o_stride_h, 1, 0, params.num_heads, false);
+          }
+          return;
+        }
+      }
       for (; tile >= 0; --tile) {
         if (tile > 0) cp_async::wait_group<1>();
         else cp_async::wait_group<0>();
