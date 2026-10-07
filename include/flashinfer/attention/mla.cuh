@@ -988,6 +988,19 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
       o_stride_h, num_heads, params.return_lse_base_on_e);
 }
 
+#define FLASHINFER_MLA_HOST_TRACE
+
+template <typename Params>
+__device__ __forceinline__ void record_overlap_phase(const Params& params, uint32_t slot, bool producer = false) {
+#ifdef FLASHINFER_MLA_HOST_TRACE
+  if (threadIdx.x == 0 && threadIdx.y == 0 && threadIdx.z == uint32_t(producer)) {
+    unsigned long long time;
+    asm volatile("mov.u64 %0, %%globaltimer;" : "=l"(time));
+    params.host_prefetch_state[3608 + blockIdx.y * 4 + slot] = time;
+  }
+#endif
+}
+
 template <typename KTraits, typename Params>
 __device__ __forceinline__ void run_host_fetch_warps(
     const Params& params, unsigned long long epoch) {
@@ -1025,6 +1038,7 @@ __device__ __forceinline__ void run_host_fetch_warps(
   }
   asm volatile("bar.sync 2, 128;" ::: "memory");
   const uint32_t selected = (total + 63 - rank) / 64;
+  record_overlap_phase(params, 1, true);
   uint32_t positions[8];
   uint4 first[8], second[8], rope[8];
 #pragma unroll
@@ -1069,6 +1083,7 @@ __device__ __forceinline__ void run_host_fetch_warps(
       }
     }
   }
+  record_overlap_phase(params, 2, true);
 }
 
 template <typename BaseTraits>
@@ -1151,6 +1166,7 @@ __device__ __forceinline__ void compute_host_split(
         params.ckv_stride_page = 576;
         params.kpe_stride_page = 576;
       }
+      record_overlap_phase(params, 2);
       float s_frag[KTraits::QK_SHARD ? KTraits::NUM_MMA_KV / 2 : KTraits::NUM_MMA_KV][8], o_frag[16][8], m[2], d[2];
       init_states_<KTraits>(o_frag, m, d);
       typename KTraits::AttentionVariant variant(params, 0, smem);
@@ -1295,6 +1311,7 @@ __device__ __forceinline__ void merge_ready_host_states(
     if (params.return_lse_base_on_e) value *= math::loge2;
     params.final_lse[head] = value;
   }
+  record_overlap_phase(params, 3);
 }
 
 template <typename KTraits, typename Params>
@@ -1302,18 +1319,21 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostOverlapKerne
   extern __shared__ uint8_t smem[];
   auto& storage = *reinterpret_cast<typename KTraits::SharedStorage*>(smem);
   const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+  record_overlap_phase(params, 0);
   if (tid == 0) storage.epoch = atomicAdd(params.host_prefetch_state + blockIdx.y, 1ULL) + 1;
   __syncthreads();
   params.partial_o = params.host_prefetch_buffer + 2048 * 576;
   params.partial_lse = reinterpret_cast<float*>(params.host_prefetch_state + gridDim.y + 2048 + 44);
   if (blockIdx.y < 44) {
     const uint32_t length = prepare_host_split<KTraits>(&storage, params);
+    record_overlap_phase(params, 1);
     if (length > 0) {
       if (blockIdx.y < 16) compute_host_split<KTraits>(storage, params, length, smem);
       else compute_host_split<HostNarrowKernelTraits<KTraits>>(storage, params, length, smem);
     } else {
       if (tid < 64) params.partial_lse[blockIdx.y * 64 + tid] = -math::inf;
     }
+    record_overlap_phase(params, 3);
     __threadfence();
     __syncthreads();
     if (tid == 0) {

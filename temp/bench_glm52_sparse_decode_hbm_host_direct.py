@@ -189,7 +189,7 @@ def benchmark_context(args, tokens):
             samples[fraction]["hot_graph"].append(time_gpu(hot_graph.replay, args.hot_repeats, start, end))
             if args.record_host_trace and iteration == 0:
                 blocks = wrapper._plan_info[1]
-                traces[fraction] = wrapper._host_prefetch_state[-blocks * 10:].cpu().view(blocks, 10).tolist()
+                traces[fraction] = wrapper._host_prefetch_state[3608:4040].cpu().view(108, 4).tolist()
             if profile:
                 torch.cuda.cudart().cudaProfilerStop()
 
