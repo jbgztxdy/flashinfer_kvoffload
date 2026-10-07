@@ -196,8 +196,9 @@ __device__ __forceinline__ void run_host_prefetch_agent(
   const uint32_t rank = params.host_prefetch_state[2048 + 11 * gridDim.y + blockIdx.y];
   const uint32_t agents = params.host_agent_count;
   const uint32_t warp = tid / 32;
+  extern __shared__ uint8_t agent_smem[];
+  auto* staging = reinterpret_cast<typename KTraits::DTypeKV*>(agent_smem);
   uint32_t positions[6];
-  uint4 first[6], second[6], rope[6];
 #pragma unroll
   for (uint32_t i = 0; i < 6; ++i) {
     const uint32_t position = (rank * 8 + warp) + i * agents * 8;
@@ -205,21 +206,25 @@ __device__ __forceinline__ void run_host_prefetch_agent(
     positions[i] = position < 2048 && page >= params.host_page_start ? position : 2048;
     if (positions[i] < 2048) {
       const auto* source = params.ckv + page * params.ckv_stride_page;
-      first[i] = load_host_vector(source + lane * 8);
-      second[i] = load_host_vector(source + 256 + lane * 8);
+      auto* destination = staging + (i * 8 + warp) * 576;
+      cp_async::load_128b<cp_async::PrefetchMode::kNoPrefetch>(destination + lane * 8, source + lane * 8);
+      cp_async::load_128b<cp_async::PrefetchMode::kNoPrefetch>(destination + 256 + lane * 8, source + 256 + lane * 8);
       if (lane < 8) {
-        rope[i] = load_host_vector(params.kpe + page * params.kpe_stride_page + lane * 8);
+        cp_async::load_128b<cp_async::PrefetchMode::kNoPrefetch>(
+            destination + 512 + lane * 8, params.kpe + page * params.kpe_stride_page + lane * 8);
       }
     }
+    cp_async::commit_group();
   }
-  asm volatile("" ::: "memory");
+  cp_async::wait_group<0>();
 #pragma unroll
   for (uint32_t i = 0; i < 6; ++i) {
     if (positions[i] < 2048) {
+      const auto* source = staging + (i * 8 + warp) * 576;
       auto* destination = params.host_prefetch_buffer + positions[i] * 576;
-      *reinterpret_cast<uint4*>(destination + lane * 8) = first[i];
-      *reinterpret_cast<uint4*>(destination + 256 + lane * 8) = second[i];
-      if (lane < 8) *reinterpret_cast<uint4*>(destination + 512 + lane * 8) = rope[i];
+      *reinterpret_cast<uint4*>(destination + lane * 8) = *reinterpret_cast<const uint4*>(source + lane * 8);
+      *reinterpret_cast<uint4*>(destination + 256 + lane * 8) = *reinterpret_cast<const uint4*>(source + 256 + lane * 8);
+      if (lane < 8) *reinterpret_cast<uint4*>(destination + 512 + lane * 8) = *reinterpret_cast<const uint4*>(source + 512 + lane * 8);
     }
   }
   __threadfence();
