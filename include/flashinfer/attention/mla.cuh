@@ -851,42 +851,52 @@ template <typename KTraits, typename Params>
 __device__ __forceinline__ void merge_host_states(const Params& params) {
   if (blockIdx.y >= 64) return;
   const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
-  const uint32_t head = blockIdx.y;
+  const uint32_t lane = threadIdx.x, warp = tid / 32, head = blockIdx.y;
   extern __shared__ uint8_t merge_smem[];
   auto* weights = reinterpret_cast<float*>(merge_smem);
-  if (tid < 32) {
-    const float lse = params.partial_lse[tid * 64 + head];
-    float maximum = lse;
+  auto* maxima = weights + 64;
+  auto* sums = maxima + 2;
+  float lse = -math::inf, maximum = -math::inf;
+  if (tid < 64) {
+    if (tid < 48) lse = params.partial_lse[tid * 64 + head];
+    maximum = lse;
 #pragma unroll
     for (uint32_t offset = 16; offset > 0; offset /= 2) {
       maximum = max(maximum, __shfl_xor_sync(0xffffffff, maximum, offset));
     }
+    if (lane == 0) maxima[warp] = maximum;
+  }
+  __syncthreads();
+  if (tid < 64) {
+    maximum = max(maxima[0], maxima[1]);
     const float weight = math::ptx_exp2(lse - maximum);
+    weights[tid] = weight;
     float sum = weight;
 #pragma unroll
     for (uint32_t offset = 16; offset > 0; offset /= 2) {
       sum += __shfl_xor_sync(0xffffffff, sum, offset);
     }
-    weights[tid] = weight / sum;
-    if (tid == 0 && params.final_lse) {
-      float value = maximum + math::ptx_log2(sum);
-      if (params.return_lse_base_on_e) value *= math::loge2;
-      params.final_lse[head] = value;
-    }
+    if (lane == 0) sums[warp] = sum;
+  }
+  __syncthreads();
+  const float sum = sums[0] + sums[1];
+  if (tid < 48) weights[tid] /= sum;
+  if (tid == 0 && params.final_lse) {
+    float value = maximum + math::ptx_log2(sum);
+    if (params.return_lse_base_on_e) value *= math::loge2;
+    params.final_lse[head] = value;
   }
   __syncthreads();
 #pragma unroll
   for (uint32_t feature = tid; feature < 512; feature += KTraits::NUM_THREADS) {
-    float values[32];
+    float values[48];
 #pragma unroll
-    for (uint32_t split = 0; split < 32; ++split) {
+    for (uint32_t split = 0; split < 48; ++split) {
       values[split] = weights[split] == 0.f ? 0.f : float(params.partial_o[(split * 64 + head) * 512 + feature]);
     }
     float output = 0.f;
 #pragma unroll
-    for (uint32_t split = 0; split < 32; ++split) {
-      output = fmaf(values[split], weights[split], output);
-    }
+    for (uint32_t split = 0; split < 48; ++split) output = fmaf(values[split], weights[split], output);
     params.final_o[head * params.o_stride_h + feature] = typename KTraits::DTypeO(output);
   }
 }
@@ -1294,8 +1304,9 @@ __device__ __forceinline__ uint32_t prepare_host_split(
     typename KTraits::SharedStorage* storage, const Params& params) {
   const uint32_t lane = threadIdx.x;
   const uint32_t warp = threadIdx.z * 4 + threadIdx.y;
-  const uint32_t chunk = blockIdx.y % 16;
   const bool host = blockIdx.y >= 16;
+  const uint32_t chunk = host ? blockIdx.y - 16 : blockIdx.y;
+  const uint32_t chunks = host ? 32 : 16;
   typename KTraits::IdType pages[8];
   uint32_t preceding[8], masks[8], count = 0;
 #pragma unroll
@@ -1318,38 +1329,39 @@ __device__ __forceinline__ uint32_t prepare_host_split(
     const uint32_t position = warp * 256 + i * 32 + lane;
     const uint32_t host_rank = prefix + preceding[i] + __popc(masks[i] & ((1U << lane) - 1));
     const uint32_t rank = host ? host_rank : position - host_rank;
-    if ((pages[i] >= params.host_page_start) == host && rank % 16 == chunk) {
-      storage->indices[rank / 16] = pages[i];
+    if ((pages[i] >= params.host_page_start) == host && rank % chunks == chunk) {
+      storage->indices[rank / chunks] = pages[i];
     }
   }
-  const uint32_t length = ((host ? total_host : 2048 - total_host) + 15 - chunk) / 16;
+  const uint32_t length = ((host ? total_host : 2048 - total_host) + chunks - 1 - chunk) / chunks;
   if (lane == 0 && warp == 0) storage->count = length;
   __syncthreads();
   return length;
 }
 
+template <typename BaseTraits>
+struct HostNarrowKernelTraits : BaseTraits {
+  static constexpr bool QK_SHARD = false;
+  static constexpr uint32_t CTA_TILE_KV = 16;
+  static constexpr uint32_t NUM_MMA_KV = 1;
+  static constexpr uint32_t UPCAST_STRIDE_P = 2;
+};
+
 template <typename KTraits, typename Params>
-__global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostSplitKernel(Params params) {
-  extern __shared__ uint8_t smem[];
-  auto& storage = *reinterpret_cast<typename KTraits::SharedStorage*>(smem);
-  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
-  params.partial_o = params.host_prefetch_buffer;
-  params.partial_lse = reinterpret_cast<float*>(params.host_prefetch_state + gridDim.y);
-  if (blockIdx.y < 32) {
-    const uint32_t length = prepare_host_split<KTraits>(&storage, params);
-    if (length > 0) {
-      float s_frag[1][8], o_frag[16][8], m[2], d[2];
+__device__ __forceinline__ void compute_host_split(
+    typename KTraits::SharedStorage& storage, Params params, uint32_t length, uint8_t* smem) {
+      float s_frag[KTraits::QK_SHARD ? KTraits::NUM_MMA_KV / 2 : KTraits::NUM_MMA_KV][8], o_frag[16][8], m[2], d[2];
       init_states_<KTraits>(o_frag, m, d);
       typename KTraits::AttentionVariant variant(params, 0, smem);
-      int tile = int(ceil_div(length, 32)) - 1;
+      int tile = int(ceil_div(length, KTraits::CTA_TILE_KV)) - 1;
       load_kv<KTraits>(&storage, params.ckv, params.kpe, storage.indices,
                        params.ckv_stride_n, params.ckv_stride_page, params.kpe_stride_n,
-                       params.kpe_stride_page, length, tile * 32, params.block_size, tile % 2);
+                       params.kpe_stride_page, length, tile * KTraits::CTA_TILE_KV, params.block_size, tile % 2);
       cp_async::commit_group();
       if (tile > 0) {
         load_kv<KTraits>(&storage, params.ckv, params.kpe, storage.indices,
                          params.ckv_stride_n, params.ckv_stride_page, params.kpe_stride_n,
-                         params.kpe_stride_page, length, (tile - 1) * 32, params.block_size,
+                         params.kpe_stride_page, length, (tile - 1) * KTraits::CTA_TILE_KV, params.block_size,
                          (tile - 1) % 2);
         cp_async::commit_group();
       }
@@ -1364,14 +1376,14 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostSplitKernel(
         else cp_async::wait_group<0>();
         __syncthreads();
         compute_mla_qk<KTraits>(&storage, tile % 2, s_frag);
-        logits_mask_<KTraits>(0, tile * 32, 1, length, length, params.num_heads, s_frag);
+        logits_mask_<KTraits>(0, tile * KTraits::CTA_TILE_KV, 1, length, length, params.num_heads, s_frag);
         update_mdo_states_<KTraits>(&storage, tile % 2, variant, s_frag, o_frag, m, d);
         compute_mla_pv<KTraits>(&storage, tile % 2, s_frag, d, o_frag);
         __syncthreads();
         if (tile >= 2) {
           load_kv<KTraits>(&storage, params.ckv, params.kpe, storage.indices,
                            params.ckv_stride_n, params.ckv_stride_page, params.kpe_stride_n,
-                           params.kpe_stride_page, length, (tile - 2) * 32, params.block_size,
+                           params.kpe_stride_page, length, (tile - 2) * KTraits::CTA_TILE_KV, params.block_size,
                            (tile - 2) % 2);
           cp_async::commit_group();
         }
@@ -1382,6 +1394,21 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostSplitKernel(
                       params.partial_o + blockIdx.y * 64 * 512,
                       params.partial_lse + blockIdx.y * 64, o_frag, m, d,
                       params.o_stride_n, params.o_stride_h, 1, 0, params.num_heads, false);
+
+}
+
+template <typename KTraits, typename Params>
+__global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostSplitKernel(Params params) {
+  extern __shared__ uint8_t smem[];
+  auto& storage = *reinterpret_cast<typename KTraits::SharedStorage*>(smem);
+  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+  params.partial_o = params.host_prefetch_buffer;
+  params.partial_lse = reinterpret_cast<float*>(params.host_prefetch_state + gridDim.y);
+  if (blockIdx.y < 48) {
+    const uint32_t length = prepare_host_split<KTraits>(&storage, params);
+    if (length > 0) {
+      if (blockIdx.y < 16) compute_host_split<KTraits>(storage, params, length, smem);
+      else compute_host_split<HostNarrowKernelTraits<KTraits>>(storage, params, length, smem);
     } else {
       if (tid < 64) params.partial_lse[blockIdx.y * 64 + tid] = -math::inf;
     }
