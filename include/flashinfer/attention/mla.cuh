@@ -1300,16 +1300,14 @@ __device__ __forceinline__ void merge_host_group(
   }
   asm volatile("bar.sync 1, 128;" ::: "memory");
   lse_output = weights[32];
-  float values[COUNT][4];
+  uint2 packed_values[COUNT];
 #pragma unroll
   for (uint32_t split = 0; split < COUNT; ++split) {
     if (weights[split] > 0.f) {
-      uint2 packed;
       asm volatile("ld.global.cg.v2.u32 {%0, %1}, [%2];"
-                   : "=r"(packed.x), "=r"(packed.y)
+                   : "=r"(packed_values[split].x), "=r"(packed_values[split].y)
                    : "l"(params.partial_o + ((START + split) * 64 + head) * 512 + tid * 4)
                    : "memory");
-      vec_cast<float, typename KTraits::DTypeO>::template cast<4>(values[split], reinterpret_cast<const typename KTraits::DTypeO*>(&packed));
     }
   }
 #pragma unroll
@@ -1318,8 +1316,11 @@ __device__ __forceinline__ void merge_host_group(
   for (uint32_t split = 0; split < COUNT; ++split) {
     const float weight = weights[split];
     if (weight > 0.f) {
+      float values[4];
+      vec_cast<float, typename KTraits::DTypeO>::template cast<4>(
+          values, reinterpret_cast<const typename KTraits::DTypeO*>(packed_values + split));
 #pragma unroll
-      for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = fmaf(values[split][feature], weight, output[feature]);
+      for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = fmaf(values[feature], weight, output[feature]);
     }
   }
   asm volatile("bar.sync 1, 128;" ::: "memory");
