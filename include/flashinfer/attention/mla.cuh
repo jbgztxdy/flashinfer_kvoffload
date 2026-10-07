@@ -1103,7 +1103,7 @@ __device__ __forceinline__ uint32_t prepare_host_split(
   const uint32_t warp = threadIdx.z * 4 + threadIdx.y;
   const bool host = blockIdx.y >= 16;
   const uint32_t chunk = host ? blockIdx.y - 16 : blockIdx.y;
-  const uint32_t chunks = 16;
+  const uint32_t chunks = host ? 28 : 16;
   typename KTraits::IdType pages[8];
   uint32_t preceding[8], masks[8], count = 0;
 #pragma unroll
@@ -1130,7 +1130,7 @@ __device__ __forceinline__ uint32_t prepare_host_split(
       storage->indices[rank / chunks] = host ? position : pages[i];
     }
   }
-  const uint32_t length = chunk < chunks ? ((host ? total_host : 2048 - total_host) + chunks - 1 - chunk) / chunks : 0;
+  const uint32_t length = ((host ? total_host : 2048 - total_host) + chunks - 1 - chunk) / chunks;
   if (lane == 0 && warp == 0) storage->count = length;
   __syncthreads();
   return length;
@@ -1260,6 +1260,31 @@ __device__ __forceinline__ void compute_host_split(
 
 }
 
+template <typename KTraits, typename Params>
+__device__ __forceinline__ void prefetch_host_partials(
+    typename KTraits::SharedStorage& storage, const Params& params) {
+  extern __shared__ uint8_t smem[];
+  auto* staged = reinterpret_cast<typename KTraits::DTypeO*>(smem);
+  const uint32_t head = blockIdx.y - 44, lane = threadIdx.x;
+  for (uint32_t split = threadIdx.y; split < 28; split += 4) {
+    unsigned long long ready;
+    do {
+      asm volatile("ld.global.cg.u64 %0, [%1];" : "=l"(ready)
+                   : "l"(params.host_prefetch_state + gridDim.y + 2048 + 16 + split) : "memory");
+      if (ready != storage.epoch) __nanosleep(64);
+    } while (ready != storage.epoch);
+    asm volatile("ld.acquire.gpu.global.u64 %0, [%1];" : "=l"(ready)
+                 : "l"(params.host_prefetch_state + gridDim.y + 2048 + 16 + split) : "memory");
+#pragma unroll
+    for (uint32_t offset = lane * 8; offset < 512; offset += 256) {
+      cp_async::pred_load_128b<cp_async::PrefetchMode::kNoPrefetch, cp_async::SharedMemFillMode::kNoFill>(staged + split * 512 + offset,
+          params.partial_o + ((16 + split) * 64 + head) * 512 + offset, true);
+    }
+    cp_async::commit_group();
+  }
+  cp_async::wait_group<0>();
+}
+
 template <uint32_t START, uint32_t COUNT, typename KTraits, typename Params>
 __device__ __forceinline__ void merge_host_group(
     typename KTraits::SharedStorage& storage, const Params& params, float* output, float& lse_output) {
@@ -1303,10 +1328,14 @@ __device__ __forceinline__ void merge_host_group(
   uint2 packed_values[COUNT];
 #pragma unroll
   for (uint32_t split = 0; split < COUNT; ++split) {
-    asm volatile("ld.global.cg.v2.u32 {%0, %1}, [%2];"
-                 : "=r"(packed_values[split].x), "=r"(packed_values[split].y)
-                 : "l"(params.partial_o + ((START + split) * 64 + head) * 512 + tid * 4)
-                 : "memory");
+    if constexpr (START == 0) {
+      asm volatile("ld.global.cg.v2.u32 {%0, %1}, [%2];"
+                   : "=r"(packed_values[split].x), "=r"(packed_values[split].y)
+                   : "l"(params.partial_o + ((START + split) * 64 + head) * 512 + tid * 4)
+                   : "memory");
+    } else {
+      packed_values[split] = *reinterpret_cast<const uint2*>(smem + (split * 512 + tid * 4) * sizeof(typename KTraits::DTypeO));
+    }
   }
 #pragma unroll
   for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = 0.f;
@@ -1329,8 +1358,11 @@ __device__ __forceinline__ void merge_ready_host_states(
     typename KTraits::SharedStorage& storage, const Params& params) {
   const uint32_t tid = threadIdx.y * 32 + threadIdx.x, head = blockIdx.y - 44;
   float local[4], host[4], local_lse, host_lse;
-  merge_host_group<0, 16, KTraits>(storage, params, local, local_lse);
-  merge_host_group<16, 16, KTraits>(storage, params, host, host_lse);
+  if (threadIdx.z == 0) merge_host_group<0, 16, KTraits>(storage, params, local, local_lse);
+  else prefetch_host_partials<KTraits>(storage, params);
+  __syncthreads();
+  if (threadIdx.z == 1) return;
+  merge_host_group<16, 28, KTraits>(storage, params, host, host_lse);
   const float maximum = max(local_lse, host_lse);
   const float local_weight = math::ptx_exp2(local_lse - maximum);
   const float host_weight = math::ptx_exp2(host_lse - maximum);
@@ -1362,7 +1394,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostOverlapKerne
     record_overlap_phase(params, 1);
     if (length > 0) {
       if (blockIdx.y < 16) compute_host_split<KTraits>(storage, params, length, smem);
-      else compute_host_split<KTraits>(storage, params, length, smem);
+      else compute_host_split<HostNarrowKernelTraits<KTraits>>(storage, params, length, smem);
     } else {
       if (tid < 64) params.partial_lse[blockIdx.y * 64 + tid] = -math::inf;
     }
@@ -1377,7 +1409,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostOverlapKerne
     }
   } else {
     if (threadIdx.z == 1) run_host_fetch_warps<KTraits>(params, storage.epoch);
-    else merge_ready_host_states<KTraits>(storage, params);
+    merge_ready_host_states<KTraits>(storage, params);
   }
 }
 
