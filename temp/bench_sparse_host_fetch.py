@@ -21,7 +21,7 @@ for context in [131072, 1048576]:
     allocation.host_tensor().normal_()
     indices = torch.empty(2048, dtype=torch.int32, device='cuda:1')
     output = torch.empty((2048, 576), dtype=torch.bfloat16, device='cuda:1')
-    values = [ctypes.c_uint64(cache.data_ptr()), ctypes.c_uint64(indices.data_ptr()), ctypes.c_uint64(output.data_ptr()), ctypes.c_int(context//2)]
+    values = [ctypes.c_uint64(cache.data_ptr() + context//2*1152), ctypes.c_uint64(indices.data_ptr()), ctypes.c_uint64(output.data_ptr()), ctypes.c_int(context//2)]
     params = (ctypes.c_void_p * 4)(*[ctypes.addressof(v) for v in values])
     for blocks in [64, 108, 216, 432]:
         stream = torch.cuda.Stream(device=1)

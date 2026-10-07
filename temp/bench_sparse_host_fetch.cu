@@ -13,7 +13,7 @@ extern "C" __global__ void sparse_fetch(const uint4* cache, const int* indices, 
     if (positions[i] >= 0) {
       asm volatile("ld.global.cg.v4.u32 {%0, %1, %2, %3}, [%4];"
                    : "=r"(values[i].x), "=r"(values[i].y), "=r"(values[i].z), "=r"(values[i].w)
-                   : "l"(cache + page * 72 + position % 72) : "memory");
+                   : "l"(cache + (page - boundary) * 72 + position % 72) : "memory");
     }
   }
 #pragma unroll
