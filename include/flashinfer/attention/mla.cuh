@@ -1213,115 +1213,92 @@ __device__ __forceinline__ void compute_host_split(
 
 }
 
+template <uint32_t START, uint32_t COUNT, typename KTraits, typename Params>
+__device__ __forceinline__ void merge_host_group(
+    typename KTraits::SharedStorage& storage, const Params& params, float* output, float& lse_output) {
+  const uint32_t tid = threadIdx.y * 32 + threadIdx.x, lane = threadIdx.x;
+  const uint32_t head = blockIdx.y - 44;
+  extern __shared__ uint8_t smem[];
+  auto* weights = reinterpret_cast<float*>(smem + 36864);
+  if (tid < 32) {
+    uint32_t mask;
+    do {
+      unsigned long long ready = storage.epoch;
+      if (lane < COUNT) {
+        asm volatile("ld.global.cg.u64 %0, [%1];"
+                     : "=l"(ready)
+                     : "l"(params.host_prefetch_state + gridDim.y + 2048 + START + lane)
+                     : "memory");
+      }
+      mask = __ballot_sync(0xffffffff, ready == storage.epoch);
+      if (mask != 0xffffffff) __nanosleep(128);
+    } while (mask != 0xffffffff);
+    if (lane < COUNT) {
+      unsigned long long ready;
+      asm volatile("ld.acquire.gpu.global.u64 %0, [%1];"
+                   : "=l"(ready)
+                   : "l"(params.host_prefetch_state + gridDim.y + 2048 + START + lane)
+                   : "memory");
+    }
+    const float lse = lane < COUNT ? params.partial_lse[(START + lane) * 64 + head] : -math::inf;
+    float maximum = lse;
+#pragma unroll
+    for (uint32_t offset = 16; offset > 0; offset /= 2) maximum = max(maximum, __shfl_xor_sync(0xffffffff, maximum, offset));
+    const float weight = maximum == -math::inf ? 0.f : math::ptx_exp2(lse - maximum);
+    float sum = weight;
+#pragma unroll
+    for (uint32_t offset = 16; offset > 0; offset /= 2) sum += __shfl_xor_sync(0xffffffff, sum, offset);
+    if (lane < COUNT) weights[lane] = sum > 0.f ? weight / sum : 0.f;
+    if (lane == 0) weights[32] = maximum == -math::inf ? -math::inf : maximum + math::ptx_log2(sum);
+  }
+  asm volatile("bar.sync 1, 128;" ::: "memory");
+  lse_output = weights[32];
+  float values[COUNT][4];
+#pragma unroll
+  for (uint32_t split = 0; split < COUNT; ++split) {
+    if (weights[split] > 0.f) {
+      uint2 packed;
+      asm volatile("ld.global.cg.v2.u32 {%0, %1}, [%2];"
+                   : "=r"(packed.x), "=r"(packed.y)
+                   : "l"(params.partial_o + ((START + split) * 64 + head) * 512 + tid * 4)
+                   : "memory");
+      vec_cast<float, typename KTraits::DTypeO>::template cast<4>(values[split], reinterpret_cast<const typename KTraits::DTypeO*>(&packed));
+    }
+  }
+#pragma unroll
+  for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = 0.f;
+#pragma unroll
+  for (uint32_t split = 0; split < COUNT; ++split) {
+    const float weight = weights[split];
+    if (weight > 0.f) {
+#pragma unroll
+      for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = fmaf(values[split][feature], weight, output[feature]);
+    }
+  }
+  asm volatile("bar.sync 1, 128;" ::: "memory");
+}
+
 template <typename KTraits, typename Params>
 __device__ __forceinline__ void merge_ready_host_states(
     typename KTraits::SharedStorage& storage, const Params& params) {
-  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
-  const uint32_t local = tid, group = 0, lane = threadIdx.x;
-  const uint32_t head = blockIdx.y - 44;
-  const uint32_t warp = local / 32;
-  extern __shared__ uint8_t merge_smem[];
-  auto* weights = reinterpret_cast<float*>(merge_smem + 36864);
-  auto* maxima = weights + 128;
-  auto* sums = maxima + 4;
-  float output[4] = {0.f, 0.f, 0.f, 0.f};
-  float maximum = -math::inf, denominator = 0.f;
-  unsigned long long processed = 0;
-  constexpr unsigned long long complete = (1ULL << 44) - 1;
-  while (processed != complete) {
-    if (tid < 32) {
-      unsigned long long ready_mask;
-      do {
-        ready_mask = 0;
-#pragma unroll
-        for (uint32_t first = 0; first < 44; first += 32) {
-          const uint32_t split = first + lane;
-          unsigned long long ready = 0;
-          if (split < 44 && !(processed & (1ULL << split))) {
-            asm volatile("ld.global.cg.u64 %0, [%1];"
-                         : "=l"(ready)
-                         : "l"(params.host_prefetch_state + gridDim.y + 2048 + split)
-                         : "memory");
-          }
-          const uint32_t mask = __ballot_sync(0xffffffff, split < 44 && ready == storage.epoch);
-          ready_mask |= static_cast<unsigned long long>(mask) << first;
-        }
-        if (__popcll(ready_mask) < 16 && (processed | ready_mask) != complete) __nanosleep(256);
-      } while (__popcll(ready_mask) < 16 && (processed | ready_mask) != complete);
-#pragma unroll
-      for (uint32_t first = 0; first < 44; first += 32) {
-        const uint32_t split = first + lane;
-        if (split < 44 && (ready_mask & (1ULL << split))) {
-          unsigned long long ready;
-          asm volatile("ld.acquire.gpu.global.u64 %0, [%1];"
-                       : "=l"(ready)
-                       : "l"(params.host_prefetch_state + gridDim.y + 2048 + split)
-                       : "memory");
-        }
-      }
-      if (lane == 0) storage.ready_mask = ready_mask;
-    }
-    asm volatile("bar.sync 1, 128;" ::: "memory");
-    const unsigned long long ready_mask = storage.ready_mask;
-    float lse = -math::inf;
-    if (local < 64) {
-      if (local < 44 && (ready_mask & (1ULL << local))) lse = params.partial_lse[local * 64 + head];
-      float value = lse;
-#pragma unroll
-      for (uint32_t offset = 16; offset > 0; offset /= 2) value = max(value, __shfl_xor_sync(0xffffffff, value, offset));
-      if (lane == 0) maxima[group * 2 + warp] = value;
-    }
-    asm volatile("bar.sync 1, 128;" ::: "memory");
-    const float previous = maximum;
-    maximum = max(maximum, max(maxima[group * 2], maxima[group * 2 + 1]));
-    const float scale = previous == -math::inf ? 0.f : math::ptx_exp2(previous - maximum);
-    denominator *= scale;
-#pragma unroll
-    for (uint32_t feature = 0; feature < 4; ++feature) output[feature] *= scale;
-    if (local < 64) {
-      const float weight = maximum == -math::inf ? 0.f : math::ptx_exp2(lse - maximum);
-      weights[group * 64 + local] = weight;
-      float sum = weight;
-#pragma unroll
-      for (uint32_t offset = 16; offset > 0; offset /= 2) sum += __shfl_xor_sync(0xffffffff, sum, offset);
-      if (lane == 0) sums[group * 2 + warp] = sum;
-    }
-    asm volatile("bar.sync 1, 128;" ::: "memory");
-    denominator += sums[group * 2] + sums[group * 2 + 1];
-    for (uint32_t first = 0; first < 44; first += 8) {
-      float values[8][4];
-#pragma unroll
-      for (uint32_t i = 0; i < 8; ++i) {
-        const uint32_t split = first + i;
-        if (split < 44 && (ready_mask & (1ULL << split)) && weights[split] > 0.f) {
-          vec_cast<float, typename KTraits::DTypeO>::template cast<4>(
-              values[i], params.partial_o + (split * 64 + head) * 512 + local * 4);
-        }
-      }
-      asm volatile("" ::: "memory");
-#pragma unroll
-      for (uint32_t i = 0; i < 8; ++i) {
-        const uint32_t split = first + i;
-        if (split < 44 && (ready_mask & (1ULL << split)) && weights[split] > 0.f) {
-          const float weight = weights[split];
-#pragma unroll
-          for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = fmaf(values[i][feature], weight, output[feature]);
-        }
-      }
-    }
-    processed |= ready_mask;
-    asm volatile("bar.sync 1, 128;" ::: "memory");
-  }
+  const uint32_t tid = threadIdx.y * 32 + threadIdx.x, head = blockIdx.y - 44;
+  float local[4], host[4], local_lse, host_lse;
+  merge_host_group<0, 16, KTraits>(storage, params, local, local_lse);
+  merge_host_group<16, 28, KTraits>(storage, params, host, host_lse);
+  const float maximum = max(local_lse, host_lse);
+  const float local_weight = math::ptx_exp2(local_lse - maximum);
+  const float host_weight = math::ptx_exp2(host_lse - maximum);
+  const float denominator = local_weight + host_weight;
 #pragma unroll
   for (uint32_t feature = 0; feature < 4; ++feature) {
-    params.final_o[head * params.o_stride_h + local * 4 + feature] = typename KTraits::DTypeO(output[feature] / denominator);
+    params.final_o[head * params.o_stride_h + tid * 4 + feature] = typename KTraits::DTypeO(
+        (local[feature] * local_weight + host[feature] * host_weight) / denominator);
   }
-  if (local == 0 && params.final_lse) {
+  if (tid == 0 && params.final_lse) {
     float value = maximum + math::ptx_log2(denominator);
     if (params.return_lse_base_on_e) value *= math::loge2;
     params.final_lse[head] = value;
   }
-  record_overlap_phase(params, 3);
 }
 
 template <typename KTraits, typename Params>
