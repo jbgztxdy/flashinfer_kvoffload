@@ -99,11 +99,11 @@ class MixedHBMHost(MixedHBM):
         return torch.frombuffer(buffer, dtype=torch.bfloat16).view(self.local_tokens, 1, 576)
 
 
-def capture_attention(wrapper, q_nope, q_pe, ckv, kpe, out, repeats):
+def capture_attention(wrapper, q_nope, q_pe, ckv, kpe, out, repeats, host_page_start=None):
     graph = torch.cuda.CUDAGraph()
     with torch.cuda.graph(graph):
         for _ in range(repeats):
-            wrapper.run(q_nope, q_pe, ckv, kpe, out=out)
+            wrapper.run(q_nope, q_pe, ckv, kpe, out=out, host_page_start=host_page_start)
     return graph
 
 
@@ -145,11 +145,12 @@ def benchmark_context(args, tokens):
     assert wrapper._kv_indices_buf.data_ptr() == indices.data_ptr()
     index_sets = [make_indices(tokens, args.topk, args.fractions, args.seed + i, args.layout) for i in range(args.index_sets)]
     indices.copy_(index_sets[0][0.0])
+    host_page_start = tokens // 2 if args.host_prefetch else None
     for _ in range(5):
-        wrapper.run(q_nope, q_pe, ckv, kpe, out=out)
+        wrapper.run(q_nope, q_pe, ckv, kpe, out=out, host_page_start=host_page_start)
     torch.cuda.synchronize(device)
-    single_graph = capture_attention(wrapper, q_nope, q_pe, ckv, kpe, out, 1)
-    hot_graph = capture_attention(wrapper, q_nope, q_pe, ckv, kpe, out, args.hot_repeats)
+    single_graph = capture_attention(wrapper, q_nope, q_pe, ckv, kpe, out, 1, host_page_start)
+    hot_graph = capture_attention(wrapper, q_nope, q_pe, ckv, kpe, out, args.hot_repeats, host_page_start)
     start = torch.cuda.Event(enable_timing=True)
     end = torch.cuda.Event(enable_timing=True)
     eviction = torch.empty(args.flush_mib * 2**20, dtype=torch.uint8, device=device)
@@ -190,7 +191,7 @@ def benchmark_context(args, tokens):
 
             def eager():
                 for _ in range(args.eager_repeats):
-                    wrapper.run(q_nope, q_pe, ckv, kpe, out=out)
+                    wrapper.run(q_nope, q_pe, ckv, kpe, out=out, host_page_start=host_page_start)
 
             samples[fraction]["eager"].append(time_gpu(eager, args.eager_repeats, start, end))
         if (iteration + 1) % 10 == 0:
@@ -225,6 +226,7 @@ def main():
     parser.add_argument("--eager-repeats", type=int, default=20)
     parser.add_argument("--flush-mib", type=int, default=64)
     parser.add_argument("--profile-fraction", type=float, default=None)
+    parser.add_argument("--host-prefetch", action="store_true")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output", type=pathlib.Path, default=pathlib.Path("temp/glm52_hbm_host_direct_random.json"))
     args = parser.parse_args()

@@ -424,6 +424,9 @@ class BatchMLAPagedAttentionWrapper:
         self._page_size = page_size
         self._sm_scale = sm_scale
         self._use_profiler = use_profiler
+        self._host_prefetch_shape = (
+            len(kv_len_arr_host) == 1 and kv_len_arr_host[0].item() == 2048
+        )
 
         self._plan_info = self._cached_module.plan(
             self._float_workspace_buffer,
@@ -451,6 +454,7 @@ class BatchMLAPagedAttentionWrapper:
         kv_len: Optional[torch.Tensor] = None,
         page_table: Optional[torch.Tensor] = None,
         return_lse_base_on_e: bool = False,
+        host_page_start: Optional[int] = None,
     ) -> torch.Tensor: ...
 
     @overload
@@ -467,6 +471,7 @@ class BatchMLAPagedAttentionWrapper:
         kv_len: Optional[torch.Tensor] = None,
         page_table: Optional[torch.Tensor] = None,
         return_lse_base_on_e: bool = False,
+        host_page_start: Optional[int] = None,
     ) -> Tuple[torch.Tensor, torch.Tensor]: ...
 
     @flashinfer_api
@@ -483,6 +488,7 @@ class BatchMLAPagedAttentionWrapper:
         kv_len: Optional[torch.Tensor] = None,
         page_table: Optional[torch.Tensor] = None,
         return_lse_base_on_e: bool = False,
+        host_page_start: Optional[int] = None,
     ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
         r"""Run the MLA attention computation.
 
@@ -510,6 +516,11 @@ class BatchMLAPagedAttentionWrapper:
             The query length of each request, shape: ``[batch_size]``. Required when ``backend`` is ``cutlass``.
         page_table : Optional[torch.Tensor]
             The page table of the paged kv-cache, shape: ``[batch_size, num_pages]``. Required when ``backend`` is ``cutlass``.
+        host_page_start : Optional[int]
+            Enable in-kernel Host prefetch for FA2 sparse decode. Pages at or above
+            this boundary must reside in mapped pinned Host memory. This path
+            requires one noncausal query, 64 heads, rank 512, RoPE 64, page size 1,
+            and 2048 selected pages. Host rows are buffered in shared memory.
         """
         if self._backend == "cutlass":
             if return_lse:
@@ -566,7 +577,24 @@ class BatchMLAPagedAttentionWrapper:
                     lse, q_nope.shape[:2], torch.float32, q_nope.device, "lse"
                 )
         profiler_args = (profiler_buffer,) if self._use_profiler else ()
-        self._cached_module.run(
+        run_function = self._cached_module.run
+        host_args = ()
+        if host_page_start is not None:
+            if (
+                self._backend != "fa2"
+                or self._causal
+                or self._page_size != 1
+                or tuple(q_nope.shape) != (1, 64, 512)
+                or tuple(q_pe.shape) != (1, 64, 64)
+                or not self._host_prefetch_shape
+                or self._use_profiler
+            ):
+                raise ValueError("Host prefetch requires FA2 noncausal 2048-page MLA decode")
+            if not 0 <= host_page_start <= ckv_cache.shape[0]:
+                raise ValueError("host_page_start must lie within the KV cache")
+            run_function = self._cached_module.run_host_prefetch
+            host_args = (host_page_start,)
+        run_function(
             self._float_workspace_buffer,
             self._int_workspace_buffer,
             self._plan_info,
@@ -583,6 +611,7 @@ class BatchMLAPagedAttentionWrapper:
             sm_scale,
             return_lse_base_on_e,
             *profiler_args,
+            *host_args,
         )
 
         return (out, lse) if return_lse else out

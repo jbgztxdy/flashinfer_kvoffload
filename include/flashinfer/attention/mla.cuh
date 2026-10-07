@@ -71,6 +71,7 @@ struct KernelTraits {
   // if true, each warpgroup will compute a subset of Q*K (sharded on the KV dimension)
   // if false, each warpgroup will compute the full Q*K, which is duplicated across warpgroups
   static constexpr bool QK_SHARD = QK_SHARD_;
+  static constexpr bool HOST_PREFETCH = false;
   static constexpr uint32_t NUM_MMA_KV = CTA_TILE_KV_ / 16;
   static constexpr uint32_t HEAD_DIM_CKV = HEAD_DIM_CKV_;
   static constexpr uint32_t HEAD_DIM_KPE = HEAD_DIM_KPE_;
@@ -107,6 +108,114 @@ struct KernelTraits {
 
   static constexpr DTypeQKAccum MaskFillValue = -math::inf;
 };
+
+template <typename BaseTraits>
+struct HostPrefetchKernelTraits : BaseTraits {
+  static constexpr bool HOST_PREFETCH = true;
+  static constexpr uint32_t HOST_CAPACITY = 46;
+  struct SharedStorage : BaseTraits::SharedStorage {
+    alignas(16) typename BaseTraits::DTypeKV host_overflow[14][576];
+    typename BaseTraits::IdType host_indices[128];
+    typename BaseTraits::IdType local_indices[128];
+    uint32_t host_count;
+  };
+};
+
+template <typename KTraits, typename Params>
+__device__ __forceinline__ uint32_t prepare_host_indices(
+    typename KTraits::SharedStorage* storage, const Params& params, uint32_t kv_indptr,
+    uint32_t kv_start) {
+  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+  const uint32_t lane = threadIdx.x;
+  if (tid < 32) {
+    uint32_t host_count = 0;
+#pragma unroll
+    for (uint32_t i = 0; i < 4; ++i) {
+      // Stripe the 16 decode chunks to balance head/tail Host hits across CTAs.
+      const uint32_t position = (i * 32 + lane) * 16 + kv_start / 128;
+      const auto page = params.kv_indices[kv_indptr + position];
+      const uint32_t mask = __ballot_sync(0xffffffff, page >= params.host_page_start);
+      const uint32_t lower_lanes = (1U << lane) - 1;
+      if (page >= params.host_page_start) {
+        storage->host_indices[host_count + __popc(mask & lower_lanes)] = page;
+      } else {
+        storage->local_indices[i * 32 - host_count + __popc(~mask & lower_lanes)] = page;
+      }
+      host_count += __popc(mask);
+    }
+    if (lane == 0) storage->host_count = host_count;
+  }
+  __syncthreads();
+  const uint32_t host_count = storage->host_count;
+  if (tid >= host_count && tid < 128) {
+    storage->host_indices[tid] = storage->local_indices[tid - host_count];
+  }
+  __syncthreads();
+  return host_count;
+}
+
+template <typename KTraits, typename Params>
+__device__ __forceinline__ void prefetch_host_rows(
+    typename KTraits::SharedStorage* storage, const Params& params, uint32_t host_count) {
+  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+  if (tid >= 32) return;
+  smem_t<KTraits::SWIZZLE_MODE_CKV> ckv_smem(storage->ckv_smem[1]);
+  smem_t<KTraits::SWIZZLE_MODE_KPE> kpe_smem(storage->kpe_p_smem[1]);
+  uint32_t iteration = 0;
+  for (uint32_t vector = tid; vector < host_count * 72; vector += 32, ++iteration) {
+    const uint32_t row = vector / 72, feature = vector % 72;
+    const auto page = storage->host_indices[row];
+    const auto* source = feature < 64
+                             ? params.ckv + page * params.ckv_stride_page + feature * 8
+                             : params.kpe + page * params.kpe_stride_page + (feature - 64) * 8;
+    void* destination;
+    if (row >= 32) {
+      destination = storage->host_overflow[row - 32] + feature * 8;
+    } else if (feature < 64) {
+      destination = ckv_smem.base + ckv_smem.template get_permuted_offset<
+                                       KTraits::UPCAST_STRIDE_CKV>(row, feature);
+    } else {
+      destination = kpe_smem.base + kpe_smem.template get_permuted_offset<
+                                       KTraits::UPCAST_STRIDE_KPE>(row, feature - 64);
+    }
+    cp_async::load_128b<cp_async::PrefetchMode::kNoPrefetch>(
+        static_cast<typename KTraits::DTypeKV*>(destination), source);
+    if ((iteration & 15) == 15) cp_async::commit_group();
+  }
+  if (iteration & 15) cp_async::commit_group();
+}
+
+template <typename KTraits, typename Params>
+__device__ __forceinline__ void load_host_prefetch_tile(
+    typename KTraits::SharedStorage* storage, const Params& params, uint32_t tile,
+    uint32_t stage, uint32_t host_count) {
+  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+  if (tid < 32) return;
+  smem_t<KTraits::SWIZZLE_MODE_CKV> ckv_smem(storage->ckv_smem[stage]);
+  smem_t<KTraits::SWIZZLE_MODE_KPE> kpe_smem(storage->kpe_p_smem[stage]);
+  for (uint32_t vector = tid - 32; vector < 32 * 72; vector += KTraits::NUM_THREADS - 32) {
+    const uint32_t row = vector / 72, feature = vector % 72, position = tile * 32 + row;
+    if (position < host_count && position < 32) continue;
+    void* destination = feature < 64
+                            ? static_cast<void*>(ckv_smem.base + ckv_smem.template get_permuted_offset<
+                                                                    KTraits::UPCAST_STRIDE_CKV>(row, feature))
+                            : static_cast<void*>(kpe_smem.base + kpe_smem.template get_permuted_offset<
+                                                                    KTraits::UPCAST_STRIDE_KPE>(row, feature - 64));
+    if (position < host_count) {
+      *static_cast<uint4*>(destination) =
+          *reinterpret_cast<const uint4*>(storage->host_overflow[position - 32] + feature * 8);
+    } else {
+      const auto page = storage->host_indices[position];
+      const auto* source = feature < 64
+                               ? params.ckv + page * params.ckv_stride_page + feature * 8
+                               : params.kpe + page * params.kpe_stride_page + (feature - 64) * 8;
+      cp_async::load_128b<cp_async::PrefetchMode::kNoPrefetch>(
+          static_cast<typename KTraits::DTypeKV*>(destination), source);
+    }
+  }
+  cp_async::commit_group();
+  cp_async::wait_group<0>();
+}
 
 template <typename KTraits>
 __device__ __forceinline__ void init_states_(float (*o_frag)[8], typename KTraits::DTypeQKAccum* m,
@@ -874,94 +983,130 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
     // last kv tile
     __syncthreads();
     uint32_t packed_kv_bound = kv_indptr * block_size + kv_len;
-    load_kv<KTraits>(&smem_storage, ckv, kpe, kv_indices, ckv_stride_n, ckv_stride_page,
-                     kpe_stride_n, kpe_stride_page, packed_kv_bound,
-                     block_iter_base + kv_tile_idx * CTA_TILE_KV, block_size,
-                     kv_tile_idx % NUM_STAGES);
-    cp_async::commit_group();
-#pragma unroll
-    for (int stage_idx = 1; stage_idx < NUM_STAGES; ++stage_idx) {
-      if (kv_tile_idx - stage_idx >= 0) {
-        load_kv<KTraits>(&smem_storage, ckv, kpe, kv_indices, ckv_stride_n, ckv_stride_page,
-                         kpe_stride_n, kpe_stride_page, packed_kv_bound,
-                         block_iter_base + (kv_tile_idx - stage_idx) * CTA_TILE_KV, block_size,
-                         (kv_tile_idx - stage_idx) % NUM_STAGES);
-        cp_async::commit_group();
+    IdType* work_kv_indices = kv_indices;
+    bool host_prefetched = false;
+    if constexpr (KTraits::HOST_PREFETCH) {
+      if (q_len == 1 && kv_len == 2048 && kv_end - kv_start == 128) {
+        const uint32_t host_count = prepare_host_indices<KTraits>(
+            &smem_storage, params, kv_indptr, kv_start);
+        work_kv_indices = smem_storage.host_indices;
+        block_iter_base = 0;
+        packed_kv_bound = 128;
+        if (host_count > 0 && host_count <= KTraits::HOST_CAPACITY) {
+          // The producer warp has its own cp.async queue. HBM waits in the
+          // other warps never wait for outstanding Host transfers.
+          cp_async::commit_group();
+          cp_async::wait_group<0>();
+          __syncthreads();
+          prefetch_host_rows<KTraits>(&smem_storage, params, host_count);
+          const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+          for (int tile = 3; tile >= 0; --tile) {
+            const uint32_t stage = tile == 0 ? 1 : 0;
+            if (tile * 32 < host_count) {
+              if (tid < 32) cp_async::wait_group<0>();
+              __syncthreads();
+            }
+            load_host_prefetch_tile<KTraits>(&smem_storage, params, tile, stage, host_count);
+            __syncthreads();
+            compute_mla_qk<KTraits>(&smem_storage, stage, s_frag);
+            update_mdo_states_<KTraits>(&smem_storage, stage, variant, s_frag, o_frag, m, d);
+            compute_mla_pv<KTraits>(&smem_storage, stage, s_frag, d, o_frag);
+            __syncthreads();
+          }
+          host_prefetched = true;
+          kv_tile_idx = -1;
+        }
       }
     }
+    if (!host_prefetched) {
+      load_kv<KTraits>(&smem_storage, ckv, kpe, work_kv_indices, ckv_stride_n, ckv_stride_page,
+                       kpe_stride_n, kpe_stride_page, packed_kv_bound,
+                       block_iter_base + kv_tile_idx * CTA_TILE_KV, block_size,
+                       kv_tile_idx % NUM_STAGES);
+      cp_async::commit_group();
+  #pragma unroll
+      for (int stage_idx = 1; stage_idx < NUM_STAGES; ++stage_idx) {
+        if (kv_tile_idx - stage_idx >= 0) {
+          load_kv<KTraits>(&smem_storage, ckv, kpe, work_kv_indices, ckv_stride_n, ckv_stride_page,
+                           kpe_stride_n, kpe_stride_page, packed_kv_bound,
+                           block_iter_base + (kv_tile_idx - stage_idx) * CTA_TILE_KV, block_size,
+                           (kv_tile_idx - stage_idx) % NUM_STAGES);
+          cp_async::commit_group();
+        }
+      }
 
-    // loop with mask
-#pragma unroll 1
-    for (; kv_tile_idx >= mask_tile_idx && kv_tile_idx > 0; --kv_tile_idx) {
-      cp_async::wait_group<NUM_STAGES - 1>();
-      __syncthreads();
-
-      // compute mla qk
-      compute_mla_qk<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, s_frag);
-
-      // logits mask
-      logits_mask_<KTraits>(qo_packed_idx_base, kv_start + kv_tile_idx * CTA_TILE_KV, q_len, kv_len,
-                            kv_end, num_heads, s_frag);
-
-      // compute m,d states in online softmax
-      update_mdo_states_<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, variant, s_frag, o_frag,
-                                  m, d);
-
-      // compute sfm * v
-      compute_mla_pv<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, s_frag, d, o_frag);
-
-      if (kv_tile_idx - NUM_STAGES >= 0) {
+      // loop with mask
+  #pragma unroll 1
+      for (; kv_tile_idx >= mask_tile_idx && kv_tile_idx > 0; --kv_tile_idx) {
+        cp_async::wait_group<NUM_STAGES - 1>();
         __syncthreads();
-        load_kv<KTraits>(&smem_storage, ckv, kpe, kv_indices, ckv_stride_n, ckv_stride_page,
+
+        // compute mla qk
+        compute_mla_qk<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, s_frag);
+
+        // logits mask
+        logits_mask_<KTraits>(qo_packed_idx_base, kv_start + kv_tile_idx * CTA_TILE_KV, q_len, kv_len,
+                              kv_end, num_heads, s_frag);
+
+        // compute m,d states in online softmax
+        update_mdo_states_<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, variant, s_frag, o_frag,
+                                    m, d);
+
+        // compute sfm * v
+        compute_mla_pv<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, s_frag, d, o_frag);
+
+        if (kv_tile_idx - NUM_STAGES >= 0) {
+          __syncthreads();
+          load_kv<KTraits>(&smem_storage, ckv, kpe, work_kv_indices, ckv_stride_n, ckv_stride_page,
+                           kpe_stride_n, kpe_stride_page, packed_kv_bound,
+                           block_iter_base + (kv_tile_idx - NUM_STAGES) * CTA_TILE_KV, block_size,
+                           (kv_tile_idx - NUM_STAGES) % NUM_STAGES);
+          cp_async::commit_group();
+        }
+      }
+
+      // loop without mask
+  #pragma unroll 1
+      for (; kv_tile_idx + 1 > NUM_STAGES; --kv_tile_idx) {
+        cp_async::wait_group<NUM_STAGES - 1>();
+        __syncthreads();
+
+        // compute mla qk
+        compute_mla_qk<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, s_frag);
+
+        // compute m,d states in online softmax
+        update_mdo_states_<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, variant, s_frag, o_frag,
+                                    m, d);
+        // compute sfm * v
+        compute_mla_pv<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, s_frag, d, o_frag);
+
+        __syncthreads();
+        load_kv<KTraits>(&smem_storage, ckv, kpe, work_kv_indices, ckv_stride_n, ckv_stride_page,
                          kpe_stride_n, kpe_stride_page, packed_kv_bound,
                          block_iter_base + (kv_tile_idx - NUM_STAGES) * CTA_TILE_KV, block_size,
                          (kv_tile_idx - NUM_STAGES) % NUM_STAGES);
         cp_async::commit_group();
       }
-    }
-
-    // loop without mask
-#pragma unroll 1
-    for (; kv_tile_idx + 1 > NUM_STAGES; --kv_tile_idx) {
-      cp_async::wait_group<NUM_STAGES - 1>();
+      cp_async::wait_group<0>();
       __syncthreads();
 
-      // compute mla qk
-      compute_mla_qk<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, s_frag);
+      // last tiles
+  #pragma unroll
+      for (; kv_tile_idx >= 0; --kv_tile_idx) {
+        // compute mla qk
+        compute_mla_qk<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, s_frag);
 
-      // compute m,d states in online softmax
-      update_mdo_states_<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, variant, s_frag, o_frag,
-                                  m, d);
-      // compute sfm * v
-      compute_mla_pv<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, s_frag, d, o_frag);
+        logits_mask_<KTraits>(qo_packed_idx_base, kv_start + kv_tile_idx * CTA_TILE_KV, q_len, kv_len,
+                              kv_end, num_heads, s_frag);
 
-      __syncthreads();
-      load_kv<KTraits>(&smem_storage, ckv, kpe, kv_indices, ckv_stride_n, ckv_stride_page,
-                       kpe_stride_n, kpe_stride_page, packed_kv_bound,
-                       block_iter_base + (kv_tile_idx - NUM_STAGES) * CTA_TILE_KV, block_size,
-                       (kv_tile_idx - NUM_STAGES) % NUM_STAGES);
-      cp_async::commit_group();
+        // compute m,d states in online softmax
+        update_mdo_states_<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, variant, s_frag, o_frag,
+                                    m, d);
+
+        // compute sfm * v
+        compute_mla_pv<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, s_frag, d, o_frag);
+      }
     }
-    cp_async::wait_group<0>();
-    __syncthreads();
-
-    // last tiles
-#pragma unroll
-    for (; kv_tile_idx >= 0; --kv_tile_idx) {
-      // compute mla qk
-      compute_mla_qk<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, s_frag);
-
-      logits_mask_<KTraits>(qo_packed_idx_base, kv_start + kv_tile_idx * CTA_TILE_KV, q_len, kv_len,
-                            kv_end, num_heads, s_frag);
-
-      // compute m,d states in online softmax
-      update_mdo_states_<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, variant, s_frag, o_frag,
-                                  m, d);
-
-      // compute sfm * v
-      compute_mla_pv<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, s_frag, d, o_frag);
-    }
-
     __syncthreads();
 
     // normalize and write back
@@ -995,9 +1140,9 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
     constexpr bool QK_SHARD = true;                                                     \
     __VA_ARGS__;                                                                        \
   } else if (smem_limit_per_sm >= 147968) {                                             \
-    constexpr uint32_t NUM_STAGES = 4;                                                  \
-    constexpr uint32_t CTA_TILE_KV = 16;                                                \
-    constexpr bool QK_SHARD = false;                                                    \
+    constexpr uint32_t NUM_STAGES = 2;                                                  \
+    constexpr uint32_t CTA_TILE_KV = 32;                                                \
+    constexpr bool QK_SHARD = true;                                                     \
     __VA_ARGS__;                                                                        \
   } else if (smem_limit_per_sm >= 92672) {                                              \
     constexpr uint32_t NUM_STAGES = 1;                                                  \
@@ -1031,6 +1176,23 @@ cudaError_t BatchMLAPagedAttention(Params params, uint32_t num_blks_x, uint32_t 
   int smem_limit_per_sm;
   cudaGetDevice(&device);
   cudaDeviceGetAttribute(&smem_limit_per_sm, cudaDevAttrMaxSharedMemoryPerMultiprocessor, device);
+
+  if constexpr (!CAUSAL && HEAD_DIM_CKV == 512 && HEAD_DIM_KPE == 64 &&
+                sizeof(DTypeQ) == 2 && sizeof(DTypeKV) == 2) {
+    using HostTraits = HostPrefetchKernelTraits<KernelTraits<
+        false, 2, true, HEAD_DIM_CKV, HEAD_DIM_KPE, 64, 32, DTypeQ, DTypeKV, DTypeO, IdType>>;
+    if (params.host_page_start >= 0 && params.block_size == 1 &&
+        smem_limit_per_sm >= sizeof(typename HostTraits::SharedStorage)) {
+      auto kernel = BatchMLAPagedAttentionKernel<HostTraits, Params>;
+      size_t smem_size = sizeof(typename HostTraits::SharedStorage);
+      void* args[] = {(void*)&params};
+      FLASHINFER_CUDA_CALL(
+          cudaFuncSetAttribute(kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, smem_size));
+      FLASHINFER_CUDA_CALL(
+          cudaLaunchCooperativeKernel((void*)kernel, nblks, nthrs, args, smem_size, stream));
+      return cudaSuccess;
+    }
+  }
 
   DISPATCH_SMEM_CONFIG(smem_limit_per_sm, NUM_STAGES, CTA_TILE_KV, QK_SHARD, {
     using KTraits = KernelTraits<CAUSAL, NUM_STAGES, QK_SHARD, HEAD_DIM_CKV, HEAD_DIM_KPE,
