@@ -988,7 +988,6 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
       o_stride_h, num_heads, params.return_lse_base_on_e);
 }
 
-#define FLASHINFER_MLA_HOST_TRACE
 
 template <typename Params>
 __device__ __forceinline__ void record_overlap_phase(const Params& params, uint32_t slot, bool producer = false) {
@@ -1289,14 +1288,22 @@ __device__ __forceinline__ void merge_ready_host_states(
     }
     asm volatile("bar.sync 1, 128;" ::: "memory");
     denominator += sums[group * 2] + sums[group * 2 + 1];
-#pragma unroll 8
-    for (uint32_t split = 0; split < 44; ++split) {
-      const float weight = weights[group * 64 + split];
-      if ((ready_mask & (1ULL << split)) && weight > 0.f) {
-        vec_t<float, 4> value;
-        value.cast_load(params.partial_o + (split * 64 + head) * 512 + local * 4);
+    float values[44][4];
 #pragma unroll
-        for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = fmaf(value[feature], weight, output[feature]);
+    for (uint32_t split = 0; split < 44; ++split) {
+      const float weight = weights[split];
+      if ((ready_mask & (1ULL << split)) && weight > 0.f) {
+        vec_cast<float, typename KTraits::DTypeO>::template cast<4>(
+            values[split], params.partial_o + (split * 64 + head) * 512 + local * 4);
+      }
+    }
+    asm volatile("" ::: "memory");
+#pragma unroll
+    for (uint32_t split = 0; split < 44; ++split) {
+      const float weight = weights[split];
+      if ((ready_mask & (1ULL << split)) && weight > 0.f) {
+#pragma unroll
+        for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = fmaf(values[split][feature], weight, output[feature]);
       }
     }
     processed |= ready_mask;
