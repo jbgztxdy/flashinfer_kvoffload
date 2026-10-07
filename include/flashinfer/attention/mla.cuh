@@ -995,7 +995,6 @@ __device__ __forceinline__ void run_host_fetch_warps(
   const uint32_t rank = blockIdx.y - 44;
   const uint32_t warp = threadIdx.y;
   extern __shared__ uint8_t agent_smem[];
-  auto* staging = reinterpret_cast<typename KTraits::DTypeKV*>(agent_smem);
   auto* selected_pages = reinterpret_cast<uint32_t*>(agent_smem + 65536);
   auto* selected_positions = selected_pages + 32;
   auto* warp_counts = selected_positions + 32;
@@ -1027,6 +1026,7 @@ __device__ __forceinline__ void run_host_fetch_warps(
   asm volatile("bar.sync 2, 128;" ::: "memory");
   const uint32_t selected = (total + 63 - rank) / 64;
   uint32_t positions[8];
+  uint4 first[8], second[8], rope[8];
 #pragma unroll
   for (uint32_t i = 0; i < 8; ++i) {
     const uint32_t slot = i * 4 + warp;
@@ -1034,25 +1034,26 @@ __device__ __forceinline__ void run_host_fetch_warps(
     if (positions[i] < 2048) {
       const auto page = selected_pages[slot];
       const auto* source = params.ckv + page * params.ckv_stride_page;
-      auto* destination = staging + (i * 4 + warp) * 576;
-      cp_async::load_128b<cp_async::PrefetchMode::kNoPrefetch>(destination + lane * 8, source + lane * 8);
-      cp_async::load_128b<cp_async::PrefetchMode::kNoPrefetch>(destination + 256 + lane * 8, source + 256 + lane * 8);
+      asm volatile("ld.global.cg.v4.u32 {%0, %1, %2, %3}, [%4];"
+                   : "=r"(first[i].x), "=r"(first[i].y), "=r"(first[i].z), "=r"(first[i].w)
+                   : "l"(source + lane * 8) : "memory");
+      asm volatile("ld.global.cg.v4.u32 {%0, %1, %2, %3}, [%4];"
+                   : "=r"(second[i].x), "=r"(second[i].y), "=r"(second[i].z), "=r"(second[i].w)
+                   : "l"(source + 256 + lane * 8) : "memory");
       if (lane < 8) {
-        cp_async::load_128b<cp_async::PrefetchMode::kNoPrefetch>(
-            destination + 512 + lane * 8, params.kpe + page * params.kpe_stride_page + lane * 8);
+        asm volatile("ld.global.cg.v4.u32 {%0, %1, %2, %3}, [%4];"
+                     : "=r"(rope[i].x), "=r"(rope[i].y), "=r"(rope[i].z), "=r"(rope[i].w)
+                     : "l"(params.kpe + page * params.kpe_stride_page + lane * 8) : "memory");
       }
     }
-    cp_async::commit_group();
   }
-  cp_async::wait_group<0>();
 #pragma unroll
   for (uint32_t i = 0; i < 8; ++i) {
     if (positions[i] < 2048) {
-      const auto* source = staging + (i * 4 + warp) * 576;
       auto* destination = params.host_prefetch_buffer + positions[i] * 576;
-      *reinterpret_cast<uint4*>(destination + lane * 8) = *reinterpret_cast<const uint4*>(source + lane * 8);
-      *reinterpret_cast<uint4*>(destination + 256 + lane * 8) = *reinterpret_cast<const uint4*>(source + 256 + lane * 8);
-      if (lane < 8) *reinterpret_cast<uint4*>(destination + 512 + lane * 8) = *reinterpret_cast<const uint4*>(source + 512 + lane * 8);
+      *reinterpret_cast<uint4*>(destination + lane * 8) = first[i];
+      *reinterpret_cast<uint4*>(destination + 256 + lane * 8) = second[i];
+      if (lane < 8) *reinterpret_cast<uint4*>(destination + 512 + lane * 8) = rope[i];
     }
   }
   __threadfence();
