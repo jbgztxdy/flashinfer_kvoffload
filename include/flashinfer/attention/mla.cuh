@@ -358,6 +358,83 @@ __device__ __forceinline__ void load_prefetched_tile(
       kpe_source + (lane % 8) * 8, true);
 }
 
+template <typename BaseTraits>
+struct HostHalfKernelTraits : BaseTraits {
+  static constexpr bool QK_SHARD = false;
+  static constexpr uint32_t CTA_TILE_KV = 16;
+  static constexpr uint32_t NUM_MMA_KV = 1;
+  static constexpr uint32_t UPCAST_STRIDE_P = 2;
+};
+
+template <typename KTraits, typename Params>
+__device__ __forceinline__ void select_ready_host_half(
+    typename KTraits::SharedStorage* storage, const Params& params) {
+  if (threadIdx.z == 0 && threadIdx.y == 0) {
+    const uint32_t lane = threadIdx.x;
+    uint32_t mask;
+    do {
+      unsigned long long ready = storage->epoch;
+      if (lane < storage->host_count) {
+        asm volatile("ld.acquire.gpu.global.u64 %0, [%1];"
+                     : "=l"(ready)
+                     : "l"(params.host_prefetch_state + gridDim.y + storage->host_positions[lane])
+                     : "memory");
+      }
+      mask = __ballot_sync(0xffffffff, ready == storage->epoch);
+      if (__popc(mask) < 16) __nanosleep(32);
+    } while (__popc(mask) < 16);
+    const uint32_t lower = (1U << lane) - 1;
+    const uint32_t ready_before = __popc(mask & lower);
+    const uint32_t selected = __ballot_sync(0xffffffff, (mask & (1U << lane)) && ready_before < 16);
+    if (selected & (1U << lane)) {
+      storage->local_positions[__popc(selected & lower)] = lane;
+    } else {
+      storage->local_positions[16 + lane - __popc(selected & lower)] = lane;
+    }
+  }
+  __syncthreads();
+}
+
+template <typename KTraits, typename Params>
+__device__ __forceinline__ void load_ready_host_half(
+    typename KTraits::SharedStorage* storage, const Params& params, uint32_t half) {
+  if (threadIdx.z != 0) return;
+  const uint32_t lane = threadIdx.x;
+  const uint32_t row = threadIdx.y * 4 + lane / 8;
+  const uint32_t position = storage->local_positions[half * 16 + row];
+  const auto page = storage->host_indices[position];
+  const uint32_t source_position = storage->host_positions[position];
+  const bool host = position < storage->host_count;
+  const uint32_t active_lanes = __activemask();
+  if (host && (lane & 7) == 0) {
+    unsigned long long ready;
+    do {
+      asm volatile("ld.acquire.gpu.global.u64 %0, [%1];"
+                   : "=l"(ready)
+                   : "l"(params.host_prefetch_state + gridDim.y + source_position)
+                   : "memory");
+      if (ready != storage->epoch) __nanosleep(32);
+    } while (ready != storage->epoch);
+  }
+  __syncwarp(active_lanes);
+  smem_t<KTraits::SWIZZLE_MODE_CKV> ckv_smem(storage->ckv_smem[0]);
+  smem_t<KTraits::SWIZZLE_MODE_KPE> kpe_smem(storage->kpe_p_smem[0]);
+  const auto* ckv_source = host ? params.host_prefetch_buffer + source_position * 576
+                              : params.ckv + page * params.ckv_stride_page;
+  const auto* kpe_source = host ? params.host_prefetch_buffer + source_position * 576 + 512
+                              : params.kpe + page * params.kpe_stride_page;
+#pragma unroll
+  for (uint32_t feature = 0; feature < 8; ++feature) {
+    const uint32_t column = feature * 8 + lane % 8;
+    ckv_smem.template load_128b_async<SharedMemFillMode::kFillZero>(
+        ckv_smem.template get_permuted_offset<KTraits::UPCAST_STRIDE_CKV>(row, column),
+        ckv_source + column * 8, true);
+  }
+  kpe_smem.template load_128b_async<SharedMemFillMode::kFillZero>(
+      kpe_smem.template get_permuted_offset<KTraits::UPCAST_STRIDE_KPE>(row, lane % 8),
+      kpe_source + (lane % 8) * 8, true);
+}
+
 template <typename KTraits>
 __device__ __forceinline__ void init_states_(float (*o_frag)[8], typename KTraits::DTypeQKAccum* m,
                                              float* d) {
@@ -1208,6 +1285,35 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
             else cp_async::wait_group<0>();
             __syncthreads();
             const uint32_t stage = tile % 2;
+            if (tile == 0 && host_count <= 32) {
+              using HalfTraits = HostHalfKernelTraits<KTraits>;
+              const uint32_t lane = threadIdx.x, warp = threadIdx.y, group = threadIdx.z;
+#pragma unroll
+              for (uint32_t j = 0; j < 2; ++j) {
+                if (lane % 4 == 0) smem_storage.d_wg[group][warp * 16 + j * 8 + lane / 4] = d[j];
+              }
+              __syncthreads();
+#pragma unroll
+              for (uint32_t j = 0; j < 2; ++j) {
+                d[j] = smem_storage.d_wg[0][warp * 16 + j * 8 + lane / 4] +
+                       smem_storage.d_wg[1][warp * 16 + j * 8 + lane / 4];
+              }
+              select_ready_host_half<KTraits>(&smem_storage, params);
+#pragma unroll
+              for (uint32_t half = 0; half < 2; ++half) {
+                load_ready_host_half<KTraits>(&smem_storage, params, half);
+                cp_async::commit_group();
+                cp_async::wait_group<0>();
+                __syncthreads();
+                compute_mla_qk<HalfTraits>(&smem_storage, 0, s_frag);
+                update_mdo_states_<HalfTraits>(&smem_storage, 0, variant, s_frag, o_frag, m, d);
+                compute_mla_pv<HalfTraits>(&smem_storage, 0, s_frag, d, o_frag);
+                __syncthreads();
+              }
+              d[0] *= 0.5f;
+              d[1] *= 0.5f;
+              break;
+            }
             if (tile * 32 < host_count) {
               record_host_phase(params, 4);
               load_prefetched_tile<true, KTraits>(&smem_storage, params, tile, stage);
