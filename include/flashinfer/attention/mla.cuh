@@ -993,17 +993,46 @@ __device__ __forceinline__ void run_host_fetch_warps(
     const Params& params, unsigned long long epoch) {
   const uint32_t lane = threadIdx.x;
   const uint32_t rank = blockIdx.y - 44;
-  const uint32_t agents = 64;
   const uint32_t warp = threadIdx.y;
   extern __shared__ uint8_t agent_smem[];
   auto* staging = reinterpret_cast<typename KTraits::DTypeKV*>(agent_smem);
+  auto* selected_pages = reinterpret_cast<uint32_t*>(agent_smem + 65536);
+  auto* selected_positions = selected_pages + 32;
+  auto* warp_counts = selected_positions + 32;
+  typename KTraits::IdType pages[16];
+  uint32_t preceding[16], masks[16], count = 0;
+#pragma unroll
+  for (uint32_t i = 0; i < 16; ++i) {
+    pages[i] = params.kv_indices[warp * 512 + i * 32 + lane];
+    preceding[i] = count;
+    masks[i] = __ballot_sync(0xffffffff, pages[i] >= params.host_page_start);
+    count += __popc(masks[i]);
+  }
+  if (lane == 0) warp_counts[warp] = count;
+  asm volatile("bar.sync 2, 128;" ::: "memory");
+  uint32_t prefix = 0, total = 0;
+#pragma unroll
+  for (uint32_t i = 0; i < 4; ++i) {
+    if (i < warp) prefix += warp_counts[i];
+    total += warp_counts[i];
+  }
+#pragma unroll
+  for (uint32_t i = 0; i < 16; ++i) {
+    const uint32_t host_rank = prefix + preceding[i] + __popc(masks[i] & ((1U << lane) - 1));
+    if (pages[i] >= params.host_page_start && host_rank % 64 == rank) {
+      selected_pages[host_rank / 64] = pages[i];
+      selected_positions[host_rank / 64] = warp * 512 + i * 32 + lane;
+    }
+  }
+  asm volatile("bar.sync 2, 128;" ::: "memory");
+  const uint32_t selected = (total + 63 - rank) / 64;
   uint32_t positions[8];
 #pragma unroll
   for (uint32_t i = 0; i < 8; ++i) {
-    const uint32_t position = (rank * 4 + warp) + i * agents * 4;
-    const auto page = position < 2048 ? params.kv_indices[position] : -1;
-    positions[i] = position < 2048 && page >= params.host_page_start ? position : 2048;
+    const uint32_t slot = i * 4 + warp;
+    positions[i] = slot < selected ? selected_positions[slot] : 2048;
     if (positions[i] < 2048) {
+      const auto page = selected_pages[slot];
       const auto* source = params.ckv + page * params.ckv_stride_page;
       auto* destination = staging + (i * 4 + warp) * 576;
       cp_async::load_128b<cp_async::PrefetchMode::kNoPrefetch>(destination + lane * 8, source + lane * 8);
