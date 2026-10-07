@@ -4,11 +4,13 @@
 import argparse
 import ctypes
 import gc
+import hashlib
 import json
 import math
 import pathlib
 import random
 import statistics
+import subprocess
 import time
 
 import torch
@@ -44,51 +46,109 @@ class MixedHBMHost(MixedHBM):
         self.closed = False
         self._call("cuInit", ctypes.c_uint(0))
         numa = ctypes.c_int()
-        self._call("cuDeviceGetAttribute", ctypes.byref(numa), ctypes.c_int(134), ctypes.c_int(device))
+        self._call(
+            "cuDeviceGetAttribute",
+            ctypes.byref(numa),
+            ctypes.c_int(134),
+            ctypes.c_int(device),
+        )
         self.host_numa = max(0, numa.value)
         supported = ctypes.c_int()
-        self._call("cuDeviceGetAttribute", ctypes.byref(supported), ctypes.c_int(141), ctypes.c_int(device))
+        self._call(
+            "cuDeviceGetAttribute",
+            ctypes.byref(supported),
+            ctypes.c_int(141),
+            ctypes.c_int(device),
+        )
         if not supported.value:
-            raise RuntimeError("Host NUMA VMM is required for an unchanged MLA kernel with mixed residency")
+            raise RuntimeError(
+                "Host NUMA VMM is required for an unchanged MLA kernel with mixed residency"
+            )
         props = []
         granularities = []
         for location in (MemoryLocation(1, device), MemoryLocation(3, self.host_numa)):
             prop = AllocationProperties()
-            prop.type = 1  # CU_MEM_ALLOCATION_TYPE_PINNED; physical pages cannot migrate.
+            prop.type = (
+                1  # CU_MEM_ALLOCATION_TYPE_PINNED; physical pages cannot migrate.
+            )
             prop.location = location
             granularity = ctypes.c_size_t()
-            self._call("cuMemGetAllocationGranularity", ctypes.byref(granularity), ctypes.byref(prop), ctypes.c_int(0))
+            self._call(
+                "cuMemGetAllocationGranularity",
+                ctypes.byref(granularity),
+                ctypes.byref(prop),
+                ctypes.c_int(0),
+            )
             props.append(prop)
             granularities.append(granularity.value)
         half_bytes = self.local_tokens * self.bytes_per_token
         if any(half_bytes % granularity for granularity in granularities):
-            raise ValueError("Each cache half must satisfy its VMM allocation granularity")
-        self._call("cuMemAddressReserve", ctypes.byref(self.address), ctypes.c_size_t(self.nbytes), ctypes.c_size_t(max(granularities)), ctypes.c_uint64(0), ctypes.c_uint64(0))
+            raise ValueError(
+                "Each cache half must satisfy its VMM allocation granularity"
+            )
+        self._call(
+            "cuMemAddressReserve",
+            ctypes.byref(self.address),
+            ctypes.c_size_t(self.nbytes),
+            ctypes.c_size_t(max(granularities)),
+            ctypes.c_uint64(0),
+            ctypes.c_uint64(0),
+        )
         try:
             for part, prop in enumerate(props):
                 handle = ctypes.c_uint64()
-                self._call("cuMemCreate", ctypes.byref(handle), ctypes.c_size_t(half_bytes), ctypes.byref(prop), ctypes.c_uint64(0))
+                self._call(
+                    "cuMemCreate",
+                    ctypes.byref(handle),
+                    ctypes.c_size_t(half_bytes),
+                    ctypes.byref(prop),
+                    ctypes.c_uint64(0),
+                )
                 self.handles.append(handle)
                 address = self.address.value + part * half_bytes
-                self._call("cuMemMap", ctypes.c_uint64(address), ctypes.c_size_t(half_bytes), ctypes.c_size_t(0), handle, ctypes.c_uint64(0))
+                self._call(
+                    "cuMemMap",
+                    ctypes.c_uint64(address),
+                    ctypes.c_size_t(half_bytes),
+                    ctypes.c_size_t(0),
+                    handle,
+                    ctypes.c_uint64(0),
+                )
                 self.mappings.append((address, half_bytes))
                 access = [AccessDescriptor(MemoryLocation(1, device), 3)]
                 if part == 1:
-                    access.append(AccessDescriptor(MemoryLocation(3, self.host_numa), 3))
+                    access.append(
+                        AccessDescriptor(MemoryLocation(3, self.host_numa), 3)
+                    )
                 descriptors = (AccessDescriptor * len(access))(*access)
-                self._call("cuMemSetAccess", ctypes.c_uint64(address), ctypes.c_size_t(half_bytes), descriptors, ctypes.c_size_t(len(access)))
+                self._call(
+                    "cuMemSetAccess",
+                    ctypes.c_uint64(address),
+                    ctypes.c_size_t(half_bytes),
+                    descriptors,
+                    ctypes.c_size_t(len(access)),
+                )
                 actual = AllocationProperties()
-                self._call("cuMemGetAllocationPropertiesFromHandle", ctypes.byref(actual), handle)
-                assert actual.type == prop.type and actual.location.type == prop.location.type
+                self._call(
+                    "cuMemGetAllocationPropertiesFromHandle",
+                    ctypes.byref(actual),
+                    handle,
+                )
+                assert (
+                    actual.type == prop.type
+                    and actual.location.type == prop.location.type
+                )
                 assert actual.location.id == prop.location.id
-                self.residency.append({
-                    "tier": "hbm" if part == 0 else "pinned_host_dram",
-                    "allocation_type": actual.type,
-                    "location_type": actual.location.type,
-                    "location_id": actual.location.id,
-                    "address": hex(address),
-                    "bytes": half_bytes,
-                })
+                self.residency.append(
+                    {
+                        "tier": "hbm" if part == 0 else "pinned_host_dram",
+                        "allocation_type": actual.type,
+                        "location_type": actual.location.type,
+                        "location_id": actual.location.id,
+                        "address": hex(address),
+                        "bytes": half_bytes,
+                    }
+                )
         except Exception:
             self.close()
             raise
@@ -96,14 +156,20 @@ class MixedHBMHost(MixedHBM):
     def host_tensor(self):
         address = self.address.value + self.local_tokens * self.bytes_per_token
         buffer = (ctypes.c_uint16 * (self.local_tokens * 576)).from_address(address)
-        return torch.frombuffer(buffer, dtype=torch.bfloat16).view(self.local_tokens, 1, 576)
+        return torch.frombuffer(buffer, dtype=torch.bfloat16).view(
+            self.local_tokens, 1, 576
+        )
 
 
-def capture_attention(wrapper, q_nope, q_pe, ckv, kpe, out, repeats, host_page_start=None):
+def capture_attention(
+    wrapper, q_nope, q_pe, ckv, kpe, out, repeats, host_page_start=None
+):
     graph = torch.cuda.CUDAGraph()
     with torch.cuda.graph(graph):
         for _ in range(repeats):
-            wrapper.run(q_nope, q_pe, ckv, kpe, out=out, host_page_start=host_page_start)
+            wrapper.run(
+                q_nope, q_pe, ckv, kpe, out=out, host_page_start=host_page_start
+            )
     return graph
 
 
@@ -121,7 +187,7 @@ def benchmark_context(args, tokens):
     before = gpu_snapshot()
     allocation = MixedHBMHost(tokens, args.device)
     cache = allocation.tensor(args.device)
-    local_cache = cache[:tokens // 2]
+    local_cache = cache[: tokens // 2]
     host_cpu = allocation.host_tensor()
     local_cache.normal_()
     host_cpu.normal_()
@@ -138,23 +204,38 @@ def benchmark_context(args, tokens):
         torch.tensor([0, args.topk], dtype=torch.int32, device=device),
         indices,
         torch.tensor([args.topk], dtype=torch.int32, device=device),
-        num_heads=64, head_dim_ckv=512, head_dim_kpe=64, page_size=1,
-        causal=False, sm_scale=1 / math.sqrt(256),
-        q_data_type=torch.bfloat16, kv_data_type=torch.bfloat16,
+        num_heads=64,
+        head_dim_ckv=512,
+        head_dim_kpe=64,
+        page_size=1,
+        causal=False,
+        sm_scale=1 / math.sqrt(256),
+        q_data_type=torch.bfloat16,
+        kv_data_type=torch.bfloat16,
     )
     assert wrapper._kv_indices_buf.data_ptr() == indices.data_ptr()
-    index_sets = [make_indices(tokens, args.topk, args.fractions, args.seed + i, args.layout) for i in range(args.index_sets)]
+    index_sets = [
+        make_indices(tokens, args.topk, args.fractions, args.seed + i, args.layout)
+        for i in range(args.index_sets)
+    ]
     indices.copy_(index_sets[0][0.0])
     host_page_start = tokens // 2 if args.host_prefetch else None
     for _ in range(5):
         wrapper.run(q_nope, q_pe, ckv, kpe, out=out, host_page_start=host_page_start)
     torch.cuda.synchronize(device)
-    single_graph = capture_attention(wrapper, q_nope, q_pe, ckv, kpe, out, 1, host_page_start)
-    hot_graph = capture_attention(wrapper, q_nope, q_pe, ckv, kpe, out, args.hot_repeats, host_page_start)
+    single_graph = capture_attention(
+        wrapper, q_nope, q_pe, ckv, kpe, out, 1, host_page_start
+    )
+    hot_graph = capture_attention(
+        wrapper, q_nope, q_pe, ckv, kpe, out, args.hot_repeats, host_page_start
+    )
     start = torch.cuda.Event(enable_timing=True)
     end = torch.cuda.Event(enable_timing=True)
     eviction = torch.empty(args.flush_mib * 2**20, dtype=torch.uint8, device=device)
-    samples = {fraction: {mode: [] for mode in ("hot_graph", "cold_single_graph", "eager")} for fraction in args.fractions}
+    samples = {
+        fraction: {mode: [] for mode in ("hot_graph", "cold_single_graph", "eager")}
+        for fraction in args.fractions
+    }
     errors = {}
     traces = {}
     rng = random.Random(args.seed + tokens)
@@ -168,16 +249,23 @@ def benchmark_context(args, tokens):
             indices.copy_(selected)
             eviction.fill_(iteration % 256)
             torch.cuda.synchronize(device)
-            samples[fraction]["cold_single_graph"].append(time_gpu(single_graph.replay, 1, start, end))
+            samples[fraction]["cold_single_graph"].append(
+                time_gpu(single_graph.replay, 1, start, end)
+            )
             if iteration == 0:
                 local_mask = selected < tokens // 2
                 rows = torch.empty((args.topk, 576), dtype=torch.bfloat16)
                 if local_mask.any():
                     rows[local_mask] = local_cache[selected[local_mask].long(), 0].cpu()
                 if (~local_mask).any():
-                    rows[~local_mask] = host_cpu[(selected[~local_mask] - tokens // 2).long(), 0]
+                    rows[~local_mask] = host_cpu[
+                        (selected[~local_mask] - tokens // 2).long(), 0
+                    ]
                 rows_gpu = rows.to(device).float()
-                scores = (q_nope[0].float() @ rows_gpu[:, :512].T + q_pe[0].float() @ rows_gpu[:, 512:].T) / math.sqrt(256)
+                scores = (
+                    q_nope[0].float() @ rows_gpu[:, :512].T
+                    + q_pe[0].float() @ rows_gpu[:, 512:].T
+                ) / math.sqrt(256)
                 reference = (scores.softmax(-1) @ rows_gpu[:, :512]).unsqueeze(0)
                 torch.testing.assert_close(out.float(), reference, rtol=1e-2, atol=5e-3)
                 errors[fraction] = (out.float() - reference).abs().max().item()
@@ -186,30 +274,87 @@ def benchmark_context(args, tokens):
             profile = iteration == 0 and fraction == args.profile_fraction
             if profile:
                 torch.cuda.cudart().cudaProfilerStart()
-            samples[fraction]["hot_graph"].append(time_gpu(hot_graph.replay, args.hot_repeats, start, end))
+            samples[fraction]["hot_graph"].append(
+                time_gpu(hot_graph.replay, args.hot_repeats, start, end)
+            )
             if args.record_host_trace and iteration == 0:
-                blocks = wrapper._plan_info[1]
-                traces[fraction] = wrapper._host_prefetch_state[3608:4040].cpu().view(108, 4).tolist()
+                traces[fraction] = (
+                    wrapper._host_prefetch_state[3608:4040].cpu().view(108, 4).tolist()
+                )
             if profile:
                 torch.cuda.cudart().cudaProfilerStop()
 
-            def eager():
+            def eager(
+                run=wrapper.run,
+                query=q_nope,
+                rope=q_pe,
+                values=ckv,
+                key_rope=kpe,
+                output=out,
+                boundary=host_page_start,
+            ):
                 for _ in range(args.eager_repeats):
-                    wrapper.run(q_nope, q_pe, ckv, kpe, out=out, host_page_start=host_page_start)
+                    run(
+                        query,
+                        rope,
+                        values,
+                        key_rope,
+                        out=output,
+                        host_page_start=boundary,
+                    )
 
-            samples[fraction]["eager"].append(time_gpu(eager, args.eager_repeats, start, end))
+            samples[fraction]["eager"].append(
+                time_gpu(eager, args.eager_repeats, start, end)
+            )
         if (iteration + 1) % 10 == 0:
-            print(f"layout={args.layout} context={tokens} rounds={iteration + 1}/{args.rounds}", flush=True)
-    result = {"context_tokens": tokens, "kv_cache_bytes": tokens * 1152, "residency": allocation.residency, "gpu_before": before, "gpu_after": gpu_snapshot(), "cases": [], "phase_timings_ns": traces}
+            print(
+                f"layout={args.layout} context={tokens} rounds={iteration + 1}/{args.rounds}",
+                flush=True,
+            )
+    result = {
+        "context_tokens": tokens,
+        "kv_cache_bytes": tokens * 1152,
+        "residency": allocation.residency,
+        "gpu_before": before,
+        "gpu_after": gpu_snapshot(),
+        "cases": [],
+        "phase_timings_ns": traces,
+    }
     for fraction in args.fractions:
         host_tokens = round(fraction * args.topk)
-        case = {"host_fraction_requested": fraction, "host_tokens": host_tokens, "host_fraction_actual": host_tokens / args.topk, "host_kv_bytes": host_tokens * 1152, "correctness_max_abs_error": errors[fraction]}
+        case = {
+            "host_fraction_requested": fraction,
+            "host_tokens": host_tokens,
+            "host_fraction_actual": host_tokens / args.topk,
+            "host_kv_bytes": host_tokens * 1152,
+            "correctness_max_abs_error": errors[fraction],
+        }
         for mode, values in samples[fraction].items():
             case[mode] = summarize(values)
-            case[mode]["relative_to_hbm"] = statistics.median(values) / statistics.median(samples[0.0][mode])
+            case[mode]["relative_to_hbm"] = statistics.median(
+                values
+            ) / statistics.median(samples[0.0][mode])
         result["cases"].append(case)
-        print(f"layout={args.layout} context={tokens} host={fraction:.0%} graph_us={case['hot_graph']['median_us']:.3f} cold_us={case['cold_single_graph']['median_us']:.3f} eager_us={case['eager']['median_us']:.3f}", flush=True)
-    del single_graph, hot_graph, wrapper, cache, local_cache, host_cpu, ckv, kpe, q_nope, q_pe, out, workspace, eviction
+        print(
+            f"layout={args.layout} context={tokens} host={fraction:.0%} graph_us={case['hot_graph']['median_us']:.3f} cold_us={case['cold_single_graph']['median_us']:.3f} eager_us={case['eager']['median_us']:.3f}",
+            flush=True,
+        )
+    del (
+        eager,
+        single_graph,
+        hot_graph,
+        wrapper,
+        cache,
+        local_cache,
+        host_cpu,
+        ckv,
+        kpe,
+        q_nope,
+        q_pe,
+        out,
+        workspace,
+        eviction,
+    )
     gc.collect()
     torch.cuda.synchronize(device)
     allocation.close()
@@ -219,9 +364,18 @@ def benchmark_context(args, tokens):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--contexts", type=int, nargs="+", default=[131072, 262144, 524288, 1048576])
-    parser.add_argument("--fractions", type=float, nargs="+", default=[0, .1, .15, .2, .3, .4, .6, .8, 1])
-    parser.add_argument("--layout", choices=("random", "head", "tail"), default="random")
+    parser.add_argument(
+        "--contexts", type=int, nargs="+", default=[131072, 262144, 524288, 1048576]
+    )
+    parser.add_argument(
+        "--fractions",
+        type=float,
+        nargs="+",
+        default=[0, 0.1, 0.15, 0.2, 0.3, 0.4, 0.6, 0.8, 1],
+    )
+    parser.add_argument(
+        "--layout", choices=("random", "head", "tail"), default="random"
+    )
     parser.add_argument("--device", type=int, default=1)
     parser.add_argument("--topk", type=int, default=2048)
     parser.add_argument("--rounds", type=int, default=40)
@@ -233,19 +387,47 @@ def main():
     parser.add_argument("--host-prefetch", action="store_true")
     parser.add_argument("--record-host-trace", action="store_true")
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--output", type=pathlib.Path, default=pathlib.Path("temp/glm52_hbm_host_direct_random.json"))
+    parser.add_argument(
+        "--output",
+        type=pathlib.Path,
+        default=pathlib.Path("temp/glm52_hbm_host_direct_random.json"),
+    )
     args = parser.parse_args()
     if 0 not in args.fractions or any(not 0 <= f <= 1 for f in args.fractions):
         raise ValueError("fractions must include 0 and lie in [0, 1]")
     torch.manual_seed(args.seed)
     result = {
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
-        "torch_version": torch.__version__, "cuda_version": torch.version.cuda,
+        "torch_version": torch.__version__,
+        "cuda_version": torch.version.cuda,
         "device_name": torch.cuda.get_device_name(args.device),
         "configuration": vars(args) | {"output": str(args.output)},
-        "access": "First cache half in HBM, second half in pinned Host NUMA DRAM; unchanged MLA kernel directly reads both via one VMM range",
+        "access": (
+            "First cache half in HBM, second half in pinned Host NUMA DRAM; one fused MLA kernel reads Host rows into internal HBM scratch concurrently with local attention"
+            if args.host_prefetch
+            else "First cache half in HBM, second half in pinned Host NUMA DRAM; native MLA kernel directly reads both via one VMM range"
+        ),
+        "git_commit": subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], text=True
+        ).strip(),
+        "source_sha256": {
+            name: hashlib.sha256(pathlib.Path(name).read_bytes()).hexdigest()
+            for name in (
+                "include/flashinfer/attention/mla.cuh",
+                "include/flashinfer/attention/mla_params.cuh",
+                "csrc/batch_mla_run.cu",
+                "flashinfer/mla/_core.py",
+                "flashinfer/jit/attention/modules.py",
+            )
+        },
         "timing": "hot_graph: 100 attention calls per CUDA Graph, GPU events around replay; eager: Python launches including GPU idle gaps; cold_single_graph: one call after L2 eviction, including graph launch gap",
-        "exclusions": ["top-k selection", "plan", "index metadata update", "correctness reference", "initialization"],
+        "exclusions": [
+            "top-k selection",
+            "plan",
+            "index metadata update",
+            "correctness reference",
+            "initialization",
+        ],
         "results": [],
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)

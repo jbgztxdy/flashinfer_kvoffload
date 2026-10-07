@@ -73,7 +73,6 @@ struct MLAParams {
   float sm_scale;
   bool return_lse_base_on_e;
   IdType host_page_start = -1;
-  uint32_t host_agent_count = 0;
   DTypeKV* host_prefetch_buffer = nullptr;
   unsigned long long* host_prefetch_state = nullptr;
 };

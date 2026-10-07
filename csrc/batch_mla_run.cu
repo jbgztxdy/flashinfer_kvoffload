@@ -27,14 +27,13 @@ using namespace flashinfer;
 using tvm::ffi::Array;
 using tvm::ffi::Optional;
 
-void BatchMLAPagedAttentionRunHostPrefetch(TensorView float_workspace_buffer, TensorView int_workspace_buffer,
-                               Array<int64_t> plan_info_vec, TensorView q_nope, TensorView q_pe,
-                               TensorView ckv_cache, TensorView kpe_cache, TensorView kv_indices,
-                               TensorView o, Optional<TensorView> maybe_lse, int64_t mask_mode_code,
-                               int64_t num_heads, int64_t page_size, double sm_scale,
-                               bool return_lse_base_on_e, int64_t host_page_start, int64_t host_agent_count,
-                               Optional<TensorView> maybe_host_buffer,
-                               Optional<TensorView> maybe_host_state) {
+void BatchMLAPagedAttentionRunHostPrefetch(
+    TensorView float_workspace_buffer, TensorView int_workspace_buffer,
+    Array<int64_t> plan_info_vec, TensorView q_nope, TensorView q_pe, TensorView ckv_cache,
+    TensorView kpe_cache, TensorView kv_indices, TensorView o, Optional<TensorView> maybe_lse,
+    int64_t mask_mode_code, int64_t num_heads, int64_t page_size, double sm_scale,
+    bool return_lse_base_on_e, int64_t host_page_start, Optional<TensorView> maybe_host_buffer,
+    Optional<TensorView> maybe_host_state) {
   // q_nope: [n, num_heads, head_dim_ckv]
   // q_pe: [n, num_heads, head_dim_kpe]
   // ckv_cache: [num_pages, page_size, head_dim_ckv]
@@ -43,6 +42,44 @@ void BatchMLAPagedAttentionRunHostPrefetch(TensorView float_workspace_buffer, Te
 
   MLAPlanInfo plan_info;
   plan_info.FromVector(std::vector<int64_t>(plan_info_vec.begin(), plan_info_vec.end()));
+
+  if (host_page_start >= 0) {
+    TVM_FFI_ICHECK(maybe_host_buffer.has_value() && maybe_host_state.has_value())
+        << "Host overlap requires initialized scratch buffers";
+    TVM_FFI_ICHECK_EQ(mask_mode_code, static_cast<int64_t>(MaskMode::kNone));
+    TVM_FFI_ICHECK_EQ(num_heads, 64);
+    TVM_FFI_ICHECK_EQ(page_size, 1);
+    TVM_FFI_ICHECK_EQ(q_nope.ndim(), 3);
+    TVM_FFI_ICHECK_EQ(q_nope.size(0), 1);
+    TVM_FFI_ICHECK_EQ(q_nope.size(1), 64);
+    TVM_FFI_ICHECK_EQ(q_nope.size(2), 512);
+    TVM_FFI_ICHECK_EQ(q_pe.ndim(), 3);
+    TVM_FFI_ICHECK_EQ(q_pe.size(0), 1);
+    TVM_FFI_ICHECK_EQ(q_pe.size(1), 64);
+    TVM_FFI_ICHECK_EQ(q_pe.size(2), 64);
+    TVM_FFI_ICHECK_EQ(ckv_cache.ndim(), 3);
+    TVM_FFI_ICHECK_EQ(ckv_cache.size(1), 1);
+    TVM_FFI_ICHECK_EQ(ckv_cache.size(2), 512);
+    TVM_FFI_ICHECK_EQ(kpe_cache.ndim(), 3);
+    TVM_FFI_ICHECK_EQ(kpe_cache.size(0), ckv_cache.size(0));
+    TVM_FFI_ICHECK_EQ(kpe_cache.size(1), 1);
+    TVM_FFI_ICHECK_EQ(kpe_cache.size(2), 64);
+    TVM_FFI_ICHECK_LE(host_page_start, ckv_cache.size(0));
+    TVM_FFI_ICHECK_GE(kv_indices.size(0), 2048);
+    const auto buffer = maybe_host_buffer.value();
+    const auto state = maybe_host_state.value();
+    CHECK_INPUT(buffer);
+    CHECK_INPUT(state);
+    CHECK_DEVICE(buffer, q_nope);
+    CHECK_DEVICE(state, q_nope);
+    CHECK_SAME_DTYPE(buffer, ckv_cache);
+    CHECK_INPUT_TYPE(state, dl_int64);
+    TVM_FFI_ICHECK_EQ(buffer.ndim(), 2);
+    TVM_FFI_ICHECK_GE(buffer.size(0), 5376);
+    TVM_FFI_ICHECK_EQ(buffer.size(1), 512);
+    TVM_FFI_ICHECK_EQ(state.ndim(), 1);
+    TVM_FFI_ICHECK_GE(state.size(0), 4096);
+  }
 
   void* float_buffer_ptr = float_workspace_buffer.data_ptr();
   void* int_buffer_ptr = int_workspace_buffer.data_ptr();
@@ -119,13 +156,14 @@ void BatchMLAPagedAttentionRunHostPrefetch(TensorView float_workspace_buffer, Te
         params.sm_scale = sm_scale;
         params.return_lse_base_on_e = return_lse_base_on_e;
         params.host_page_start = host_page_start;
-        params.host_agent_count = host_agent_count;
-        params.host_prefetch_buffer = maybe_host_buffer.has_value()
-                                          ? static_cast<DTypeKV*>(maybe_host_buffer.value().data_ptr())
-                                          : nullptr;
-        params.host_prefetch_state = maybe_host_state.has_value()
-                                         ? static_cast<unsigned long long*>(maybe_host_state.value().data_ptr())
-                                         : nullptr;
+        params.host_prefetch_buffer =
+            maybe_host_buffer.has_value()
+                ? static_cast<DTypeKV*>(maybe_host_buffer.value().data_ptr())
+                : nullptr;
+        params.host_prefetch_state =
+            maybe_host_state.has_value()
+                ? static_cast<unsigned long long*>(maybe_host_state.value().data_ptr())
+                : nullptr;
 
         cudaError_t status = mla::BatchMLAPagedAttention<MASK_MODE, HEAD_DIM_CKV, HEAD_DIM_KPE>(
             params, plan_info.num_blks_x, plan_info.num_blks_y, stream);
@@ -144,5 +182,5 @@ void BatchMLAPagedAttentionRun(TensorView float_workspace_buffer, TensorView int
   BatchMLAPagedAttentionRunHostPrefetch(
       float_workspace_buffer, int_workspace_buffer, plan_info_vec, q_nope, q_pe, ckv_cache,
       kpe_cache, kv_indices, o, maybe_lse, mask_mode_code, num_heads, page_size, sm_scale,
-      return_lse_base_on_e, -1, 0, Optional<TensorView>(), Optional<TensorView>());
+      return_lse_base_on_e, -1, Optional<TensorView>(), Optional<TensorView>());
 }

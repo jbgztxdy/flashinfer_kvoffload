@@ -205,8 +205,10 @@ def get_mla_module():
 
 
 @functools.cache
-def get_batch_mla_module(backend, *args):
-    return gen_batch_mla_module(backend, *args).build_and_load()
+def get_batch_mla_module(backend, *args, host_prefetch=False):
+    return gen_batch_mla_module(
+        backend, *args, host_prefetch=host_prefetch
+    ).build_and_load()
 
 
 class BatchMLAPagedAttentionWrapper:
@@ -322,6 +324,9 @@ class BatchMLAPagedAttentionWrapper:
         """
         self._float_workspace_buffer = float_workspace_buffer
         self.device = float_workspace_buffer.device
+        self._host_prefetch_module = None
+        self._host_prefetch_buffer = None
+        self._host_prefetch_state = None
 
         if backend == "cutlass":
             self._backend = backend
@@ -396,8 +401,7 @@ class BatchMLAPagedAttentionWrapper:
         use_profiler : bool, optional
             Whether to enable intra-kernel profiler, default is False.
         """
-        self._cached_module = get_batch_mla_module(
-            self._backend,
+        self._module_args = (
             q_data_type,
             kv_data_type,
             q_data_type,
@@ -406,6 +410,8 @@ class BatchMLAPagedAttentionWrapper:
             head_dim_kpe,
             use_profiler,
         )
+        self._cached_module = get_batch_mla_module(self._backend, *self._module_args)
+        self._host_prefetch_module = None
         qo_indptr_host = qo_indptr.to("cpu")
         kv_indptr_host = kv_indptr.to("cpu")
         kv_len_arr_host = kv_len_arr.to("cpu")
@@ -425,10 +431,20 @@ class BatchMLAPagedAttentionWrapper:
         self._sm_scale = sm_scale
         self._use_profiler = use_profiler
         self._host_prefetch_shape = (
-            len(kv_len_arr_host) == 1 and kv_len_arr_host[0].item() == 2048
+            qo_indptr_host.tolist() == [0, 1]
+            and kv_indptr_host.tolist() == [0, 2048]
+            and kv_len_arr_host.tolist() == [2048]
+            and num_heads == 64
+            and head_dim_ckv == 512
+            and head_dim_kpe == 64
+            and qo_indptr.dtype == torch.int32
         )
-        self._host_prefetch_buffer = None
-        self._host_prefetch_state = None
+        if (
+            self._host_prefetch_buffer is not None
+            and self._host_prefetch_buffer.dtype != kv_data_type
+        ):
+            self._host_prefetch_buffer = None
+            self._host_prefetch_state = None
 
         self._plan_info = self._cached_module.plan(
             self._float_workspace_buffer,
@@ -522,10 +538,16 @@ class BatchMLAPagedAttentionWrapper:
             Enable in-kernel Host prefetch for FA2 sparse decode. Pages at or above
             this boundary must reside in mapped pinned Host memory. This path
             requires one noncausal query, 64 heads, rank 512, RoPE 64, page size 1,
-            and 2048 selected pages. Idle CTAs directly read Host rows into an
-            internal 2.25 MiB HBM buffer while attention computes on local rows.
-            Call once before CUDA Graph capture to allocate the internal buffers.
+            and 2048 selected pages, using matching BF16 or FP16 inputs on a GPU
+            with at least 108 SMs. Producer warp groups directly read Host rows
+            into 2.25 MiB of internal HBM while local attention runs concurrently.
+            The same kernel computes Host attention and merges partial outputs.
+            Total internal scratch is 5.25 MiB plus 32 KiB of synchronization state.
+            Call once before CUDA Graph capture to compile and allocate buffers.
+            Calls using the same wrapper must not execute concurrently.
         """
+        if host_page_start is not None and self._backend != "fa2":
+            raise ValueError("Host overlap requires the FA2 backend")
         if self._backend == "cutlass":
             if return_lse:
                 raise ValueError("return_lse does not support cutlass backend for now.")
@@ -593,22 +615,61 @@ class BatchMLAPagedAttentionWrapper:
                 or not self._host_prefetch_shape
                 or self._use_profiler
             ):
-                raise ValueError("Host prefetch requires FA2 noncausal 2048-page MLA decode")
-            if not 0 <= host_page_start <= ckv_cache.shape[0]:
-                raise ValueError("host_page_start must lie within the KV cache")
-            run_function = self._cached_module.run_host_prefetch
-            if self._host_prefetch_buffer is None:
+                raise ValueError(
+                    "Host prefetch requires FA2 noncausal 2048-page MLA decode"
+                )
+            if (
+                ckv_cache.ndim != 3
+                or tuple(ckv_cache.shape[1:]) != (1, 512)
+                or tuple(kpe_cache.shape) != (ckv_cache.shape[0], 1, 64)
+            ):
+                raise ValueError(
+                    "Host overlap requires page-size-one 512+64 KV tensors"
+                )
+            if (
+                not isinstance(host_page_start, int)
+                or not 0 <= host_page_start <= ckv_cache.shape[0]
+            ):
+                raise ValueError(
+                    "host_page_start must be an integer within the KV cache"
+                )
+            if (
+                q_nope.dtype not in (torch.bfloat16, torch.float16)
+                or q_nope.dtype != self._module_args[0]
+                or ckv_cache.dtype != self._module_args[1]
+                or any(t.dtype != q_nope.dtype for t in (q_pe, ckv_cache, kpe_cache))
+            ):
+                raise ValueError(
+                    "Host overlap requires matching planned BF16 or FP16 inputs"
+                )
+            if any(
+                t.device != self.device
+                or t.stride(-1) != 1
+                or t.stride(0) % 8
+                or t.data_ptr() % 16
+                for t in (q_nope, q_pe, ckv_cache, kpe_cache, out)
+            ):
+                raise ValueError(
+                    "Host overlap requires aligned CUDA tensors with unit feature stride"
+                )
+            if get_device_sm_count(self.device) < 108:
+                raise ValueError("Host overlap requires at least 108 GPU SMs")
+            if self._host_prefetch_module is None or self._host_prefetch_buffer is None:
                 if torch.cuda.is_current_stream_capturing():
-                    raise RuntimeError("Warm up Host prefetch before CUDA Graph capture")
-                self._host_prefetch_buffer = torch.zeros(
-                    (5376, 512), dtype=ckv_cache.dtype, device=self.device
+                    raise RuntimeError("Warm up Host overlap before CUDA Graph capture")
+                self._host_prefetch_module = get_batch_mla_module(
+                    self._backend, *self._module_args, host_prefetch=True
                 )
-                self._host_prefetch_state = torch.zeros(
-                    8192, dtype=torch.int64, device=self.device
-                )
+                if self._host_prefetch_buffer is None:
+                    self._host_prefetch_buffer = torch.zeros(
+                        (5376, 512), dtype=ckv_cache.dtype, device=self.device
+                    )
+                    self._host_prefetch_state = torch.zeros(
+                        4096, dtype=torch.int64, device=self.device
+                    )
+            run_function = self._host_prefetch_module.run_host_prefetch
             host_args = (
                 host_page_start,
-                0,
                 self._host_prefetch_buffer,
                 self._host_prefetch_state,
             )
