@@ -1147,6 +1147,10 @@ struct HostNarrowKernelTraits : BaseTraits {
 template <typename KTraits, typename Params>
 __device__ __forceinline__ void compute_host_split(
     typename KTraits::SharedStorage& storage, Params params, uint32_t length, uint8_t* smem) {
+      load_q<KTraits>(&storage, params.q_nope, params.q_pe, params.q_nope_stride_n,
+                      params.q_nope_stride_h, params.q_pe_stride_n, params.q_pe_stride_h,
+                      1, 0, params.num_heads);
+      cp_async::commit_group();
       if (blockIdx.y >= 16) {
         const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
         if (tid < length) {
@@ -1181,10 +1185,6 @@ __device__ __forceinline__ void compute_host_split(
                          (tile - 1) % 2);
         cp_async::commit_group();
       }
-      load_q<KTraits>(&storage, params.q_nope, params.q_pe, params.q_nope_stride_n,
-                      params.q_nope_stride_h, params.q_pe_stride_n, params.q_pe_stride_h,
-                      1, 0, params.num_heads);
-      cp_async::commit_group();
       cp_async::wait_group<0>();
       __syncthreads();
       for (; tile >= 0; --tile) {
