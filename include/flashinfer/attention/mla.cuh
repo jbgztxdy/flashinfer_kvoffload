@@ -15,6 +15,7 @@
  */
 #ifndef FLASHINFER_MLA_FA2_CUH_
 #define FLASHINFER_MLA_FA2_CUH_
+#define FLASHINFER_MLA_HOST_TRACE
 #include <cooperative_groups.h>
 
 #include <cstdint>
@@ -122,6 +123,17 @@ struct HostPrefetchKernelTraits : BaseTraits {
   };
 };
 
+template <typename Params>
+__device__ __forceinline__ void record_host_phase(const Params& params, uint32_t slot) {
+#ifdef FLASHINFER_MLA_HOST_TRACE
+  if (threadIdx.x == 0 && threadIdx.y == 0 && threadIdx.z == 0) {
+    unsigned long long time;
+    asm volatile("mov.u64 %0, %%globaltimer;" : "=l"(time));
+    params.host_prefetch_state[gridDim.y + 2048 + blockIdx.y * 10 + slot] = time;
+  }
+#endif
+}
+
 template <typename KTraits, typename Params>
 __device__ __forceinline__ uint32_t prepare_host_indices(
     typename KTraits::SharedStorage* storage, const Params& params, uint32_t kv_indptr,
@@ -163,6 +175,7 @@ __device__ __forceinline__ uint32_t prepare_host_indices(
 template <typename KTraits, typename Params>
 __device__ __forceinline__ void run_host_prefetch_agent(
     const Params& params, unsigned long long epoch) {
+  record_host_phase(params, 1);
   const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
   const uint32_t lane = threadIdx.x;
   uint32_t rank = 0, agents = 0;
@@ -177,6 +190,7 @@ __device__ __forceinline__ void run_host_prefetch_agent(
     rank += __popc(mask & lower);
   }
   extern __shared__ uint8_t agent_smem[];
+  record_host_phase(params, 2);
   auto* positions = reinterpret_cast<uint32_t*>(agent_smem);
   auto* pages = positions + 128;
   auto* count = pages + 128;
@@ -197,6 +211,9 @@ __device__ __forceinline__ void run_host_prefetch_agent(
     if (tid == 0) *count = selected;
   }
   __syncthreads();
+  record_host_phase(params, 3);
+  if (tid == 0) params.host_prefetch_state[gridDim.y + 2048 + blockIdx.y * 10 + 8] = *count;
+  record_host_phase(params, 4);
   for (uint32_t vector = tid; vector < *count * 72; vector += KTraits::NUM_THREADS) {
     const uint32_t row = vector / 72, feature = vector % 72;
     const auto page = pages[row];
@@ -208,12 +225,13 @@ __device__ __forceinline__ void run_host_prefetch_agent(
   }
   __threadfence();
   __syncthreads();
+  record_host_phase(params, 5);
   if (tid == 0) {
     for (uint32_t row = 0; row < *count; ++row) {
       atomicExch(params.host_prefetch_state + gridDim.y + positions[row], epoch);
     }
   }
-
+  record_host_phase(params, 6);
 }
 
 template <bool HOST_ONLY, typename KTraits, typename Params>
@@ -986,9 +1004,12 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
   const uint32_t cluster_tile_q = gridDim.x * KTraits::CTA_TILE_Q;
 
   if constexpr (KTraits::HOST_PREFETCH) {
+    record_host_phase(params, 0);
     const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
     if (tid == 0) {
       smem_storage.epoch = atomicAdd(params.host_prefetch_state + blockIdx.y, 1ULL) + 1;
+      params.host_prefetch_state[gridDim.y + 2048 + blockIdx.y * 10 + 9] =
+          work_indptr[blockIdx.y] == work_indptr[blockIdx.y + 1];
     }
     __syncthreads();
     if (work_indptr[blockIdx.y] == work_indptr[blockIdx.y + 1]) {
@@ -1041,12 +1062,18 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
     bool host_prefetched = false;
     if constexpr (KTraits::HOST_PREFETCH) {
       if (q_len == 1 && kv_len == 2048 && kv_end - kv_start == 128) {
+        record_host_phase(params, 1);
         host_count = prepare_host_indices<KTraits>(&smem_storage, params, kv_indptr, kv_start);
+        record_host_phase(params, 2);
+        if (threadIdx.x == 0 && threadIdx.y == 0 && threadIdx.z == 0) {
+          params.host_prefetch_state[gridDim.y + 2048 + blockIdx.y * 10 + 8] = host_count;
+        }
         work_kv_indices = smem_storage.host_indices;
         block_iter_base = 0;
         packed_kv_bound = 128;
         // Prefetch local tiles first; Host rows are loaded at consumption time.
         if (host_count > 0) {
+          record_host_phase(params, 3);
           load_prefetched_tile<false, KTraits>(&smem_storage, params, 3, 1);
           cp_async::commit_group();
           load_prefetched_tile<false, KTraits>(&smem_storage, params, 2, 0);
@@ -1057,10 +1084,12 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
             __syncthreads();
             const uint32_t stage = tile % 2;
             if (tile * 32 < host_count) {
+              record_host_phase(params, 4);
               load_prefetched_tile<true, KTraits>(&smem_storage, params, tile, stage);
               cp_async::commit_group();
               cp_async::wait_group<0>();
               __syncthreads();
+              record_host_phase(params, 5);
             }
             compute_mla_qk<KTraits>(&smem_storage, stage, s_frag);
             update_mdo_states_<KTraits>(&smem_storage, stage, variant, s_frag, o_frag, m, d);
@@ -1168,6 +1197,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
     __syncthreads();
 
     // normalize and write back
+    if constexpr (KTraits::HOST_PREFETCH) record_host_phase(params, 6);
     normalize_d_<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, o_frag, m, d);
 
     finalize_m_<KTraits>(variant, m);
@@ -1182,6 +1212,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
 
   auto grid = cg::this_grid();
   grid.sync();
+  if constexpr (KTraits::HOST_PREFETCH) record_host_phase(params, 7);
 
   // the second stage, merge partial outputs
   DevicePersistentMergeStates<KTraits>(

@@ -604,7 +604,7 @@ class BatchMLAPagedAttentionWrapper:
                     (2048, 576), dtype=ckv_cache.dtype, device=self.device
                 )
                 self._host_prefetch_state = torch.zeros(
-                    2048 + self._plan_info[1], dtype=torch.int64, device=self.device
+                    2048 + 11 * self._plan_info[1], dtype=torch.int64, device=self.device
                 )
             host_args = (
                 host_page_start,

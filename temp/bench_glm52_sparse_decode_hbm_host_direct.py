@@ -156,6 +156,7 @@ def benchmark_context(args, tokens):
     eviction = torch.empty(args.flush_mib * 2**20, dtype=torch.uint8, device=device)
     samples = {fraction: {mode: [] for mode in ("hot_graph", "cold_single_graph", "eager")} for fraction in args.fractions}
     errors = {}
+    traces = {}
     rng = random.Random(args.seed + tokens)
     for iteration in range(args.rounds):
         fractions = args.fractions.copy()
@@ -186,6 +187,9 @@ def benchmark_context(args, tokens):
             if profile:
                 torch.cuda.cudart().cudaProfilerStart()
             samples[fraction]["hot_graph"].append(time_gpu(hot_graph.replay, args.hot_repeats, start, end))
+            if args.record_host_trace and iteration == 0:
+                blocks = wrapper._plan_info[1]
+                traces[fraction] = wrapper._host_prefetch_state[-blocks * 10:].cpu().view(blocks, 10).tolist()
             if profile:
                 torch.cuda.cudart().cudaProfilerStop()
 
@@ -196,7 +200,7 @@ def benchmark_context(args, tokens):
             samples[fraction]["eager"].append(time_gpu(eager, args.eager_repeats, start, end))
         if (iteration + 1) % 10 == 0:
             print(f"layout={args.layout} context={tokens} rounds={iteration + 1}/{args.rounds}", flush=True)
-    result = {"context_tokens": tokens, "kv_cache_bytes": tokens * 1152, "residency": allocation.residency, "gpu_before": before, "gpu_after": gpu_snapshot(), "cases": []}
+    result = {"context_tokens": tokens, "kv_cache_bytes": tokens * 1152, "residency": allocation.residency, "gpu_before": before, "gpu_after": gpu_snapshot(), "cases": [], "phase_timings_ns": traces}
     for fraction in args.fractions:
         host_tokens = round(fraction * args.topk)
         case = {"host_fraction_requested": fraction, "host_tokens": host_tokens, "host_fraction_actual": host_tokens / args.topk, "host_kv_bytes": host_tokens * 1152, "correctness_max_abs_error": errors[fraction]}
@@ -227,6 +231,7 @@ def main():
     parser.add_argument("--flush-mib", type=int, default=64)
     parser.add_argument("--profile-fraction", type=float, default=None)
     parser.add_argument("--host-prefetch", action="store_true")
+    parser.add_argument("--record-host-trace", action="store_true")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output", type=pathlib.Path, default=pathlib.Path("temp/glm52_hbm_host_direct_random.json"))
     args = parser.parse_args()
