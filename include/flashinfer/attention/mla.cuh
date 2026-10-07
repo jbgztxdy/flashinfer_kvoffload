@@ -669,7 +669,7 @@ __device__ void DevicePersistentMergeStates(
   }
 }
 
-template <typename KTraits>
+template <typename KTraits, bool SYNC_WARP = false>
 __device__ __forceinline__ void write_o(typename KTraits::SharedStorage* smem_storage,
                                         typename KTraits::DTypeO* final_o, float* final_lse,
                                         typename KTraits::DTypeO* partial_o, float* partial_lse,
@@ -684,6 +684,8 @@ __device__ __forceinline__ void write_o(typename KTraits::SharedStorage* smem_st
   constexpr uint32_t UPCAST_STRIDE_FINAL_O = KTraits::UPCAST_STRIDE_FINAL_O;
   const uint32_t lane_idx = threadIdx.x, warpgroup_idx = threadIdx.z, warp_idx_in_wg = threadIdx.y;
   smem_t<KTraits::SWIZZLE_MODE_O> o_smem(smem_storage->o_smem);
+  // The output tile aliases query storage, so finish prior reads first.
+  if constexpr (SYNC_WARP) __syncwarp();
 #pragma unroll
   for (uint32_t mma_d = 0; mma_d < NUM_MMA_D_CKV / 2; ++mma_d) {
     uint32_t o_frag_f16[8 / 2];
@@ -705,6 +707,8 @@ __device__ __forceinline__ void write_o(typename KTraits::SharedStorage* smem_st
 #endif
   }
 
+  // Host partial writes may reuse this shared tile within the same warp.
+  if constexpr (SYNC_WARP) __syncwarp();
   if (partial_o != nullptr) {
     // write to partial_o
 #pragma unroll
@@ -778,6 +782,7 @@ __device__ __forceinline__ void write_o(typename KTraits::SharedStorage* smem_st
           NUM_MMA_D_CKV;
     }
   }
+  if constexpr (SYNC_WARP) __syncwarp();
 }
 
 template <typename KTraits, typename Params>
@@ -1222,7 +1227,7 @@ __device__ __forceinline__ void compute_host_split(typename KTraits::SharedStora
         compute_small_host_pv<0, KTraits>(&storage, s_frag, d, o_frag);
         normalize_d_<KTraits>(&storage, 0, o_frag, m, d);
         finalize_m_<KTraits>(variant, m);
-        write_o<KTraits>(&storage, params.final_o, params.final_lse,
+        write_o<KTraits, true>(&storage, params.final_o, params.final_lse,
                          params.partial_o + blockIdx.y * 64 * 512,
                          params.partial_lse + blockIdx.y * 64, o_frag, m, d, params.o_stride_n,
                          params.o_stride_h, 1, 0, params.num_heads, false);
@@ -1233,7 +1238,7 @@ __device__ __forceinline__ void compute_host_split(typename KTraits::SharedStora
         }
         compute_small_host_pv<1, KTraits>(&storage, s_frag, d, o_frag);
         normalize_d_<KTraits>(&storage, 0, o_frag, m, d);
-        write_o<KTraits>(&storage, params.final_o, params.final_lse,
+        write_o<KTraits, true>(&storage, params.final_o, params.final_lse,
                          params.partial_o + blockIdx.y * 64 * 512 + 256,
                          params.partial_lse + blockIdx.y * 64, o_frag, m, d, params.o_stride_n,
                          params.o_stride_h, 1, 0, params.num_heads, false);
@@ -1262,7 +1267,7 @@ __device__ __forceinline__ void compute_host_split(typename KTraits::SharedStora
   }
   normalize_d_<KTraits>(&storage, 0, o_frag, m, d);
   finalize_m_<KTraits>(variant, m);
-  write_o<KTraits>(&storage, params.final_o, params.final_lse,
+  write_o<KTraits, true>(&storage, params.final_o, params.final_lse,
                    params.partial_o + blockIdx.y * 64 * 512, params.partial_lse + blockIdx.y * 64,
                    o_frag, m, d, params.o_stride_n, params.o_stride_h, 1, 0, params.num_heads,
                    false);
