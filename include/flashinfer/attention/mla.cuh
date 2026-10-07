@@ -1333,8 +1333,6 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostSplitKernel(
   extern __shared__ uint8_t smem[];
   auto& storage = *reinterpret_cast<typename KTraits::SharedStorage*>(smem);
   const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
-  if (tid == 0) storage.epoch = atomicAdd(params.host_prefetch_state + blockIdx.y, 1ULL) + 1;
-  __syncthreads();
   params.partial_o = params.host_prefetch_buffer;
   params.partial_lse = reinterpret_cast<float*>(params.host_prefetch_state + gridDim.y);
   if (blockIdx.y < 32) {
@@ -1387,23 +1385,9 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostSplitKernel(
     } else {
       if (tid < 64) params.partial_lse[blockIdx.y * 64 + tid] = -math::inf;
     }
-    __threadfence();
-    __syncthreads();
-    if (tid == 0) atomicAdd(params.host_prefetch_state + gridDim.y + 2048, 1ULL);
   }
-  if (blockIdx.y < 64) {
-    if (tid == 0) {
-      unsigned long long completed;
-      do {
-        asm volatile("ld.acquire.gpu.global.u64 %0, [%1];"
-                     : "=l"(completed)
-                     : "l"(params.host_prefetch_state + gridDim.y + 2048) : "memory");
-        if (completed < storage.epoch * 32) __nanosleep(32);
-      } while (completed < storage.epoch * 32);
-    }
-    __syncthreads();
-    merge_host_states<KTraits>(params);
-  }
+  cg::this_grid().sync();
+  merge_host_states<KTraits>(params);
 }
 
 #define DISPATCH_SMEM_CONFIG(smem_limit_per_sm, NUM_STAGES, CTA_TILE_KV, QK_SHARD, ...) \
@@ -1462,7 +1446,7 @@ cudaError_t BatchMLAPagedAttention(Params params, uint32_t num_blks_x, uint32_t 
       FLASHINFER_CUDA_CALL(
           cudaFuncSetAttribute(kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, smem_size));
       FLASHINFER_CUDA_CALL(
-          cudaLaunchCooperativeKernel((void*)kernel, nblks, nthrs, args, smem_size, stream));
+          cudaLaunchCooperativeKernel((void*)kernel, dim3(1, 64), nthrs, args, smem_size, stream));
       return cudaSuccess;
     }
   }
