@@ -995,9 +995,9 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
     constexpr bool QK_SHARD = true;                                                     \
     __VA_ARGS__;                                                                        \
   } else if (smem_limit_per_sm >= 147968) {                                             \
-    constexpr uint32_t NUM_STAGES = 2;                                                  \
-    constexpr uint32_t CTA_TILE_KV = 32;                                                \
-    constexpr bool QK_SHARD = true;                                                     \
+    constexpr uint32_t NUM_STAGES = 4;                                                  \
+    constexpr uint32_t CTA_TILE_KV = 16;                                                \
+    constexpr bool QK_SHARD = false;                                                    \
     __VA_ARGS__;                                                                        \
   } else if (smem_limit_per_sm >= 92672) {                                              \
     constexpr uint32_t NUM_STAGES = 1;                                                  \
