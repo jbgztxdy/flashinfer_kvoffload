@@ -842,6 +842,50 @@ __device__ void DevicePersistentMergeStates(
   }
 }
 
+template <typename KTraits, typename Params>
+__device__ __forceinline__ void merge_host_states(const Params& params) {
+  if (blockIdx.y >= 64) return;
+  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+  const uint32_t head = blockIdx.y;
+  extern __shared__ uint8_t merge_smem[];
+  auto* weights = reinterpret_cast<float*>(merge_smem);
+  if (tid < 32) {
+    const float lse = tid < 16 ? params.partial_lse[tid * 64 + head] : -math::inf;
+    float maximum = lse;
+#pragma unroll
+    for (uint32_t offset = 16; offset > 0; offset /= 2) {
+      maximum = max(maximum, __shfl_xor_sync(0xffffffff, maximum, offset));
+    }
+    const float weight = math::ptx_exp2(lse - maximum);
+    float sum = weight;
+#pragma unroll
+    for (uint32_t offset = 16; offset > 0; offset /= 2) {
+      sum += __shfl_xor_sync(0xffffffff, sum, offset);
+    }
+    if (tid < 16) weights[tid] = weight / sum;
+    if (tid == 0 && params.final_lse) {
+      float value = maximum + math::ptx_log2(sum);
+      if (params.return_lse_base_on_e) value *= math::loge2;
+      params.final_lse[head] = value;
+    }
+  }
+  __syncthreads();
+#pragma unroll
+  for (uint32_t feature = tid; feature < 512; feature += KTraits::NUM_THREADS) {
+    float values[16];
+#pragma unroll
+    for (uint32_t split = 0; split < 16; ++split) {
+      values[split] = float(params.partial_o[(split * 64 + head) * 512 + feature]);
+    }
+    float output = 0.f;
+#pragma unroll
+    for (uint32_t split = 0; split < 16; ++split) {
+      output = fmaf(values[split], weights[split], output);
+    }
+    params.final_o[head * params.o_stride_h + feature] = typename KTraits::DTypeO(output);
+  }
+}
+
 template <typename KTraits>
 __device__ __forceinline__ void write_o(typename KTraits::SharedStorage* smem_storage,
                                         typename KTraits::DTypeO* final_o, float* final_lse,
@@ -1219,11 +1263,15 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
   if constexpr (KTraits::HOST_PREFETCH) record_host_phase(params, 7);
 
   // the second stage, merge partial outputs
+  if constexpr (KTraits::HOST_PREFETCH) {
+    merge_host_states<KTraits>(params);
+  } else {
   DevicePersistentMergeStates<KTraits>(
       params.merge_packed_offset_start, params.merge_packed_offset_end,
       params.merge_partial_packed_offset_start, params.merge_partial_packed_offset_end,
       params.merge_partial_stride, partial_o, partial_lse, final_o, final_lse, o_stride_n,
       o_stride_h, num_heads, params.return_lse_base_on_e);
+  }
 }
 
 #define DISPATCH_SMEM_CONFIG(smem_limit_per_sm, NUM_STAGES, CTA_TILE_KV, QK_SHARD, ...) \
