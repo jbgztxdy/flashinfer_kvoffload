@@ -1,0 +1,201 @@
+{
+  "timestamp": "2026-10-07T15:50:31+0800",
+  "device": "GPU 1: NVIDIA A100-SXM4-40GB",
+  "link": "PCIe Gen4 x16, current and maximum verified using nvidia-smi",
+  "link_one_direction_bytes_per_second": 31507692307.692307,
+  "link_formula": "16e9 transfers/s * 16 lanes * (128/130) / 8 bytes/bit",
+  "measured_streaming_bandwidth_bytes_per_second": 27032958000.0,
+  "bandwidth_measurement": "cudaHostAllocMapped + cudaHostGetDevicePointer; coalesced GPU ld.global.cg.v4.u32 reads, 64/256 MiB > 40 MiB L2; CPU initialization bound to NUMA-0 CPUs, checksum verified; 20 rounds, 5 kernels per graph",
+  "raw_bandwidth_results": [
+    {
+      "mib": "64",
+      "blocks": "432",
+      "host_pointer": "0x7fe514000000",
+      "device_pointer": "0x7fe514000000",
+      "median_us": "2485.555",
+      "p10_us": "2485.248",
+      "p90_us": "2487.296",
+      "median_GB_per_s": "26.999547",
+      "verified": "true"
+    },
+    {
+      "mib": "64",
+      "blocks": "864",
+      "host_pointer": "0x7fe514000000",
+      "device_pointer": "0x7fe514000000",
+      "median_us": "2485.453",
+      "p10_us": "2485.248",
+      "p90_us": "2485.862",
+      "median_GB_per_s": "27.000658",
+      "verified": "true"
+    },
+    {
+      "mib": "64",
+      "blocks": "1728",
+      "host_pointer": "0x7fe514000000",
+      "device_pointer": "0x7fe514000000",
+      "median_us": "2485.351",
+      "p10_us": "2485.043",
+      "p90_us": "2485.658",
+      "median_GB_per_s": "27.001770",
+      "verified": "true"
+    },
+    {
+      "mib": "256",
+      "blocks": "432",
+      "host_pointer": "0x7fe508000000",
+      "device_pointer": "0x7fe508000000",
+      "median_us": "9930.650",
+      "p10_us": "9929.933",
+      "p90_us": "9931.162",
+      "median_GB_per_s": "27.031005",
+      "verified": "true"
+    },
+    {
+      "mib": "256",
+      "blocks": "864",
+      "host_pointer": "0x7fe508000000",
+      "device_pointer": "0x7fe508000000",
+      "median_us": "9929.933",
+      "p10_us": "9929.523",
+      "p90_us": "9930.548",
+      "median_GB_per_s": "27.032958",
+      "verified": "true"
+    },
+    {
+      "mib": "256",
+      "blocks": "1728",
+      "host_pointer": "0x7fe508000000",
+      "device_pointer": "0x7fe508000000",
+      "median_us": "9930.342",
+      "p10_us": "9929.729",
+      "p90_us": "9930.752",
+      "median_GB_per_s": "27.031845",
+      "verified": "true"
+    }
+  ],
+  "timing_model": "pull_link = host_bytes/link_peak; pull_streaming = host_bytes/measured_streaming_bandwidth; ideal_overlap_proxy = max(HBM_attention_baseline, pull_streaming); serial_proxy = HBM_attention_baseline + pull_streaming",
+  "model_limits": [
+    "HBM attention baseline includes HBM access, softmax, synchronization and launch overhead; it is not isolated compute time",
+    "Streaming bandwidth does not guarantee the same bandwidth for sparse MLA loads",
+    "Models assume each selected KV vector is read once; protocol overhead and transaction latency are not included in the link-peak bound",
+    "Neither actual computation time nor overlap percentage was isolated by this measurement"
+  ],
+  "context_tokens": 1048576,
+  "hbm_attention_baseline_us": 27.484159469604492,
+  "sources": {
+    "pcie": "https://pcisig.com/sites/default/files/2026-01/30%20Years%20of%20PCI-SIG%20Innovation%20Webinar_Updated%203.23.2023.pdf",
+    "async_copy": "https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#asynchronous-copy-from-global-memory-to-shared-memory",
+    "kernel": "include/flashinfer/attention/mla.cuh:877-949"
+  },
+  "cases": [
+    {
+      "host_fraction_requested": 0,
+      "host_tokens": 0,
+      "host_bytes": 0,
+      "host_kib": 0.0,
+      "pull_at_link_peak_us": 0.0,
+      "pull_at_measured_streaming_bandwidth_us": 0.0,
+      "ideal_full_overlap_proxy_us": 27.484159469604492,
+      "serial_proxy_us": 27.484159469604492,
+      "measured_attention_us": 27.484159469604492,
+      "relative_to_hbm": 1.0
+    },
+    {
+      "host_fraction_requested": 0.1,
+      "host_tokens": 205,
+      "host_bytes": 236160,
+      "host_kib": 230.625,
+      "pull_at_link_peak_us": 7.4953125,
+      "pull_at_measured_streaming_bandwidth_us": 8.736002919103415,
+      "ideal_full_overlap_proxy_us": 27.484159469604492,
+      "serial_proxy_us": 36.220162388707905,
+      "measured_attention_us": 31.615999937057495,
+      "relative_to_hbm": 1.1503353403265806
+    },
+    {
+      "host_fraction_requested": 0.15,
+      "host_tokens": 307,
+      "host_bytes": 353664,
+      "host_kib": 345.375,
+      "pull_at_link_peak_us": 11.2246875,
+      "pull_at_measured_streaming_bandwidth_us": 13.082697054462187,
+      "ideal_full_overlap_proxy_us": 27.484159469604492,
+      "serial_proxy_us": 40.56685652406668,
+      "measured_attention_us": 33.341439962387085,
+      "relative_to_hbm": 1.213114776140792
+    },
+    {
+      "host_fraction_requested": 0.2,
+      "host_tokens": 410,
+      "host_bytes": 472320,
+      "host_kib": 461.25,
+      "pull_at_link_peak_us": 14.990625,
+      "pull_at_measured_streaming_bandwidth_us": 17.47200583820683,
+      "ideal_full_overlap_proxy_us": 27.484159469604492,
+      "serial_proxy_us": 44.95616530781132,
+      "measured_attention_us": 37.33504056930542,
+      "relative_to_hbm": 1.3584203151853815
+    },
+    {
+      "host_fraction_requested": 0.3,
+      "host_tokens": 614,
+      "host_bytes": 707328,
+      "host_kib": 690.75,
+      "pull_at_link_peak_us": 22.449375,
+      "pull_at_measured_streaming_bandwidth_us": 26.165394108924374,
+      "ideal_full_overlap_proxy_us": 27.484159469604492,
+      "serial_proxy_us": 53.64955357852887,
+      "measured_attention_us": 46.04928016662598,
+      "relative_to_hbm": 1.6754843901103533
+    },
+    {
+      "host_fraction_requested": 0.4,
+      "host_tokens": 819,
+      "host_bytes": 943488,
+      "host_kib": 921.375,
+      "pull_at_link_peak_us": 29.9446875,
+      "pull_at_measured_streaming_bandwidth_us": 34.90139702802779,
+      "ideal_full_overlap_proxy_us": 34.90139702802779,
+      "serial_proxy_us": 62.38555649763228,
+      "measured_attention_us": 54.768640995025635,
+      "relative_to_hbm": 1.9927347989519497
+    },
+    {
+      "host_fraction_requested": 0.6,
+      "host_tokens": 1229,
+      "host_bytes": 1415808,
+      "host_kib": 1382.625,
+      "pull_at_link_peak_us": 44.9353125,
+      "pull_at_measured_streaming_bandwidth_us": 52.37340286623461,
+      "ideal_full_overlap_proxy_us": 52.37340286623461,
+      "serial_proxy_us": 79.8575623358391,
+      "measured_attention_us": 72.2431993484497,
+      "relative_to_hbm": 2.628539520313346
+    },
+    {
+      "host_fraction_requested": 0.8,
+      "host_tokens": 1638,
+      "host_bytes": 1886976,
+      "host_kib": 1842.75,
+      "pull_at_link_peak_us": 59.889375,
+      "pull_at_measured_streaming_bandwidth_us": 69.80279405605557,
+      "ideal_full_overlap_proxy_us": 69.80279405605557,
+      "serial_proxy_us": 97.28695352566007,
+      "measured_attention_us": 89.70239639282227,
+      "relative_to_hbm": 3.263785326672503
+    },
+    {
+      "host_fraction_requested": 1,
+      "host_tokens": 2048,
+      "host_bytes": 2359296,
+      "host_kib": 2304.0,
+      "pull_at_link_peak_us": 74.88,
+      "pull_at_measured_streaming_bandwidth_us": 87.2747998942624,
+      "ideal_full_overlap_proxy_us": 87.2747998942624,
+      "serial_proxy_us": 114.7589593638669,
+      "measured_attention_us": 107.1615982055664,
+      "relative_to_hbm": 3.8990313065269264
+    }
+  ]
+}

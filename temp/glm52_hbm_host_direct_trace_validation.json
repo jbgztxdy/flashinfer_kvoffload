@@ -1,0 +1,9 @@
+{
+  "capture": "Only the 100%-Host timed graph replay, excluding setup, reference, and index metadata transfers",
+  "kernel_count": 100,
+  "kernel_names": [
+    "void flashinfer::mla::BatchMLAPagedAttentionKernel<flashinfer::mla::KernelTraits<(bool)0, (unsigned int)2, (bool)1, (unsigned int)512, (unsigned int)64, (unsigned int)64, (unsigned int)32, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, int>, flashinfer::MLAParams<__nv_bfloat16, __nv_bfloat16, __nv_bfloat16, int>>(T2)"
+  ],
+  "cuda_memcpy_activity_tables": [],
+  "note": "Profiling adds overhead; use the unprofiled 40-round JSON files for performance."
+}

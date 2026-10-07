@@ -1,0 +1,429 @@
+{
+  "timestamp": "2026-10-07T15:28:33+0800",
+  "torch_version": "2.11.0+cu130",
+  "cuda_version": "13.0",
+  "device_name": "NVIDIA A100-SXM4-40GB",
+  "configuration": {
+    "contexts": [
+      131072
+    ],
+    "fractions": [
+      0,
+      0.1,
+      0.15,
+      0.2,
+      0.3,
+      0.4,
+      0.6,
+      0.8,
+      1
+    ],
+    "layout": "random",
+    "device": 1,
+    "topk": 2048,
+    "rounds": 3,
+    "index_sets": 8,
+    "hot_repeats": 100,
+    "eager_repeats": 20,
+    "flush_mib": 64,
+    "seed": 42,
+    "output": "temp/glm52_hbm_host_direct_smoke.json"
+  },
+  "access": "First cache half in HBM, second half in pinned Host NUMA DRAM; unchanged MLA kernel directly reads both via one VMM range",
+  "timing": "hot_graph: 100 attention calls per CUDA Graph, GPU events around replay; eager: Python launches including GPU idle gaps; cold_single_graph: one call after L2 eviction, including graph launch gap",
+  "exclusions": [
+    "top-k selection",
+    "plan",
+    "index metadata update",
+    "correctness reference",
+    "initialization"
+  ],
+  "results": [
+    {
+      "context_tokens": 131072,
+      "kv_cache_bytes": 150994944,
+      "residency": [
+        {
+          "tier": "hbm",
+          "allocation_type": 1,
+          "location_type": 1,
+          "location_id": 1,
+          "address": "0x602000000",
+          "bytes": 75497472
+        },
+        {
+          "tier": "pinned_host_dram",
+          "allocation_type": 1,
+          "location_type": 3,
+          "location_id": 0,
+          "address": "0x606800000",
+          "bytes": 75497472
+        }
+      ],
+      "gpu_before": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 37991 MiB, 2451 MiB, 0 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 423 MiB, 40019 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 38173 MiB, 2269 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz",
+      "gpu_after": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 37991 MiB, 2451 MiB, 0 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 741 MiB, 39701 MiB, 77 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 38173 MiB, 2269 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz",
+      "cases": [
+        {
+          "host_fraction_requested": 0,
+          "host_tokens": 0,
+          "host_fraction_actual": 0.0,
+          "host_kv_bytes": 0,
+          "correctness_max_abs_error": 0.0013034939765930176,
+          "hot_graph": {
+            "median_us": 27.555840015411377,
+            "p10_us": 27.545599937438965,
+            "p90_us": 27.555840015411377,
+            "samples_us": [
+              27.555840015411377,
+              27.545599937438965,
+              27.56608009338379
+            ],
+            "relative_to_hbm": 1.0
+          },
+          "cold_single_graph": {
+            "median_us": 39.93599861860275,
+            "p10_us": 39.93599861860275,
+            "p90_us": 39.93599861860275,
+            "samples_us": [
+              44.03200000524521,
+              39.93599861860275,
+              39.93599861860275
+            ],
+            "relative_to_hbm": 1.0
+          },
+          "eager": {
+            "median_us": 30.003198981285095,
+            "p10_us": 29.849600791931152,
+            "p90_us": 30.003198981285095,
+            "samples_us": [
+              31.7440003156662,
+              30.003198981285095,
+              29.849600791931152
+            ],
+            "relative_to_hbm": 1.0
+          }
+        },
+        {
+          "host_fraction_requested": 0.1,
+          "host_tokens": 205,
+          "host_fraction_actual": 0.10009765625,
+          "host_kv_bytes": 236160,
+          "correctness_max_abs_error": 0.0015410780906677246,
+          "hot_graph": {
+            "median_us": 32.522239685058594,
+            "p10_us": 31.55967950820923,
+            "p90_us": 32.522239685058594,
+            "samples_us": [
+              32.522239685058594,
+              32.727038860321045,
+              31.55967950820923
+            ],
+            "relative_to_hbm": 1.1802303855324177
+          },
+          "cold_single_graph": {
+            "median_us": 47.10400104522705,
+            "p10_us": 46.08000069856644,
+            "p90_us": 47.10400104522705,
+            "samples_us": [
+              50.175998359918594,
+              46.08000069856644,
+              47.10400104522705
+            ],
+            "relative_to_hbm": 1.1794872464585209
+          },
+          "eager": {
+            "median_us": 36.96640133857727,
+            "p10_us": 36.19840145111084,
+            "p90_us": 36.96640133857727,
+            "samples_us": [
+              38.553598523139954,
+              36.96640133857727,
+              36.19840145111084
+            ],
+            "relative_to_hbm": 1.2320819977108297
+          }
+        },
+        {
+          "host_fraction_requested": 0.15,
+          "host_tokens": 307,
+          "host_fraction_actual": 0.14990234375,
+          "host_kv_bytes": 353664,
+          "correctness_max_abs_error": 0.0013861656188964844,
+          "hot_graph": {
+            "median_us": 34.80576038360596,
+            "p10_us": 33.47455978393555,
+            "p90_us": 34.80576038360596,
+            "samples_us": [
+              34.80576038360596,
+              35.15392065048218,
+              33.47455978393555
+            ],
+            "relative_to_hbm": 1.2630992328355752
+          },
+          "cold_single_graph": {
+            "median_us": 52.22399905323982,
+            "p10_us": 46.08000069856644,
+            "p90_us": 52.22399905323982,
+            "samples_us": [
+              52.22399905323982,
+              52.22399905323982,
+              46.08000069856644
+            ],
+            "relative_to_hbm": 1.3076923292188103
+          },
+          "eager": {
+            "median_us": 39.52639997005463,
+            "p10_us": 37.83679902553558,
+            "p90_us": 39.52639997005463,
+            "samples_us": [
+              41.47199988365173,
+              39.52639997005463,
+              37.83679902553558
+            ],
+            "relative_to_hbm": 1.3174061870772433
+          }
+        },
+        {
+          "host_fraction_requested": 0.2,
+          "host_tokens": 410,
+          "host_fraction_actual": 0.2001953125,
+          "host_kv_bytes": 472320,
+          "correctness_max_abs_error": 0.0015175342559814453,
+          "hot_graph": {
+            "median_us": 37.63200044631958,
+            "p10_us": 37.468159198760986,
+            "p90_us": 37.63200044631958,
+            "samples_us": [
+              37.703680992126465,
+              37.63200044631958,
+              37.468159198760986
+            ],
+            "relative_to_hbm": 1.3656633376181901
+          },
+          "cold_single_graph": {
+            "median_us": 52.22399905323982,
+            "p10_us": 49.15200173854828,
+            "p90_us": 52.22399905323982,
+            "samples_us": [
+              55.296000093221664,
+              52.22399905323982,
+              49.15200173854828
+            ],
+            "relative_to_hbm": 1.3076923292188103
+          },
+          "eager": {
+            "median_us": 42.239999771118164,
+            "p10_us": 42.08639860153198,
+            "p90_us": 42.239999771118164,
+            "samples_us": [
+              43.98080110549927,
+              42.239999771118164,
+              42.08639860153198
+            ],
+            "relative_to_hbm": 1.4078498695244444
+          }
+        },
+        {
+          "host_fraction_requested": 0.3,
+          "host_tokens": 614,
+          "host_fraction_actual": 0.2998046875,
+          "host_kv_bytes": 707328,
+          "correctness_max_abs_error": 0.001495450735092163,
+          "hot_graph": {
+            "median_us": 46.30527973175049,
+            "p10_us": 46.284799575805664,
+            "p90_us": 46.30527973175049,
+            "samples_us": [
+              49.08031940460205,
+              46.284799575805664,
+              46.30527973175049
+            ],
+            "relative_to_hbm": 1.6804161914807518
+          },
+          "cold_single_graph": {
+            "median_us": 58.36800113320351,
+            "p10_us": 58.36800113320351,
+            "p90_us": 58.36800113320351,
+            "samples_us": [
+              102.39999741315842,
+              58.36800113320351,
+              58.36800113320351
+            ],
+            "relative_to_hbm": 1.461538540468971
+          },
+          "eager": {
+            "median_us": 51.097601652145386,
+            "p10_us": 50.79039931297302,
+            "p90_us": 51.097601652145386,
+            "samples_us": [
+              56.37120008468628,
+              51.097601652145386,
+              50.79039931297302
+            ],
+            "relative_to_hbm": 1.703071785245907
+          }
+        },
+        {
+          "host_fraction_requested": 0.4,
+          "host_tokens": 819,
+          "host_fraction_actual": 0.39990234375,
+          "host_kv_bytes": 943488,
+          "correctness_max_abs_error": 0.0013231635093688965,
+          "hot_graph": {
+            "median_us": 54.98879909515381,
+            "p10_us": 54.93760108947754,
+            "p90_us": 54.98879909515381,
+            "samples_us": [
+              58.10175895690918,
+              54.93760108947754,
+              54.98879909515381
+            ],
+            "relative_to_hbm": 1.9955406572399819
+          },
+          "cold_single_graph": {
+            "median_us": 68.60800087451935,
+            "p10_us": 66.56000018119812,
+            "p90_us": 68.60800087451935,
+            "samples_us": [
+              73.72800260782242,
+              68.60800087451935,
+              66.56000018119812
+            ],
+            "relative_to_hbm": 1.717948799271061
+          },
+          "eager": {
+            "median_us": 59.596800804138184,
+            "p10_us": 59.443199634552,
+            "p90_us": 59.596800804138184,
+            "samples_us": [
+              64.81919884681702,
+              59.443199634552,
+              59.596800804138184
+            ],
+            "relative_to_hbm": 1.9863482171121987
+          }
+        },
+        {
+          "host_fraction_requested": 0.6,
+          "host_tokens": 1229,
+          "host_fraction_actual": 0.60009765625,
+          "host_kv_bytes": 1415808,
+          "correctness_max_abs_error": 0.0013820827007293701,
+          "hot_graph": {
+            "median_us": 72.60159969329834,
+            "p10_us": 72.37631797790527,
+            "p90_us": 72.60159969329834,
+            "samples_us": [
+              72.60159969329834,
+              75.64288139343262,
+              72.37631797790527
+            ],
+            "relative_to_hbm": 2.634708274278478
+          },
+          "cold_single_graph": {
+            "median_us": 90.11200070381165,
+            "p10_us": 86.01599931716919,
+            "p90_us": 90.11200070381165,
+            "samples_us": [
+              90.11200070381165,
+              91.13600105047226,
+              86.01599931716919
+            ],
+            "relative_to_hbm": 2.256410352083601
+          },
+          "eager": {
+            "median_us": 77.10719704627991,
+            "p10_us": 77.10719704627991,
+            "p90_us": 77.10719704627991,
+            "samples_us": [
+              78.95039916038513,
+              77.10719704627991,
+              77.10719704627991
+            ],
+            "relative_to_hbm": 2.569965859119775
+          }
+        },
+        {
+          "host_fraction_requested": 0.8,
+          "host_tokens": 1638,
+          "host_fraction_actual": 0.7998046875,
+          "host_kv_bytes": 1886976,
+          "correctness_max_abs_error": 0.001600503921508789,
+          "hot_graph": {
+            "median_us": 90.01983642578125,
+            "p10_us": 89.88672256469727,
+            "p90_us": 90.01983642578125,
+            "samples_us": [
+              93.0303955078125,
+              90.01983642578125,
+              89.88672256469727
+            ],
+            "relative_to_hbm": 3.2668151787583004
+          },
+          "cold_single_graph": {
+            "median_us": 104.44799810647964,
+            "p10_us": 102.39999741315842,
+            "p90_us": 104.44799810647964,
+            "samples_us": [
+              113.66400122642517,
+              104.44799810647964,
+              102.39999741315842
+            ],
+            "relative_to_hbm": 2.6153846584376206
+          },
+          "eager": {
+            "median_us": 94.46399807929993,
+            "p10_us": 94.3615972995758,
+            "p90_us": 94.46399807929993,
+            "samples_us": [
+              97.28000164031982,
+              94.46399807929993,
+              94.3615972995758
+            ],
+            "relative_to_hbm": 3.148464206707529
+          }
+        },
+        {
+          "host_fraction_requested": 1,
+          "host_tokens": 2048,
+          "host_fraction_actual": 1.0,
+          "host_kv_bytes": 2359296,
+          "correctness_max_abs_error": 0.0012963712215423584,
+          "hot_graph": {
+            "median_us": 107.43807792663574,
+            "p10_us": 107.4073600769043,
+            "p90_us": 107.43807792663574,
+            "samples_us": [
+              107.65312194824219,
+              107.43807792663574,
+              107.4073600769043
+            ],
+            "relative_to_hbm": 3.89892225628208
+          },
+          "cold_single_graph": {
+            "median_us": 120.83200365304947,
+            "p10_us": 119.80800330638885,
+            "p90_us": 120.83200365304947,
+            "samples_us": [
+              124.92799758911133,
+              120.83200365304947,
+              119.80800330638885
+            ],
+            "relative_to_hbm": 3.0256412217713824
+          },
+          "eager": {
+            "median_us": 111.87200546264648,
+            "p10_us": 111.82080507278442,
+            "p90_us": 111.87200546264648,
+            "samples_us": [
+              114.12479877471924,
+              111.87200546264648,
+              111.82080507278442
+            ],
+            "relative_to_hbm": 3.728669250649845
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,327 @@
+{
+  "timestamp": "2026-10-06T20:31:19+0800",
+  "torch_version": "2.8.0",
+  "cuda_version": "12.8",
+  "local_device": 0,
+  "remote_device": 1,
+  "topology": "\t\u001b[4mGPU0\tGPU1\tGPU2\tGPU3\tNIC0\tNIC1\tCPU Affinity\tNUMA Affinity\tGPU NUMA ID\u001b[0m\nGPU0\t X \tNV12\tSYS\tSYS\tNODE\tNODE\t0-31,64-95\t0\t\tN/A\nGPU1\tNV12\t X \tSYS\tSYS\tNODE\tNODE\t0-31,64-95\t0\t\tN/A\nGPU2\tSYS\tSYS\t X \tPIX\tSYS\tSYS\t32-63,96-127\t1\t\tN/A\nGPU3\tSYS\tSYS\tPIX\t X \tSYS\tSYS\t32-63,96-127\t1\t\tN/A\nNIC0\tNODE\tNODE\tSYS\tSYS\t X \tPIX\t\t\t\t\nNIC1\tNODE\tNODE\tSYS\tSYS\tPIX\t X \t\t\t\t\n\nLegend:\n\n  X    = Self\n  SYS  = Connection traversing PCIe as well as the SMP interconnect between NUMA nodes (e.g., QPI/UPI)\n  NODE = Connection traversing PCIe as well as the interconnect between PCIe Host Bridges within a NUMA node\n  PHB  = Connection traversing PCIe as well as a PCIe Host Bridge (typically the CPU)\n  PXB  = Connection traversing multiple PCIe bridges (without traversing the PCIe Host Bridge)\n  PIX  = Connection traversing at most a single PCIe bridge\n  NV#  = Connection traversing a bonded set of # NVLinks\n\nNIC Legend:\n\n  NIC0: mlx5_0\n  NIC1: mlx5_1\n\n",
+  "configuration": {
+    "contexts": [
+      131072
+    ],
+    "fractions": [
+      0.0,
+      0.1,
+      0.15,
+      0.2,
+      0.3,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "layout": "head",
+    "local": 0,
+    "remote": 1,
+    "topk": 2048,
+    "rounds": 2,
+    "index_sets": 8,
+    "hot_repeats": 10,
+    "flush_mib": 64,
+    "seed": 42,
+    "verify_nvlink": false,
+    "output": "temp/glm52_sparse_decode_p2p_head_smoke.json"
+  },
+  "attention": {
+    "wrapper": "BatchMLAPagedAttentionWrapper",
+    "backend": "fa2",
+    "batch_size": 1,
+    "query_tokens": 1,
+    "heads": 64,
+    "compressed_rank": 512,
+    "rope_dim": 64,
+    "dtype": "bfloat16",
+    "page_size": 1,
+    "kv_transfer": "none; direct P2P loads through CUDA VMM",
+    "timing": "CUDA events inside captured graphs; attention kernels only",
+    "cold": "64 MiB read/write sweep on each owner GPU before one attention call",
+    "hot": "Repeated calls using the same selected indices"
+  },
+  "results": [
+    {
+      "context_tokens": 131072,
+      "residency": [
+        {
+          "owner_device": 0,
+          "bytes": 75497472
+        },
+        {
+          "owner_device": 1,
+          "bytes": 75497472
+        }
+      ],
+      "kv_cache_bytes": 150994944,
+      "cache_stride_elements": [
+        576,
+        576,
+        1
+      ],
+      "gpu_before": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 39780 MiB, 662 MiB, 0 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 633 MiB, 39809 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 39283 MiB, 1159 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz",
+      "gpu_after": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 39812 MiB, 630 MiB, 0 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 633 MiB, 39809 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 39283 MiB, 1159 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz",
+      "cases": [
+        {
+          "remote_fraction_requested": 0.0,
+          "remote_tokens": 0,
+          "remote_fraction_actual": 0.0,
+          "correctness_max_abs_error": 0.0013034939765930176,
+          "cold": {
+            "median_us": 36.3520011305809,
+            "p10_us": 35.840000957250595,
+            "p90_us": 35.840000957250595,
+            "samples_us": [
+              35.840000957250595,
+              36.86400130391121
+            ],
+            "relative_to_local": 1.0,
+            "paired_relative_median": 1.0
+          },
+          "hot": {
+            "median_us": 28.39999943971634,
+            "p10_us": 28.15999984741211,
+            "p90_us": 28.15999984741211,
+            "samples_us": [
+              28.63999903202057,
+              28.15999984741211
+            ],
+            "relative_to_local": 1.0,
+            "paired_relative_median": 1.0
+          }
+        },
+        {
+          "remote_fraction_requested": 0.1,
+          "remote_tokens": 205,
+          "remote_fraction_actual": 0.10009765625,
+          "correctness_max_abs_error": 0.0012040138244628906,
+          "cold": {
+            "median_us": 38.91200013458729,
+            "p10_us": 37.88800165057182,
+            "p90_us": 37.88800165057182,
+            "samples_us": [
+              37.88800165057182,
+              39.93599861860275
+            ],
+            "relative_to_local": 1.0704225056224705,
+            "paired_relative_median": 1.0702380662518196
+          },
+          "hot": {
+            "median_us": 29.53439950942993,
+            "p10_us": 29.372799396514893,
+            "p90_us": 29.372799396514893,
+            "samples_us": [
+              29.372799396514893,
+              29.69599962234497
+            ],
+            "relative_to_local": 1.0399436652145555,
+            "paired_relative_median": 1.0400660263094412
+          }
+        },
+        {
+          "remote_fraction_requested": 0.15,
+          "remote_tokens": 307,
+          "remote_fraction_actual": 0.14990234375,
+          "correctness_max_abs_error": 0.0014930367469787598,
+          "cold": {
+            "median_us": 38.39999996125698,
+            "p10_us": 37.88800165057182,
+            "p90_us": 37.88800165057182,
+            "samples_us": [
+              37.88800165057182,
+              38.91199827194214
+            ],
+            "relative_to_local": 1.056337994250149,
+            "paired_relative_median": 1.0563491731523071
+          },
+          "hot": {
+            "median_us": 29.184000194072723,
+            "p10_us": 28.87679934501648,
+            "p90_us": 28.87679934501648,
+            "samples_us": [
+              29.491201043128967,
+              28.87679934501648
+            ],
+            "relative_to_local": 1.027605660909274,
+            "paired_relative_median": 1.0275876346837765
+          }
+        },
+        {
+          "remote_fraction_requested": 0.2,
+          "remote_tokens": 410,
+          "remote_fraction_actual": 0.2001953125,
+          "correctness_max_abs_error": 0.0020019710063934326,
+          "cold": {
+            "median_us": 38.39999996125698,
+            "p10_us": 37.88800165057182,
+            "p90_us": 37.88800165057182,
+            "samples_us": [
+              38.91199827194214,
+              37.88800165057182
+            ],
+            "relative_to_local": 1.056337994250149,
+            "paired_relative_median": 1.0567459973495343
+          },
+          "hot": {
+            "median_us": 29.24160063266754,
+            "p10_us": 29.08160090446472,
+            "p90_us": 29.08160090446472,
+            "samples_us": [
+              29.40160036087036,
+              29.08160090446472
+            ],
+            "relative_to_local": 1.0296338454068508,
+            "paired_relative_median": 1.0296597682550468
+          }
+        },
+        {
+          "remote_fraction_requested": 0.3,
+          "remote_tokens": 614,
+          "remote_fraction_actual": 0.2998046875,
+          "correctness_max_abs_error": 0.0013810694217681885,
+          "cold": {
+            "median_us": 47.1039991825819,
+            "p10_us": 39.93599861860275,
+            "p90_us": 39.93599861860275,
+            "samples_us": [
+              54.27199974656105,
+              39.93599861860275
+            ],
+            "relative_to_local": 1.2957745851013398,
+            "paired_relative_median": 1.2988094621556843
+          },
+          "hot": {
+            "median_us": 31.82079941034317,
+            "p10_us": 29.388800263404846,
+            "p90_us": 29.388800263404846,
+            "samples_us": [
+              34.252798557281494,
+              29.388800263404846
+            ],
+            "relative_to_local": 1.120450705567373,
+            "paired_relative_median": 1.1198070111620828
+          }
+        },
+        {
+          "remote_fraction_requested": 0.4,
+          "remote_tokens": 819,
+          "remote_fraction_actual": 0.39990234375,
+          "correctness_max_abs_error": 0.0013253986835479736,
+          "cold": {
+            "median_us": 38.91199827194214,
+            "p10_us": 38.91199827194214,
+            "p90_us": 38.91199827194214,
+            "samples_us": [
+              38.91199827194214,
+              38.91199827194214
+            ],
+            "relative_to_local": 1.0704224543833338,
+            "paired_relative_median": 1.0706348399215648
+          },
+          "hot": {
+            "median_us": 30.04000037908554,
+            "p10_us": 29.798400402069092,
+            "p90_us": 29.798400402069092,
+            "samples_us": [
+              30.28160035610199,
+              29.798400402069092
+            ],
+            "relative_to_local": 1.0577465130888601,
+            "paired_relative_median": 1.0577501610585256
+          }
+        },
+        {
+          "remote_fraction_requested": 0.6,
+          "remote_tokens": 1229,
+          "remote_fraction_actual": 0.60009765625,
+          "correctness_max_abs_error": 0.0015522539615631104,
+          "cold": {
+            "median_us": 39.93599861860275,
+            "p10_us": 39.93599861860275,
+            "p90_us": 39.93599861860275,
+            "samples_us": [
+              39.93599861860275,
+              39.93599861860275
+            ],
+            "relative_to_local": 1.0985914771279768,
+            "paired_relative_median": 1.0988094517614595
+          },
+          "hot": {
+            "median_us": 30.99360018968582,
+            "p10_us": 30.720001459121704,
+            "p90_us": 30.720001459121704,
+            "samples_us": [
+              31.26719892024994,
+              30.720001459121704
+            ],
+            "relative_to_local": 1.0913239718710146,
+            "paired_relative_median": 1.091320495704439
+          }
+        },
+        {
+          "remote_fraction_requested": 0.8,
+          "remote_tokens": 1638,
+          "remote_fraction_actual": 0.7998046875,
+          "correctness_max_abs_error": 0.0017030537128448486,
+          "cold": {
+            "median_us": 41.471999138593674,
+            "p10_us": 40.95999896526337,
+            "p90_us": 40.95999896526337,
+            "samples_us": [
+              41.98399931192398,
+              40.95999896526337
+            ],
+            "relative_to_local": 1.1408450112449409,
+            "paired_relative_median": 1.141269782341736
+          },
+          "hot": {
+            "median_us": 32.19680041074753,
+            "p10_us": 31.7440003156662,
+            "p90_us": 31.7440003156662,
+            "samples_us": [
+              32.64960050582886,
+              31.7440003156662
+            ],
+            "relative_to_local": 1.133690177673789,
+            "paired_relative_median": 1.1336364003911203
+          }
+        },
+        {
+          "remote_fraction_requested": 1.0,
+          "remote_tokens": 2048,
+          "remote_fraction_actual": 1.0,
+          "correctness_max_abs_error": 0.0017756223678588867,
+          "cold": {
+            "median_us": 41.98399931192398,
+            "p10_us": 41.98399931192398,
+            "p90_us": 41.98399931192398,
+            "samples_us": [
+              41.98399931192398,
+              41.98399931192398
+            ],
+            "relative_to_local": 1.1549295226172622,
+            "paired_relative_median": 1.1551586754412484
+          },
+          "hot": {
+            "median_us": 32.77759999036789,
+            "p10_us": 32.66560137271881,
+            "p90_us": 32.66560137271881,
+            "samples_us": [
+              32.88959860801697,
+              32.66560137271881
+            ],
+            "relative_to_local": 1.1541408675004985,
+            "paired_relative_median": 1.1541899667556135
+          }
+        }
+      ]
+    }
+  ]
+}

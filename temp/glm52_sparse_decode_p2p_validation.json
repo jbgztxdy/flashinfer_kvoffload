@@ -1,0 +1,242 @@
+{
+  "timestamp": "2026-10-06T20:09:56+0800",
+  "torch_version": "2.8.0",
+  "cuda_version": "12.8",
+  "local_device": 0,
+  "remote_device": 1,
+  "topology": "\t\u001b[4mGPU0\tGPU1\tGPU2\tGPU3\tNIC0\tNIC1\tCPU Affinity\tNUMA Affinity\tGPU NUMA ID\u001b[0m\nGPU0\t X \tNV12\tSYS\tSYS\tNODE\tNODE\t0-31,64-95\t0\t\tN/A\nGPU1\tNV12\t X \tSYS\tSYS\tNODE\tNODE\t0-31,64-95\t0\t\tN/A\nGPU2\tSYS\tSYS\t X \tPIX\tSYS\tSYS\t32-63,96-127\t1\t\tN/A\nGPU3\tSYS\tSYS\tPIX\t X \tSYS\tSYS\t32-63,96-127\t1\t\tN/A\nNIC0\tNODE\tNODE\tSYS\tSYS\t X \tPIX\t\t\t\t\nNIC1\tNODE\tNODE\tSYS\tSYS\tPIX\t X \t\t\t\t\n\nLegend:\n\n  X    = Self\n  SYS  = Connection traversing PCIe as well as the SMP interconnect between NUMA nodes (e.g., QPI/UPI)\n  NODE = Connection traversing PCIe as well as the interconnect between PCIe Host Bridges within a NUMA node\n  PHB  = Connection traversing PCIe as well as a PCIe Host Bridge (typically the CPU)\n  PXB  = Connection traversing multiple PCIe bridges (without traversing the PCIe Host Bridge)\n  PIX  = Connection traversing at most a single PCIe bridge\n  NV#  = Connection traversing a bonded set of # NVLinks\n\nNIC Legend:\n\n  NIC0: mlx5_0\n  NIC1: mlx5_1\n\n",
+  "configuration": {
+    "contexts": [
+      131072
+    ],
+    "fractions": [
+      0,
+      0.1,
+      0.15,
+      0.2,
+      0.3
+    ],
+    "local": 0,
+    "remote": 1,
+    "topk": 2048,
+    "rounds": 2,
+    "index_sets": 8,
+    "hot_repeats": 1000,
+    "flush_mib": 64,
+    "seed": 42,
+    "verify_nvlink": true,
+    "output": "temp/glm52_sparse_decode_p2p_validation.json"
+  },
+  "attention": {
+    "wrapper": "BatchMLAPagedAttentionWrapper",
+    "backend": "fa2",
+    "batch_size": 1,
+    "query_tokens": 1,
+    "heads": 64,
+    "compressed_rank": 512,
+    "rope_dim": 64,
+    "dtype": "bfloat16",
+    "page_size": 1,
+    "kv_transfer": "none; direct P2P loads through CUDA VMM",
+    "timing": "CUDA events inside captured graphs; attention kernels only",
+    "cold": "64 MiB read/write sweep on each owner GPU before one attention call",
+    "hot": "Repeated calls using the same selected indices"
+  },
+  "results": [
+    {
+      "context_tokens": 131072,
+      "residency": [
+        {
+          "owner_device": 0,
+          "bytes": 75497472
+        },
+        {
+          "owner_device": 1,
+          "bytes": 75497472
+        }
+      ],
+      "kv_cache_bytes": 150994944,
+      "cache_stride_elements": [
+        576,
+        576,
+        1
+      ],
+      "gpu_before": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 39800 MiB, 642 MiB, 0 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 645 MiB, 39797 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 39283 MiB, 1159 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz",
+      "gpu_after": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 39832 MiB, 610 MiB, 30 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 645 MiB, 39797 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 39283 MiB, 1159 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz",
+      "nvlink_validation": [
+        {
+          "tx_bytes": 0,
+          "rx_bytes": 0,
+          "remote_fraction": 0,
+          "attention_calls": 1000
+        },
+        {
+          "tx_bytes": 0,
+          "rx_bytes": 236160000,
+          "remote_fraction": 0.1,
+          "attention_calls": 1000
+        },
+        {
+          "tx_bytes": 0,
+          "rx_bytes": 353664000,
+          "remote_fraction": 0.15,
+          "attention_calls": 1000
+        },
+        {
+          "tx_bytes": 0,
+          "rx_bytes": 472320000,
+          "remote_fraction": 0.2,
+          "attention_calls": 1000
+        },
+        {
+          "tx_bytes": 0,
+          "rx_bytes": 707328000,
+          "remote_fraction": 0.3,
+          "attention_calls": 1000
+        }
+      ],
+      "cases": [
+        {
+          "remote_fraction_requested": 0,
+          "remote_tokens": 0,
+          "remote_fraction_actual": 0.0,
+          "correctness_max_abs_error": 0.0013034939765930176,
+          "cold": {
+            "median_us": 36.04800067842007,
+            "p10_us": 35.93600168824196,
+            "p90_us": 35.93600168824196,
+            "samples_us": [
+              36.159999668598175,
+              35.93600168824196
+            ],
+            "relative_to_local": 1.0,
+            "paired_relative_median": 1.0
+          },
+          "hot": {
+            "median_us": 30.4606876373291,
+            "p10_us": 30.450687408447266,
+            "p90_us": 30.450687408447266,
+            "samples_us": [
+              30.470687866210938,
+              30.450687408447266
+            ],
+            "relative_to_local": 1.0,
+            "paired_relative_median": 1.0
+          }
+        },
+        {
+          "remote_fraction_requested": 0.1,
+          "remote_tokens": 205,
+          "remote_fraction_actual": 0.10009765625,
+          "correctness_max_abs_error": 0.0013665258884429932,
+          "cold": {
+            "median_us": 39.29599933326244,
+            "p10_us": 38.975998759269714,
+            "p90_us": 38.975998759269714,
+            "samples_us": [
+              39.61599990725517,
+              38.975998759269714
+            ],
+            "relative_to_local": 1.0901020470959648,
+            "paired_relative_median": 1.0900849892490818
+          },
+          "hot": {
+            "median_us": 30.90507221221924,
+            "p10_us": 30.83171272277832,
+            "p90_us": 30.83171272277832,
+            "samples_us": [
+              30.978431701660156,
+              30.83171272277832
+            ],
+            "relative_to_local": 1.0145887899899393,
+            "paired_relative_median": 1.0145881086881654
+          }
+        },
+        {
+          "remote_fraction_requested": 0.15,
+          "remote_tokens": 307,
+          "remote_fraction_actual": 0.14990234375,
+          "correctness_max_abs_error": 0.0013628900051116943,
+          "cold": {
+            "median_us": 39.85599987208843,
+            "p10_us": 38.975998759269714,
+            "p90_us": 38.975998759269714,
+            "samples_us": [
+              40.73600098490715,
+              38.975998759269714
+            ],
+            "relative_to_local": 1.1056369041833713,
+            "paired_relative_median": 1.1055717299558938
+          },
+          "hot": {
+            "median_us": 30.972320556640625,
+            "p10_us": 30.96758460998535,
+            "p90_us": 30.96758460998535,
+            "samples_us": [
+              30.9770565032959,
+              30.96758460998535
+            ],
+            "relative_to_local": 1.0167964993240837,
+            "paired_relative_median": 1.0167965578718614
+          }
+        },
+        {
+          "remote_fraction_requested": 0.2,
+          "remote_tokens": 410,
+          "remote_fraction_actual": 0.2001953125,
+          "correctness_max_abs_error": 0.0013349354267120361,
+          "cold": {
+            "median_us": 53.18400077521801,
+            "p10_us": 41.600000113248825,
+            "p90_us": 41.600000113248825,
+            "samples_us": [
+              64.7680014371872,
+              41.600000113248825
+            ],
+            "relative_to_local": 1.4753661721676652,
+            "paired_relative_median": 1.4743819912900689
+          },
+          "hot": {
+            "median_us": 31.52939224243164,
+            "p10_us": 31.106752395629883,
+            "p90_us": 31.106752395629883,
+            "samples_us": [
+              31.9520320892334,
+              31.106752395629883
+            ],
+            "relative_to_local": 1.0350847169908555,
+            "paired_relative_median": 1.0350802734203182
+          }
+        },
+        {
+          "remote_fraction_requested": 0.3,
+          "remote_tokens": 614,
+          "remote_fraction_actual": 0.2998046875,
+          "correctness_max_abs_error": 0.0015929341316223145,
+          "cold": {
+            "median_us": 43.26399974524975,
+            "p10_us": 39.0079990029335,
+            "p90_us": 39.0079990029335,
+            "samples_us": [
+              39.0079990029335,
+              47.520000487565994
+            ],
+            "relative_to_local": 1.2001775114021649,
+            "paired_relative_median": 1.200555920826477
+          },
+          "hot": {
+            "median_us": 31.576064109802246,
+            "p10_us": 31.546720504760742,
+            "p90_us": 31.546720504760742,
+            "samples_us": [
+              31.546720504760742,
+              31.60540771484375
+            ],
+            "relative_to_local": 1.0366169170490513,
+            "paired_relative_median": 1.0366173450360667
+          }
+        }
+      ]
+    }
+  ]
+}

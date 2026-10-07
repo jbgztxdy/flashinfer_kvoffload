@@ -1,0 +1,166 @@
+{
+  "timestamp": "2026-10-06T22:57:37+0800",
+  "torch_version": "2.11.0+cu130",
+  "cuda_version": "13.0",
+  "configuration": {
+    "contexts": [
+      131072
+    ],
+    "fractions": [
+      0,
+      0.1,
+      0.15,
+      0.2,
+      0.3,
+      0.4,
+      0.6,
+      0.8,
+      1
+    ],
+    "layout": "random",
+    "device": 0,
+    "topk": 2048,
+    "rounds": 1,
+    "index_sets": 1,
+    "repeats": 3,
+    "seed": 42,
+    "output": "temp/host_direct_smoke.json"
+  },
+  "access": "MLA directly reads CUDA tensor backed by cudaHostAllocMapped Host DRAM; no staging or memcpy",
+  "results": [
+    {
+      "context_tokens": 131072,
+      "kv_cache_bytes": 150994944,
+      "gpu_before": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 39654 MiB, 788 MiB, 40 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 39283 MiB, 1159 MiB, 33 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz",
+      "gpu_after": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 39654 MiB, 788 MiB, 40 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 39283 MiB, 1159 MiB, 33 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz",
+      "cases": [
+        {
+          "remote_fraction_requested": 0,
+          "remote_tokens": 0,
+          "correctness_max_abs_error": 0.0016028285026550293,
+          "direct_attention": {
+            "median_us": 116.39466881752014,
+            "p10_us": 116.39466881752014,
+            "p90_us": 116.39466881752014,
+            "samples_us": [
+              116.39466881752014
+            ],
+            "relative_to_local": 1.0
+          }
+        },
+        {
+          "remote_fraction_requested": 0.1,
+          "remote_tokens": 205,
+          "correctness_max_abs_error": 0.0017866194248199463,
+          "direct_attention": {
+            "median_us": 116.39466881752014,
+            "p10_us": 116.39466881752014,
+            "p90_us": 116.39466881752014,
+            "samples_us": [
+              116.39466881752014
+            ],
+            "relative_to_local": 1.0
+          }
+        },
+        {
+          "remote_fraction_requested": 0.15,
+          "remote_tokens": 307,
+          "correctness_max_abs_error": 0.001534104347229004,
+          "direct_attention": {
+            "median_us": 116.39466881752014,
+            "p10_us": 116.39466881752014,
+            "p90_us": 116.39466881752014,
+            "samples_us": [
+              116.39466881752014
+            ],
+            "relative_to_local": 1.0
+          }
+        },
+        {
+          "remote_fraction_requested": 0.2,
+          "remote_tokens": 410,
+          "correctness_max_abs_error": 0.0015849769115447998,
+          "direct_attention": {
+            "median_us": 116.39466881752014,
+            "p10_us": 116.39466881752014,
+            "p90_us": 116.39466881752014,
+            "samples_us": [
+              116.39466881752014
+            ],
+            "relative_to_local": 1.0
+          }
+        },
+        {
+          "remote_fraction_requested": 0.3,
+          "remote_tokens": 614,
+          "correctness_max_abs_error": 0.0016039013862609863,
+          "direct_attention": {
+            "median_us": 120.4906702041626,
+            "p10_us": 120.4906702041626,
+            "p90_us": 120.4906702041626,
+            "samples_us": [
+              120.4906702041626
+            ],
+            "relative_to_local": 1.0351906270987723
+          }
+        },
+        {
+          "remote_fraction_requested": 0.4,
+          "remote_tokens": 819,
+          "correctness_max_abs_error": 0.0015024542808532715,
+          "direct_attention": {
+            "median_us": 116.39466881752014,
+            "p10_us": 116.39466881752014,
+            "p90_us": 116.39466881752014,
+            "samples_us": [
+              116.39466881752014
+            ],
+            "relative_to_local": 1.0
+          }
+        },
+        {
+          "remote_fraction_requested": 0.6,
+          "remote_tokens": 1229,
+          "correctness_max_abs_error": 0.0013160109519958496,
+          "direct_attention": {
+            "median_us": 117.07733074824016,
+            "p10_us": 117.07733074824016,
+            "p90_us": 117.07733074824016,
+            "samples_us": [
+              117.07733074824016
+            ],
+            "relative_to_local": 1.0058650618422247
+          }
+        },
+        {
+          "remote_fraction_requested": 0.8,
+          "remote_tokens": 1638,
+          "correctness_max_abs_error": 0.0016125142574310303,
+          "direct_attention": {
+            "median_us": 118.1013286113739,
+            "p10_us": 118.1013286113739,
+            "p90_us": 118.1013286113739,
+            "samples_us": [
+              118.1013286113739
+            ],
+            "relative_to_local": 1.014662697279799
+          }
+        },
+        {
+          "remote_fraction_requested": 1,
+          "remote_tokens": 2048,
+          "correctness_max_abs_error": 0.0016384124755859375,
+          "direct_attention": {
+            "median_us": 117.41866668065389,
+            "p10_us": 117.41866668065389,
+            "p90_us": 117.41866668065389,
+            "samples_us": [
+              117.41866668065389
+            ],
+            "relative_to_local": 1.0087976354375743
+          }
+        }
+      ]
+    }
+  ]
+}
