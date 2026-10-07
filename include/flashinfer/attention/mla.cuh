@@ -177,73 +177,47 @@ __device__ __forceinline__ void run_host_prefetch_agent(
   record_host_phase(params, 1);
   const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
   const uint32_t lane = threadIdx.x;
-  uint32_t rank = 0, agents = 0;
-  for (uint32_t first = 0; first < gridDim.y; first += 32) {
-    const uint32_t block = first + lane;
-    const bool idle = block < gridDim.y &&
-                      params.work_indptr[block] == params.work_indptr[block + 1];
-    const uint32_t mask = __ballot_sync(0xffffffff, idle);
-    agents += __popc(mask);
-    const uint32_t before = blockIdx.y > first ? min(blockIdx.y - first, 32U) : 0;
-    const uint32_t lower = before == 32 ? 0xffffffff : (1U << before) - 1;
-    rank += __popc(mask & lower);
-  }
-  extern __shared__ uint8_t agent_smem[];
-  record_host_phase(params, 2);
-  auto* positions = reinterpret_cast<uint32_t*>(agent_smem);
-  auto* pages = positions + 128;
-  auto* count = pages + 128;
-  if (tid < 32) {
-    uint32_t selected = 0;
-    for (uint32_t first = rank; first < 2048; first += agents * 32) {
-      const uint32_t position = first + lane * agents;
-      const auto page = position < 2048 ? params.kv_indices[position] : -1;
-      const uint32_t mask = __ballot_sync(
-          0xffffffff, position < 2048 && page >= params.host_page_start);
-      if (position < 2048 && page >= params.host_page_start) {
-        const uint32_t offset = selected + __popc(mask & ((1U << lane) - 1));
-        positions[offset] = position;
-        pages[offset] = page;
-      }
-      selected += __popc(mask);
-    }
-    if (tid == 0) *count = selected;
-  }
-  __syncthreads();
-  record_host_phase(params, 3);
-  if (tid == 0) params.host_prefetch_state[gridDim.y + 2048 + blockIdx.y * 10 + 8] = *count;
-  record_host_phase(params, 4);
-  uint4 values[16];
+  const uint32_t rank = params.host_prefetch_state[2048 + 11 * gridDim.y + blockIdx.y];
+  const uint32_t agents = params.host_agent_count;
+  const uint32_t warp = tid / 32;
+  uint32_t positions[6];
+  uint4 first[6], second[6], rope[6];
 #pragma unroll
-  for (uint32_t i = 0; i < 16; ++i) {
-    const uint32_t vector = tid + i * KTraits::NUM_THREADS;
-    if (vector < *count * 72) {
-      const uint32_t row = vector / 72, feature = vector % 72;
-      const auto page = pages[row];
-      const auto* source = feature < 64
-                               ? params.ckv + page * params.ckv_stride_page + feature * 8
-                               : params.kpe + page * params.kpe_stride_page + (feature - 64) * 8;
-      values[i] = *reinterpret_cast<const uint4*>(source);
+  for (uint32_t i = 0; i < 6; ++i) {
+    const uint32_t position = (rank * 8 + warp) + i * agents * 8;
+    const auto page = position < 2048 ? params.kv_indices[position] : -1;
+    positions[i] = position < 2048 && page >= params.host_page_start ? position : 2048;
+    if (positions[i] < 2048) {
+      const auto* source = params.ckv + page * params.ckv_stride_page;
+      first[i] = *reinterpret_cast<const uint4*>(source + lane * 8);
+      second[i] = *reinterpret_cast<const uint4*>(source + 256 + lane * 8);
+      if (lane < 8) {
+        rope[i] = *reinterpret_cast<const uint4*>(
+            params.kpe + page * params.kpe_stride_page + lane * 8);
+      }
     }
   }
   asm volatile("" ::: "memory");
 #pragma unroll
-  for (uint32_t i = 0; i < 16; ++i) {
-    const uint32_t vector = tid + i * KTraits::NUM_THREADS;
-    if (vector < *count * 72) {
-      const uint32_t row = vector / 72, feature = vector % 72;
-      *reinterpret_cast<uint4*>(params.host_prefetch_buffer + positions[row] * 576 + feature * 8) = values[i];
+  for (uint32_t i = 0; i < 6; ++i) {
+    if (positions[i] < 2048) {
+      auto* destination = params.host_prefetch_buffer + positions[i] * 576;
+      *reinterpret_cast<uint4*>(destination + lane * 8) = first[i];
+      *reinterpret_cast<uint4*>(destination + 256 + lane * 8) = second[i];
+      if (lane < 8) *reinterpret_cast<uint4*>(destination + 512 + lane * 8) = rope[i];
     }
   }
   __threadfence();
-  __syncthreads();
-  record_host_phase(params, 5);
-  if (tid == 0) {
-    for (uint32_t row = 0; row < *count; ++row) {
-      asm volatile("st.release.gpu.global.u64 [%0], %1;"
-                   :
-                   : "l"(params.host_prefetch_state + gridDim.y + positions[row]), "l"(epoch)
-                   : "memory");
+  __syncwarp();
+  if (lane == 0) {
+#pragma unroll
+    for (uint32_t i = 0; i < 6; ++i) {
+      if (positions[i] < 2048) {
+        asm volatile("st.release.gpu.global.u64 [%0], %1;"
+                     :
+                     : "l"(params.host_prefetch_state + gridDim.y + positions[i]), "l"(epoch)
+                     : "memory");
+      }
     }
   }
   record_host_phase(params, 6);
