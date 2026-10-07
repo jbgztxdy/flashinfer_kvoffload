@@ -178,6 +178,15 @@ __device__ __forceinline__ uint32_t prepare_host_indices(
   return host_count;
 }
 
+template <typename T>
+__device__ __forceinline__ uint4 load_host_vector(const T* source) {
+  uint4 value;
+  asm volatile("ld.global.cg.v4.u32 {%0, %1, %2, %3}, [%4];"
+               : "=r"(value.x), "=r"(value.y), "=r"(value.z), "=r"(value.w)
+               : "l"(source) : "memory");
+  return value;
+}
+
 template <typename KTraits, typename Params>
 __device__ __forceinline__ void run_host_prefetch_agent(
     const Params& params, unsigned long long epoch) {
@@ -196,11 +205,10 @@ __device__ __forceinline__ void run_host_prefetch_agent(
     positions[i] = position < 2048 && page >= params.host_page_start ? position : 2048;
     if (positions[i] < 2048) {
       const auto* source = params.ckv + page * params.ckv_stride_page;
-      first[i] = *reinterpret_cast<const uint4*>(source + lane * 8);
-      second[i] = *reinterpret_cast<const uint4*>(source + 256 + lane * 8);
+      first[i] = load_host_vector(source + lane * 8);
+      second[i] = load_host_vector(source + 256 + lane * 8);
       if (lane < 8) {
-        rope[i] = *reinterpret_cast<const uint4*>(
-            params.kpe + page * params.kpe_stride_page + lane * 8);
+        rope[i] = load_host_vector(params.kpe + page * params.kpe_stride_page + lane * 8);
       }
     }
   }
