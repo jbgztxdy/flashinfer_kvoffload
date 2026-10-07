@@ -1208,61 +1208,29 @@ __device__ __forceinline__ void compute_host_split(
       __syncthreads();
       if constexpr (!KTraits::QK_SHARD) {
         if (length <= 16) {
-          auto* probabilities = reinterpret_cast<typename KTraits::DTypeKV*>(storage.kpe_p_smem[0]);
-          auto* moments = reinterpret_cast<float*>(probabilities + 64 * 16);
-          const uint32_t lane = threadIdx.x, warp = threadIdx.y;
           if (threadIdx.z == 0) {
             compute_mla_qk<KTraits>(&storage, 0, s_frag);
             logits_mask_<KTraits>(0, 0, 1, length, length, params.num_heads, s_frag);
             update_mdo_states_<KTraits>(&storage, 0, variant, s_frag, o_frag, m, d);
-            typename KTraits::DTypeKV p[8];
-            vec_cast<typename KTraits::DTypeKV, float>::template cast<8>(p, s_frag[0]);
-            mma::m16k16_rowsum_f16f16f32(d, p);
+            compute_small_host_pv<0, KTraits>(&storage, s_frag, d, o_frag);
+            normalize_d_<KTraits>(&storage, 0, o_frag, m, d);
             finalize_m_<KTraits>(variant, m);
+            write_o<KTraits>(&storage, params.final_o, params.final_lse,
+                            params.partial_o + blockIdx.y * 64 * 512,
+                            params.partial_lse + blockIdx.y * 64, o_frag, m, d,
+                            params.o_stride_n, params.o_stride_h, 1, 0, params.num_heads, false);
 #pragma unroll
-            for (uint32_t j = 0; j < 2; ++j) {
-              const uint32_t head = warp * 16 + lane / 4 + j * 8;
-              if (lane % 4 == 0) {
-                moments[head] = m[j];
-                moments[64 + head] = d[j];
-              }
+            for (uint32_t feature = 0; feature < 16; ++feature) {
+#pragma unroll
+              for (uint32_t reg = 0; reg < 8; ++reg) o_frag[feature][reg] = 0.f;
             }
-#pragma unroll
-            for (uint32_t reg = 0; reg < 8; ++reg) {
-              const uint32_t head = warp * 16 + lane / 4 + ((reg % 4) / 2) * 8;
-              const uint32_t key = 2 * (lane % 4) + (reg / 4) * 8 + reg % 2;
-              probabilities[head * 16 + key] = p[reg];
-            }
+            compute_small_host_pv<1, KTraits>(&storage, s_frag, d, o_frag);
+            normalize_d_<KTraits>(&storage, 0, o_frag, m, d);
+            write_o<KTraits>(&storage, params.final_o, params.final_lse,
+                            params.partial_o + blockIdx.y * 64 * 512 + 256,
+                            params.partial_lse + blockIdx.y * 64, o_frag, m, d,
+                            params.o_stride_n, params.o_stride_h, 1, 0, params.num_heads, false);
           }
-          __syncthreads();
-          alignas(16) typename KTraits::DTypeKV p[8];
-#pragma unroll
-          for (uint32_t reg = 0; reg < 8; ++reg) {
-            const uint32_t head = warp * 16 + lane / 4 + ((reg % 4) / 2) * 8;
-            const uint32_t key = 2 * (lane % 4) + (reg / 4) * 8 + reg % 2;
-            p[reg] = probabilities[head * 16 + key];
-          }
-#pragma unroll
-          for (uint32_t j = 0; j < 2; ++j) {
-            const uint32_t head = warp * 16 + lane / 4 + j * 8;
-            m[j] = moments[head];
-            d[j] = moments[64 + head];
-          }
-          smem_t<KTraits::SWIZZLE_MODE_CKV> ckv_smem(storage.ckv_smem[0]);
-          uint32_t offset = ckv_smem.template get_permuted_offset<KTraits::UPCAST_STRIDE_CKV>(
-              lane % 16, threadIdx.z * KTraits::NUM_MMA_D_CKV + lane / 16);
-#pragma unroll
-          for (uint32_t feature = 0; feature < 16; ++feature) {
-            uint32_t value[4];
-            ckv_smem.ldmatrix_m8n8x4_trans(offset, value);
-            mma::mma_sync_m16n16k16_row_col_f16f16f32<typename KTraits::DTypeKV>(o_frag[feature], reinterpret_cast<uint32_t*>(p), value);
-            offset = ckv_smem.template advance_offset_by_column<2>(offset, feature);
-          }
-          normalize_d_<KTraits>(&storage, 0, o_frag, m, d);
-          write_o<KTraits>(&storage, params.final_o, params.final_lse,
-                          params.partial_o + blockIdx.y * 64 * 512,
-                          params.partial_lse + blockIdx.y * 64, o_frag, m, d,
-                          params.o_stride_n, params.o_stride_h, 1, 0, params.num_heads, false);
           return;
         }
       }
@@ -1298,7 +1266,7 @@ __device__ __forceinline__ void merge_host_group(
   const uint32_t tid = threadIdx.y * 32 + threadIdx.x, lane = threadIdx.x;
   const uint32_t head = blockIdx.y - 44;
   extern __shared__ uint8_t smem[];
-  auto* weights = reinterpret_cast<float*>(smem + 36864);
+  auto* weights = reinterpret_cast<float*>(smem + 36864 + (START == 0 ? 0 : 256));
   if (tid < 32) {
     uint32_t mask;
     do {
@@ -1330,7 +1298,8 @@ __device__ __forceinline__ void merge_host_group(
     if (lane < COUNT) weights[lane] = sum > 0.f ? weight / sum : 0.f;
     if (lane == 0) weights[32] = maximum == -math::inf ? -math::inf : maximum + math::ptx_log2(sum);
   }
-  asm volatile("bar.sync 1, 128;" ::: "memory");
+  if constexpr (START == 0) asm volatile("bar.sync 1, 128;" ::: "memory");
+  else asm volatile("bar.sync 2, 128;" ::: "memory");
   lse_output = weights[32];
   uint2 packed_values[COUNT];
 #pragma unroll
@@ -1353,29 +1322,42 @@ __device__ __forceinline__ void merge_host_group(
       for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = fmaf(values[feature], weight, output[feature]);
     }
   }
-  asm volatile("bar.sync 1, 128;" ::: "memory");
+  if constexpr (START == 0) asm volatile("bar.sync 1, 128;" ::: "memory");
+  else asm volatile("bar.sync 2, 128;" ::: "memory");
 }
 
 template <typename KTraits, typename Params>
 __device__ __forceinline__ void merge_ready_host_states(
     typename KTraits::SharedStorage& storage, const Params& params) {
   const uint32_t tid = threadIdx.y * 32 + threadIdx.x, head = blockIdx.y - 44;
-  float local[4], host[4], local_lse, host_lse;
-  merge_host_group<0, 16, KTraits>(storage, params, local, local_lse);
-  merge_host_group<16, 28, KTraits>(storage, params, host, host_lse);
-  const float maximum = max(local_lse, host_lse);
-  const float local_weight = math::ptx_exp2(local_lse - maximum);
-  const float host_weight = math::ptx_exp2(host_lse - maximum);
-  const float denominator = local_weight + host_weight;
+  extern __shared__ uint8_t smem[];
+  auto* host_output = reinterpret_cast<float*>(smem + 40960);
+  float output[4], lse;
+  if (threadIdx.z == 1) {
+    merge_host_group<16, 28, KTraits>(storage, params, output, lse);
 #pragma unroll
-  for (uint32_t feature = 0; feature < 4; ++feature) {
-    params.final_o[head * params.o_stride_h + tid * 4 + feature] = typename KTraits::DTypeO(
-        (local[feature] * local_weight + host[feature] * host_weight) / denominator);
+    for (uint32_t feature = 0; feature < 4; ++feature) host_output[tid * 4 + feature] = output[feature];
+    if (tid == 0) host_output[512] = lse;
+  } else {
+    merge_host_group<0, 16, KTraits>(storage, params, output, lse);
   }
-  if (tid == 0 && params.final_lse) {
-    float value = maximum + math::ptx_log2(denominator);
-    if (params.return_lse_base_on_e) value *= math::loge2;
-    params.final_lse[head] = value;
+  __syncthreads();
+  if (threadIdx.z == 0) {
+    const float host_lse = host_output[512];
+    const float maximum = max(lse, host_lse);
+    const float local_weight = math::ptx_exp2(lse - maximum);
+    const float host_weight = math::ptx_exp2(host_lse - maximum);
+    const float denominator = local_weight + host_weight;
+#pragma unroll
+    for (uint32_t feature = 0; feature < 4; ++feature) {
+      params.final_o[head * params.o_stride_h + tid * 4 + feature] = typename KTraits::DTypeO(
+          (output[feature] * local_weight + host_output[tid * 4 + feature] * host_weight) / denominator);
+    }
+    if (tid == 0 && params.final_lse) {
+      float value = maximum + math::ptx_log2(denominator);
+      if (params.return_lse_base_on_e) value *= math::loge2;
+      params.final_lse[head] = value;
+    }
   }
 }
 
@@ -1409,7 +1391,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostOverlapKerne
     }
   } else {
     if (threadIdx.z == 1) run_host_fetch_warps<KTraits>(params, storage.epoch);
-    else merge_ready_host_states<KTraits>(storage, params);
+    merge_ready_host_states<KTraits>(storage, params);
   }
 }
 
