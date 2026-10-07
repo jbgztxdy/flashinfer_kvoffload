@@ -139,34 +139,41 @@ __device__ __forceinline__ uint32_t prepare_host_indices(
     uint32_t kv_start) {
   const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
   const uint32_t lane = threadIdx.x;
-  if (tid < 32) {
-    uint32_t host_count = 0;
+  const uint32_t warp = tid / 32;
+  const uint32_t chunk = kv_start / 128;
+  uint32_t counts[8], masks[8];
+  typename KTraits::IdType pages[8];
+  uint32_t count = 0;
 #pragma unroll
-    for (uint32_t i = 0; i < 4; ++i) {
-      // Stripe the 16 decode chunks to balance head/tail Host hits across CTAs.
-      const uint32_t position = (i * 32 + lane) * 16 + kv_start / 128;
-      const auto page = params.kv_indices[kv_indptr + position];
-      const uint32_t mask = __ballot_sync(0xffffffff, page >= params.host_page_start);
-      const uint32_t lower_lanes = (1U << lane) - 1;
-      if (page >= params.host_page_start) {
-        const uint32_t rank = host_count + __popc(mask & lower_lanes);
-        storage->host_indices[rank] = page;
-        storage->host_positions[rank] = kv_indptr + position;
-      } else {
-        const uint32_t rank = i * 32 - host_count + __popc(~mask & lower_lanes);
-        storage->local_indices[rank] = page;
-        storage->local_positions[rank] = kv_indptr + position;
-      }
-      host_count += __popc(mask);
-    }
-    if (lane == 0) storage->host_count = host_count;
+  for (uint32_t i = 0; i < 8; ++i) {
+    pages[i] = params.kv_indices[kv_indptr + warp * 256 + i * 32 + lane];
+    counts[i] = count;
+    masks[i] = __ballot_sync(0xffffffff, pages[i] >= params.host_page_start);
+    count += __popc(masks[i]);
   }
+  if (lane == 0) storage->local_indices[warp] = count;
   __syncthreads();
-  const uint32_t host_count = storage->host_count;
-  if (tid >= host_count && tid < 128) {
-    storage->host_indices[tid] = storage->local_indices[tid - host_count];
-    storage->host_positions[tid] = storage->local_positions[tid - host_count];
+  uint32_t host_prefix = 0, total_host = 0;
+#pragma unroll
+  for (uint32_t i = 0; i < 8; ++i) {
+    const uint32_t current = storage->local_indices[i];
+    if (i < warp) host_prefix += current;
+    total_host += current;
   }
+  const uint32_t lower = (1U << lane) - 1;
+#pragma unroll
+  for (uint32_t i = 0; i < 8; ++i) {
+    const uint32_t position = warp * 256 + i * 32 + lane;
+    const bool host = pages[i] >= params.host_page_start;
+    const uint32_t preceding = host_prefix + counts[i] + __popc(masks[i] & lower);
+    const uint32_t ordered = host ? preceding : total_host + position - preceding;
+    if (ordered % 16 == chunk) {
+      storage->host_indices[ordered / 16] = pages[i];
+      storage->host_positions[ordered / 16] = kv_indptr + position;
+    }
+  }
+  const uint32_t host_count = (total_host + 15 - chunk) / 16;
+  if (tid == 0) storage->host_count = host_count;
   __syncthreads();
   return host_count;
 }
