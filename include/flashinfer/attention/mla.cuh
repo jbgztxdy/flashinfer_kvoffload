@@ -187,6 +187,13 @@ __device__ __forceinline__ uint4 load_host_vector(const T* source) {
   return value;
 }
 
+template <typename T>
+__device__ __forceinline__ void load_host_prefetch_256(T* destination, const T* source) {
+  const uint32_t shared = static_cast<uint32_t>(__cvta_generic_to_shared(destination));
+  asm volatile("cp.async.cg.shared.global.L2::256B [%0], [%1], 16;"
+               :: "r"(shared), "l"(source));
+}
+
 template <typename KTraits, typename Params>
 __device__ __forceinline__ void run_host_prefetch_agent(
     const Params& params, unsigned long long epoch) {
@@ -207,8 +214,8 @@ __device__ __forceinline__ void run_host_prefetch_agent(
     if (positions[i] < 2048) {
       const auto* source = params.ckv + page * params.ckv_stride_page;
       auto* destination = staging + (i * 8 + warp) * 576;
-      cp_async::load_128b<cp_async::PrefetchMode::kNoPrefetch>(destination + lane * 8, source + lane * 8);
-      cp_async::load_128b<cp_async::PrefetchMode::kNoPrefetch>(destination + 256 + lane * 8, source + 256 + lane * 8);
+      load_host_prefetch_256(destination + lane * 8, source + lane * 8);
+      load_host_prefetch_256(destination + 256 + lane * 8, source + 256 + lane * 8);
       if (lane < 8) {
         cp_async::load_128b<cp_async::PrefetchMode::kNoPrefetch>(
             destination + 512 + lane * 8, params.kpe + page * params.kpe_stride_page + lane * 8);
@@ -851,52 +858,42 @@ template <typename KTraits, typename Params>
 __device__ __forceinline__ void merge_host_states(const Params& params) {
   if (blockIdx.y >= 64) return;
   const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
-  const uint32_t lane = threadIdx.x, warp = tid / 32, head = blockIdx.y;
+  const uint32_t head = blockIdx.y;
   extern __shared__ uint8_t merge_smem[];
   auto* weights = reinterpret_cast<float*>(merge_smem);
-  auto* maxima = weights + 64;
-  auto* sums = maxima + 2;
-  float lse = -math::inf, maximum = -math::inf;
-  if (tid < 64) {
-    if (tid < 48) lse = params.partial_lse[tid * 64 + head];
-    maximum = lse;
+  if (tid < 32) {
+    const float lse = tid < 16 ? params.partial_lse[tid * 64 + head] : -math::inf;
+    float maximum = lse;
 #pragma unroll
     for (uint32_t offset = 16; offset > 0; offset /= 2) {
       maximum = max(maximum, __shfl_xor_sync(0xffffffff, maximum, offset));
     }
-    if (lane == 0) maxima[warp] = maximum;
-  }
-  __syncthreads();
-  if (tid < 64) {
-    maximum = max(maxima[0], maxima[1]);
     const float weight = math::ptx_exp2(lse - maximum);
-    weights[tid] = weight;
     float sum = weight;
 #pragma unroll
     for (uint32_t offset = 16; offset > 0; offset /= 2) {
       sum += __shfl_xor_sync(0xffffffff, sum, offset);
     }
-    if (lane == 0) sums[warp] = sum;
-  }
-  __syncthreads();
-  const float sum = sums[0] + sums[1];
-  if (tid < 48) weights[tid] /= sum;
-  if (tid == 0 && params.final_lse) {
-    float value = maximum + math::ptx_log2(sum);
-    if (params.return_lse_base_on_e) value *= math::loge2;
-    params.final_lse[head] = value;
+    if (tid < 16) weights[tid] = weight / sum;
+    if (tid == 0 && params.final_lse) {
+      float value = maximum + math::ptx_log2(sum);
+      if (params.return_lse_base_on_e) value *= math::loge2;
+      params.final_lse[head] = value;
+    }
   }
   __syncthreads();
 #pragma unroll
   for (uint32_t feature = tid; feature < 512; feature += KTraits::NUM_THREADS) {
-    float values[48];
+    float values[16];
 #pragma unroll
-    for (uint32_t split = 0; split < 48; ++split) {
-      values[split] = weights[split] == 0.f ? 0.f : float(params.partial_o[(split * 64 + head) * 512 + feature]);
+    for (uint32_t split = 0; split < 16; ++split) {
+      values[split] = float(params.partial_o[(split * 64 + head) * 512 + feature]);
     }
     float output = 0.f;
 #pragma unroll
-    for (uint32_t split = 0; split < 48; ++split) output = fmaf(values[split], weights[split], output);
+    for (uint32_t split = 0; split < 16; ++split) {
+      output = fmaf(values[split], weights[split], output);
+    }
     params.final_o[head * params.o_stride_h + feature] = typename KTraits::DTypeO(output);
   }
 }
@@ -1289,244 +1286,6 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
   }
 }
 
-template <typename BaseTraits>
-struct HostSplitKernelTraits : BaseTraits {
-  struct SharedStorage : BaseTraits::SharedStorage {
-    typename BaseTraits::IdType indices[128];
-    uint32_t counts[8];
-    uint32_t count;
-    unsigned long long epoch;
-    unsigned long long ready_mask;
-  };
-};
-
-template <typename KTraits, typename Params>
-__device__ __forceinline__ uint32_t prepare_host_split(
-    typename KTraits::SharedStorage* storage, const Params& params) {
-  const uint32_t lane = threadIdx.x;
-  const uint32_t warp = threadIdx.z * 4 + threadIdx.y;
-  const bool host = blockIdx.y >= 16;
-  const uint32_t chunk = host ? blockIdx.y - 16 : blockIdx.y;
-  const uint32_t chunks = host ? 32 : 16;
-  typename KTraits::IdType pages[8];
-  uint32_t preceding[8], masks[8], count = 0;
-#pragma unroll
-  for (uint32_t i = 0; i < 8; ++i) {
-    pages[i] = params.kv_indices[warp * 256 + i * 32 + lane];
-    preceding[i] = count;
-    masks[i] = __ballot_sync(0xffffffff, pages[i] >= params.host_page_start);
-    count += __popc(masks[i]);
-  }
-  if (lane == 0) storage->counts[warp] = count;
-  __syncthreads();
-  uint32_t prefix = 0, total_host = 0;
-#pragma unroll
-  for (uint32_t i = 0; i < 8; ++i) {
-    if (i < warp) prefix += storage->counts[i];
-    total_host += storage->counts[i];
-  }
-#pragma unroll
-  for (uint32_t i = 0; i < 8; ++i) {
-    const uint32_t position = warp * 256 + i * 32 + lane;
-    const uint32_t host_rank = prefix + preceding[i] + __popc(masks[i] & ((1U << lane) - 1));
-    const uint32_t rank = host ? host_rank : position - host_rank;
-    if ((pages[i] >= params.host_page_start) == host && rank % chunks == chunk) {
-      storage->indices[rank / chunks] = pages[i];
-    }
-  }
-  const uint32_t length = ((host ? total_host : 2048 - total_host) + chunks - 1 - chunk) / chunks;
-  if (lane == 0 && warp == 0) storage->count = length;
-  __syncthreads();
-  return length;
-}
-
-template <typename BaseTraits>
-struct HostNarrowKernelTraits : BaseTraits {
-  static constexpr bool QK_SHARD = false;
-  static constexpr uint32_t CTA_TILE_KV = 16;
-  static constexpr uint32_t NUM_MMA_KV = 1;
-  static constexpr uint32_t UPCAST_STRIDE_P = 2;
-};
-
-template <typename KTraits, typename Params>
-__device__ __forceinline__ void compute_host_split(
-    typename KTraits::SharedStorage& storage, Params params, uint32_t length, uint8_t* smem) {
-      float s_frag[KTraits::QK_SHARD ? KTraits::NUM_MMA_KV / 2 : KTraits::NUM_MMA_KV][8], o_frag[16][8], m[2], d[2];
-      init_states_<KTraits>(o_frag, m, d);
-      typename KTraits::AttentionVariant variant(params, 0, smem);
-      int tile = int(ceil_div(length, KTraits::CTA_TILE_KV)) - 1;
-      load_kv<KTraits>(&storage, params.ckv, params.kpe, storage.indices,
-                       params.ckv_stride_n, params.ckv_stride_page, params.kpe_stride_n,
-                       params.kpe_stride_page, length, tile * KTraits::CTA_TILE_KV, params.block_size, tile % 2);
-      cp_async::commit_group();
-      if (tile > 0) {
-        load_kv<KTraits>(&storage, params.ckv, params.kpe, storage.indices,
-                         params.ckv_stride_n, params.ckv_stride_page, params.kpe_stride_n,
-                         params.kpe_stride_page, length, (tile - 1) * KTraits::CTA_TILE_KV, params.block_size,
-                         (tile - 1) % 2);
-        cp_async::commit_group();
-      }
-      load_q<KTraits>(&storage, params.q_nope, params.q_pe, params.q_nope_stride_n,
-                      params.q_nope_stride_h, params.q_pe_stride_n, params.q_pe_stride_h,
-                      1, 0, params.num_heads);
-      cp_async::commit_group();
-      cp_async::wait_group<0>();
-      __syncthreads();
-      for (; tile >= 0; --tile) {
-        if (tile > 0) cp_async::wait_group<1>();
-        else cp_async::wait_group<0>();
-        __syncthreads();
-        compute_mla_qk<KTraits>(&storage, tile % 2, s_frag);
-        logits_mask_<KTraits>(0, tile * KTraits::CTA_TILE_KV, 1, length, length, params.num_heads, s_frag);
-        update_mdo_states_<KTraits>(&storage, tile % 2, variant, s_frag, o_frag, m, d);
-        compute_mla_pv<KTraits>(&storage, tile % 2, s_frag, d, o_frag);
-        __syncthreads();
-        if (tile >= 2) {
-          load_kv<KTraits>(&storage, params.ckv, params.kpe, storage.indices,
-                           params.ckv_stride_n, params.ckv_stride_page, params.kpe_stride_n,
-                           params.kpe_stride_page, length, (tile - 2) * KTraits::CTA_TILE_KV, params.block_size,
-                           (tile - 2) % 2);
-          cp_async::commit_group();
-        }
-      }
-      normalize_d_<KTraits>(&storage, 0, o_frag, m, d);
-      finalize_m_<KTraits>(variant, m);
-      write_o<KTraits>(&storage, params.final_o, params.final_lse,
-                      params.partial_o + blockIdx.y * 64 * 512,
-                      params.partial_lse + blockIdx.y * 64, o_frag, m, d,
-                      params.o_stride_n, params.o_stride_h, 1, 0, params.num_heads, false);
-
-}
-
-template <typename KTraits, typename Params>
-__device__ __forceinline__ void merge_ready_host_states(
-    typename KTraits::SharedStorage& storage, const Params& params) {
-  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
-  const uint32_t local = tid % 128, group = tid / 128, lane = threadIdx.x;
-  const uint32_t head = (blockIdx.y - 48) * 2 + group;
-  const uint32_t warp = local / 32;
-  extern __shared__ uint8_t merge_smem[];
-  auto* weights = reinterpret_cast<float*>(merge_smem);
-  auto* maxima = weights + 128;
-  auto* sums = maxima + 4;
-  float output[4] = {0.f, 0.f, 0.f, 0.f};
-  float maximum = -math::inf, denominator = 0.f;
-  unsigned long long processed = 0;
-  constexpr unsigned long long complete = (1ULL << 48) - 1;
-  while (processed != complete) {
-    if (tid < 32) {
-      unsigned long long ready_mask;
-      do {
-        ready_mask = 0;
-#pragma unroll
-        for (uint32_t first = 0; first < 48; first += 32) {
-          const uint32_t split = first + lane;
-          unsigned long long ready = 0;
-          if (split < 48 && !(processed & (1ULL << split))) {
-            asm volatile("ld.global.cg.u64 %0, [%1];"
-                         : "=l"(ready)
-                         : "l"(params.host_prefetch_state + gridDim.y + 2048 + split)
-                         : "memory");
-          }
-          const uint32_t mask = __ballot_sync(0xffffffff, split < 48 && ready == storage.epoch);
-          ready_mask |= static_cast<unsigned long long>(mask) << first;
-        }
-        if (__popcll(ready_mask) < 8 && (processed | ready_mask) != complete) __nanosleep(256);
-      } while (__popcll(ready_mask) < 8 && (processed | ready_mask) != complete);
-#pragma unroll
-      for (uint32_t first = 0; first < 48; first += 32) {
-        const uint32_t split = first + lane;
-        if (split < 48 && (ready_mask & (1ULL << split))) {
-          unsigned long long ready;
-          asm volatile("ld.acquire.gpu.global.u64 %0, [%1];"
-                       : "=l"(ready)
-                       : "l"(params.host_prefetch_state + gridDim.y + 2048 + split)
-                       : "memory");
-        }
-      }
-      if (lane == 0) storage.ready_mask = ready_mask;
-    }
-    __syncthreads();
-    const unsigned long long ready_mask = storage.ready_mask;
-    float lse = -math::inf;
-    if (local < 64) {
-      if (local < 48 && (ready_mask & (1ULL << local))) lse = params.partial_lse[local * 64 + head];
-      float value = lse;
-#pragma unroll
-      for (uint32_t offset = 16; offset > 0; offset /= 2) value = max(value, __shfl_xor_sync(0xffffffff, value, offset));
-      if (lane == 0) maxima[group * 2 + warp] = value;
-    }
-    __syncthreads();
-    const float previous = maximum;
-    maximum = max(maximum, max(maxima[group * 2], maxima[group * 2 + 1]));
-    const float scale = previous == -math::inf ? 0.f : math::ptx_exp2(previous - maximum);
-    denominator *= scale;
-#pragma unroll
-    for (uint32_t feature = 0; feature < 4; ++feature) output[feature] *= scale;
-    if (local < 64) {
-      const float weight = maximum == -math::inf ? 0.f : math::ptx_exp2(lse - maximum);
-      weights[group * 64 + local] = weight;
-      float sum = weight;
-#pragma unroll
-      for (uint32_t offset = 16; offset > 0; offset /= 2) sum += __shfl_xor_sync(0xffffffff, sum, offset);
-      if (lane == 0) sums[group * 2 + warp] = sum;
-    }
-    __syncthreads();
-    denominator += sums[group * 2] + sums[group * 2 + 1];
-#pragma unroll 8
-    for (uint32_t split = 0; split < 48; ++split) {
-      const float weight = weights[group * 64 + split];
-      if ((ready_mask & (1ULL << split)) && weight > 0.f) {
-        vec_t<float, 4> value;
-        value.cast_load(params.partial_o + (split * 64 + head) * 512 + local * 4);
-#pragma unroll
-        for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = fmaf(value[feature], weight, output[feature]);
-      }
-    }
-    processed |= ready_mask;
-    __syncthreads();
-  }
-#pragma unroll
-  for (uint32_t feature = 0; feature < 4; ++feature) {
-    params.final_o[head * params.o_stride_h + local * 4 + feature] = typename KTraits::DTypeO(output[feature] / denominator);
-  }
-  if (local == 0 && params.final_lse) {
-    float value = maximum + math::ptx_log2(denominator);
-    if (params.return_lse_base_on_e) value *= math::loge2;
-    params.final_lse[head] = value;
-  }
-}
-
-template <typename KTraits, typename Params>
-__global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostSplitKernel(Params params) {
-  extern __shared__ uint8_t smem[];
-  auto& storage = *reinterpret_cast<typename KTraits::SharedStorage*>(smem);
-  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
-  if (tid == 0) storage.epoch = atomicAdd(params.host_prefetch_state + blockIdx.y, 1ULL) + 1;
-  __syncthreads();
-  params.partial_o = params.host_prefetch_buffer;
-  params.partial_lse = reinterpret_cast<float*>(params.host_prefetch_state + gridDim.y);
-  if (blockIdx.y < 48) {
-    const uint32_t length = prepare_host_split<KTraits>(&storage, params);
-    if (length > 0) {
-      if (blockIdx.y < 16) compute_host_split<KTraits>(storage, params, length, smem);
-      else compute_host_split<HostNarrowKernelTraits<KTraits>>(storage, params, length, smem);
-    } else {
-      if (tid < 64) params.partial_lse[blockIdx.y * 64 + tid] = -math::inf;
-    }
-    __threadfence();
-    __syncthreads();
-    if (tid == 0) {
-      asm volatile("st.release.gpu.global.u64 [%0], %1;"
-                   :
-                   : "l"(params.host_prefetch_state + gridDim.y + 2048 + blockIdx.y), "l"(storage.epoch)
-                   : "memory");
-    }
-  } else {
-    merge_ready_host_states<KTraits>(storage, params);
-  }
-}
-
 #define DISPATCH_SMEM_CONFIG(smem_limit_per_sm, NUM_STAGES, CTA_TILE_KV, QK_SHARD, ...) \
   if (smem_limit_per_sm >= 221696) {                                                    \
     constexpr uint32_t NUM_STAGES = 2;                                                  \
@@ -1573,17 +1332,17 @@ cudaError_t BatchMLAPagedAttention(Params params, uint32_t num_blks_x, uint32_t 
 
   if constexpr (!CAUSAL && HEAD_DIM_CKV == 512 && HEAD_DIM_KPE == 64 &&
                 sizeof(DTypeQ) == 2 && sizeof(DTypeKV) == 2) {
-    using HostTraits = HostSplitKernelTraits<KernelTraits<
+    using HostTraits = HostPrefetchKernelTraits<KernelTraits<
         false, 2, true, HEAD_DIM_CKV, HEAD_DIM_KPE, 64, 32, DTypeQ, DTypeKV, DTypeO, IdType>>;
-    if (params.host_page_start >= 0 && params.block_size == 1 && num_blks_y >= 80 &&
+    if (params.host_page_start >= 0 && params.block_size == 1 && num_blks_y >= 64 &&
         smem_limit_per_sm >= sizeof(typename HostTraits::SharedStorage)) {
-      auto kernel = BatchMLAHostSplitKernel<HostTraits, Params>;
+      auto kernel = BatchMLAPagedAttentionKernel<HostTraits, Params>;
       size_t smem_size = sizeof(typename HostTraits::SharedStorage);
       void* args[] = {(void*)&params};
       FLASHINFER_CUDA_CALL(
           cudaFuncSetAttribute(kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, smem_size));
       FLASHINFER_CUDA_CALL(
-          cudaLaunchCooperativeKernel((void*)kernel, dim3(1, 80), nthrs, args, smem_size, stream));
+          cudaLaunchCooperativeKernel((void*)kernel, nblks, nthrs, args, smem_size, stream));
       return cudaSuccess;
     }
   }
