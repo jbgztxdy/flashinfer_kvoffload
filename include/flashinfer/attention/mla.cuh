@@ -217,10 +217,18 @@ __device__ __forceinline__ void load_prefetched_tile(
   if (host != HOST_ONLY) return;
   const uint32_t source_position = storage->host_positions[position];
   if constexpr (HOST_ONLY) {
-    while (atomicAdd(params.host_prefetch_state + gridDim.y + source_position, 0ULL) !=
-           storage->epoch) {
-      __nanosleep(32);
+    const uint32_t active_lanes = __activemask();
+    if ((lane & 7) == 0) {
+      unsigned long long ready;
+      do {
+        asm volatile("ld.acquire.gpu.global.u64 %0, [%1];"
+                     : "=l"(ready)
+                     : "l"(params.host_prefetch_state + gridDim.y + source_position)
+                     : "memory");
+        if (ready != storage->epoch) __nanosleep(64);
+      } while (ready != storage->epoch);
     }
+    __syncwarp(active_lanes);
   }
   smem_t<KTraits::SWIZZLE_MODE_CKV> ckv_smem(storage->ckv_smem[stage]);
   smem_t<KTraits::SWIZZLE_MODE_KPE> kpe_smem(storage->kpe_p_smem[stage]);
