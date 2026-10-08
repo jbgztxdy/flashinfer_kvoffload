@@ -6,6 +6,7 @@ import json
 import math
 from pathlib import Path
 import re
+import zipfile
 
 import matplotlib
 
@@ -184,6 +185,16 @@ def save_charts(cases_by_layout):
             metadata={"Creator": "Matplotlib"},
         )
     plt.close(figure)
+    for path in FOLDER.rglob("*.svg"):
+        path.write_text(
+            "\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n"
+        )
+    with zipfile.ZipFile(
+        FOLDER / "charts.zip", "w", compression=zipfile.ZIP_DEFLATED
+    ) as archive:
+        for path in sorted(FOLDER.rglob("host_*.*")):
+            if path.suffix in {".png", ".svg", ".pdf"}:
+                archive.write(path, path.relative_to(FOLDER))
 
 
 def history():
@@ -364,7 +375,7 @@ def main():
         "max_abs_error",
     ]
     with (FOLDER / "comparison.csv").open("w", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer = csv.DictWriter(file, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for layout, cases in cases_by_layout.items():
             for (context, fraction), case in sorted(cases.items()):
