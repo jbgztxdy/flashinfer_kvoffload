@@ -406,6 +406,8 @@ def main():
     parser.add_argument(
         "--host-kernel", choices=("staged", "private"), default="staged"
     )
+    parser.add_argument("--private-chunks", type=int, choices=(28, 32, 40, 48, 60), default=28)
+    parser.add_argument("--private-pipeline", action="store_true")
     args = parser.parse_args()
     if args.host_kernel == "private":
         from flashinfer.jit import gen_batch_mla_module
@@ -417,10 +419,17 @@ def main():
                 backend, *module_args, host_prefetch=host_prefetch
             )
             if host_prefetch:
-                specification.name += "_private_shared"
-                specification.extra_cuda_cflags.append(
-                    "-DFLASHINFER_MLA_HOST_PRIVATE_SHARED"
+                specification.name += f"_private_shared_{args.private_chunks}_{int(args.private_pipeline)}"
+                specification.extra_cuda_cflags.extend(
+                    [
+                        "-DFLASHINFER_MLA_HOST_PRIVATE_SHARED",
+                        f"-DFLASHINFER_MLA_HOST_PRIVATE_CHUNKS={args.private_chunks}",
+                    ]
                 )
+                if args.private_pipeline:
+                    specification.extra_cuda_cflags.append(
+                        "-DFLASHINFER_MLA_HOST_PRIVATE_PIPELINE"
+                    )
             return specification.build_and_load()
 
         _core.get_batch_mla_module = private_module

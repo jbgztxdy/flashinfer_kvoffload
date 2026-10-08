@@ -1,0 +1,40 @@
+{
+  "baseline_us": 27.463679313659668,
+  "throughput_loss_20_budget_us": 34.329599142074585,
+  "link_ceiling_GB_s": 31.50769230769231,
+  "measured_stream_GB_s": 27.032958,
+  "scope": "Single-layer BF16 MLA with top-k 2048. Stream proxy excludes startup and sparse overhead; sparse read-and-store is an implementation reference, not a physical floor. HBM baseline includes memory and synchronization.",
+  "rows": [
+    {
+      "host_fraction": 0.25,
+      "host_rows": 512,
+      "host_bytes": 589824,
+      "link_only_us": 18.72,
+      "stream_proxy_us": 21.8186999735656,
+      "sparse_read_and_store_us": 25.410560369491577,
+      "latency_budget_us": 32.9564151763916,
+      "post_stream_budget_us": 11.137715202826001,
+      "post_sparse_reference_budget_us": 7.545854806900024,
+      "current_attention_us": 38.81983995437622,
+      "required_overlap_proxy": 0.7482555849163036
+    },
+    {
+      "host_fraction": 0.3,
+      "host_rows": 614,
+      "host_bytes": 707328,
+      "link_only_us": 22.449375,
+      "stream_proxy_us": 26.16539410892437,
+      "sparse_read_and_store_us": 29.76256012916565,
+      "latency_budget_us": 32.9564151763916,
+      "post_stream_budget_us": 6.791021067467231,
+      "post_sparse_reference_budget_us": 3.193855047225952,
+      "current_attention_us": 43.079681396484375,
+      "required_overlap_proxy": 0.7900763183666897
+    }
+  ],
+  "sources": [
+    "https://pcisig.com/sites/default/files/2026-01/30%20Years%20of%20PCI-SIG%20Innovation%20Webinar_Updated%203.23.2023.pdf",
+    "temp/mapped_host_read_bandwidth.csv",
+    "temp/host_attention_pcie20/sparse_fetch.json"
+  ]
+}
