@@ -12,7 +12,7 @@ import test_glm52_host_overlap as validation
 def private_module(backend, *args, host_prefetch=False):
     specification = gen_batch_mla_module(backend, *args, host_prefetch=host_prefetch)
     if host_prefetch:
-        chunks = int(os.environ.get("MLA_PRIVATE_CHUNKS", "28"))
+        chunks = int(os.environ.get("MLA_PRIVATE_CHUNKS", "32"))
         pipeline = os.environ.get("MLA_PRIVATE_PIPELINE", "1") == "1"
         specification.name += f"_private_shared_{chunks}_{int(pipeline)}"
         specification.extra_cuda_cflags.extend(

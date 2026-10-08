@@ -111,7 +111,7 @@ def get_batch_mla_uri(
             f"profiler_{use_profiler}"
         )
         + ("_sm90" if backend == "fa3" else "")
-        + ("_host_overlap_v1" if host_prefetch else "")
+        + ("_host_overlap_v2" if host_prefetch else "")
     )
 
 

@@ -1097,8 +1097,7 @@ __device__ __forceinline__ void run_host_fetch_warps(const Params& params,
 }
 
 template <typename BaseTraits>
-// Fixed task assignment for one-query, 64-head, top-2048 decode:
-// 16 local compute CTAs, 28 Host compute CTAs, and 64 producer/merge CTAs.
+// Shared index compaction for one-query, 64-head, top-2048 decode.
 struct HostSplitKernelTraits : BaseTraits {
   struct SharedStorage : BaseTraits::SharedStorage {
     typename BaseTraits::IdType indices[128];
@@ -1181,27 +1180,27 @@ template <uint32_t BEGIN, uint32_t END, bool ROPE, typename KTraits, typename Pa
 __device__ __forceinline__ void load_private_host_segment(
     typename KTraits::SharedStorage& storage, const Params& params, uint32_t length) {
   const uint32_t lane = threadIdx.x;
-  const uint32_t warp = threadIdx.z * 4 + threadIdx.y;
-#pragma unroll
-  for (uint32_t slot = 0; slot < KTraits::CTA_TILE_KV / 8; ++slot) {
-  const uint32_t row = warp + slot * 8;
+  const uint32_t group = threadIdx.z;
+  if constexpr (!KTraits::QK_SHARD) {
+    if (group != 0) return;
+  }
+  const uint32_t row = (KTraits::QK_SHARD ? group * 16 : 0) + threadIdx.y * 4 + lane / 8;
   const uint32_t page = row < length ? storage.indices[row] : 0;
   if constexpr (ROPE) {
-    if (lane < 8) {
     smem_t<KTraits::SWIZZLE_MODE_KPE> shared(storage.kpe_p_smem[0]);
     auto* source = params.kpe + page * params.kpe_stride_page + (lane % 8) * 8;
     const uint32_t offset = shared.template get_permuted_offset<KTraits::UPCAST_STRIDE_KPE>(
         row, lane % 8);
     shared.template load_128b_async<SharedMemFillMode::kFillZero>(offset, source, row < length);
-    }
   } else {
     smem_t<KTraits::SWIZZLE_MODE_CKV> shared(storage.ckv_smem[0]);
-    static_assert(END - BEGIN == 4);
-      auto* source = params.ckv + page * params.ckv_stride_page + BEGIN * 64 + lane * 8;
+#pragma unroll
+    for (uint32_t feature = BEGIN; feature < END; ++feature) {
+      auto* source = params.ckv + page * params.ckv_stride_page + feature * 64 + (lane % 8) * 8;
       const uint32_t offset = shared.template get_permuted_offset<KTraits::UPCAST_STRIDE_CKV>(
-          row, BEGIN * 8 + lane);
+          row, feature * 8 + lane % 8);
       shared.template load_128b_async<SharedMemFillMode::kFillZero>(offset, source, row < length);
-  }
+    }
   }
 }
 
@@ -1270,17 +1269,17 @@ __device__ __forceinline__ void compute_host_split(typename KTraits::SharedStora
     }
   } else {
     load_kv<KTraits>(&storage, params.ckv, params.kpe, storage.indices, params.ckv_stride_n,
-                   params.ckv_stride_page, params.kpe_stride_n, params.kpe_stride_page, length,
-                   tile * KTraits::CTA_TILE_KV, params.block_size, tile % 2);
-  cp_async::commit_group();
-  if (tile > 0) {
-    load_kv<KTraits>(&storage, params.ckv, params.kpe, storage.indices, params.ckv_stride_n,
-                     params.ckv_stride_page, params.kpe_stride_n, params.kpe_stride_page, length,
-                     (tile - 1) * KTraits::CTA_TILE_KV, params.block_size, (tile - 1) % 2);
+                    params.ckv_stride_page, params.kpe_stride_n, params.kpe_stride_page, length,
+                    tile * KTraits::CTA_TILE_KV, params.block_size, tile % 2);
     cp_async::commit_group();
-  }
-  cp_async::wait_group<0>();
-  __syncthreads();
+    if (tile > 0) {
+      load_kv<KTraits>(&storage, params.ckv, params.kpe, storage.indices, params.ckv_stride_n,
+                      params.ckv_stride_page, params.kpe_stride_n, params.kpe_stride_page, length,
+                      (tile - 1) * KTraits::CTA_TILE_KV, params.block_size, (tile - 1) % 2);
+      cp_async::commit_group();
+    }
+    cp_async::wait_group<0>();
+    __syncthreads();
   }
   if constexpr (DIRECT_HOST) record_overlap_phase(params, 2);
   if constexpr (!KTraits::QK_SHARD) {
@@ -1564,7 +1563,7 @@ __device__ __forceinline__ void merge_private_host_group(
 
 template <uint32_t HOST_CHUNKS, typename KTraits, typename Params>
 __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPrivateHostKernel(Params params) {
-#ifdef FLASHINFER_MLA_HOST_PRIVATE_PIPELINE
+#if defined(FLASHINFER_MLA_HOST_PRIVATE_PIPELINE) || !defined(FLASHINFER_MLA_HOST_PRIVATE_SHARED)
   constexpr bool PIPELINE = true;
 #else
   constexpr bool PIPELINE = false;
@@ -1677,10 +1676,12 @@ cudaError_t BatchMLAPagedAttention(Params params, uint32_t num_blks_x, uint32_t 
         false, 2, true, HEAD_DIM_CKV, HEAD_DIM_KPE, 64, 32, DTypeQ, DTypeKV, DTypeO, IdType>>;
     if (params.host_page_start >= 0 && params.block_size == 1 && num_blks_y >= 108 &&
         smem_limit_per_sm >= sizeof(typename HostTraits::SharedStorage)) {
-#ifdef FLASHINFER_MLA_HOST_PRIVATE_SHARED
+#ifdef FLASHINFER_MLA_HOST_STAGED_BASELINE
+      auto kernel = BatchMLAHostOverlapKernel<HostTraits, Params>;
+#elif defined(FLASHINFER_MLA_HOST_PRIVATE_SHARED)
       auto kernel = BatchMLAPrivateHostKernel<FLASHINFER_MLA_HOST_PRIVATE_CHUNKS, HostTraits, Params>;
 #else
-      auto kernel = BatchMLAHostOverlapKernel<HostTraits, Params>;
+      auto kernel = BatchMLAPrivateHostKernel<32, HostTraits, Params>;
 #endif
       size_t smem_size = sizeof(typename HostTraits::SharedStorage);
       void* args[] = {(void*)&params};

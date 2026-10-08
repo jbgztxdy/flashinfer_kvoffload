@@ -404,18 +404,14 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--baseline-module", type=Path)
     parser.add_argument(
-        "--host-kernel", choices=("staged", "private"), default="staged"
+        "--host-kernel", choices=("auto", "staged", "private"), default="auto"
     )
     parser.add_argument(
-        "--private-chunks", type=int, choices=(28, 32, 40, 48, 60), default=28
+        "--private-chunks", type=int, choices=(28, 32, 40, 48, 60), default=32
     )
     parser.add_argument("--private-pipeline", action="store_true")
-    parser.add_argument("--private-register", action="store_true")
-    parser.add_argument("--private-unsharded", action="store_true")
     args = parser.parse_args()
-    if args.private_register and not args.private_pipeline:
-        raise ValueError("Register reads require --private-pipeline")
-    if args.host_kernel == "private":
+    if args.host_kernel != "auto":
         from flashinfer.jit import gen_batch_mla_module
         from flashinfer.mla import _core
 
@@ -424,12 +420,13 @@ def main():
             specification = gen_batch_mla_module(
                 backend, *module_args, host_prefetch=host_prefetch
             )
-            if host_prefetch:
-                specification.name += (
-                    f"_private_shared_{args.private_chunks}_{int(args.private_pipeline)}"
-                    + ("_register" if args.private_register else "")
-                    + ("_unsharded" if args.private_unsharded else "")
+            if host_prefetch and args.host_kernel == "staged":
+                specification.name += "_staged_baseline"
+                specification.extra_cuda_cflags.append(
+                    "-DFLASHINFER_MLA_HOST_STAGED_BASELINE"
                 )
+            elif host_prefetch:
+                specification.name += f"_private_shared_{args.private_chunks}_{int(args.private_pipeline)}"
                 specification.extra_cuda_cflags.extend(
                     [
                         "-DFLASHINFER_MLA_HOST_PRIVATE_SHARED",
@@ -439,14 +436,6 @@ def main():
                 if args.private_pipeline:
                     specification.extra_cuda_cflags.append(
                         "-DFLASHINFER_MLA_HOST_PRIVATE_PIPELINE"
-                    )
-                if args.private_register:
-                    specification.extra_cuda_cflags.append(
-                        "-DFLASHINFER_MLA_HOST_PRIVATE_REGISTER"
-                    )
-                if args.private_unsharded:
-                    specification.extra_cuda_cflags.append(
-                        "-DFLASHINFER_MLA_HOST_PRIVATE_UNSHARDED"
                     )
             return specification.build_and_load()
 
@@ -479,6 +468,7 @@ def main():
                 "include/flashinfer/attention/mla.cuh",
                 "csrc/batch_mla_run.cu",
                 "flashinfer/mla/_core.py",
+                "flashinfer/jit/attention/modules.py",
             )
         },
         methods={

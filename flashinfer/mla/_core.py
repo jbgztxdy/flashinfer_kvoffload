@@ -539,10 +539,11 @@ class BatchMLAPagedAttentionWrapper:
             this boundary must reside in mapped pinned Host memory. This path
             requires one noncausal query, 64 heads, rank 512, RoPE 64, page size 1,
             and 2048 selected pages, using matching BF16 or FP16 inputs on a GPU
-            with at least 108 SMs. Producer warp groups directly read Host rows
-            into 2.25 MiB of internal HBM while local attention runs concurrently.
-            The same kernel computes Host attention and merges partial outputs.
-            Total internal scratch is 5.25 MiB plus 32 KiB of synchronization state.
+            with at least 108 SMs. Host computing CTAs read rows directly into
+            shared memory in segments, overlapping QK with subsequent reads
+            and local attention. The same kernel merges partial outputs.
+            Internal HBM scratch holds partial attention outputs, with capacity
+            5.25 MiB plus 32 KiB of synchronization state.
             Call once before CUDA Graph capture to compile and allocate buffers.
             Calls using the same wrapper must not execute concurrently.
         """
