@@ -2,6 +2,7 @@
 # Usage: PYTHONPATH=. /mnt/data/mhy-vllm-venv/bin/python temp/bench_glm52_host_comparison.py --layout random --output temp/host_comparison_random.json
 import argparse
 import ctypes
+import functools
 import gc
 import hashlib
 import json
@@ -402,7 +403,27 @@ def main():
     )
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--baseline-module", type=Path)
+    parser.add_argument(
+        "--host-kernel", choices=("staged", "private"), default="staged"
+    )
     args = parser.parse_args()
+    if args.host_kernel == "private":
+        from flashinfer.jit import gen_batch_mla_module
+        from flashinfer.mla import _core
+
+        @functools.cache
+        def private_module(backend, *module_args, host_prefetch=False):
+            specification = gen_batch_mla_module(
+                backend, *module_args, host_prefetch=host_prefetch
+            )
+            if host_prefetch:
+                specification.name += "_private_shared"
+                specification.extra_cuda_cflags.append(
+                    "-DFLASHINFER_MLA_HOST_PRIVATE_SHARED"
+                )
+            return specification.build_and_load()
+
+        _core.get_batch_mla_module = private_module
     if args.output.exists():
         raise FileExistsError(args.output)
     if args.topk != 2048 or 0 not in args.fractions:
