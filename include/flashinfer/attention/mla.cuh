@@ -1099,7 +1099,7 @@ template <typename BaseTraits>
 // 12 local compute CTAs, 32 Host compute CTAs, and 64 producer/merge CTAs.
 struct HostSplitKernelTraits : BaseTraits {
   struct SharedStorage : BaseTraits::SharedStorage {
-    typename BaseTraits::IdType indices[128];
+    typename BaseTraits::IdType indices[192];
     uint32_t counts[8];
     uint32_t count;
     unsigned long long epoch;

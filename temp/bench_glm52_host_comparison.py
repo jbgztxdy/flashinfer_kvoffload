@@ -221,8 +221,19 @@ def benchmark_context(args, tokens):
             query, rope, alias_cache[..., :512], alias_cache[..., 512:], out=output
         )
     torch.cuda.synchronize(device)
+    modes = ["copy", "direct", "overlap"]
+    current_module = direct_wrapper._host_prefetch_module
+    previous_module = None
+    if args.baseline_module:
+        import tvm_ffi
+
+        previous_module = tvm_ffi.load_module(str(args.baseline_module.resolve()))
+        modes.append("previous")
     graphs = {}
-    for mode in ("copy", "direct", "overlap"):
+    for mode in modes:
+        direct_wrapper._host_prefetch_module = (
+            previous_module if mode == "previous" else current_module
+        )
         graphs[mode] = {}
         fractions = args.fractions if mode == "copy" else [0.0]
         for fraction in fractions:
@@ -230,7 +241,7 @@ def benchmark_context(args, tokens):
             wrapper = copy_wrapper if mode == "copy" else direct_wrapper
             data = alias_cache if mode == "copy" else cache
             kwargs = dict(
-                host_start=tokens // 2 if mode == "overlap" else None,
+                host_start=tokens // 2 if mode in ("overlap", "previous") else None,
                 source=packed,
                 destination=staged,
                 rows=rows,
@@ -243,11 +254,12 @@ def benchmark_context(args, tokens):
                     wrapper, query, rope, data, output, 1, **kwargs
                 ),
             }
+    direct_wrapper._host_prefetch_module = current_module
     eviction = torch.empty(64 * 2**20, dtype=torch.uint8, device=device)
     samples = {
         fraction: {
             mode: {"gpu_cycle": [], "cold_single": [], "serial_wall": []}
-            for mode in ("copy", "direct", "overlap")
+            for mode in modes
         }
         for fraction in args.fractions
     }
@@ -266,8 +278,8 @@ def benchmark_context(args, tokens):
             direct_indices.copy_(selected)
             copy_indices.copy_(remapped)
             torch.cuda.synchronize(device)
-            modes = ["copy", "direct", "overlap"]
-            rng.shuffle(modes)
+            order = modes.copy()
+            rng.shuffle(order)
             reference = None
             if iteration == 0:
                 values = torch.empty((args.topk, 576), dtype=torch.bfloat16)
@@ -280,7 +292,7 @@ def benchmark_context(args, tokens):
                     + rope[0].float() @ values[:, 512:].T
                 ) / 16
                 reference = (scores.softmax(-1) @ values[:, :512]).unsqueeze(0)
-            for mode in modes:
+            for mode in order:
                 captured = graphs[mode][fraction if mode == "copy" else 0.0]
                 eviction.fill_(iteration % 256)
                 torch.cuda.synchronize(device)
@@ -345,7 +357,12 @@ def benchmark_context(args, tokens):
             }
         result["cases"].append(case)
         print(
-            f"context={tokens} host={fraction:.0%} copy={case['copy']['gpu_cycle']['median_us']:.3f} direct={case['direct']['gpu_cycle']['median_us']:.3f} overlap={case['overlap']['gpu_cycle']['median_us']:.3f}",
+            f"context={tokens} host={fraction:.0%} copy={case['copy']['gpu_cycle']['median_us']:.3f} direct={case['direct']['gpu_cycle']['median_us']:.3f} overlap={case['overlap']['gpu_cycle']['median_us']:.3f}"
+            + (
+                f" previous={case['previous']['gpu_cycle']['median_us']:.3f}"
+                if "previous" in case
+                else ""
+            ),
             flush=True,
         )
     del graphs, wrapper, data, kwargs, direct_wrapper, copy_wrapper
@@ -384,6 +401,7 @@ def main():
         "--profile-mode", choices=["copy", "direct", "overlap"], default="copy"
     )
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--baseline-module", type=Path)
     args = parser.parse_args()
     if args.output.exists():
         raise FileExistsError(args.output)
@@ -393,7 +411,13 @@ def main():
     torch.set_num_threads(8)
     torch.manual_seed(args.seed)
     result = dict(
-        configuration=vars(args) | {"output": str(args.output)},
+        configuration=vars(args)
+        | {
+            "output": str(args.output),
+            "baseline_module": str(args.baseline_module)
+            if args.baseline_module
+            else None,
+        },
         timestamp=time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         torch_version=torch.__version__,
         cuda_version=torch.version.cuda,
@@ -429,6 +453,13 @@ def main():
         ],
         results=[],
     )
+    if args.baseline_module:
+        result["baseline_module_sha256"] = hashlib.sha256(
+            args.baseline_module.read_bytes()
+        ).hexdigest()
+        result["methods"]["previous"] = (
+            "Frozen previous fused Host-overlap implementation"
+        )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     for tokens in args.contexts:
         result["results"].append(benchmark_context(args, tokens))
