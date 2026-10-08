@@ -1,0 +1,198 @@
+Benchmarking random
+layout=random context=131072 rounds=10/40
+layout=random context=131072 rounds=20/40
+layout=random context=131072 rounds=30/40
+layout=random context=131072 rounds=40/40
+context=131072 host=0% copy=27.453 direct=27.382 overlap=27.689
+context=131072 host=5% copy=44.242 direct=30.121 overlap=28.744
+context=131072 host=10% copy=49.838 direct=31.805 overlap=28.744
+context=131072 host=15% copy=55.434 direct=33.792 overlap=28.744
+context=131072 host=20% copy=59.791 direct=37.519 overlap=32.763
+context=131072 host=25% copy=64.532 direct=41.672 overlap=40.934
+context=131072 host=30% copy=68.613 direct=46.039 overlap=45.220
+context=131072 host=35% copy=73.068 direct=50.406 overlap=50.084
+context=131072 host=40% copy=76.723 direct=54.794 overlap=55.107
+context=131072 host=60% copy=93.215 direct=72.238 overlap=75.935
+context=131072 host=80% copy=110.024 direct=89.738 overlap=97.326
+context=131072 host=100% copy=128.118 direct=107.581 overlap=118.001
+layout=random context=262144 rounds=10/40
+layout=random context=262144 rounds=20/40
+layout=random context=262144 rounds=30/40
+layout=random context=262144 rounds=40/40
+context=262144 host=0% copy=27.423 direct=27.382 overlap=27.715
+context=262144 host=5% copy=43.561 direct=29.978 overlap=28.754
+context=262144 host=10% copy=49.306 direct=31.964 overlap=28.744
+context=262144 host=15% copy=52.669 direct=33.828 overlap=28.744
+context=262144 host=20% copy=58.240 direct=37.366 overlap=32.635
+context=262144 host=25% copy=64.010 direct=41.667 overlap=40.940
+context=262144 host=30% copy=67.907 direct=46.054 overlap=45.358
+context=262144 host=35% copy=70.881 direct=50.417 overlap=50.109
+context=262144 host=40% copy=75.873 direct=54.764 overlap=55.086
+context=262144 host=60% copy=92.995 direct=72.300 overlap=75.935
+context=262144 host=80% copy=109.885 direct=89.733 overlap=97.362
+context=262144 host=100% copy=127.718 direct=107.284 overlap=117.893
+layout=random context=524288 rounds=10/40
+layout=random context=524288 rounds=20/40
+layout=random context=524288 rounds=30/40
+layout=random context=524288 rounds=40/40
+context=524288 host=0% copy=27.351 direct=27.392 overlap=27.715
+context=524288 host=5% copy=43.817 direct=30.090 overlap=28.774
+context=524288 host=10% copy=49.879 direct=31.749 overlap=28.744
+context=524288 host=15% copy=55.711 direct=33.792 overlap=28.744
+context=524288 host=20% copy=59.525 direct=37.489 overlap=32.681
+context=524288 host=25% copy=65.111 direct=41.892 overlap=40.960
+context=524288 host=30% copy=70.113 direct=46.157 overlap=45.332
+context=524288 host=35% copy=74.143 direct=50.550 overlap=50.079
+context=524288 host=40% copy=77.788 direct=54.881 overlap=55.173
+context=524288 host=60% copy=94.280 direct=72.300 overlap=75.919
+context=524288 host=80% copy=111.073 direct=89.830 overlap=97.449
+context=524288 host=100% copy=128.358 direct=108.068 overlap=119.163
+layout=random context=1048576 rounds=10/40
+layout=random context=1048576 rounds=20/40
+layout=random context=1048576 rounds=30/40
+layout=random context=1048576 rounds=40/40
+context=1048576 host=0% copy=27.479 direct=27.290 overlap=27.709
+context=1048576 host=5% copy=43.971 direct=29.824 overlap=28.764
+context=1048576 host=10% copy=49.910 direct=31.585 overlap=28.744
+context=1048576 host=15% copy=55.255 direct=33.510 overlap=28.739
+context=1048576 host=20% copy=61.614 direct=37.222 overlap=32.522
+context=1048576 host=25% copy=64.947 direct=41.580 overlap=40.924
+context=1048576 host=30% copy=68.398 direct=45.947 overlap=45.261
+context=1048576 host=35% copy=73.656 direct=50.309 overlap=50.053
+context=1048576 host=40% copy=78.428 direct=54.641 overlap=55.091
+context=1048576 host=60% copy=93.271 direct=72.084 overlap=75.868
+context=1048576 host=80% copy=109.809 direct=89.580 overlap=97.306
+context=1048576 host=100% copy=127.150 direct=107.075 overlap=117.617
+results=/mnt/data/rtx/projects/flashinfer/temp/host_attention_comparison/raw_random.json
+Benchmarking head
+layout=head context=131072 rounds=10/40
+layout=head context=131072 rounds=20/40
+layout=head context=131072 rounds=30/40
+layout=head context=131072 rounds=40/40
+context=131072 host=0% copy=27.423 direct=27.361 overlap=27.689
+context=131072 host=5% copy=45.056 direct=30.111 overlap=28.692
+context=131072 host=10% copy=50.478 direct=31.293 overlap=28.718
+context=131072 host=15% copy=56.699 direct=36.311 overlap=29.614
+context=131072 host=20% copy=61.460 direct=39.649 overlap=33.418
+context=131072 host=25% copy=66.161 direct=43.315 overlap=41.533
+context=131072 host=30% copy=69.944 direct=46.884 overlap=45.655
+context=131072 host=35% copy=75.914 direct=50.801 overlap=50.227
+context=131072 host=40% copy=79.488 direct=54.897 overlap=55.357
+context=131072 host=60% copy=95.401 direct=72.315 overlap=75.960
+context=131072 host=80% copy=109.829 direct=89.810 overlap=97.341
+context=131072 host=100% copy=127.478 direct=107.249 overlap=117.796
+layout=head context=262144 rounds=10/40
+layout=head context=262144 rounds=20/40
+layout=head context=262144 rounds=30/40
+layout=head context=262144 rounds=40/40
+context=262144 host=0% copy=27.382 direct=27.361 overlap=27.720
+context=262144 host=5% copy=44.206 direct=29.722 overlap=28.733
+context=262144 host=10% copy=50.084 direct=30.833 overlap=28.733
+context=262144 host=15% copy=55.316 direct=34.022 overlap=28.733
+context=262144 host=20% copy=60.308 direct=38.042 overlap=32.625
+context=262144 host=25% copy=65.096 direct=41.851 overlap=40.893
+context=262144 host=30% copy=69.074 direct=46.136 overlap=45.174
+context=262144 host=35% copy=72.668 direct=50.309 overlap=50.043
+context=262144 host=40% copy=77.112 direct=54.548 overlap=54.968
+context=262144 host=60% copy=92.826 direct=72.028 overlap=75.848
+context=262144 host=80% copy=108.421 direct=89.569 overlap=97.311
+context=262144 host=100% copy=127.027 direct=107.049 overlap=117.540
+layout=head context=524288 rounds=10/40
+layout=head context=524288 rounds=20/40
+layout=head context=524288 rounds=30/40
+layout=head context=524288 rounds=40/40
+context=524288 host=0% copy=27.474 direct=27.392 overlap=27.735
+context=524288 host=5% copy=44.636 direct=29.998 overlap=28.744
+context=524288 host=10% copy=49.900 direct=30.971 overlap=28.744
+context=524288 host=15% copy=55.757 direct=34.345 overlap=28.744
+context=524288 host=20% copy=59.950 direct=38.851 overlap=32.712
+context=524288 host=25% copy=65.362 direct=42.143 overlap=40.955
+context=524288 host=30% copy=71.127 direct=46.331 overlap=45.276
+context=524288 host=35% copy=74.230 direct=50.540 overlap=50.074
+context=524288 host=40% copy=78.556 direct=54.717 overlap=55.132
+context=524288 host=60% copy=94.582 direct=72.177 overlap=75.858
+context=524288 host=80% copy=109.399 direct=89.636 overlap=97.290
+context=524288 host=100% copy=127.442 direct=107.162 overlap=117.750
+layout=head context=1048576 rounds=10/40
+layout=head context=1048576 rounds=20/40
+layout=head context=1048576 rounds=30/40
+layout=head context=1048576 rounds=40/40
+context=1048576 host=0% copy=27.453 direct=27.453 overlap=27.730
+context=1048576 host=5% copy=44.749 direct=30.336 overlap=28.744
+context=1048576 host=10% copy=50.964 direct=31.391 overlap=28.744
+context=1048576 host=15% copy=56.801 direct=34.934 overlap=28.769
+context=1048576 host=20% copy=61.594 direct=39.199 overlap=32.819
+context=1048576 host=25% copy=65.777 direct=43.889 overlap=41.037
+context=1048576 host=30% copy=69.980 direct=48.753 overlap=47.427
+context=1048576 host=35% copy=76.436 direct=52.516 overlap=52.388
+context=1048576 host=40% copy=79.124 direct=54.973 overlap=55.337
+context=1048576 host=60% copy=95.718 direct=72.330 overlap=75.924
+context=1048576 host=80% copy=110.618 direct=89.830 overlap=97.372
+context=1048576 host=100% copy=127.309 direct=107.300 overlap=117.821
+results=/mnt/data/rtx/projects/flashinfer/temp/host_attention_comparison/raw_head.json
+Benchmarking tail
+layout=tail context=131072 rounds=10/40
+layout=tail context=131072 rounds=20/40
+layout=tail context=131072 rounds=30/40
+layout=tail context=131072 rounds=40/40
+context=131072 host=0% copy=27.464 direct=27.392 overlap=27.699
+context=131072 host=5% copy=44.754 direct=30.034 overlap=28.733
+context=131072 host=10% copy=50.156 direct=32.901 overlap=28.733
+context=131072 host=15% copy=56.351 direct=36.029 overlap=29.716
+context=131072 host=20% copy=61.491 direct=39.352 overlap=32.927
+context=131072 host=25% copy=65.951 direct=42.665 overlap=41.021
+context=131072 host=30% copy=70.226 direct=46.961 overlap=45.527
+context=131072 host=35% copy=74.650 direct=50.499 overlap=50.191
+context=131072 host=40% copy=78.874 direct=54.748 overlap=55.296
+context=131072 host=60% copy=94.828 direct=72.243 overlap=75.976
+context=131072 host=80% copy=109.532 direct=89.784 overlap=97.382
+context=131072 host=100% copy=127.314 direct=107.320 overlap=117.893
+layout=tail context=262144 rounds=10/40
+layout=tail context=262144 rounds=20/40
+layout=tail context=262144 rounds=30/40
+layout=tail context=262144 rounds=40/40
+context=262144 host=0% copy=27.392 direct=27.361 overlap=27.786
+context=262144 host=5% copy=43.817 direct=29.783 overlap=28.733
+context=262144 host=10% copy=49.782 direct=32.256 overlap=28.733
+context=262144 host=15% copy=55.112 direct=34.939 overlap=28.733
+context=262144 host=20% copy=59.064 direct=37.914 overlap=32.737
+context=262144 host=25% copy=64.978 direct=42.097 overlap=40.904
+context=262144 host=30% copy=69.330 direct=46.254 overlap=45.292
+context=262144 host=35% copy=73.375 direct=50.268 overlap=50.074
+context=262144 host=40% copy=76.493 direct=54.610 overlap=55.025
+context=262144 host=60% copy=92.841 direct=72.008 overlap=75.858
+context=262144 host=80% copy=108.703 direct=89.605 overlap=97.331
+context=262144 host=100% copy=127.043 direct=107.121 overlap=117.796
+layout=tail context=524288 rounds=10/40
+layout=tail context=524288 rounds=20/40
+layout=tail context=524288 rounds=30/40
+layout=tail context=524288 rounds=40/40
+context=524288 host=0% copy=27.474 direct=27.418 overlap=27.796
+context=524288 host=5% copy=44.109 direct=29.855 overlap=28.733
+context=524288 host=10% copy=50.028 direct=32.287 overlap=28.733
+context=524288 host=15% copy=54.958 direct=34.913 overlap=28.733
+context=524288 host=20% copy=58.056 direct=37.975 overlap=32.696
+context=524288 host=25% copy=64.829 direct=42.081 overlap=40.924
+context=524288 host=30% copy=68.460 direct=46.269 overlap=45.286
+context=524288 host=35% copy=73.027 direct=50.263 overlap=50.084
+context=524288 host=40% copy=77.297 direct=54.595 overlap=54.922
+context=524288 host=60% copy=92.861 direct=72.018 overlap=75.858
+context=524288 host=80% copy=108.462 direct=89.605 overlap=97.336
+context=524288 host=100% copy=127.007 direct=107.167 overlap=117.893
+layout=tail context=1048576 rounds=10/40
+layout=tail context=1048576 rounds=20/40
+layout=tail context=1048576 rounds=30/40
+layout=tail context=1048576 rounds=40/40
+context=1048576 host=0% copy=27.423 direct=27.433 overlap=27.750
+context=1048576 host=5% copy=43.853 direct=29.691 overlap=28.733
+context=1048576 host=10% copy=49.987 direct=32.169 overlap=28.733
+context=1048576 host=15% copy=55.091 direct=34.801 overlap=28.733
+context=1048576 host=20% copy=60.196 direct=37.996 overlap=32.686
+context=1048576 host=25% copy=64.707 direct=42.138 overlap=40.909
+context=1048576 host=30% copy=66.924 direct=46.275 overlap=45.414
+context=1048576 host=35% copy=72.095 direct=50.299 overlap=50.074
+context=1048576 host=40% copy=76.826 direct=54.656 overlap=54.958
+context=1048576 host=60% copy=92.590 direct=72.064 overlap=75.848
+context=1048576 host=80% copy=108.068 direct=89.677 overlap=97.311
+context=1048576 host=100% copy=126.940 direct=107.192 overlap=117.908
+results=/mnt/data/rtx/projects/flashinfer/temp/host_attention_comparison/raw_tail.json

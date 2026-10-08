@@ -1,0 +1,270 @@
+{
+  "configuration": {
+    "device": 1,
+    "contexts": [
+      1048576
+    ],
+    "fractions": [
+      0.0,
+      0.2
+    ],
+    "layout": "random",
+    "topk": 2048,
+    "rounds": 1,
+    "index_sets": 1,
+    "repeats": 100,
+    "seed": 42,
+    "profile_fraction": 0.2,
+    "profile_mode": "copy",
+    "output": "temp/host_attention_comparison/profile_copy_20_check.json"
+  },
+  "timestamp": "2026-10-08T13:23:45+0800",
+  "torch_version": "2.11.0+cu130",
+  "cuda_version": "13.0",
+  "git_commit": "222d2149d2f31f05e43634146f4650b04fdee621",
+  "source_sha256": {
+    "temp/bench_glm52_host_comparison.py": "adcabfe9a326c8c476ae7595ae33b4f1194b95d77098c14623bc15f7cdaa860e",
+    "include/flashinfer/attention/mla.cuh": "990677b45dc4ee6b1d47c930d9b42c97de1ec9b7838fa9cbbf6cc519109bd277",
+    "csrc/batch_mla_run.cu": "2c8a6f85cdcc225a6aacd12b00a5947bcb68e9d9a28c5fb2ec104256e2700fbb",
+    "flashinfer/mla/_core.py": "3c12b46242feb56cfe618325e440f9be757a6cd5c9694fe320495ea63b125bfc"
+  },
+  "methods": {
+    "copy": "CPU packing into pinned buffer, then actual H2D DMA and native attention in one stream; local HBM is aliased without gathering",
+    "direct": "Native attention directly reads mapped Host DRAM",
+    "overlap": "Fused attention overlaps in-kernel Host reads with local computation"
+  },
+  "timing": {
+    "gpu_cycle": "GPU events inside CUDA graph; every iteration includes its H2D DMA for copy and attention; CPU packing excluded",
+    "cold_single": "One GPU cycle after 64 MiB L2 eviction",
+    "serial_wall": "CPU wall time for one serialized cycle, including CPU packing for copy and final synchronization",
+    "cpu_pack": "CPU gather into the pinned staging buffer"
+  },
+  "exclusions": [
+    "top-k selection",
+    "plan",
+    "index remapping/update",
+    "initialization",
+    "correctness reference"
+  ],
+  "results": [
+    {
+      "context_tokens": 1048576,
+      "residency": [
+        {
+          "tier": "hbm",
+          "allocation_type": 1,
+          "location_type": 1,
+          "location_id": 1,
+          "address": "0x602000000",
+          "bytes": 603979776
+        },
+        {
+          "tier": "pinned_host_dram",
+          "allocation_type": 1,
+          "location_type": 3,
+          "location_id": 0,
+          "address": "0x626000000",
+          "bytes": 603979776
+        }
+      ],
+      "gpu_before": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 39503 MiB, 939 MiB, 0 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 5480 MiB, 34962 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 39503 MiB, 939 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz",
+      "gpu_after": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 39503 MiB, 939 MiB, 0 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 5492 MiB, 34950 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 39503 MiB, 939 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz",
+      "cases": [
+        {
+          "host_fraction_requested": 0.0,
+          "host_rows": 0,
+          "host_fraction_actual": 0.0,
+          "host_bytes": 0,
+          "cpu_pack": {
+            "median_us": 0.0,
+            "p10_us": 0.0,
+            "p90_us": 0.0,
+            "samples_us": [
+              0.0
+            ]
+          },
+          "correctness_max_abs_error": {
+            "copy": 0.001629471778869629,
+            "overlap": 0.001467376947402954,
+            "direct": 0.001629471778869629
+          },
+          "copy": {
+            "gpu_cycle": {
+              "median_us": 29.120960235595703,
+              "p10_us": 29.120960235595703,
+              "p90_us": 29.120960235595703,
+              "samples_us": [
+                29.120960235595703
+              ]
+            },
+            "cold_single": {
+              "median_us": 80.06399869918823,
+              "p10_us": 80.06399869918823,
+              "p90_us": 80.06399869918823,
+              "samples_us": [
+                80.06399869918823
+              ]
+            },
+            "serial_wall": {
+              "median_us": 252.525,
+              "p10_us": 252.525,
+              "p90_us": 252.525,
+              "samples_us": [
+                252.525
+              ]
+            }
+          },
+          "direct": {
+            "gpu_cycle": {
+              "median_us": 29.030721187591553,
+              "p10_us": 29.030721187591553,
+              "p90_us": 29.030721187591553,
+              "samples_us": [
+                29.030721187591553
+              ]
+            },
+            "cold_single": {
+              "median_us": 42.847998440265656,
+              "p10_us": 42.847998440265656,
+              "p90_us": 42.847998440265656,
+              "samples_us": [
+                42.847998440265656
+              ]
+            },
+            "serial_wall": {
+              "median_us": 69.1,
+              "p10_us": 69.1,
+              "p90_us": 69.1,
+              "samples_us": [
+                69.1
+              ]
+            }
+          },
+          "overlap": {
+            "gpu_cycle": {
+              "median_us": 29.265599250793457,
+              "p10_us": 29.265599250793457,
+              "p90_us": 29.265599250793457,
+              "samples_us": [
+                29.265599250793457
+              ]
+            },
+            "cold_single": {
+              "median_us": 64.67200070619583,
+              "p10_us": 64.67200070619583,
+              "p90_us": 64.67200070619583,
+              "samples_us": [
+                64.67200070619583
+              ]
+            },
+            "serial_wall": {
+              "median_us": 95.212,
+              "p10_us": 95.212,
+              "p90_us": 95.212,
+              "samples_us": [
+                95.212
+              ]
+            }
+          }
+        },
+        {
+          "host_fraction_requested": 0.2,
+          "host_rows": 410,
+          "host_fraction_actual": 0.2001953125,
+          "host_bytes": 472320,
+          "cpu_pack": {
+            "median_us": 204.282,
+            "p10_us": 204.282,
+            "p90_us": 204.282,
+            "samples_us": [
+              204.282
+            ]
+          },
+          "correctness_max_abs_error": {
+            "copy": 0.0023186206817626953,
+            "overlap": 0.0015148520469665527,
+            "direct": 0.0023186206817626953
+          },
+          "copy": {
+            "gpu_cycle": {
+              "median_us": 61.82015895843506,
+              "p10_us": 61.82015895843506,
+              "p90_us": 61.82015895843506,
+              "samples_us": [
+                61.82015895843506
+              ]
+            },
+            "cold_single": {
+              "median_us": 145.4080045223236,
+              "p10_us": 145.4080045223236,
+              "p90_us": 145.4080045223236,
+              "samples_us": [
+                145.4080045223236
+              ]
+            },
+            "serial_wall": {
+              "median_us": 414.718,
+              "p10_us": 414.718,
+              "p90_us": 414.718,
+              "samples_us": [
+                414.718
+              ]
+            }
+          },
+          "direct": {
+            "gpu_cycle": {
+              "median_us": 40.58976173400879,
+              "p10_us": 40.58976173400879,
+              "p90_us": 40.58976173400879,
+              "samples_us": [
+                40.58976173400879
+              ]
+            },
+            "cold_single": {
+              "median_us": 57.023998349905014,
+              "p10_us": 57.023998349905014,
+              "p90_us": 57.023998349905014,
+              "samples_us": [
+                57.023998349905014
+              ]
+            },
+            "serial_wall": {
+              "median_us": 102.348,
+              "p10_us": 102.348,
+              "p90_us": 102.348,
+              "samples_us": [
+                102.348
+              ]
+            }
+          },
+          "overlap": {
+            "gpu_cycle": {
+              "median_us": 35.90368032455444,
+              "p10_us": 35.90368032455444,
+              "p90_us": 35.90368032455444,
+              "samples_us": [
+                35.90368032455444
+              ]
+            },
+            "cold_single": {
+              "median_us": 76.38400048017502,
+              "p10_us": 76.38400048017502,
+              "p90_us": 76.38400048017502,
+              "samples_us": [
+                76.38400048017502
+              ]
+            },
+            "serial_wall": {
+              "median_us": 205.328,
+              "p10_us": 205.328,
+              "p90_us": 205.328,
+              "samples_us": [
+                205.328
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

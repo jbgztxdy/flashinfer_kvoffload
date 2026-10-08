@@ -1,0 +1,15 @@
+{
+  "kernel_count": 100,
+  "h2d_copy_count": 100,
+  "bytes_per_copy": 472320,
+  "total_h2d_bytes": 47232000,
+  "copy_kernel_overlap": false,
+  "same_stream": true,
+  "extra_gather_kernels": 0,
+  "attention_kernel": "void flashinfer::mla::BatchMLAPagedAttentionKernel<flashinfer::mla::KernelTraits<(bool)0, (unsigned int)2, (bool)1, (unsigned int)512, (unsigned int)64, (unsigned int)64, (unsigned int)32, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, int>, flashinfer::MLAParams<__nv_bfloat16, __nv_bfloat16, __nv_bfloat16, int>>(T2)",
+  "median_profiled_copy_us": 21.712000000000003,
+  "median_profiled_attention_us": 28.064500000000002,
+  "median_profiled_copy_to_attention_gap_us": 7.488,
+  "median_profiled_attention_to_copy_gap_us": 1.472,
+  "note": "Profiling validates the DMA baseline and serialized scheduling. Profiled durations are not used in the comparison figures."
+}
