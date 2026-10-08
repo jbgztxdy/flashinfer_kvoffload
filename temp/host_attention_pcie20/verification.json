@@ -1,0 +1,116 @@
+{
+  "code_commit": "da4ede5f507b50af6078ac5f0887bc5d773c031f",
+  "source_sha256": {
+    "include/flashinfer/attention/mla.cuh": "9c47ed46db70f32fdb0ae91b8c42c5e69755daf35ec0bf500615f7c70bdf117e",
+    "flashinfer/jit/attention/modules.py": "843bad2bbca92e7dbeef9440e49ed82940761907e194e3b562e944df3128e70b",
+    "flashinfer/mla/_core.py": "2ef09a794b6ebf33d78e039cf8c5091f7a498d49d4986e9eedc6b747771d8e75",
+    "temp/bench_glm52_host_comparison.py": "064dc7846269b93a8499e722a270160a3296238a930d4ff6300921982fb1573d"
+  },
+  "modules": {
+    "bf16": {
+      "path": "temp/jit_host_pcie_final/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "sha256": "94015399d323f4755ec133b5a594dd9e5399e6dd07777b2c0017a691036133b8",
+      "resource_lines": [
+        " Function _ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEEEEvT1_:",
+        "  REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      ]
+    },
+    "f16": {
+      "path": "temp/jit_host_pcie_final/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "sha256": "0e6099ff03a2b6642ff0d2db2bcdb5aee6eee98f26ca4eafd0029c866cfb4ab4",
+      "resource_lines": [
+        " Function _ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEEEEvT1_:",
+        "  REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      ]
+    }
+  },
+  "correctness": {
+    "passed": true,
+    "cases": 372,
+    "maximum_output_absolute_error": 0.004857063293457031,
+    "dtypes": [
+      "bfloat16",
+      "float16"
+    ],
+    "lse_bases": [
+      "2",
+      "e"
+    ],
+    "quick_mode": false,
+    "host_mutations": true
+  },
+  "api": {
+    "passed": true,
+    "native_cases": 6,
+    "invalid_input_cases": 8
+  },
+  "racecheck": {
+    "output": {
+      "passed": true,
+      "cases": 8,
+      "maximum_output_absolute_error": 0.002966582775115967,
+      "dtypes": [
+        "bfloat16"
+      ],
+      "lse_bases": [
+        "2"
+      ],
+      "quick_mode": true,
+      "host_mutations": true
+    },
+    "summary": "========= COMPUTE-SANITIZER\n========= RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)"
+  },
+  "synccheck": {
+    "output": {
+      "passed": true,
+      "cases": 8,
+      "maximum_output_absolute_error": 0.002966582775115967,
+      "dtypes": [
+        "bfloat16"
+      ],
+      "lse_bases": [
+        "2"
+      ],
+      "quick_mode": true,
+      "host_mutations": true
+    },
+    "summary": "========= COMPUTE-SANITIZER\n========= ERROR SUMMARY: 0 errors"
+  },
+  "preserved_baseline_sha256": "676fa142797b1c70419ad58c18916b479b415784cf5e9e7973d5c3f7fd9b1fd8",
+  "traffic_status": "Verified",
+  "refresh_artifacts": [
+    "rerun_random_1M.json",
+    "rerun_head_128K_256K.json"
+  ],
+  "excluded_initial_artifacts": [
+    "initial_random.json",
+    "initial_head.json"
+  ],
+  "traffic": [
+    {
+      "host_percent": 25,
+      "expected_bytes": 589824,
+      "sysmem_fill_bytes": 589824,
+      "kernel": "void BatchMLAPrivateHostKernel<32, HostSplitKernelTraits<KernelTraits<0, 2, 1, 512, 64, 64, 32, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, int>>, MLAParams<__nv_bfloat16, __nv_bfloat16, __nv_bfloat16, int>>(T3)",
+      "artifact": "profile_25.csv",
+      "warmup_calls": 10,
+      "scope": "Warmed application replay, cache-control none. Profiler durations are excluded from performance tables."
+    },
+    {
+      "host_percent": 30,
+      "expected_bytes": 707328,
+      "sysmem_fill_bytes": 707328,
+      "kernel": "void BatchMLAPrivateHostKernel<32, HostSplitKernelTraits<KernelTraits<0, 2, 1, 512, 64, 64, 32, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, int>>, MLAParams<__nv_bfloat16, __nv_bfloat16, __nv_bfloat16, int>>(T3)",
+      "artifact": "profile_30.csv",
+      "warmup_calls": 10,
+      "scope": "Warmed application replay, cache-control none. Profiler durations are excluded from performance tables."
+    }
+  ],
+  "matched_output_comparisons": {
+    "checks": 576,
+    "maximum_output_absolute_error": 0.0037490129470825195,
+    "report": "/mnt/data/rtx/projects/flashinfer/temp/host_attention_pcie20/report.md"
+  },
+  "all_paired_source_hashes_match": true,
+  "old_baseline_hashes_match": true
+}
