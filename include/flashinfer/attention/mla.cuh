@@ -1046,52 +1046,50 @@ __device__ __forceinline__ void run_host_fetch_warps(const Params& params,
   asm volatile("bar.sync 2, 128;" ::: "memory");
   const uint32_t selected = (total + 63 - rank) / 64;
   record_overlap_phase(params, 1, true);
-  for (uint32_t batch = 0; batch < selected; batch += 16) {
-    uint32_t positions[4];
-    uint4 first[4], second[4], rope[4];
-  #pragma unroll
-    for (uint32_t i = 0; i < 4; ++i) {
-      const uint32_t slot = batch + i * 4 + warp;
-      positions[i] = slot < selected ? selected_positions[slot] : 2048;
-      if (positions[i] < 2048) {
-        const auto page = selected_pages[slot];
-        const auto* source = params.ckv + page * params.ckv_stride_page;
+  uint32_t positions[8];
+  uint4 first[8], second[8], rope[8];
+#pragma unroll
+  for (uint32_t i = 0; i < 8; ++i) {
+    const uint32_t slot = i * 4 + warp;
+    positions[i] = slot < selected ? selected_positions[slot] : 2048;
+    if (positions[i] < 2048) {
+      const auto page = selected_pages[slot];
+      const auto* source = params.ckv + page * params.ckv_stride_page;
+      asm volatile("ld.global.cg.v4.u32 {%0, %1, %2, %3}, [%4];"
+                   : "=r"(first[i].x), "=r"(first[i].y), "=r"(first[i].z), "=r"(first[i].w)
+                   : "l"(source + lane * 8)
+                   : "memory");
+      asm volatile("ld.global.cg.v4.u32 {%0, %1, %2, %3}, [%4];"
+                   : "=r"(second[i].x), "=r"(second[i].y), "=r"(second[i].z), "=r"(second[i].w)
+                   : "l"(source + 256 + lane * 8)
+                   : "memory");
+      if (lane < 8) {
         asm volatile("ld.global.cg.v4.u32 {%0, %1, %2, %3}, [%4];"
-                     : "=r"(first[i].x), "=r"(first[i].y), "=r"(first[i].z), "=r"(first[i].w)
-                     : "l"(source + lane * 8)
+                     : "=r"(rope[i].x), "=r"(rope[i].y), "=r"(rope[i].z), "=r"(rope[i].w)
+                     : "l"(params.kpe + page * params.kpe_stride_page + lane * 8)
                      : "memory");
-        asm volatile("ld.global.cg.v4.u32 {%0, %1, %2, %3}, [%4];"
-                     : "=r"(second[i].x), "=r"(second[i].y), "=r"(second[i].z), "=r"(second[i].w)
-                     : "l"(source + 256 + lane * 8)
-                     : "memory");
-        if (lane < 8) {
-          asm volatile("ld.global.cg.v4.u32 {%0, %1, %2, %3}, [%4];"
-                       : "=r"(rope[i].x), "=r"(rope[i].y), "=r"(rope[i].z), "=r"(rope[i].w)
-                       : "l"(params.kpe + page * params.kpe_stride_page + lane * 8)
-                       : "memory");
-        }
       }
     }
-  #pragma unroll
-    for (uint32_t i = 0; i < 4; ++i) {
-      if (positions[i] < 2048) {
-        auto* destination = params.host_prefetch_buffer + positions[i] * 576;
-        *reinterpret_cast<uint4*>(destination + lane * 8) = first[i];
-        *reinterpret_cast<uint4*>(destination + 256 + lane * 8) = second[i];
-        if (lane < 8) *reinterpret_cast<uint4*>(destination + 512 + lane * 8) = rope[i];
-      }
+  }
+#pragma unroll
+  for (uint32_t i = 0; i < 8; ++i) {
+    if (positions[i] < 2048) {
+      auto* destination = params.host_prefetch_buffer + positions[i] * 576;
+      *reinterpret_cast<uint4*>(destination + lane * 8) = first[i];
+      *reinterpret_cast<uint4*>(destination + 256 + lane * 8) = second[i];
+      if (lane < 8) *reinterpret_cast<uint4*>(destination + 512 + lane * 8) = rope[i];
     }
-    __threadfence();
-    __syncwarp();
-    if (lane == 0) {
-  #pragma unroll
-      for (uint32_t i = 0; i < 4; ++i) {
-        if (positions[i] < 2048) {
-          asm volatile("st.release.gpu.global.u64 [%0], %1;"
-                       :
-                       : "l"(params.host_prefetch_state + gridDim.y + positions[i]), "l"(epoch)
-                       : "memory");
-        }
+  }
+  __threadfence();
+  __syncwarp();
+  if (lane == 0) {
+#pragma unroll
+    for (uint32_t i = 0; i < 8; ++i) {
+      if (positions[i] < 2048) {
+        asm volatile("st.release.gpu.global.u64 [%0], %1;"
+                     :
+                     : "l"(params.host_prefetch_state + gridDim.y + positions[i]), "l"(epoch)
+                     : "memory");
       }
     }
   }
@@ -1182,14 +1180,14 @@ __device__ __forceinline__ void compute_small_host_pv(typename KTraits::SharedSt
   }
 }
 
-template <typename KTraits, typename Params>
+template <bool HOST, typename KTraits, typename Params>
 __device__ __forceinline__ void compute_host_split(typename KTraits::SharedStorage& storage,
                                                    Params params, uint32_t length, uint8_t* smem) {
   load_q<KTraits>(&storage, params.q_nope, params.q_pe, params.q_nope_stride_n,
                   params.q_nope_stride_h, params.q_pe_stride_n, params.q_pe_stride_h, 1, 0,
                   params.num_heads);
   cp_async::commit_group();
-  if (blockIdx.y >= storage.local_splits) {
+  if constexpr (HOST) {
     const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
     if (tid < length) {
       unsigned long long ready;
@@ -1323,30 +1321,26 @@ __device__ __forceinline__ void merge_host_group(typename KTraits::SharedStorage
   }
   asm volatile("bar.sync 1, 128;" ::: "memory");
   lse_output = weights[32];
-  constexpr uint32_t BATCH = COUNT == 32 ? 16 : COUNT;
-  uint2 packed_values[BATCH];
+  uint2 packed_values[COUNT];
+#pragma unroll
+  for (uint32_t split = 0; split < COUNT; ++split) {
+    asm volatile("ld.global.cg.v2.u32 {%0, %1}, [%2];"
+                 : "=r"(packed_values[split].x), "=r"(packed_values[split].y)
+                 : "l"(params.partial_o + ((START + split) * 64 + head) * 512 + tid * 4)
+                 : "memory");
+  }
 #pragma unroll
   for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = 0.f;
 #pragma unroll
-  for (uint32_t begin = 0; begin < COUNT; begin += BATCH) {
+  for (uint32_t split = 0; split < COUNT; ++split) {
+    const float weight = weights[split];
+    if (weight > 0.f) {
+      float values[4];
+      vec_cast<float, typename KTraits::DTypeO>::template cast<4>(
+          values, reinterpret_cast<const typename KTraits::DTypeO*>(packed_values + split));
 #pragma unroll
-    for (uint32_t split = 0; split < BATCH; ++split) {
-      asm volatile("ld.global.cg.v2.u32 {%0, %1}, [%2];"
-                   : "=r"(packed_values[split].x), "=r"(packed_values[split].y)
-                   : "l"(params.partial_o + ((START + begin + split) * 64 + head) * 512 + tid * 4)
-                   : "memory");
-    }
-#pragma unroll
-    for (uint32_t split = 0; split < BATCH; ++split) {
-      const float weight = weights[begin + split];
-      if (weight > 0.f) {
-        float values[4];
-        vec_cast<float, typename KTraits::DTypeO>::template cast<4>(
-            values, reinterpret_cast<const typename KTraits::DTypeO*>(packed_values + split));
-#pragma unroll
-        for (uint32_t feature = 0; feature < 4; ++feature)
-          output[feature] = fmaf(values[feature], weight, output[feature]);
-      }
+      for (uint32_t feature = 0; feature < 4; ++feature)
+        output[feature] = fmaf(values[feature], weight, output[feature]);
     }
   }
   asm volatile("bar.sync 1, 128;" ::: "memory");
@@ -1392,10 +1386,12 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostOverlapKerne
     const uint32_t length = prepare_host_split<KTraits>(&storage, params);
     record_overlap_phase(params, 1);
     if (length > 0) {
-      if (blockIdx.y < storage.local_splits || (length > 16 && length <= 32))
-        compute_host_split<KTraits>(storage, params, length, smem);
+      if (blockIdx.y < storage.local_splits)
+        compute_host_split<false, KTraits>(storage, params, length, smem);
+      else if (length > 16 && length <= 32)
+        compute_host_split<true, KTraits>(storage, params, length, smem);
       else
-        compute_host_split<HostNarrowKernelTraits<KTraits>>(storage, params, length, smem);
+        compute_host_split<true, HostNarrowKernelTraits<KTraits>>(storage, params, length, smem);
     } else {
       if (tid < 64) params.partial_lse[blockIdx.y * 64 + tid] = -math::inf;
     }
