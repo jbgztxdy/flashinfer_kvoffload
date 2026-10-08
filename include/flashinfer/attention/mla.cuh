@@ -1008,7 +1008,8 @@ __device__ __forceinline__ void record_overlap_phase(const Params& params, uint3
 
 template <typename KTraits, typename Params>
 __device__ __forceinline__ void run_host_fetch_warps(const Params& params,
-                                                     unsigned long long epoch) {
+                                                     unsigned long long epoch,
+                                                     uint32_t* local_splits) {
   const uint32_t lane = threadIdx.x;
   const uint32_t rank = blockIdx.y - 44;
   const uint32_t warp = threadIdx.y;
@@ -1033,6 +1034,7 @@ __device__ __forceinline__ void run_host_fetch_warps(const Params& params,
     if (i < warp) prefix += warp_counts[i];
     total += warp_counts[i];
   }
+  if (lane == 0 && warp == 0) atomicExch(local_splits, total > 448 && total <= 512 ? 12U : 16U);
 #pragma unroll
   for (uint32_t i = 0; i < 16; ++i) {
     const uint32_t host_rank = prefix + preceding[i] + __popc(masks[i] & ((1U << lane) - 1));
@@ -1096,12 +1098,13 @@ __device__ __forceinline__ void run_host_fetch_warps(const Params& params,
 
 template <typename BaseTraits>
 // Fixed task assignment for one-query, 64-head, top-2048 decode:
-// 12 local compute CTAs, 32 Host compute CTAs, and 64 producer/merge CTAs.
+// 44 compute CTAs and 64 producer/merge CTAs, with adaptive local/Host splits.
 struct HostSplitKernelTraits : BaseTraits {
   struct SharedStorage : BaseTraits::SharedStorage {
     typename BaseTraits::IdType indices[192];
     uint32_t counts[8];
     uint32_t count;
+    uint32_t local_splits;
     unsigned long long epoch;
   };
 };
@@ -1111,9 +1114,6 @@ __device__ __forceinline__ uint32_t prepare_host_split(typename KTraits::SharedS
                                                        const Params& params) {
   const uint32_t lane = threadIdx.x;
   const uint32_t warp = threadIdx.z * 4 + threadIdx.y;
-  const bool host = blockIdx.y >= 12;
-  const uint32_t chunk = host ? blockIdx.y - 12 : blockIdx.y;
-  const uint32_t chunks = host ? 32 : 12;
   typename KTraits::IdType pages[8];
   uint32_t preceding[8], masks[8], count = 0;
 #pragma unroll
@@ -1131,6 +1131,11 @@ __device__ __forceinline__ uint32_t prepare_host_split(typename KTraits::SharedS
     if (i < warp) prefix += storage->counts[i];
     total_host += storage->counts[i];
   }
+  const uint32_t local_splits = total_host > 448 && total_host <= 512 ? 12 : 16;
+  const bool host = blockIdx.y >= local_splits;
+  const uint32_t chunk = host ? blockIdx.y - local_splits : blockIdx.y;
+  const uint32_t chunks = host ? 44 - local_splits : local_splits;
+  if (lane == 0 && warp == 0) storage->local_splits = local_splits;
 #pragma unroll
   for (uint32_t i = 0; i < 8; ++i) {
     const uint32_t position = warp * 256 + i * 32 + lane;
@@ -1182,7 +1187,7 @@ __device__ __forceinline__ void compute_host_split(typename KTraits::SharedStora
                   params.q_nope_stride_h, params.q_pe_stride_n, params.q_pe_stride_h, 1, 0,
                   params.num_heads);
   cp_async::commit_group();
-  if (blockIdx.y >= 12) {
+  if (blockIdx.y >= storage.local_splits) {
     const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
     if (tid < length) {
       unsigned long long ready;
@@ -1341,13 +1346,13 @@ __device__ __forceinline__ void merge_host_group(typename KTraits::SharedStorage
   asm volatile("bar.sync 1, 128;" ::: "memory");
 }
 
-template <typename KTraits, typename Params>
+template <uint32_t LOCAL_SPLITS, uint32_t HOST_SPLITS, typename KTraits, typename Params>
 __device__ __forceinline__ void merge_ready_host_states(typename KTraits::SharedStorage& storage,
                                                         const Params& params) {
   const uint32_t tid = threadIdx.y * 32 + threadIdx.x, head = blockIdx.y - 44;
   float local[4], host[4], local_lse, host_lse;
-  merge_host_group<0, 12, KTraits>(storage, params, local, local_lse);
-  merge_host_group<12, 32, KTraits>(storage, params, host, host_lse);
+  merge_host_group<0, LOCAL_SPLITS, KTraits>(storage, params, local, local_lse);
+  merge_host_group<LOCAL_SPLITS, HOST_SPLITS, KTraits>(storage, params, host, host_lse);
   const float maximum = max(local_lse, host_lse);
   const float local_weight = math::ptx_exp2(local_lse - maximum);
   const float host_weight = math::ptx_exp2(host_lse - maximum);
@@ -1370,7 +1375,10 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostOverlapKerne
   auto& storage = *reinterpret_cast<typename KTraits::SharedStorage*>(smem);
   const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
   record_overlap_phase(params, 0);
-  if (tid == 0) storage.epoch = atomicAdd(params.host_prefetch_state + blockIdx.y, 1ULL) + 1;
+  if (tid == 0) {
+    storage.epoch = atomicAdd(params.host_prefetch_state + blockIdx.y, 1ULL) + 1;
+    storage.local_splits = 0;
+  }
   __syncthreads();
   params.partial_o = params.host_prefetch_buffer + 2048 * 576;
   params.partial_lse = reinterpret_cast<float*>(params.host_prefetch_state + gridDim.y + 2048 + 44);
@@ -1378,7 +1386,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostOverlapKerne
     const uint32_t length = prepare_host_split<KTraits>(&storage, params);
     record_overlap_phase(params, 1);
     if (length > 0) {
-      if (blockIdx.y < 12 || (length > 16 && length <= 32))
+      if (blockIdx.y < storage.local_splits || (length > 16 && length <= 32))
         compute_host_split<KTraits>(storage, params, length, smem);
       else
         compute_host_split<HostNarrowKernelTraits<KTraits>>(storage, params, length, smem);
@@ -1397,9 +1405,21 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostOverlapKerne
     }
   } else {
     if (threadIdx.z == 1)
-      run_host_fetch_warps<KTraits>(params, storage.epoch);
-    else
-      merge_ready_host_states<KTraits>(storage, params);
+      run_host_fetch_warps<KTraits>(params, storage.epoch, &storage.local_splits);
+    else {
+      uint32_t local_splits = 0;
+      if (threadIdx.x == 0) {
+        do {
+          local_splits = atomicAdd(&storage.local_splits, 0U);
+          if (local_splits == 0) __nanosleep(32);
+        } while (local_splits == 0);
+      }
+      local_splits = __shfl_sync(0xffffffff, local_splits, 0);
+      if (local_splits == 12)
+        merge_ready_host_states<12, 32, KTraits>(storage, params);
+      else
+        merge_ready_host_states<16, 28, KTraits>(storage, params);
+    }
   }
 }
 
