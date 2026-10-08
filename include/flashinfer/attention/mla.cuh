@@ -1323,26 +1323,30 @@ __device__ __forceinline__ void merge_host_group(typename KTraits::SharedStorage
   }
   asm volatile("bar.sync 1, 128;" ::: "memory");
   lse_output = weights[32];
-  uint2 packed_values[COUNT];
-#pragma unroll
-  for (uint32_t split = 0; split < COUNT; ++split) {
-    asm volatile("ld.global.cg.v2.u32 {%0, %1}, [%2];"
-                 : "=r"(packed_values[split].x), "=r"(packed_values[split].y)
-                 : "l"(params.partial_o + ((START + split) * 64 + head) * 512 + tid * 4)
-                 : "memory");
-  }
+  constexpr uint32_t BATCH = COUNT == 32 ? 16 : COUNT;
+  uint2 packed_values[BATCH];
 #pragma unroll
   for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = 0.f;
 #pragma unroll
-  for (uint32_t split = 0; split < COUNT; ++split) {
-    const float weight = weights[split];
-    if (weight > 0.f) {
-      float values[4];
-      vec_cast<float, typename KTraits::DTypeO>::template cast<4>(
-          values, reinterpret_cast<const typename KTraits::DTypeO*>(packed_values + split));
+  for (uint32_t begin = 0; begin < COUNT; begin += BATCH) {
 #pragma unroll
-      for (uint32_t feature = 0; feature < 4; ++feature)
-        output[feature] = fmaf(values[feature], weight, output[feature]);
+    for (uint32_t split = 0; split < BATCH; ++split) {
+      asm volatile("ld.global.cg.v2.u32 {%0, %1}, [%2];"
+                   : "=r"(packed_values[split].x), "=r"(packed_values[split].y)
+                   : "l"(params.partial_o + ((START + begin + split) * 64 + head) * 512 + tid * 4)
+                   : "memory");
+    }
+#pragma unroll
+    for (uint32_t split = 0; split < BATCH; ++split) {
+      const float weight = weights[begin + split];
+      if (weight > 0.f) {
+        float values[4];
+        vec_cast<float, typename KTraits::DTypeO>::template cast<4>(
+            values, reinterpret_cast<const typename KTraits::DTypeO*>(packed_values + split));
+#pragma unroll
+        for (uint32_t feature = 0; feature < 4; ++feature)
+          output[feature] = fmaf(values[feature], weight, output[feature]);
+      }
     }
   }
   asm volatile("bar.sync 1, 128;" ::: "memory");
