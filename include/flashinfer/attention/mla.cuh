@@ -1180,7 +1180,7 @@ __device__ __forceinline__ void compute_small_host_pv(typename KTraits::SharedSt
   }
 }
 
-template <bool HOST, typename KTraits, typename Params>
+template <bool HOST, bool SINGLE_TILE, typename KTraits, typename Params>
 __device__ __forceinline__ void compute_host_split(typename KTraits::SharedStorage& storage,
                                                    Params params, uint32_t length, uint8_t* smem) {
   load_q<KTraits>(&storage, params.q_nope, params.q_pe, params.q_nope_stride_n,
@@ -1210,7 +1210,7 @@ __device__ __forceinline__ void compute_host_split(typename KTraits::SharedStora
       m[2], d[2];
   init_states_<KTraits>(o_frag, m, d);
   typename KTraits::AttentionVariant variant(params, 0, smem);
-  int tile = int(ceil_div(length, KTraits::CTA_TILE_KV)) - 1;
+  int tile = SINGLE_TILE ? 0 : int(ceil_div(length, KTraits::CTA_TILE_KV)) - 1;
   load_kv<KTraits>(&storage, params.ckv, params.kpe, storage.indices, params.ckv_stride_n,
                    params.ckv_stride_page, params.kpe_stride_n, params.kpe_stride_page, length,
                    tile * KTraits::CTA_TILE_KV, params.block_size, tile % 2);
@@ -1387,11 +1387,11 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostOverlapKerne
     record_overlap_phase(params, 1);
     if (length > 0) {
       if (blockIdx.y < storage.local_splits)
-        compute_host_split<false, KTraits>(storage, params, length, smem);
+        compute_host_split<false, false, KTraits>(storage, params, length, smem);
       else if (length > 16 && length <= 32)
-        compute_host_split<true, KTraits>(storage, params, length, smem);
+        compute_host_split<true, true, KTraits>(storage, params, length, smem);
       else
-        compute_host_split<true, HostNarrowKernelTraits<KTraits>>(storage, params, length, smem);
+        compute_host_split<true, false, HostNarrowKernelTraits<KTraits>>(storage, params, length, smem);
     } else {
       if (tid < 64) params.partial_lse[blockIdx.y * 64 + tid] = -math::inf;
     }
