@@ -142,7 +142,7 @@ def main():
     ]
     (FOLDER / "report.md").write_text("\n".join(lines))
     with (FOLDER / "comparison.csv").open("w") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     charts.FOLDER = FOLDER
@@ -163,6 +163,10 @@ def main():
                 metadata={"Creator": "Matplotlib"},
             )
         plt.close(figure)
+    for path in FOLDER.rglob("*.svg"):
+        path.write_text(
+            "\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n"
+        )
     import zipfile
 
     with zipfile.ZipFile(
