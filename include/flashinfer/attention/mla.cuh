@@ -1154,6 +1154,11 @@ struct HostNarrowKernelTraits : BaseTraits {
   static constexpr uint32_t UPCAST_STRIDE_P = 2;
 };
 
+template <typename BaseTraits>
+struct HostMediumKernelTraits : BaseTraits {
+  static constexpr bool QK_SHARD = false;
+};
+
 template <uint32_t PASS, typename KTraits>
 __device__ __forceinline__ void compute_small_host_pv(typename KTraits::SharedStorage* storage,
                                                       float (*s_frag)[8], float* d,
@@ -1378,8 +1383,10 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostOverlapKerne
     const uint32_t length = prepare_host_split<KTraits>(&storage, params);
     record_overlap_phase(params, 1);
     if (length > 0) {
-      if (blockIdx.y < 16 || (length > 16 && length <= 32))
+      if (blockIdx.y < 16)
         compute_host_split<KTraits>(storage, params, length, smem);
+      else if (length > 16 && length <= 32)
+        compute_host_split<HostMediumKernelTraits<KTraits>>(storage, params, length, smem);
       else
         compute_host_split<HostNarrowKernelTraits<KTraits>>(storage, params, length, smem);
     } else {

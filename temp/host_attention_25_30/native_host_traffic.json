@@ -1,0 +1,21 @@
+{
+  "purpose": "Verify every selected Host row is fetched after warmup; profiler durations are excluded from latency comparisons.",
+  "checks": [
+    {
+      "host_rows": 512,
+      "host_bytes": 589824,
+      "measured_sysmem_fill_bytes": 589824,
+      "warmed": true,
+      "kernel": "void BatchMLAPagedAttentionKernel<KernelTraits<0, 2, 1, 512, 64, 64, 32, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, int>, MLAParams<__nv_bfloat16, __nv_bfloat16, __nv_bfloat16, int>>(T2)",
+      "profiled_duration_us": 53.344
+    },
+    {
+      "host_rows": 614,
+      "host_bytes": 707328,
+      "measured_sysmem_fill_bytes": 707328,
+      "warmed": true,
+      "kernel": "void BatchMLAPagedAttentionKernel<KernelTraits<0, 2, 1, 512, 64, 64, 32, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, int>, MLAParams<__nv_bfloat16, __nv_bfloat16, __nv_bfloat16, int>>(T2)",
+      "profiled_duration_us": 57.632
+    }
+  ]
+}
