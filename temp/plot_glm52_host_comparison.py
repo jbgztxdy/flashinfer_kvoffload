@@ -36,12 +36,15 @@ def load(layout):
     }
 
 
-def table(cases, method, metric="gpu_cycle", fractions=FRACTIONS):
-    lines = ["| Host | " + " | ".join(TICKS) + " |", "|---:|---:|---:|---:|---:|"]
+def table(cases, context, metric="gpu_cycle", fractions=FRACTIONS):
+    lines = [
+        "| Host | " + " | ".join(label for _, label, _ in METHODS) + " |",
+        "|---:|---:|---:|---:|",
+    ]
     for fraction in fractions:
         values = [
             cases[(context, fraction)][method][metric]["median_us"]
-            for context in CONTEXTS
+            for method, _, _ in METHODS
         ]
         lines.append(
             f"| {fraction:.0%} | "
@@ -254,7 +257,9 @@ def history():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--plots-only", action="store_true")
+    outputs = parser.add_mutually_exclusive_group()
+    outputs.add_argument("--plots-only", action="store_true")
+    outputs.add_argument("--tables-only", action="store_true")
     args = parser.parse_args()
     loaded = {
         layout: load(layout)
@@ -277,7 +282,8 @@ def main():
             }
             for mode, _, _ in METHODS:
                 assert len(case[mode]["gpu_cycle"]["samples_us"]) == 40
-    save_charts(cases_by_layout)
+    if not args.tables_only:
+        save_charts(cases_by_layout)
     lines = [
         "# Host attention: memcpy, direct access, and overlap",
         "",
@@ -317,8 +323,12 @@ def main():
     for layout in LAYOUTS:
         cases = cases_by_layout[layout]
         lines += [f"### {layout.title()}", ""]
-        for mode, label, _ in METHODS:
-            lines += [f"#### {label}", ""] + table(cases, mode) + [""]
+        for context, label in zip(CONTEXTS, TICKS, strict=True):
+            lines += (
+                [f"#### {label}", ""]
+                + table(cases, context, fractions=FRACTIONS + [0.6, 0.8, 1.0])
+                + [""]
+            )
         details += (
             [f"## {layout.title()}", "", "### CPU packing", ""]
             + packing_table(cases)
@@ -328,18 +338,9 @@ def main():
             ("cold_single", "Cold single"),
             ("serial_wall", "Serial wall"),
         ]:
-            for mode, label, _ in METHODS:
-                details += (
-                    [f"### {name}: {label}", ""] + table(cases, mode, metric) + [""]
-                )
-    lines += ["## Higher Host fractions (µs)", ""]
-    for layout in LAYOUTS:
-        for mode, label, _ in METHODS:
-            lines += (
-                [f"### {layout.title()}: {label}", ""]
-                + table(cases_by_layout[layout], mode, fractions=[0.6, 0.8, 1.0])
-                + [""]
-            )
+            details += [f"### {name}", ""]
+            for context, label in zip(CONTEXTS, TICKS, strict=True):
+                details += [f"#### {label}", ""] + table(cases, context, metric) + [""]
     lines += [
         "## Files",
         "",
