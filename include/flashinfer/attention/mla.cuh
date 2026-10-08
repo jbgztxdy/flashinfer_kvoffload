@@ -1096,7 +1096,7 @@ __device__ __forceinline__ void run_host_fetch_warps(const Params& params,
 
 template <typename BaseTraits>
 // Fixed task assignment for one-query, 64-head, top-2048 decode:
-// 16 local compute CTAs, 28 Host compute CTAs, and 64 producer/merge CTAs.
+// 12 local compute CTAs, 32 Host compute CTAs, and 64 producer/merge CTAs.
 struct HostSplitKernelTraits : BaseTraits {
   struct SharedStorage : BaseTraits::SharedStorage {
     typename BaseTraits::IdType indices[128];
@@ -1111,9 +1111,9 @@ __device__ __forceinline__ uint32_t prepare_host_split(typename KTraits::SharedS
                                                        const Params& params) {
   const uint32_t lane = threadIdx.x;
   const uint32_t warp = threadIdx.z * 4 + threadIdx.y;
-  const bool host = blockIdx.y >= 16;
-  const uint32_t chunk = host ? blockIdx.y - 16 : blockIdx.y;
-  const uint32_t chunks = host ? 28 : 16;
+  const bool host = blockIdx.y >= 12;
+  const uint32_t chunk = host ? blockIdx.y - 12 : blockIdx.y;
+  const uint32_t chunks = host ? 32 : 12;
   typename KTraits::IdType pages[8];
   uint32_t preceding[8], masks[8], count = 0;
 #pragma unroll
@@ -1154,11 +1154,6 @@ struct HostNarrowKernelTraits : BaseTraits {
   static constexpr uint32_t UPCAST_STRIDE_P = 2;
 };
 
-template <typename BaseTraits>
-struct HostMediumKernelTraits : BaseTraits {
-  static constexpr bool QK_SHARD = false;
-};
-
 template <uint32_t PASS, typename KTraits>
 __device__ __forceinline__ void compute_small_host_pv(typename KTraits::SharedStorage* storage,
                                                       float (*s_frag)[8], float* d,
@@ -1187,7 +1182,7 @@ __device__ __forceinline__ void compute_host_split(typename KTraits::SharedStora
                   params.q_nope_stride_h, params.q_pe_stride_n, params.q_pe_stride_h, 1, 0,
                   params.num_heads);
   cp_async::commit_group();
-  if (blockIdx.y >= 16) {
+  if (blockIdx.y >= 12) {
     const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
     if (tid < length) {
       unsigned long long ready;
@@ -1351,8 +1346,8 @@ __device__ __forceinline__ void merge_ready_host_states(typename KTraits::Shared
                                                         const Params& params) {
   const uint32_t tid = threadIdx.y * 32 + threadIdx.x, head = blockIdx.y - 44;
   float local[4], host[4], local_lse, host_lse;
-  merge_host_group<0, 16, KTraits>(storage, params, local, local_lse);
-  merge_host_group<16, 28, KTraits>(storage, params, host, host_lse);
+  merge_host_group<0, 12, KTraits>(storage, params, local, local_lse);
+  merge_host_group<12, 32, KTraits>(storage, params, host, host_lse);
   const float maximum = max(local_lse, host_lse);
   const float local_weight = math::ptx_exp2(local_lse - maximum);
   const float host_weight = math::ptx_exp2(host_lse - maximum);
@@ -1383,10 +1378,8 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostOverlapKerne
     const uint32_t length = prepare_host_split<KTraits>(&storage, params);
     record_overlap_phase(params, 1);
     if (length > 0) {
-      if (blockIdx.y < 16)
+      if (blockIdx.y < 12 || (length > 16 && length <= 32))
         compute_host_split<KTraits>(storage, params, length, smem);
-      else if (length > 16 && length <= 32)
-        compute_host_split<HostMediumKernelTraits<KTraits>>(storage, params, length, smem);
       else
         compute_host_split<HostNarrowKernelTraits<KTraits>>(storage, params, length, smem);
     } else {

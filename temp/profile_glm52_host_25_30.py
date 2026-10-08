@@ -1,7 +1,11 @@
 # Purpose: Verify native or fused MLA Host traffic with warmed inputs.
 # Usage: PYTHONPATH=. /mnt/data/mhy-vllm-venv/bin/python temp/profile_glm52_host_25_30.py --mode direct --fraction .25
 import argparse
+import functools
+import hashlib
+import json
 import os
+from pathlib import Path
 
 import torch
 
@@ -13,7 +17,27 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=("direct", "overlap"), default="direct")
     parser.add_argument("--fraction", type=float, default=0.25)
+    parser.add_argument("--trace-output", type=Path)
     args = parser.parse_args()
+    if args.trace_output:
+        if args.mode != "overlap":
+            raise ValueError("Phase tracing requires the overlap kernel")
+        if args.trace_output.exists():
+            raise FileExistsError(args.trace_output)
+        from flashinfer.jit import gen_batch_mla_module
+        from flashinfer.mla import _core
+
+        @functools.cache
+        def instrumented_module(backend, *module_args, host_prefetch=False):
+            specification = gen_batch_mla_module(
+                backend, *module_args, host_prefetch=host_prefetch
+            )
+            if host_prefetch:
+                specification.name += "_phase_trace"
+                specification.extra_cuda_cflags.append("-DFLASHINFER_MLA_HOST_TRACE")
+            return specification.build_and_load()
+
+        _core.get_batch_mla_module = instrumented_module
     os.sched_setaffinity(0, set(range(32)) | set(range(64, 96)))
     torch.set_num_threads(8)
     torch.manual_seed(42)
@@ -48,6 +72,23 @@ def main():
     run()
     torch.cuda.synchronize()
     torch.cuda.cudart().cudaProfilerStop()
+    if args.trace_output:
+        args.trace_output.write_text(
+            json.dumps(
+                dict(
+                    fraction=args.fraction,
+                    source_sha256=hashlib.sha256(
+                        Path("include/flashinfer/attention/mla.cuh").read_bytes()
+                    ).hexdigest(),
+                    phases_ns=wrapper._host_prefetch_state[3608:4040]
+                    .cpu()
+                    .view(108, 4)
+                    .tolist(),
+                ),
+                indent=2,
+            )
+            + "\n"
+        )
 
 
 if __name__ == "__main__":
