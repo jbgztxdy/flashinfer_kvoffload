@@ -1156,6 +1156,11 @@ struct HostNarrowKernelTraits : BaseTraits {
   static constexpr uint32_t UPCAST_STRIDE_P = 2;
 };
 
+template <typename BaseTraits>
+struct HostUnshardedKernelTraits : BaseTraits {
+  static constexpr bool QK_SHARD = false;
+};
+
 template <uint32_t PASS, typename KTraits>
 __device__ __forceinline__ void compute_small_host_pv(typename KTraits::SharedStorage* storage,
                                                       float (*s_frag)[8], float* d,
@@ -1182,10 +1187,10 @@ __device__ __forceinline__ void load_private_host_segment(
     typename KTraits::SharedStorage& storage, const Params& params, uint32_t length) {
   const uint32_t lane = threadIdx.x;
   const uint32_t group = threadIdx.z;
-  if constexpr (!KTraits::QK_SHARD) {
+  if constexpr (KTraits::NUM_MMA_KV == 1) {
     if (group != 0) return;
   }
-  const uint32_t row = (KTraits::QK_SHARD ? group * 16 : 0) + threadIdx.y * 4 + lane / 8;
+  const uint32_t row = (KTraits::NUM_MMA_KV > 1 ? group * 16 : 0) + threadIdx.y * 4 + lane / 8;
   const uint32_t page = row < length ? storage.indices[row] : 0;
   if constexpr (ROPE) {
     smem_t<KTraits::SWIZZLE_MODE_KPE> shared(storage.kpe_p_smem[0]);
@@ -1209,12 +1214,10 @@ template <bool HOST, bool SINGLE_TILE, bool DIRECT_HOST, typename KTraits, bool 
           typename Params>
 __device__ __forceinline__ void compute_host_split(typename KTraits::SharedStorage& storage,
                                                    Params params, uint32_t length, uint8_t* smem) {
-  if constexpr (!PIPELINE) {
   load_q<KTraits>(&storage, params.q_nope, params.q_pe, params.q_nope_stride_n,
                   params.q_nope_stride_h, params.q_pe_stride_n, params.q_pe_stride_h, 1, 0,
                   params.num_heads);
   cp_async::commit_group();
-  }
   if constexpr (HOST && !DIRECT_HOST) {
     const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
     if (tid < length) {
@@ -1236,16 +1239,12 @@ __device__ __forceinline__ void compute_host_split(typename KTraits::SharedStora
   if constexpr (!DIRECT_HOST) record_overlap_phase(params, 2);
   float s_frag[KTraits::QK_SHARD ? KTraits::NUM_MMA_KV / 2 : KTraits::NUM_MMA_KV][8], o_frag[16][8],
       m[2], d[2];
-  if constexpr (!PIPELINE) init_states_<KTraits>(o_frag, m, d);
+  init_states_<KTraits>(o_frag, m, d);
   typename KTraits::AttentionVariant variant(params, 0, smem);
   int tile = SINGLE_TILE ? 0 : int(ceil_div(length, KTraits::CTA_TILE_KV)) - 1;
   if constexpr (PIPELINE) {
     static_assert(HOST && DIRECT_HOST && SINGLE_TILE);
     load_private_host_segment<0, 4, false, KTraits>(storage, params, length);
-    cp_async::commit_group();
-    load_q<KTraits>(&storage, params.q_nope, params.q_pe, params.q_nope_stride_n,
-                    params.q_nope_stride_h, params.q_pe_stride_n, params.q_pe_stride_h, 1, 0,
-                    params.num_heads);
     cp_async::commit_group();
     load_private_host_segment<4, 8, false, KTraits>(storage, params, length);
     cp_async::commit_group();
@@ -1255,19 +1254,19 @@ __device__ __forceinline__ void compute_host_split(typename KTraits::SharedStora
     smem_t<KTraits::SWIZZLE_MODE_CKV> key(storage.ckv_smem[0]);
     cp_async::wait_group<2>();
     __syncthreads();
-    if (KTraits::QK_SHARD || threadIdx.z == 0)
+    if (KTraits::NUM_MMA_KV > 1 || threadIdx.z == 0)
       compute_qk_<true, KTraits, 16, KTraits::UPCAST_STRIDE_Q_NOPE,
                   KTraits::UPCAST_STRIDE_CKV, KTraits::SWIZZLE_MODE_Q_NOPE,
                   KTraits::SWIZZLE_MODE_CKV>(query, key, s_frag);
     cp_async::wait_group<1>();
     __syncthreads();
-    if (KTraits::QK_SHARD || threadIdx.z == 0)
+    if (KTraits::NUM_MMA_KV > 1 || threadIdx.z == 0)
       compute_qk_<false, KTraits, 16, KTraits::UPCAST_STRIDE_Q_NOPE,
                   KTraits::UPCAST_STRIDE_CKV, KTraits::SWIZZLE_MODE_Q_NOPE,
                   KTraits::SWIZZLE_MODE_CKV, 16>(query, key, s_frag);
     cp_async::wait_group<0>();
     __syncthreads();
-    if (KTraits::QK_SHARD || threadIdx.z == 0) {
+    if (KTraits::NUM_MMA_KV > 1 || threadIdx.z == 0) {
       smem_t<KTraits::SWIZZLE_MODE_Q_PE> rope_query(storage.q_smem_pe);
       smem_t<KTraits::SWIZZLE_MODE_KPE> rope_key(storage.kpe_p_smem[0]);
       compute_qk_<false, KTraits, KTraits::NUM_MMA_D_KPE, KTraits::UPCAST_STRIDE_Q_PE,
@@ -1288,7 +1287,6 @@ __device__ __forceinline__ void compute_host_split(typename KTraits::SharedStora
   cp_async::wait_group<0>();
   __syncthreads();
   }
-  if constexpr (PIPELINE) init_states_<KTraits>(o_frag, m, d);
   if constexpr (DIRECT_HOST) record_overlap_phase(params, 2);
   if constexpr (!KTraits::QK_SHARD) {
     if (length <= 16) {
@@ -1488,7 +1486,7 @@ __device__ __forceinline__ void merge_private_host_group(
   extern __shared__ uint8_t smem[];
   auto* weights = reinterpret_cast<float*>(smem + 36864 + threadIdx.z * 512);
   constexpr uint32_t BATCHES = (COUNT + 31) / 32;
-  {
+  if (tid < 32) {
     uint32_t mask;
     do {
       bool complete = true;
@@ -1507,27 +1505,6 @@ __device__ __forceinline__ void merge_private_host_group(
       mask = __ballot_sync(0xffffffff, complete);
       if (mask != 0xffffffff) __nanosleep(128);
     } while (mask != 0xffffffff);
-  }
-  #pragma unroll
-  for (uint32_t batch = 0; batch < BATCHES; ++batch) {
-    const uint32_t split = batch * 32 + lane;
-    if (split < COUNT) {
-      unsigned long long ready;
-      asm volatile("ld.acquire.gpu.global.u64 %0, [%1];"
-                   : "=l"(ready)
-                   : "l"(params.host_prefetch_state + gridDim.y + START + split) : "memory");
-    }
-  }
-  __syncwarp();
-  uint2 values[COUNT];
-#pragma unroll
-  for (uint32_t split = 0; split < COUNT; ++split) {
-    asm volatile("ld.global.cg.v2.u32 {%0, %1}, [%2];"
-                 : "=r"(values[split].x), "=r"(values[split].y)
-                 : "l"(params.partial_o + ((START + split) * 64 + head) * 512 + tid * 4)
-                 : "memory");
-  }
-  if (tid < 32) {
     float lse[BATCHES], weight[BATCHES], maximum = -math::inf;
 #pragma unroll
     for (uint32_t batch = 0; batch < BATCHES; ++batch) {
@@ -1565,6 +1542,14 @@ __device__ __forceinline__ void merge_private_host_group(
   const uint32_t barrier = threadIdx.z + 1;
   asm volatile("bar.sync %0, 128;" :: "r"(barrier) : "memory");
   lse_output = weights[64];
+  uint2 values[COUNT];
+#pragma unroll
+  for (uint32_t split = 0; split < COUNT; ++split) {
+    asm volatile("ld.global.cg.v2.u32 {%0, %1}, [%2];"
+                 : "=r"(values[split].x), "=r"(values[split].y)
+                 : "l"(params.partial_o + ((START + split) * 64 + head) * 512 + tid * 4)
+                 : "memory");
+  }
 #pragma unroll
   for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = 0.f;
 #pragma unroll
@@ -1593,13 +1578,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPrivateHostKerne
   auto& storage = *reinterpret_cast<typename KTraits::SharedStorage*>(smem);
   const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
   record_overlap_phase(params, 0);
-  if (tid == 0) {
-    unsigned long long epoch;
-    asm volatile("ld.global.cg.u64 %0, [%1];"
-                 : "=l"(epoch) : "l"(params.host_prefetch_state + blockIdx.y) : "memory");
-    storage.epoch = epoch + 1;
-    params.host_prefetch_state[blockIdx.y] = storage.epoch;
-  }
+  if (tid == 0) storage.epoch = atomicAdd(params.host_prefetch_state + blockIdx.y, 1ULL) + 1;
   __syncthreads();
   params.partial_o = params.host_prefetch_buffer;
   params.partial_lse = reinterpret_cast<float*>(params.host_prefetch_state + gridDim.y + 16 + HOST_CHUNKS);
@@ -1613,7 +1592,12 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPrivateHostKerne
         compute_host_split<true, true, true, HostNarrowKernelTraits<KTraits>, PIPELINE>(
             storage, params, length, smem);
       else if (length <= 32)
+#ifdef FLASHINFER_MLA_HOST_PRIVATE_UNSHARDED
+        compute_host_split<true, true, true, HostUnshardedKernelTraits<KTraits>, PIPELINE>(
+            storage, params, length, smem);
+#else
         compute_host_split<true, true, true, KTraits, PIPELINE>(storage, params, length, smem);
+#endif
       else
         compute_host_split<true, false, true, KTraits>(storage, params, length, smem);
     } else if (tid < 64) {

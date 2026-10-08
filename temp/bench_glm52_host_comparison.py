@@ -411,6 +411,7 @@ def main():
     )
     parser.add_argument("--private-pipeline", action="store_true")
     parser.add_argument("--private-register", action="store_true")
+    parser.add_argument("--private-unsharded", action="store_true")
     args = parser.parse_args()
     if args.private_register and not args.private_pipeline:
         raise ValueError("Register reads require --private-pipeline")
@@ -427,6 +428,7 @@ def main():
                 specification.name += (
                     f"_private_shared_{args.private_chunks}_{int(args.private_pipeline)}"
                     + ("_register" if args.private_register else "")
+                    + ("_unsharded" if args.private_unsharded else "")
                 )
                 specification.extra_cuda_cflags.extend(
                     [
@@ -441,6 +443,10 @@ def main():
                 if args.private_register:
                     specification.extra_cuda_cflags.append(
                         "-DFLASHINFER_MLA_HOST_PRIVATE_REGISTER"
+                    )
+                if args.private_unsharded:
+                    specification.extra_cuda_cflags.append(
+                        "-DFLASHINFER_MLA_HOST_PRIVATE_UNSHARDED"
                     )
             return specification.build_and_load()
 
