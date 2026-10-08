@@ -406,7 +406,9 @@ def main():
     parser.add_argument(
         "--host-kernel", choices=("staged", "private"), default="staged"
     )
-    parser.add_argument("--private-chunks", type=int, choices=(28, 32, 40, 48, 60), default=28)
+    parser.add_argument(
+        "--private-chunks", type=int, choices=(28, 32, 40, 48, 60), default=28
+    )
     parser.add_argument("--private-pipeline", action="store_true")
     parser.add_argument("--private-register", action="store_true")
     args = parser.parse_args()
