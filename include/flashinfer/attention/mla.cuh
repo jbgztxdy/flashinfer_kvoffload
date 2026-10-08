@@ -1234,32 +1234,97 @@ __device__ __forceinline__ void compute_host_split(typename KTraits::SharedStora
   if constexpr (!DIRECT_HOST) record_overlap_phase(params, 2);
   float s_frag[KTraits::QK_SHARD ? KTraits::NUM_MMA_KV / 2 : KTraits::NUM_MMA_KV][8], o_frag[16][8],
       m[2], d[2];
-  init_states_<KTraits>(o_frag, m, d);
   typename KTraits::AttentionVariant variant(params, 0, smem);
   int tile = SINGLE_TILE ? 0 : int(ceil_div(length, KTraits::CTA_TILE_KV)) - 1;
   if constexpr (PIPELINE) {
     static_assert(HOST && DIRECT_HOST && SINGLE_TILE);
+#ifdef FLASHINFER_MLA_HOST_PRIVATE_REGISTER
+    const uint32_t row = (KTraits::QK_SHARD ? threadIdx.z * 16 : 0) +
+                         threadIdx.y * 4 + threadIdx.x / 8;
+    const bool active = KTraits::QK_SHARD || threadIdx.z == 0;
+    const bool valid = active && row < length;
+    const uint32_t page = valid ? storage.indices[row] : 0;
+    uint4 first[4], second[4], rope;
+#pragma unroll
+    for (uint32_t feature = 0; feature < 4; ++feature) {
+      first[feature] = make_uint4(0, 0, 0, 0);
+      second[feature] = make_uint4(0, 0, 0, 0);
+      if (valid) {
+        const auto* source = params.ckv + page * params.ckv_stride_page +
+                             feature * 64 + (threadIdx.x % 8) * 8;
+        asm volatile("ld.global.cg.v4.u32 {%0, %1, %2, %3}, [%4];"
+                     : "=r"(first[feature].x), "=r"(first[feature].y),
+                       "=r"(first[feature].z), "=r"(first[feature].w)
+                     : "l"(source) : "memory");
+        asm volatile("ld.global.cg.v4.u32 {%0, %1, %2, %3}, [%4];"
+                     : "=r"(second[feature].x), "=r"(second[feature].y),
+                       "=r"(second[feature].z), "=r"(second[feature].w)
+                     : "l"(source + 256) : "memory");
+      }
+    }
+    rope = make_uint4(0, 0, 0, 0);
+    if (valid) {
+      const auto* source = params.kpe + page * params.kpe_stride_page + (threadIdx.x % 8) * 8;
+      asm volatile("ld.global.cg.v4.u32 {%0, %1, %2, %3}, [%4];"
+                   : "=r"(rope.x), "=r"(rope.y), "=r"(rope.z), "=r"(rope.w)
+                   : "l"(source) : "memory");
+    }
+    smem_t<KTraits::SWIZZLE_MODE_CKV> destination(storage.ckv_smem[0]);
+    if (active) {
+#pragma unroll
+      for (uint32_t feature = 0; feature < 4; ++feature) {
+        const uint32_t offset = destination.template get_permuted_offset<KTraits::UPCAST_STRIDE_CKV>(
+            row, feature * 8 + threadIdx.x % 8);
+        destination.base[offset] = first[feature];
+      }
+    }
+#else
     load_private_host_segment<0, 4, false, KTraits>(storage, params, length);
     cp_async::commit_group();
     load_private_host_segment<4, 8, false, KTraits>(storage, params, length);
     cp_async::commit_group();
     load_private_host_segment<0, 1, true, KTraits>(storage, params, length);
     cp_async::commit_group();
+#endif
     smem_t<KTraits::SWIZZLE_MODE_Q_NOPE> query(storage.q_smem_nope);
     smem_t<KTraits::SWIZZLE_MODE_CKV> key(storage.ckv_smem[0]);
+#ifdef FLASHINFER_MLA_HOST_PRIVATE_REGISTER
+    cp_async::wait_group<0>();
+#else
     cp_async::wait_group<2>();
+#endif
     __syncthreads();
     if (KTraits::QK_SHARD || threadIdx.z == 0)
       compute_qk_<true, KTraits, 16, KTraits::UPCAST_STRIDE_Q_NOPE,
                   KTraits::UPCAST_STRIDE_CKV, KTraits::SWIZZLE_MODE_Q_NOPE,
                   KTraits::SWIZZLE_MODE_CKV>(query, key, s_frag);
+#ifdef FLASHINFER_MLA_HOST_PRIVATE_REGISTER
+    if (active) {
+#pragma unroll
+      for (uint32_t feature = 0; feature < 4; ++feature) {
+        const uint32_t offset = destination.template get_permuted_offset<KTraits::UPCAST_STRIDE_CKV>(
+            row, (feature + 4) * 8 + threadIdx.x % 8);
+        destination.base[offset] = second[feature];
+      }
+    }
+#else
     cp_async::wait_group<1>();
+#endif
     __syncthreads();
     if (KTraits::QK_SHARD || threadIdx.z == 0)
       compute_qk_<false, KTraits, 16, KTraits::UPCAST_STRIDE_Q_NOPE,
                   KTraits::UPCAST_STRIDE_CKV, KTraits::SWIZZLE_MODE_Q_NOPE,
                   KTraits::SWIZZLE_MODE_CKV, 16>(query, key, s_frag);
+#ifdef FLASHINFER_MLA_HOST_PRIVATE_REGISTER
+    if (active) {
+      smem_t<KTraits::SWIZZLE_MODE_KPE> destination_rope(storage.kpe_p_smem[0]);
+      const uint32_t offset = destination_rope.template get_permuted_offset<KTraits::UPCAST_STRIDE_KPE>(
+          row, threadIdx.x % 8);
+      destination_rope.base[offset] = rope;
+    }
+#else
     cp_async::wait_group<0>();
+#endif
     __syncthreads();
     if (KTraits::QK_SHARD || threadIdx.z == 0) {
       smem_t<KTraits::SWIZZLE_MODE_Q_PE> rope_query(storage.q_smem_pe);
@@ -1282,6 +1347,7 @@ __device__ __forceinline__ void compute_host_split(typename KTraits::SharedStora
   cp_async::wait_group<0>();
   __syncthreads();
   }
+  init_states_<KTraits>(o_frag, m, d);
   if constexpr (DIRECT_HOST) record_overlap_phase(params, 2);
   if constexpr (!KTraits::QK_SHARD) {
     if (length <= 16) {

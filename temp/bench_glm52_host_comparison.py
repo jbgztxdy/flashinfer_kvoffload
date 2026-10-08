@@ -408,7 +408,10 @@ def main():
     )
     parser.add_argument("--private-chunks", type=int, choices=(28, 32, 40, 48, 60), default=28)
     parser.add_argument("--private-pipeline", action="store_true")
+    parser.add_argument("--private-register", action="store_true")
     args = parser.parse_args()
+    if args.private_register and not args.private_pipeline:
+        raise ValueError("Register reads require --private-pipeline")
     if args.host_kernel == "private":
         from flashinfer.jit import gen_batch_mla_module
         from flashinfer.mla import _core
@@ -419,7 +422,10 @@ def main():
                 backend, *module_args, host_prefetch=host_prefetch
             )
             if host_prefetch:
-                specification.name += f"_private_shared_{args.private_chunks}_{int(args.private_pipeline)}"
+                specification.name += (
+                    f"_private_shared_{args.private_chunks}_{int(args.private_pipeline)}"
+                    + ("_register" if args.private_register else "")
+                )
                 specification.extra_cuda_cflags.extend(
                     [
                         "-DFLASHINFER_MLA_HOST_PRIVATE_SHARED",
@@ -429,6 +435,10 @@ def main():
                 if args.private_pipeline:
                     specification.extra_cuda_cflags.append(
                         "-DFLASHINFER_MLA_HOST_PRIVATE_PIPELINE"
+                    )
+                if args.private_register:
+                    specification.extra_cuda_cflags.append(
+                        "-DFLASHINFER_MLA_HOST_PRIVATE_REGISTER"
                     )
             return specification.build_and_load()
 
