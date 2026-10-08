@@ -1378,7 +1378,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostOverlapKerne
     const uint32_t length = prepare_host_split<KTraits>(&storage, params);
     record_overlap_phase(params, 1);
     if (length > 0) {
-      if (blockIdx.y < 16)
+      if (blockIdx.y < 16 || (length > 16 && length <= 32))
         compute_host_split<KTraits>(storage, params, length, smem);
       else
         compute_host_split<HostNarrowKernelTraits<KTraits>>(storage, params, length, smem);
