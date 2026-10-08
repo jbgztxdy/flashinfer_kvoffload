@@ -13,7 +13,7 @@ def main():
     parser.add_argument(
         "--output-dir", type=Path, default=repository / "temp/host_attention_25_30"
     )
-    parser.add_argument("--workspace", default="temp/jit_host_25_30_v42")
+    parser.add_argument("--workspace", default="temp/jit_host_25_30_v44")
     args = parser.parse_args()
     environment = dict(os.environ)
     environment.update(
