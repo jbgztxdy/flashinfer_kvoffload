@@ -17,7 +17,7 @@ Half of the physical cache resides in local HBM and half in pinned NUMA-0 Host m
 
 ## Charts
 
-The main figures show random placement. Additional 25% and 30% figures are included. Head and tail figures are in their corresponding subdirectories. PNG, SVG, and PDF versions are available; charts.zip contains only the current figures.
+The main figures show random placement. The dashed HBM line is the measured 0% Host native-attention median for each context and placement, with all selected KV rows in local HBM. Additional 25% and 30% figures are included. Head and tail figures are in their corresponding subdirectories. PNG, SVG, and PDF versions are available; charts.zip contains only the current figures.
 
 ![10% Host](host_10.png)
 

@@ -270,6 +270,6 @@ All 576 paired FP32 output comparisons passed; maximum absolute error 0.003749. 
 
 ## Charts and data
 
-Charts use the three main methods, context on the horizontal axis, and latency in us on the vertical axis. Error bars show the 10th-90th percentile across rounds. Existing baseline reports and plots are preserved.
+Charts use the three main methods, context on the horizontal axis, and latency in us on the vertical axis. The dashed HBM line is the measured 0% Host native-attention median for each context and placement, with all selected KV rows in local HBM. Error bars show the 10th-90th percentile across rounds. Existing baseline reports and plots are preserved.
 
 [Charts](charts.zip) · [CSV](comparison.csv) · [Original comparison](../host_attention_comparison/report.md) · [Previous optimization](../host_attention_25_30/report.md)

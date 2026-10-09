@@ -73,6 +73,7 @@ def packing_table(cases):
 def plot_axis(axis, cases, fraction, ymax, legend=True, ylabel=True):
     x = np.arange(len(CONTEXTS))
     width = 0.235
+    handles = []
     for index, (method, label, color) in enumerate(METHODS):
         summaries = [
             cases[(context, fraction)][method]["gpu_cycle"] for context in CONTEXTS
@@ -84,17 +85,35 @@ def plot_axis(axis, cases, fraction, ymax, legend=True, ylabel=True):
                 [row["p90_us"] - row["median_us"] for row in summaries],
             ]
         )
-        axis.bar(
-            x + (index - 1) * width,
-            median,
-            width=width,
-            label=label,
-            color=color,
-            edgecolor="white",
-            linewidth=0.45,
-            yerr=errors,
-            error_kw=dict(ecolor="#4B535A", elinewidth=0.75, capsize=2, capthick=0.75),
+        handles.append(
+            axis.bar(
+                x + (index - 1) * width,
+                median,
+                width=width,
+                label=label,
+                color=color,
+                edgecolor="white",
+                linewidth=0.45,
+                yerr=errors,
+                error_kw=dict(
+                    ecolor="#4B535A", elinewidth=0.75, capsize=2, capthick=0.75
+                ),
+            )
         )
+    local = [
+        cases[(context, 0.0)]["direct"]["gpu_cycle"]["median_us"]
+        for context in CONTEXTS
+    ]
+    (local_line,) = axis.plot(
+        np.concatenate(([x[0] - 0.45], x, [x[-1] + 0.45])),
+        [local[0], *local, local[-1]],
+        color="#333B43",
+        linewidth=1.4,
+        linestyle=(0, (5, 3)),
+        label="HBM",
+        zorder=4,
+    )
+    handles.append(local_line)
     axis.set_xticks(x, TICKS)
     axis.set_xlabel("Context", labelpad=8)
     if ylabel:
@@ -113,7 +132,8 @@ def plot_axis(axis, cases, fraction, ymax, legend=True, ylabel=True):
     )
     if legend:
         axis.legend(
-            ncol=3,
+            handles=handles,
+            ncol=4,
             loc="upper right",
             bbox_to_anchor=(1.01, 1.165),
             frameon=False,
@@ -189,10 +209,12 @@ def save_charts(cases_by_layout, fractions=(0.1, 0.15, 0.2)):
     for index, (axis, fraction) in enumerate(zip(axes, (0.1, 0.15, 0.2), strict=True)):
         plot_axis(axis, cases, fraction, ymax, legend=False, ylabel=index == 0)
     handles, labels = axes[0].get_legend_handles_labels()
+    entries = dict(zip(labels, handles, strict=True))
+    labels = [label for _, label, _ in METHODS] + ["HBM"]
     figure.legend(
-        handles,
+        [entries[label] for label in labels],
         labels,
-        ncol=3,
+        ncol=4,
         loc="upper center",
         bbox_to_anchor=(0.54, 0.995),
         frameon=False,
@@ -335,7 +357,7 @@ def main():
         "",
         "## Charts",
         "",
-        "The main figures show random placement. Additional 25% and 30% figures are included. Head and tail figures are in their corresponding subdirectories. PNG, SVG, and PDF versions are available; charts.zip contains only the current figures.",
+        "The main figures show random placement. The dashed HBM line is the measured 0% Host native-attention median for each context and placement, with all selected KV rows in local HBM. Additional 25% and 30% figures are included. Head and tail figures are in their corresponding subdirectories. PNG, SVG, and PDF versions are available; charts.zip contains only the current figures.",
         "",
         "![10% Host](host_10.png)",
         "",
