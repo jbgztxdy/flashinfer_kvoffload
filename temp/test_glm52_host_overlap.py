@@ -42,8 +42,22 @@ def main():
     parser.add_argument("--local-chunks", type=int, default=16)
     parser.add_argument("--host-chunks", type=int, default=32)
     parser.add_argument("--stream-merge", action="store_true")
+    parser.add_argument("--merge-batch", type=int, choices=(8, 16, 32), default=8)
+    parser.add_argument("--mixed", action="store_true")
+    parser.add_argument("--progressive-merge", action="store_true")
+    parser.add_argument("--ready-first", action="store_true")
     args = parser.parse_args()
-    if args.local_chunks != 16 or args.host_chunks != 32 or args.stream_merge:
+    if args.ready_first and (not args.progressive_merge or args.host_chunks > 32):
+        raise ValueError(
+            "Ready-first merging requires progressive merging with at most 32 Host chunks"
+        )
+    if (
+        args.local_chunks != 16
+        or args.host_chunks != 32
+        or args.stream_merge
+        or args.mixed
+        or args.progressive_merge
+    ):
         from flashinfer.jit import gen_batch_mla_module
         from flashinfer.mla import _core
 
@@ -53,22 +67,44 @@ def main():
                 backend, *module_args, host_prefetch=host_prefetch
             )
             if host_prefetch:
-                specification.name += (
-                    f"_private_shared_{args.host_chunks}_1_local{args.local_chunks}"
-                )
-                specification.extra_cuda_cflags.extend(
-                    [
-                        "-DFLASHINFER_MLA_HOST_PRIVATE_SHARED",
-                        "-DFLASHINFER_MLA_HOST_PRIVATE_PIPELINE",
-                        f"-DFLASHINFER_MLA_HOST_PRIVATE_CHUNKS={args.host_chunks}",
-                        f"-DFLASHINFER_MLA_HOST_LOCAL_CHUNKS={args.local_chunks}",
-                    ]
-                )
-                if args.stream_merge:
-                    specification.name += "_stream_merge"
+                if args.mixed:
+                    specification.name += "_mixed_workers48"
                     specification.extra_cuda_cflags.append(
-                        "-DFLASHINFER_MLA_HOST_STREAM_MERGE"
+                        "-DFLASHINFER_MLA_HOST_MIXED_WORKERS"
                     )
+                else:
+                    specification.name += (
+                        f"_private_shared_{args.host_chunks}_1_local{args.local_chunks}"
+                    )
+                    specification.extra_cuda_cflags.extend(
+                        [
+                            "-DFLASHINFER_MLA_HOST_PRIVATE_SHARED",
+                            "-DFLASHINFER_MLA_HOST_PRIVATE_PIPELINE",
+                            f"-DFLASHINFER_MLA_HOST_PRIVATE_CHUNKS={args.host_chunks}",
+                            f"-DFLASHINFER_MLA_HOST_LOCAL_CHUNKS={args.local_chunks}",
+                        ]
+                    )
+                if args.stream_merge:
+                    specification.name += f"_stream_merge_{args.merge_batch}"
+                    specification.extra_cuda_cflags.extend(
+                        [
+                            "-DFLASHINFER_MLA_HOST_STREAM_MERGE",
+                            f"-DFLASHINFER_MLA_HOST_MERGE_BATCH={args.merge_batch}",
+                        ]
+                    )
+                if args.progressive_merge:
+                    specification.name += f"_progressive_merge_{args.merge_batch}"
+                    specification.extra_cuda_cflags.extend(
+                        [
+                            "-DFLASHINFER_MLA_HOST_PROGRESSIVE_MERGE",
+                            f"-DFLASHINFER_MLA_HOST_MERGE_BATCH={args.merge_batch}",
+                        ]
+                    )
+                    if args.ready_first:
+                        specification.name += "_ready_first"
+                        specification.extra_cuda_cflags.append(
+                            "-DFLASHINFER_MLA_HOST_READY_FIRST"
+                        )
             return specification.build_and_load()
 
         _core.get_batch_mla_module = balanced_module
@@ -138,13 +174,15 @@ def main():
                         131072,
                         2048,
                         (
-                            [0, 0.2, 0.25, 0.3, 1]
+                            [0, 0.2, 0.25, 0.3, 1, 409 / 2048]
                             if args.quick
                             else [
                                 0,
                                 0.1,
                                 0.15,
                                 0.2,
+                                409 / 2048,
+                                411 / 2048,
                                 448 / 2048,
                                 449 / 2048,
                                 0.25,
@@ -218,6 +256,10 @@ def main():
                 local_chunks=args.local_chunks,
                 host_chunks=args.host_chunks,
                 stream_merge=args.stream_merge,
+                merge_batch=args.merge_batch,
+                mixed=args.mixed,
+                progressive_merge=args.progressive_merge,
+                ready_first=args.ready_first,
             ),
             indent=2,
         )

@@ -404,20 +404,34 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--baseline-module", type=Path)
     parser.add_argument(
-        "--host-kernel", choices=("auto", "staged", "private"), default="auto"
+        "--host-kernel", choices=("auto", "staged", "private", "mixed"), default="auto"
     )
     parser.add_argument(
-        "--private-chunks", type=int, choices=(28, 32, 40, 48, 60, 64), default=32
+        "--private-chunks", type=int, choices=(28, 32, 36, 40, 48, 60, 64), default=32
     )
     parser.add_argument("--private-pipeline", action="store_true")
     parser.add_argument("--stream-merge", action="store_true")
+    parser.add_argument("--progressive-merge", action="store_true")
+    parser.add_argument("--ready-first", action="store_true")
+    parser.add_argument("--merge-batch", type=int, choices=(8, 16, 32), default=8)
     parser.add_argument(
-        "--local-chunks", type=int, choices=(16, 24, 32, 40, 44, 48, 52), default=16
+        "--local-chunks",
+        type=int,
+        choices=(8, 12, 16, 24, 32, 40, 44, 48, 52),
+        default=16,
     )
     parser.add_argument("--cpu-affinity", default="0-31,64-95")
     args = parser.parse_args()
     if args.host_kernel == "private" and args.local_chunks + args.private_chunks > 84:
         raise ValueError("Compute partitions exceed the existing partial-output buffer")
+    if args.progressive_merge and (args.host_kernel != "private" or args.stream_merge):
+        raise ValueError(
+            "Progressive merging requires the private kernel without stream merging"
+        )
+    if args.ready_first and (not args.progressive_merge or args.private_chunks > 32):
+        raise ValueError(
+            "Ready-first merging requires progressive merging with at most 32 Host chunks"
+        )
     if args.host_kernel != "auto":
         from flashinfer.jit import gen_batch_mla_module
         from flashinfer.mla import _core
@@ -432,6 +446,19 @@ def main():
                 specification.extra_cuda_cflags.append(
                     "-DFLASHINFER_MLA_HOST_STAGED_BASELINE"
                 )
+            elif host_prefetch and args.host_kernel == "mixed":
+                specification.name += "_mixed_workers48"
+                specification.extra_cuda_cflags.append(
+                    "-DFLASHINFER_MLA_HOST_MIXED_WORKERS"
+                )
+                if args.stream_merge:
+                    specification.name += f"_stream_merge_{args.merge_batch}"
+                    specification.extra_cuda_cflags.extend(
+                        [
+                            "-DFLASHINFER_MLA_HOST_STREAM_MERGE",
+                            f"-DFLASHINFER_MLA_HOST_MERGE_BATCH={args.merge_batch}",
+                        ]
+                    )
             elif host_prefetch:
                 specification.name += f"_private_shared_{args.private_chunks}_{int(args.private_pipeline)}_local{args.local_chunks}"
                 specification.extra_cuda_cflags.extend(
@@ -446,9 +473,25 @@ def main():
                         "-DFLASHINFER_MLA_HOST_PRIVATE_PIPELINE"
                     )
                 if args.stream_merge:
-                    specification.name += "_stream_merge"
+                    specification.name += f"_stream_merge_{args.merge_batch}"
+                    specification.extra_cuda_cflags.extend(
+                        [
+                            "-DFLASHINFER_MLA_HOST_STREAM_MERGE",
+                            f"-DFLASHINFER_MLA_HOST_MERGE_BATCH={args.merge_batch}",
+                        ]
+                    )
+            if host_prefetch and args.progressive_merge:
+                specification.name += f"_progressive_merge_{args.merge_batch}"
+                specification.extra_cuda_cflags.extend(
+                    [
+                        "-DFLASHINFER_MLA_HOST_PROGRESSIVE_MERGE",
+                        f"-DFLASHINFER_MLA_HOST_MERGE_BATCH={args.merge_batch}",
+                    ]
+                )
+                if args.ready_first:
+                    specification.name += "_ready_first"
                     specification.extra_cuda_cflags.append(
-                        "-DFLASHINFER_MLA_HOST_STREAM_MERGE"
+                        "-DFLASHINFER_MLA_HOST_READY_FIRST"
                     )
             return specification.build_and_load()
 

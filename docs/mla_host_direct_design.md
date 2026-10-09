@@ -4,9 +4,9 @@
 
 本设计用于 GLM 5.2 的 DSA top-k=2048 稀疏 decode 实验：KV cache 分布在 GPU HBM 和 pinned Host DRAM，GPU 直接读取选中的 Host KV，并尽量把 PCIe 拉取与本地 attention 计算重叠。测试对象是单层 attention；模型执行、DSA 索引器与 top-k 计算均未计入时间。
 
-当前实现位于 `codex/mla-host-overlap` 分支，算子版本为 `da4ede5f`。入口仍是 `BatchMLAPagedAttentionWrapper.run(..., host_page_start=...)`，默认调用 `BatchMLAPrivateHostKernel<32>`。完整测量和验证结果来自上一轮已保存的数据；本次更新表格、figure 和设计说明。
+当前实现位于 `codex/mla-host-overlap` 分支，入口仍是 `BatchMLAPagedAttentionWrapper.run(..., host_page_start=...)`，默认调用 `BatchMLAPrivateHostKernel<32>`。本页的原始表格、figure 和下文固定合并描述记录的是 `da4ede5f` 分段直访 baseline，均保留。最新默认路径在 Host 命中达到 410 行时新增按就绪顺序合并，低于该值仍使用批量合并；分配仍为 16 个本地、32 个 Host、32 个有效合并 CTA。新的配对测量和负载均衡实验见 [SM 负载均衡实验](mla_host_balance.md)。
 
-在随机命中布局下，全本地原始算子约 27.4 µs。Host 命中率 10% / 15% 时，本实现约 27.7 µs；20% 时约 30.7～31.0 µs；25% 时约 34.9～35.1 µs；30% 时约 40.1～40.7 µs。25% 和 30% 相比上一版 V44 优化算子分别缩短约 10% 和 7%，但相对全本地的吞吐仍下降约 22% 和 32%，尚未达到允许下降 20% 的目标。
+在分段直访 baseline 的随机命中布局下，全本地原始算子约 27.4 µs。Host 命中率 10% / 15% 时，该 baseline 约 27.7 µs；20% 时约 30.7～31.0 µs；25% 时约 34.9～35.1 µs；30% 时约 40.1～40.7 µs。25% 和 30% 相比 V44 优化算子分别缩短约 10% 和 7%，但相对全本地的吞吐仍下降约 22% 和 32%，尚未达到允许下降 20% 的目标。
 
 ## 2. 输入范围与三条数据路径
 

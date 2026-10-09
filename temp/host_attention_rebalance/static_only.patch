@@ -1,0 +1,25 @@
+--- a/include/flashinfer/attention/mla.cuh
++++ b/include/flashinfer/attention/mla.cuh
+@@ -1103 +1103 @@
+-    typename BaseTraits::IdType indices[128];
++    typename BaseTraits::IdType indices[256];
+@@ -1539,0 +1540,4 @@
++#ifndef FLASHINFER_MLA_HOST_MERGE_BATCH
++#define FLASHINFER_MLA_HOST_MERGE_BATCH 8
++#endif
++  constexpr uint32_t MERGE_BATCH = FLASHINFER_MLA_HOST_MERGE_BATCH;
+@@ -1541,4 +1545,4 @@
+-  for (uint32_t batch = 0; batch < COUNT; batch += 8) {
+-    uint2 values[8];
+-#pragma unroll
+-    for (uint32_t slot = 0; slot < 8; ++slot) {
++  for (uint32_t batch = 0; batch < COUNT; batch += MERGE_BATCH) {
++    uint2 values[MERGE_BATCH];
++#pragma unroll
++    for (uint32_t slot = 0; slot < MERGE_BATCH; ++slot) {
+@@ -1554 +1558 @@
+-    for (uint32_t slot = 0; slot < 8; ++slot) {
++    for (uint32_t slot = 0; slot < MERGE_BATCH; ++slot) {
+@@ -1595 +1599 @@
+-  static_assert(LOCAL_CHUNKS >= 16 && LOCAL_CHUNKS + HOST_CHUNKS <= 84);
++  static_assert(LOCAL_CHUNKS >= 8 && LOCAL_CHUNKS + HOST_CHUNKS <= 84);

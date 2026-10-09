@@ -1,0 +1,696 @@
+{
+  "scope": "Instrumented single-call globaltimer traces; excluded from latency comparisons.",
+  "device": 2,
+  "local_chunks": 12,
+  "host_chunks": 36,
+  "stream_merge": false,
+  "merge_batch": 8,
+  "mixed": false,
+  "residency": [
+    {
+      "tier": "hbm",
+      "allocation_type": 1,
+      "location_type": 1,
+      "location_id": 2,
+      "address": "0x602000000",
+      "bytes": 603979776
+    },
+    {
+      "tier": "pinned_host_dram",
+      "allocation_type": 1,
+      "location_type": 3,
+      "location_id": 1,
+      "address": "0x626000000",
+      "bytes": 603979776
+    }
+  ],
+  "source_sha256": "6c540d38ea1b4136ed1cde7327ed541e5c1e106300f5b7753111babfbc239181",
+  "cases": [
+    {
+      "host_fraction": 0.25,
+      "median_us": {
+        "local_end_us": 21.504,
+        "host_prepare_end_us": 3.072,
+        "host_end_us": 30.72,
+        "merge_end_us": 35.84,
+        "post_compute_us": 5.1200000000000045,
+        "host_read_end_us": 27.648
+      },
+      "samples": [
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 34.816,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 34.816,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 31.744,
+          "merge_end_us": 35.84,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 34.816,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 34.816,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 31.744,
+          "merge_end_us": 35.84,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 34.816,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 31.744,
+          "merge_end_us": 35.84,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 31.744,
+          "merge_end_us": 35.84,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 31.744,
+          "merge_end_us": 35.84,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 31.744,
+          "merge_end_us": 35.84,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 34.816,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 31.744,
+          "merge_end_us": 35.84,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 27.648
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 30.72,
+          "merge_end_us": 35.84,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 27.648
+        }
+      ]
+    },
+    {
+      "host_fraction": 0.3,
+      "median_us": {
+        "local_end_us": 21.504,
+        "host_prepare_end_us": 3.072,
+        "host_end_us": 36.864,
+        "merge_end_us": 40.96,
+        "post_compute_us": 5.119999999999997,
+        "host_read_end_us": 32.768
+      },
+      "samples": [
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 40.96,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 35.84,
+          "merge_end_us": 40.96,
+          "post_compute_us": 5.119999999999997,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 40.96,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 35.84,
+          "merge_end_us": 40.96,
+          "post_compute_us": 5.119999999999997,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 40.96,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 35.84,
+          "merge_end_us": 40.96,
+          "post_compute_us": 5.119999999999997,
+          "host_read_end_us": 31.744
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 40.96,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 35.84,
+          "merge_end_us": 40.96,
+          "post_compute_us": 5.119999999999997,
+          "host_read_end_us": 31.744
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 40.96,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 35.84,
+          "merge_end_us": 40.96,
+          "post_compute_us": 5.119999999999997,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 35.84,
+          "merge_end_us": 40.96,
+          "post_compute_us": 5.119999999999997,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 35.84,
+          "merge_end_us": 40.96,
+          "post_compute_us": 5.119999999999997,
+          "host_read_end_us": 31.744
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 35.84,
+          "merge_end_us": 40.96,
+          "post_compute_us": 5.119999999999997,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 40.96,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 35.84,
+          "merge_end_us": 40.96,
+          "post_compute_us": 5.119999999999997,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 36.864,
+          "merge_end_us": 40.96,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 35.84,
+          "merge_end_us": 40.96,
+          "post_compute_us": 5.119999999999997,
+          "host_read_end_us": 31.744
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 35.84,
+          "merge_end_us": 40.96,
+          "post_compute_us": 5.119999999999997,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 35.84,
+          "merge_end_us": 40.96,
+          "post_compute_us": 5.119999999999997,
+          "host_read_end_us": 31.744
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 35.84,
+          "merge_end_us": 40.96,
+          "post_compute_us": 5.119999999999997,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 35.84,
+          "merge_end_us": 40.96,
+          "post_compute_us": 5.119999999999997,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 2.048,
+          "host_end_us": 35.84,
+          "merge_end_us": 40.96,
+          "post_compute_us": 5.119999999999997,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 40.96,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 22.528,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 41.984,
+          "post_compute_us": 5.1200000000000045,
+          "host_read_end_us": 32.768
+        },
+        {
+          "local_end_us": 21.504,
+          "host_prepare_end_us": 3.072,
+          "host_end_us": 36.864,
+          "merge_end_us": 40.96,
+          "post_compute_us": 4.096000000000004,
+          "host_read_end_us": 32.768
+        }
+      ]
+    }
+  ]
+}

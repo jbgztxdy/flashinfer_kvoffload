@@ -1,0 +1,23 @@
+========= COMPUTE-SANITIZER
+{
+  "passed": true,
+  "cases": 8,
+  "maximum_output_absolute_error": 0.002966582775115967,
+  "dtypes": [
+    "bfloat16"
+  ],
+  "lse_bases": [
+    "2"
+  ],
+  "quick_mode": true,
+  "host_mutations": true,
+  "device": 2,
+  "local_chunks": 16,
+  "host_chunks": 32,
+  "stream_merge": false,
+  "merge_batch": 16,
+  "mixed": false,
+  "progressive_merge": true,
+  "ready_first": true
+}
+========= RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)
