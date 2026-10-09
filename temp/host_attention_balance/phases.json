@@ -1,0 +1,527 @@
+{
+  "scope": "Instrumented single-call globaltimer traces; excluded from latency comparisons.",
+  "device": 2,
+  "residency": [
+    {
+      "tier": "hbm",
+      "allocation_type": 1,
+      "location_type": 1,
+      "location_id": 2,
+      "address": "0x602000000",
+      "bytes": 603979776
+    },
+    {
+      "tier": "pinned_host_dram",
+      "allocation_type": 1,
+      "location_type": 3,
+      "location_id": 1,
+      "address": "0x626000000",
+      "bytes": 603979776
+    }
+  ],
+  "source_sha256": "96a9663d0a6bd84f193b522e0734d474a6bd93b4a4d39ecd38a7db292976ac1d",
+  "cases": [
+    {
+      "host_fraction": 0.25,
+      "median_us": {
+        "local_end_us": 17.408,
+        "host_end_us": 29.696,
+        "merge_end_us": 32.768,
+        "post_compute_us": 4.096
+      },
+      "samples": [
+        {
+          "local_end_us": 16.384,
+          "host_end_us": 28.672,
+          "merge_end_us": 32.768,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 16.384,
+          "host_end_us": 28.672,
+          "merge_end_us": 32.768,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 16.384,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 28.672,
+          "merge_end_us": 32.768,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        },
+        {
+          "local_end_us": 16.384,
+          "host_end_us": 28.672,
+          "merge_end_us": 32.768,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 33.792,
+          "post_compute_us": 4.096
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 29.696,
+          "merge_end_us": 32.768,
+          "post_compute_us": 3.071999999999999
+        }
+      ]
+    },
+    {
+      "host_fraction": 0.3,
+      "median_us": {
+        "local_end_us": 17.408,
+        "host_end_us": 34.816,
+        "merge_end_us": 38.912,
+        "post_compute_us": 4.0959999999999965
+      },
+      "samples": [
+        {
+          "local_end_us": 20.48,
+          "host_end_us": 35.84,
+          "merge_end_us": 39.936,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 35.84,
+          "merge_end_us": 38.912,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 16.384,
+          "host_end_us": 34.816,
+          "merge_end_us": 37.888,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 18.432,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 16.384,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 18.432,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 35.84,
+          "merge_end_us": 38.912,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 19.456,
+          "host_end_us": 35.84,
+          "merge_end_us": 38.912,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 16.384,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 35.84,
+          "merge_end_us": 38.912,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 18.432,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 19.456,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 18.432,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 18.432,
+          "host_end_us": 35.84,
+          "merge_end_us": 38.912,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 16.384,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 35.84,
+          "merge_end_us": 38.912,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 19.456,
+          "host_end_us": 35.84,
+          "merge_end_us": 38.912,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 19.456,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 18.432,
+          "host_end_us": 35.84,
+          "merge_end_us": 38.912,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 20.48,
+          "host_end_us": 35.84,
+          "merge_end_us": 38.912,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 18.432,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 19.456,
+          "host_end_us": 35.84,
+          "merge_end_us": 38.912,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 18.432,
+          "host_end_us": 35.84,
+          "merge_end_us": 38.912,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 19.456,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 19.456,
+          "host_end_us": 35.84,
+          "merge_end_us": 38.912,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 16.384,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 35.84,
+          "merge_end_us": 38.912,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 18.432,
+          "host_end_us": 35.84,
+          "merge_end_us": 38.912,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 17.408,
+          "host_end_us": 35.84,
+          "merge_end_us": 38.912,
+          "post_compute_us": 3.0719999999999956
+        },
+        {
+          "local_end_us": 18.432,
+          "host_end_us": 34.816,
+          "merge_end_us": 38.912,
+          "post_compute_us": 4.0959999999999965
+        }
+      ]
+    }
+  ]
+}

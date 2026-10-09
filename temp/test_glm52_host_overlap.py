@@ -1,6 +1,7 @@
 # Purpose: Check mixed-tier MLA outputs, LSE, graph reuse, and Host mutations.
 # Usage: PYTHONPATH=. /mnt/data/mhy-vllm-venv/bin/python temp/test_glm52_host_overlap.py
 import argparse
+import functools
 import gc
 import json
 import math
@@ -37,24 +38,58 @@ def check_case(wrapper, q, qpe, cache, host, selected, out, lse, graph, base_e):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--quick", action="store_true")
+    parser.add_argument("--device", type=int, default=1)
+    parser.add_argument("--local-chunks", type=int, default=16)
+    parser.add_argument("--host-chunks", type=int, default=32)
+    parser.add_argument("--stream-merge", action="store_true")
     args = parser.parse_args()
-    torch.cuda.set_device(1)
+    if args.local_chunks != 16 or args.host_chunks != 32 or args.stream_merge:
+        from flashinfer.jit import gen_batch_mla_module
+        from flashinfer.mla import _core
+
+        @functools.cache
+        def balanced_module(backend, *module_args, host_prefetch=False):
+            specification = gen_batch_mla_module(
+                backend, *module_args, host_prefetch=host_prefetch
+            )
+            if host_prefetch:
+                specification.name += (
+                    f"_private_shared_{args.host_chunks}_1_local{args.local_chunks}"
+                )
+                specification.extra_cuda_cflags.extend(
+                    [
+                        "-DFLASHINFER_MLA_HOST_PRIVATE_SHARED",
+                        "-DFLASHINFER_MLA_HOST_PRIVATE_PIPELINE",
+                        f"-DFLASHINFER_MLA_HOST_PRIVATE_CHUNKS={args.host_chunks}",
+                        f"-DFLASHINFER_MLA_HOST_LOCAL_CHUNKS={args.local_chunks}",
+                    ]
+                )
+                if args.stream_merge:
+                    specification.name += "_stream_merge"
+                    specification.extra_cuda_cflags.append(
+                        "-DFLASHINFER_MLA_HOST_STREAM_MERGE"
+                    )
+            return specification.build_and_load()
+
+        _core.get_batch_mla_module = balanced_module
+    device = f"cuda:{args.device}"
+    torch.cuda.set_device(args.device)
     torch.set_num_threads(8)
     torch.manual_seed(123)
     cases = 0
     maximum_error = 0.0
     for dtype in [torch.bfloat16] if args.quick else [torch.bfloat16, torch.float16]:
-        allocation = MixedHBMHost(131072, 1)
-        cache = allocation.tensor(1).view(dtype)
+        allocation = MixedHBMHost(131072, args.device)
+        cache = allocation.tensor(args.device).view(dtype)
         host = allocation.host_tensor().view(dtype)
         cache[:65536].normal_()
         host.normal_()
-        q = torch.randn((1, 64, 512), device="cuda:1", dtype=dtype)
-        qpe = torch.randn((1, 64, 64), device="cuda:1", dtype=dtype)
+        q = torch.randn((1, 64, 512), device=device, dtype=dtype)
+        qpe = torch.randn((1, 64, 64), device=device, dtype=dtype)
         out = torch.empty_like(q)
-        lse = torch.empty((1, 64), device="cuda:1", dtype=torch.float32)
-        indices = torch.empty(2048, device="cuda:1", dtype=torch.int32)
-        workspace = torch.empty(32 * 2**20, dtype=torch.uint8, device="cuda:1")
+        lse = torch.empty((1, 64), device=device, dtype=torch.float32)
+        indices = torch.empty(2048, device=device, dtype=torch.int32)
+        workspace = torch.empty(32 * 2**20, dtype=torch.uint8, device=device)
         wrapper = BatchMLAPagedAttentionWrapper(workspace, backend="fa2")
         wrapper.plan(
             torch.tensor([0, 1], dtype=torch.int32),
@@ -122,6 +157,16 @@ def main():
                                 0.8,
                                 1,
                             ]
+                            + [
+                                rows / 2048
+                                for rows in (
+                                    args.host_chunks * 16,
+                                    args.host_chunks * 16 + 1,
+                                    args.host_chunks * 32,
+                                    args.host_chunks * 32 + 1,
+                                )
+                                if rows <= 2048
+                            ]
                         ),
                         seed,
                         layout,
@@ -169,6 +214,10 @@ def main():
                 lse_bases=["2"] if args.quick else ["2", "e"],
                 quick_mode=args.quick,
                 host_mutations=True,
+                device=args.device,
+                local_chunks=args.local_chunks,
+                host_chunks=args.host_chunks,
+                stream_merge=args.stream_merge,
             ),
             indent=2,
         )

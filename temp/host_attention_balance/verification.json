@@ -1,0 +1,185 @@
+{
+  "default_allocation": {
+    "local": 16,
+    "host": 32
+  },
+  "automatic_dispatch_enabled": false,
+  "source_sha256": {
+    "include/flashinfer/attention/mla.cuh": "96a9663d0a6bd84f193b522e0734d474a6bd93b4a4d39ecd38a7db292976ac1d",
+    "temp/bench_glm52_host_comparison.py": "ca2cd5a9bf00de9e9039012ff972fce6b3a19db2a3305694cc2544ed5b55c409",
+    "temp/test_glm52_host_overlap.py": "0f6062296db8af7c82bab94ed35ec79dde5e04175c5e99f85e9372f3c91e4069",
+    "temp/profile_glm52_host_balance.py": "d96be1cbd3d069b3754a132b4752cc6e29c38820d9b8b9e9f5df0675c2ed5888"
+  },
+  "baseline": {
+    "source_commit": "da4ede5f507b50af6078ac5f0887bc5d773c031f",
+    "module_sha256": "94015399d323f4755ec133b5a594dd9e5399e6dd07777b2c0017a691036133b8",
+    "source_sha256": "9c47ed46db70f32fdb0ae91b8c42c5e69755daf35ec0bf500615f7c70bdf117e",
+    "device_for_paired_measurements": 2
+  },
+  "default_control_max_relative_difference": 0.0022115907954569636,
+  "paired_fp32_output_checks": 432,
+  "paired_maximum_absolute_error": 0.0036359429359436035,
+  "extended_correctness": {
+    "passed": true,
+    "cases": 420,
+    "maximum_output_absolute_error": 0.004857063293457031,
+    "dtypes": [
+      "bfloat16",
+      "float16"
+    ],
+    "lse_bases": [
+      "2",
+      "e"
+    ],
+    "quick_mode": false,
+    "host_mutations": true,
+    "device": 2,
+    "local_chunks": 52,
+    "host_chunks": 32,
+    "stream_merge": false
+  },
+  "racecheck": "0 hazards, 0 errors, 0 warnings",
+  "synccheck": "0 errors",
+  "primary_measurements": [
+    "full_local44_host32_random.json",
+    "full_local32_host32_random.json",
+    "full_stream_local44_host32_random.json"
+  ],
+  "all_measurements": [
+    {
+      "path": "fixed_local16_host32_random.json",
+      "sha256": "96eb37665d1ac39600a466d408774ca67951736ccf2d84503fc8b6f104d35196",
+      "rounds": 12,
+      "local_chunks": 16,
+      "host_chunks": 32,
+      "stream_merge": false,
+      "context_count": 1
+    },
+    {
+      "path": "fixed_local16_host48_random.json",
+      "sha256": "fbf13e99757d1aae468be3275a77999645ee86af81b88f3cd00516feac84f9c7",
+      "rounds": 12,
+      "local_chunks": 16,
+      "host_chunks": 48,
+      "stream_merge": false,
+      "context_count": 1
+    },
+    {
+      "path": "fixed_local24_host32_random.json",
+      "sha256": "7a5a0be04c3df5fd6bdd0049186595d27d3668ed8b8cbbcb0df4d7dbbd7c7054",
+      "rounds": 12,
+      "local_chunks": 24,
+      "host_chunks": 32,
+      "stream_merge": false,
+      "context_count": 1
+    },
+    {
+      "path": "full_local32_host32_random.json",
+      "sha256": "4b1324bc30029f9f348c62d0aba6592b77c27c20c18072b7394d4796749b420c",
+      "rounds": 40,
+      "local_chunks": 32,
+      "host_chunks": 32,
+      "stream_merge": false,
+      "context_count": 1
+    },
+    {
+      "path": "full_local44_host32_random.json",
+      "sha256": "6dfd1ea90f890e84e0f8db9a2cdbf8b4462dc03a973e1d2f6576f9f2efc092d3",
+      "rounds": 40,
+      "local_chunks": 44,
+      "host_chunks": 32,
+      "stream_merge": false,
+      "context_count": 4
+    },
+    {
+      "path": "full_stream_local44_host32_random.json",
+      "sha256": "7f5dfa1abbe3b8e5c8c013e8abbe6f3101e88e93977b1bd2b57ee415bc4f1774",
+      "rounds": 40,
+      "local_chunks": 44,
+      "host_chunks": 32,
+      "stream_merge": true,
+      "context_count": 1
+    },
+    {
+      "path": "local16_host48_random.json",
+      "sha256": "d27257f2162ac886fd5ecdc89f0659d151f618f409bfab3a8a8ad7c68fb2c40c",
+      "rounds": 12,
+      "local_chunks": 16,
+      "host_chunks": 48,
+      "stream_merge": false,
+      "context_count": 1
+    },
+    {
+      "path": "local16_host64_random.json",
+      "sha256": "83b4af057e936c916324d7239f18f296c7e292a22ae3c76835425ca2addd0ffa",
+      "rounds": 12,
+      "local_chunks": 16,
+      "host_chunks": 64,
+      "stream_merge": false,
+      "context_count": 1
+    },
+    {
+      "path": "local24_random.json",
+      "sha256": "3429d189eb7838eaf27ad085d83810dec5df3dc3ffbd1c73f954f738835429a1",
+      "rounds": 12,
+      "local_chunks": 24,
+      "host_chunks": 32,
+      "stream_merge": false,
+      "context_count": 1
+    },
+    {
+      "path": "local44_host32_random.json",
+      "sha256": "f87aaac907242cef05150ab563dcc3543880d4440174ee9d68790f9b1a67be5f",
+      "rounds": 12,
+      "local_chunks": 44,
+      "host_chunks": 32,
+      "stream_merge": false,
+      "context_count": 1
+    },
+    {
+      "path": "local48_host32_random.json",
+      "sha256": "d816320fc0d5db26aa73a1063db590325e8cc2009219251eebe996ffc96d89f1",
+      "rounds": 12,
+      "local_chunks": 48,
+      "host_chunks": 32,
+      "stream_merge": false,
+      "context_count": 1
+    },
+    {
+      "path": "stream_local16_host32_random.json",
+      "sha256": "469f5311fe0a42f2e15b00ee8eda93000be34196a5959ebf2ae1f2dd23917314",
+      "rounds": 12,
+      "local_chunks": 16,
+      "host_chunks": 32,
+      "stream_merge": true,
+      "context_count": 1
+    },
+    {
+      "path": "stream_local16_host48_random.json",
+      "sha256": "2d1e0b39d5c924b793abe76398f697b3b378c6ea37f80a1de5bfdfa666d3cd6c",
+      "rounds": 12,
+      "local_chunks": 16,
+      "host_chunks": 48,
+      "stream_merge": true,
+      "context_count": 1
+    },
+    {
+      "path": "stream_local16_host64_random.json",
+      "sha256": "21b65ff47244f0676defc23e419ad8cdfefdaf96d3159ebf4679953ca5195060",
+      "rounds": 12,
+      "local_chunks": 16,
+      "host_chunks": 64,
+      "stream_merge": true,
+      "context_count": 1
+    },
+    {
+      "path": "stream_local44_host32_random.json",
+      "sha256": "9832e53261e3b88acfc0701c9a1d7185e88844b92645fa42c88a9b6f819975fe",
+      "rounds": 12,
+      "local_chunks": 44,
+      "host_chunks": 32,
+      "stream_merge": true,
+      "context_count": 1
+    }
+  ]
+}

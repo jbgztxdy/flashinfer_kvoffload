@@ -1,0 +1,125 @@
+--- a/include/flashinfer/attention/mla.cuh
++++ b/include/flashinfer/attention/mla.cuh
+@@ -1110 +1110,2 @@
+-template <typename KTraits, uint32_t HOST_CHUNKS = 28, bool RAW_HOST_PAGES = false, typename Params>
++template <typename KTraits, uint32_t HOST_CHUNKS = 28, bool RAW_HOST_PAGES = false,
++          uint32_t LOCAL_CHUNKS = 16, typename Params>
+@@ -1115,3 +1116,3 @@
+-  const bool host = blockIdx.y >= 16;
+-  const uint32_t chunk = host ? blockIdx.y - 16 : blockIdx.y;
+-  const uint32_t chunks = host ? HOST_CHUNKS : 16;
++  const bool host = blockIdx.y >= LOCAL_CHUNKS;
++  const uint32_t chunk = host ? blockIdx.y - LOCAL_CHUNKS : blockIdx.y;
++  const uint32_t chunks = host ? HOST_CHUNKS : LOCAL_CHUNKS;
+@@ -1475 +1476 @@
+-    float& lse_output) {
++    float& lse_output, uint32_t head) {
+@@ -1477,3 +1477,0 @@
+-  constexpr uint32_t HEADS_PER_CTA = 108 - 16 - HOST_CHUNKS >= 64 ? 1 : 2;
+-  const uint32_t head = (blockIdx.y - 16 - HOST_CHUNKS) * HEADS_PER_CTA +
+-                        (HEADS_PER_CTA == 1 ? 0 : threadIdx.z);
+@@ -1538,0 +1537,30 @@
++#ifdef FLASHINFER_MLA_HOST_STREAM_MERGE
++#pragma unroll
++  for (uint32_t feature = 0; feature < 4; ++feature) output[feature] = 0.f;
++#pragma unroll 1
++  for (uint32_t batch = 0; batch < COUNT; batch += 8) {
++    uint2 values[8];
++#pragma unroll
++    for (uint32_t slot = 0; slot < 8; ++slot) {
++      const uint32_t split = batch + slot;
++      if (split < COUNT) {
++        asm volatile("ld.global.cg.v2.u32 {%0, %1}, [%2];"
++                     : "=r"(values[slot].x), "=r"(values[slot].y)
++                     : "l"(params.partial_o + ((START + split) * 64 + head) * 512 + tid * 4)
++                     : "memory");
++      }
++    }
++#pragma unroll
++    for (uint32_t slot = 0; slot < 8; ++slot) {
++      const uint32_t split = batch + slot;
++      if (split < COUNT && weights[split] > 0.f) {
++        float decoded[4];
++        vec_cast<float, typename KTraits::DTypeO>::template cast<4>(
++            decoded, reinterpret_cast<const typename KTraits::DTypeO*>(values + slot));
++#pragma unroll
++        for (uint32_t feature = 0; feature < 4; ++feature)
++          output[feature] = fmaf(decoded[feature], weights[split], output[feature]);
++      }
++    }
++  }
++#else
+@@ -1560,0 +1589 @@
++#endif
+@@ -1564 +1593 @@
+-template <uint32_t HOST_CHUNKS, typename KTraits, typename Params>
++template <uint32_t HOST_CHUNKS, typename KTraits, typename Params, uint32_t LOCAL_CHUNKS = 16>
+@@ -1565,0 +1595 @@
++  static_assert(LOCAL_CHUNKS >= 16 && LOCAL_CHUNKS + HOST_CHUNKS <= 84);
+@@ -1578,3 +1608,3 @@
+-  params.partial_lse = reinterpret_cast<float*>(params.host_prefetch_state + gridDim.y + 16 + HOST_CHUNKS);
+-  if (blockIdx.y < 16 + HOST_CHUNKS) {
+-    const uint32_t length = prepare_host_split<KTraits, HOST_CHUNKS, true>(&storage, params);
++  params.partial_lse = reinterpret_cast<float*>(params.host_prefetch_state + gridDim.y + LOCAL_CHUNKS + HOST_CHUNKS);
++  if (blockIdx.y < LOCAL_CHUNKS + HOST_CHUNKS) {
++    const uint32_t length = prepare_host_split<KTraits, HOST_CHUNKS, true, LOCAL_CHUNKS>(&storage, params);
+@@ -1583 +1613 @@
+-      if (blockIdx.y < 16)
++      if (blockIdx.y < LOCAL_CHUNKS)
+@@ -1604,4 +1634,3 @@
+-    constexpr uint32_t HEADS_PER_CTA = 108 - 16 - HOST_CHUNKS >= 64 ? 1 : 2;
+-    const uint32_t head = (blockIdx.y - 16 - HOST_CHUNKS) * HEADS_PER_CTA +
+-                          (HEADS_PER_CTA == 1 ? 0 : threadIdx.z);
+-    if ((HEADS_PER_CTA == 1 && threadIdx.z != 0) || head >= 64) return;
++    constexpr uint32_t MERGE_CTAS = 108 - LOCAL_CHUNKS - HOST_CHUNKS;
++    constexpr uint32_t HEADS_PER_CTA = MERGE_CTAS >= 64 ? 1 : (MERGE_CTAS >= 32 ? 2 : 4);
++    if (HEADS_PER_CTA == 1 && threadIdx.z != 0) return;
+@@ -1609,17 +1638,24 @@
+-    float local[4], host[4], local_lse, host_lse;
+-    merge_private_host_group<0, 16, HOST_CHUNKS, KTraits>(storage, params, local, local_lse);
+-    merge_private_host_group<16, HOST_CHUNKS, HOST_CHUNKS, KTraits>(storage, params, host, host_lse);
+-    const float maximum = max(local_lse, host_lse);
+-    const float local_weight = math::ptx_exp2(local_lse - maximum);
+-    const float host_weight = math::ptx_exp2(host_lse - maximum);
+-    const float denominator = local_weight + host_weight;
+-#pragma unroll
+-    for (uint32_t feature = 0; feature < 4; ++feature)
+-      params.final_o[head * params.o_stride_h + feature_base + feature] = typename KTraits::DTypeO(
+-          (local[feature] * local_weight + host[feature] * host_weight) / denominator);
+-    if (feature_base == 0 && params.final_lse) {
+-      float lse = maximum + math::ptx_log2(denominator);
+-      if (params.return_lse_base_on_e) lse *= math::loge2;
+-      params.final_lse[head] = lse;
+-    }
+-    record_overlap_phase(params, 3);
++#pragma unroll
++    for (uint32_t offset = threadIdx.z; offset < HEADS_PER_CTA; offset += 2) {
++      const uint32_t head = (blockIdx.y - LOCAL_CHUNKS - HOST_CHUNKS) * HEADS_PER_CTA + offset;
++      if (head >= 64) return;
++      float local[4], host[4], local_lse, host_lse;
++      merge_private_host_group<0, LOCAL_CHUNKS, HOST_CHUNKS, KTraits>(
++          storage, params, local, local_lse, head);
++      merge_private_host_group<LOCAL_CHUNKS, HOST_CHUNKS, HOST_CHUNKS, KTraits>(
++          storage, params, host, host_lse, head);
++      const float maximum = max(local_lse, host_lse);
++      const float local_weight = math::ptx_exp2(local_lse - maximum);
++      const float host_weight = math::ptx_exp2(host_lse - maximum);
++      const float denominator = local_weight + host_weight;
++#pragma unroll
++      for (uint32_t feature = 0; feature < 4; ++feature)
++        params.final_o[head * params.o_stride_h + feature_base + feature] = typename KTraits::DTypeO(
++            (local[feature] * local_weight + host[feature] * host_weight) / denominator);
++      if (feature_base == 0 && params.final_lse) {
++        float lse = maximum + math::ptx_log2(denominator);
++        if (params.return_lse_base_on_e) lse *= math::loge2;
++        params.final_lse[head] = lse;
++      }
++      record_overlap_phase(params, 3);
++    }
+@@ -1682 +1718,5 @@
+-      auto kernel = BatchMLAPrivateHostKernel<FLASHINFER_MLA_HOST_PRIVATE_CHUNKS, HostTraits, Params>;
++#ifndef FLASHINFER_MLA_HOST_LOCAL_CHUNKS
++#define FLASHINFER_MLA_HOST_LOCAL_CHUNKS 16
++#endif
++      auto kernel = BatchMLAPrivateHostKernel<FLASHINFER_MLA_HOST_PRIVATE_CHUNKS, HostTraits, Params,
++                                            FLASHINFER_MLA_HOST_LOCAL_CHUNKS>;

@@ -407,10 +407,17 @@ def main():
         "--host-kernel", choices=("auto", "staged", "private"), default="auto"
     )
     parser.add_argument(
-        "--private-chunks", type=int, choices=(28, 32, 40, 48, 60), default=32
+        "--private-chunks", type=int, choices=(28, 32, 40, 48, 60, 64), default=32
     )
     parser.add_argument("--private-pipeline", action="store_true")
+    parser.add_argument("--stream-merge", action="store_true")
+    parser.add_argument(
+        "--local-chunks", type=int, choices=(16, 24, 32, 40, 44, 48, 52), default=16
+    )
+    parser.add_argument("--cpu-affinity", default="0-31,64-95")
     args = parser.parse_args()
+    if args.host_kernel == "private" and args.local_chunks + args.private_chunks > 84:
+        raise ValueError("Compute partitions exceed the existing partial-output buffer")
     if args.host_kernel != "auto":
         from flashinfer.jit import gen_batch_mla_module
         from flashinfer.mla import _core
@@ -426,16 +433,22 @@ def main():
                     "-DFLASHINFER_MLA_HOST_STAGED_BASELINE"
                 )
             elif host_prefetch:
-                specification.name += f"_private_shared_{args.private_chunks}_{int(args.private_pipeline)}"
+                specification.name += f"_private_shared_{args.private_chunks}_{int(args.private_pipeline)}_local{args.local_chunks}"
                 specification.extra_cuda_cflags.extend(
                     [
                         "-DFLASHINFER_MLA_HOST_PRIVATE_SHARED",
                         f"-DFLASHINFER_MLA_HOST_PRIVATE_CHUNKS={args.private_chunks}",
+                        f"-DFLASHINFER_MLA_HOST_LOCAL_CHUNKS={args.local_chunks}",
                     ]
                 )
                 if args.private_pipeline:
                     specification.extra_cuda_cflags.append(
                         "-DFLASHINFER_MLA_HOST_PRIVATE_PIPELINE"
+                    )
+                if args.stream_merge:
+                    specification.name += "_stream_merge"
+                    specification.extra_cuda_cflags.append(
+                        "-DFLASHINFER_MLA_HOST_STREAM_MERGE"
                     )
             return specification.build_and_load()
 
@@ -444,7 +457,11 @@ def main():
         raise FileExistsError(args.output)
     if args.topk != 2048 or 0 not in args.fractions:
         raise ValueError("This comparison requires top-k 2048 and a 0% baseline")
-    os.sched_setaffinity(0, set(range(32)) | set(range(64, 96)))
+    cpus = set()
+    for span in args.cpu_affinity.split(","):
+        limits = [int(value) for value in span.split("-")]
+        cpus.update(range(limits[0], limits[-1] + 1))
+    os.sched_setaffinity(0, cpus)
     torch.set_num_threads(8)
     torch.manual_seed(args.seed)
     result = dict(
