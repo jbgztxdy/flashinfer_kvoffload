@@ -2,6 +2,7 @@
 # Usage: MPLCONFIGDIR=temp/matplotlib python temp/plot_glm52_host_comparison.py
 import argparse
 import csv
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -16,19 +17,20 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 FOLDER = ROOT / "temp/host_attention_comparison"
+INPUT_FOLDER = ROOT / "temp/host_attention_pcie20"
 CONTEXTS = [131072, 262144, 524288, 1048576]
 TICKS = ["128K", "256K", "512K", "1M"]
 FRACTIONS = [i / 100 for i in range(0, 41, 5)]
 METHODS = [
     ("copy", "Memcpy", "#9BA7B2"),
     ("direct", "Direct", "#4D79A3"),
-    ("overlap", "Overlap", "#398875"),
+    ("overlap", "Segmented", "#398875"),
 ]
 LAYOUTS = ["random", "head", "tail"]
 
 
 def load(layout):
-    data = json.loads((FOLDER / f"raw_{layout}.json").read_text())
+    data = json.loads((INPUT_FOLDER / f"after_{layout}.json").read_text())
     return data, {
         (result["context_tokens"], case["host_fraction_requested"]): case
         for result in data["results"]
@@ -122,7 +124,7 @@ def plot_axis(axis, cases, fraction, ymax, legend=True, ylabel=True):
         )
 
 
-def save_charts(cases_by_layout):
+def save_charts(cases_by_layout, fractions=(0.1, 0.15, 0.2)):
     plt.rcParams.update(
         {
             "font.family": "Lato",
@@ -154,10 +156,26 @@ def save_charts(cases_by_layout):
     for layout, cases in cases_by_layout.items():
         directory = FOLDER if layout == "random" else FOLDER / layout
         directory.mkdir(exist_ok=True)
-        for fraction in (0.1, 0.15, 0.2):
+        for fraction in fractions:
+            axis_max = ymax
+            if fraction not in (0.1, 0.15, 0.2):
+                axis_max = (
+                    math.ceil(
+                        max(
+                            item[(context, extra)][method]["gpu_cycle"]["p90_us"]
+                            for item in cases_by_layout.values()
+                            for context in CONTEXTS
+                            for extra in fractions
+                            if extra not in (0.1, 0.15, 0.2)
+                            for method, _, _ in METHODS
+                        )
+                        / 10
+                    )
+                    * 10
+                )
             figure, axis = plt.subplots(figsize=(6.4, 3.8))
             figure.subplots_adjust(left=0.12, right=0.98, bottom=0.18, top=0.82)
-            plot_axis(axis, cases, fraction, ymax)
+            plot_axis(axis, cases, fraction, axis_max)
             for suffix in ("png", "svg", "pdf"):
                 figure.savefig(
                     directory / f"host_{round(fraction * 100)}.{suffix}",
@@ -188,23 +206,30 @@ def save_charts(cases_by_layout):
             metadata={"Creator": "Matplotlib"},
         )
     plt.close(figure)
-    for path in FOLDER.rglob("*.svg"):
+    chart_paths = sorted(
+        path
+        for directory in (FOLDER, FOLDER / "head", FOLDER / "tail")
+        for path in directory.glob("host_*.*")
+        if path.suffix in {".png", ".svg", ".pdf"}
+    )
+    for path in chart_paths:
+        if path.suffix != ".svg":
+            continue
         path.write_text(
             "\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n"
         )
     with zipfile.ZipFile(
         FOLDER / "charts.zip", "w", compression=zipfile.ZIP_DEFLATED
     ) as archive:
-        for path in sorted(FOLDER.rglob("host_*.*")):
-            if path.suffix in {".png", ".svg", ".pdf"}:
-                archive.write(path, path.relative_to(FOLDER))
+        for path in chart_paths:
+            archive.write(path, path.relative_to(FOLDER))
 
 
 def history():
     lines = [
         "# Historical Host-attention measurements",
         "",
-        "These exploratory results are retained for traceability. They used earlier implementations and measurement configurations. The comparison figures use the matched measurements in raw_random/head/tail.json.",
+        "These exploratory results are retained for traceability. They used earlier implementations and measurement configurations. The original V35 measurements remain in raw_random/head/tail.json; its report and figures are in archive/v35. Current figures use the complete segmented-read measurements from ../host_attention_pcie20/after_random/head/tail.json.",
         "",
         "## Operator variants",
         "",
@@ -256,26 +281,32 @@ def history():
 
 
 def main():
+    global FOLDER, INPUT_FOLDER
     parser = argparse.ArgumentParser()
+    parser.add_argument("--input-dir", type=Path, default=INPUT_FOLDER)
+    parser.add_argument("--output-dir", type=Path, default=FOLDER)
     outputs = parser.add_mutually_exclusive_group()
     outputs.add_argument("--plots-only", action="store_true")
     outputs.add_argument("--tables-only", action="store_true")
     args = parser.parse_args()
+    INPUT_FOLDER = args.input_dir.resolve()
+    FOLDER = args.output_dir.resolve()
+    FOLDER.mkdir(parents=True, exist_ok=True)
     loaded = {
         layout: load(layout)
         for layout in LAYOUTS
-        if (FOLDER / f"raw_{layout}.json").exists()
+        if (INPUT_FOLDER / f"after_{layout}.json").exists()
     }
     cases_by_layout = {layout: cases for layout, (_, cases) in loaded.items()}
     if args.plots_only:
-        save_charts(cases_by_layout)
+        save_charts(cases_by_layout, fractions=(0.1, 0.15, 0.2, 0.25, 0.3))
         return
     if list(loaded) != LAYOUTS:
         raise ValueError("Complete random, head, and tail measurements are required")
     for _data, cases in loaded.values():
         assert len(cases) == len(CONTEXTS) * 12
         for case in cases.values():
-            assert set(case["correctness_max_abs_error"]) == {
+            assert set(case["correctness_max_abs_error"]) >= {
                 "copy",
                 "direct",
                 "overlap",
@@ -283,9 +314,9 @@ def main():
             for mode, _, _ in METHODS:
                 assert len(case[mode]["gpu_cycle"]["samples_us"]) == 40
     if not args.tables_only:
-        save_charts(cases_by_layout)
+        save_charts(cases_by_layout, fractions=(0.1, 0.15, 0.2, 0.25, 0.3))
     lines = [
-        "# Host attention: memcpy, direct access, and overlap",
+        "# Host attention: memcpy, direct access, and segmented reads",
         "",
         "A100-SXM4-40GB GPU 1; BF16; one decode query; 64 heads; compressed rank 512; RoPE 64; top-k 2048; page size 1. A single attention layer is measured. Context labels are powers of two: 128K=131072, 256K=262144, 512K=524288, 1M=1048576.",
         "",
@@ -295,21 +326,26 @@ def main():
         "",
         "- Memcpy: gather selected Host rows on CPU into a pinned buffer, then H2D DMA and native attention on one stream. Every repeated GPU cycle performs its own DMA. Local HBM is aliased directly, with no local gather or copy.",
         "- Direct: native attention directly reads mapped Host memory.",
-        "- Overlap: the optimized fused attention kernel fetches Host rows concurrently with local computation.",
+        "- Segmented: the current optimized kernel uses 16 local and 32 Host compute partitions. It reads Host KV directly into shared memory in three groups and overlaps partial QK with later reads and local computation. HBM scratch stores partial attention outputs.",
         "- Main tables and charts report the median GPU cycle in µs. Memcpy includes DMA, its handoff/dependency cost, and attention. CPU packing is excluded from these GPU values and reported separately in details.md; serial wall time includes packing and synchronization.",
         "- Each case uses the same KV data, query, and eight index sets across all three methods. Forty rounds are measured, with 100 serialized cycles per CUDA graph. Fraction and method order are shuffled. Error bars show the 10th-90th percentiles across rounds.",
         "- Top-k selection, index updates/remapping, plan, initialization, and FP32 references are excluded. All measured cases passed independent FP32 comparisons.",
-        "- The 20% memcpy trace contains 100 actual pinned-Host-to-device copies and 100 native attention kernels on the same stream, with no overlap and no GPU gather kernels. Each copy moves 472320 bytes. See memcpy_verification.json for the checked timeline.",
+        "- The preserved 20% memcpy trace verifies 100 actual pinned-Host-to-device copies and 100 native attention kernels on one stream. Each copy moves 472320 bytes. See memcpy_verification.json. Latest profiling independently verifies full Host payload reads at 25% and 30%; see ../host_attention_pcie20/verification.json.",
+        "- Tables and plots use the latest complete after_random/head/tail.json data. The affected random 1M and head 128K/256K runs were repeated after external GPU 1 activity elevated their all-local references. Initial data and replacement provenance are retained. No samples were trimmed within a run.",
         "",
         "## Charts",
         "",
-        "The three main figures show random placement. Head and tail figures are in their corresponding subdirectories. PNG, SVG, and PDF versions are available.",
+        "The main figures show random placement. Additional 25% and 30% figures are included. Head and tail figures are in their corresponding subdirectories. PNG, SVG, and PDF versions are available; charts.zip contains only the current figures.",
         "",
         "![10% Host](host_10.png)",
         "",
         "![15% Host](host_15.png)",
         "",
         "![20% Host](host_20.png)",
+        "",
+        "![25% Host](host_25.png)",
+        "",
+        "![30% Host](host_30.png)",
         "",
         "## GPU cycle latency (µs)",
         "",
@@ -347,17 +383,19 @@ def main():
         "- [Component and serial-step tables](details.md)",
         "- [Exploratory variants and legacy baseline tables](history.md)",
         "- [CSV data](comparison.csv)",
+        "- [Core design](../../docs/mla_host_direct_design.md)",
+        "- [Previous V35 tables and figures](archive/v35/README.md)",
+        "- [PCIe budget and paired V44 comparison](../host_attention_pcie20/report.md)",
         "",
-        "The old baseline artifacts are preserved. The new benchmark source is ../bench_glm52_host_comparison.py; raw JSON retains samples, source hashes, the Git commit, correctness errors, and GPU snapshots. GPU 1 shared the machine with unrelated workloads on other GPUs. This comparison does not measure a complete GLM model.",
+        "The previous baseline artifacts are preserved. Current measurement sources are ../host_attention_pcie20/after_random/head/tail.json; original V35 data remains in raw_random/head/tail.json. Raw data retains samples, source hashes, commits, correctness errors, GPU snapshots, and rerun provenance. This comparison measures a single attention layer, not a complete GLM model.",
         "",
         "## Reproduce",
         "",
         "```bash",
-        "PYTHONPATH=. /mnt/data/mhy-vllm-venv/bin/python temp/run_glm52_host_comparison.py",
         "MPLCONFIGDIR=temp/matplotlib python temp/plot_glm52_host_comparison.py",
         "```",
         "",
-        "Existing raw outputs are protected from overwrite. Choose new output names for a repeat run.",
+        "This command regenerates the main tables and figures from existing measured data. Use --input-dir to select a new directory containing after_random/head/tail.json. Benchmark reproduction is described in the core design document; choose fresh output names for new measurements.",
     ]
     (FOLDER / "report.md").write_text("\n".join(lines) + "\n")
     (FOLDER / "details.md").write_text("\n".join(details) + "\n")
@@ -400,7 +438,28 @@ def main():
                             max_abs_error=case["correctness_max_abs_error"][mode],
                         )
                     )
-    history()
+    if FOLDER == ROOT / "temp/host_attention_comparison":
+        history()
+    manifest = {
+        "design_reference_commit": "da4ede5f507b50af6078ac5f0887bc5d773c031f",
+        "inputs": [str(INPUT_FOLDER / f"after_{layout}.json") for layout in LAYOUTS],
+        "input_sha256": {
+            layout: hashlib.sha256(
+                (INPUT_FOLDER / f"after_{layout}.json").read_bytes()
+            ).hexdigest()
+            for layout in LAYOUTS
+        },
+        "primary_methods": [mode for mode, _, _ in METHODS],
+        "case_count": len(CONTEXTS) * 12 * len(LAYOUTS),
+        "method_rows": len(CONTEXTS) * 12 * len(LAYOUTS) * len(METHODS),
+        "source_commits": {
+            layout: data["git_commit"] for layout, (data, _) in loaded.items()
+        },
+        "refreshes": {
+            layout: data.get("refreshes", []) for layout, (data, _) in loaded.items()
+        },
+    }
+    (FOLDER / "latest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(f"Tables and figures: {FOLDER}")
 
 

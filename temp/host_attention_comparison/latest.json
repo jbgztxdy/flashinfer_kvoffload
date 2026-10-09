@@ -1,0 +1,49 @@
+{
+  "design_reference_commit": "da4ede5f507b50af6078ac5f0887bc5d773c031f",
+  "inputs": [
+    "/mnt/data/rtx/projects/flashinfer/temp/host_attention_pcie20/after_random.json",
+    "/mnt/data/rtx/projects/flashinfer/temp/host_attention_pcie20/after_head.json",
+    "/mnt/data/rtx/projects/flashinfer/temp/host_attention_pcie20/after_tail.json"
+  ],
+  "input_sha256": {
+    "random": "c048038ddc6bd85a5fa858ccdabad0bfdf8e6de94600cbc4df2d08c1197b507d",
+    "head": "eb878c9ea827819b4d82e776af190c317ccd9333d2f52fad2d767e38c1940db1",
+    "tail": "2420aadf55ebd7520dd6e70fbf09fdcdfef68b9c08b8edf5aae26ca3de072d97"
+  },
+  "primary_methods": [
+    "copy",
+    "direct",
+    "overlap"
+  ],
+  "case_count": 144,
+  "method_rows": 432,
+  "source_commits": {
+    "random": "da4ede5f507b50af6078ac5f0887bc5d773c031f",
+    "head": "da4ede5f507b50af6078ac5f0887bc5d773c031f",
+    "tail": "da4ede5f507b50af6078ac5f0887bc5d773c031f"
+  },
+  "refreshes": {
+    "random": [
+      {
+        "artifact": "rerun_random_1M.json",
+        "initial_artifact": "initial_random.json",
+        "context_tokens": [
+          1048576
+        ],
+        "reason": "External GPU 1 load increased memory occupancy and elevated the simultaneous 0% Host references. Initial measurements are retained; affected contexts were rerun without that observed load."
+      }
+    ],
+    "head": [
+      {
+        "artifact": "rerun_head_128K_256K.json",
+        "initial_artifact": "initial_head.json",
+        "context_tokens": [
+          131072,
+          262144
+        ],
+        "reason": "External GPU 1 load increased memory occupancy and elevated the simultaneous 0% Host references. Initial measurements are retained; affected contexts were rerun without that observed load."
+      }
+    ],
+    "tail": []
+  }
+}

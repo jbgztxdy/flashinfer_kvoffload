@@ -1,6 +1,6 @@
 # Historical Host-attention measurements
 
-These exploratory results are retained for traceability. They used earlier implementations and measurement configurations. The comparison figures use the matched measurements in raw_random/head/tail.json.
+These exploratory results are retained for traceability. They used earlier implementations and measurement configurations. The original V35 measurements remain in raw_random/head/tail.json; its report and figures are in archive/v35. Current figures use the complete segmented-read measurements from ../host_attention_pcie20/after_random/head/tail.json.
 
 ## Operator variants
 
