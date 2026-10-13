@@ -187,12 +187,12 @@ __device__ __forceinline__ void prefetch_offset(
       uint32_t packed_block_iter =
           packed_block_iter_base + lane_idx / 8 + (j + mma_kv * 2) * 16 + warp_idx_in_wg * 4;
       block_size.divmod(packed_block_iter, q, r);
+      // Widen before scaling so offsets beyond 2^32 elements do not wrap.
+      const int64_t page = packed_block_iter < packed_kv_bound ? indices[q] : 0;
       ckv_offset[mma_kv][j] =
-          (packed_block_iter < packed_kv_bound ? indices[q] : 0) * ckv_stride_page +
-          r * ckv_stride_n + (lane_idx % 8) * upcast_size<DTypeKV>();
+          page * ckv_stride_page + r * ckv_stride_n + (lane_idx % 8) * upcast_size<DTypeKV>();
       kpe_offset[mma_kv][j] =
-          (packed_block_iter < packed_kv_bound ? indices[q] : 0) * kpe_stride_page +
-          r * kpe_stride_n + (lane_idx % 8) * upcast_size<DTypeKV>();
+          page * kpe_stride_page + r * kpe_stride_n + (lane_idx % 8) * upcast_size<DTypeKV>();
     }
   }
 }

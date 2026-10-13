@@ -61,8 +61,9 @@ __device__ __forceinline__ void prefetch_offest(
                                  lane_idx / KV_THR_LAYOUT_COL +
                                  KV_THR_LAYOUT_ROW * NUM_WARPS_Q * NUM_WARPS_KV * i;
     block_size.divmod(packed_block_iter, page_iter, entry_idx);
-    kv_offset[i] = (packed_block_iter < packed_kv_bound ? indices[page_iter] : 0) * kv_stride_page +
-                   entry_idx * kv_stride_n + kv_head_idx * kv_stride_h +
+    // Widen before scaling so offsets beyond 2^32 elements do not wrap.
+    const int64_t page = packed_block_iter < packed_kv_bound ? indices[page_iter] : 0;
+    kv_offset[i] = page * kv_stride_page + entry_idx * kv_stride_n + kv_head_idx * kv_stride_h +
                    (lane_idx % KV_THR_LAYOUT_COL) * upcast_size<DTypeKV>();
   }
 }

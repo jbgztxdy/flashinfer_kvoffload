@@ -195,18 +195,19 @@ __device__ __forceinline__ void load_kv(
   smem_t<KTraits::SWIZZLE_MODE_CKV> ckv_smem(smem_storage->ckv_smem[stage_idx]);
   smem_t<KTraits::SWIZZLE_MODE_KPE> kpe_smem(smem_storage->kpe_p_smem[stage_idx]);
 
+  // Widen page ids before scaling: a 32-bit page * stride product wraps beyond 2^32 elements
+  // (~7.46M pages of 576 BF16 values, ~8 GiB per layer).
   if constexpr (KTraits::NUM_MMA_KV == 1) {
     if (warpgroup_idx == 0) {
       uint32_t q, r;
       uint32_t packed_block_iter = packed_block_iter_base + lane_idx / 8 + warp_idx_in_wg * 4;
       block_size.divmod(packed_block_iter, q, r);
 
-      DTypeKV* ckv_ptr = ckv +
-                         (packed_block_iter < packed_kv_bound ? indices[q] : 0) * ckv_stride_page +
-                         r * ckv_stride_n + (lane_idx % 8) * upcast_size<DTypeKV>();
-      DTypeKV* kpe_ptr = kpe +
-                         (packed_block_iter < packed_kv_bound ? indices[q] : 0) * kpe_stride_page +
-                         r * kpe_stride_n + (lane_idx % 8) * upcast_size<DTypeKV>();
+      const int64_t page = packed_block_iter < packed_kv_bound ? indices[q] : 0;
+      DTypeKV* ckv_ptr = ckv + page * ckv_stride_page + r * ckv_stride_n +
+                         (lane_idx % 8) * upcast_size<DTypeKV>();
+      DTypeKV* kpe_ptr = kpe + page * kpe_stride_page + r * kpe_stride_n +
+                         (lane_idx % 8) * upcast_size<DTypeKV>();
 
 #pragma unroll
       for (uint32_t mma_d = 0; mma_d < KTraits::NUM_MMA_D_CKV / 4; ++mma_d) {
@@ -234,12 +235,11 @@ __device__ __forceinline__ void load_kv(
                                    (warpgroup_idx + mma_kv * 2) * 16 + warp_idx_in_wg * 4;
       block_size.divmod(packed_block_iter, q, r);
 
-      DTypeKV* ckv_ptr = ckv +
-                         (packed_block_iter < packed_kv_bound ? indices[q] : 0) * ckv_stride_page +
-                         r * ckv_stride_n + (lane_idx % 8) * upcast_size<DTypeKV>();
-      DTypeKV* kpe_ptr = kpe +
-                         (packed_block_iter < packed_kv_bound ? indices[q] : 0) * kpe_stride_page +
-                         r * kpe_stride_n + (lane_idx % 8) * upcast_size<DTypeKV>();
+      const int64_t page = packed_block_iter < packed_kv_bound ? indices[q] : 0;
+      DTypeKV* ckv_ptr = ckv + page * ckv_stride_page + r * ckv_stride_n +
+                         (lane_idx % 8) * upcast_size<DTypeKV>();
+      DTypeKV* kpe_ptr = kpe + page * kpe_stride_page + r * kpe_stride_n +
+                         (lane_idx % 8) * upcast_size<DTypeKV>();
 
 #pragma unroll
       for (uint32_t mma_d = 0; mma_d < KTraits::NUM_MMA_D_CKV / 4; ++mma_d) {
@@ -1054,7 +1054,7 @@ __device__ __forceinline__ void run_host_fetch_warps(const Params& params,
     positions[i] = slot < selected ? selected_positions[slot] : 2048;
     if (positions[i] < 2048) {
       const auto page = selected_pages[slot];
-      const auto* source = params.ckv + page * params.ckv_stride_page;
+      const auto* source = params.ckv + static_cast<int64_t>(page) * params.ckv_stride_page;
       asm volatile("ld.global.cg.v4.u32 {%0, %1, %2, %3}, [%4];"
                    : "=r"(first[i].x), "=r"(first[i].y), "=r"(first[i].z), "=r"(first[i].w)
                    : "l"(source + lane * 8)
@@ -1066,7 +1066,8 @@ __device__ __forceinline__ void run_host_fetch_warps(const Params& params,
       if (lane < 8) {
         asm volatile("ld.global.cg.v4.u32 {%0, %1, %2, %3}, [%4];"
                      : "=r"(rope[i].x), "=r"(rope[i].y), "=r"(rope[i].z), "=r"(rope[i].w)
-                     : "l"(params.kpe + page * params.kpe_stride_page + lane * 8)
+                     : "l"(params.kpe + static_cast<int64_t>(page) * params.kpe_stride_page +
+                           lane * 8)
                      : "memory");
       }
     }
@@ -1207,7 +1208,8 @@ __device__ __forceinline__ void load_private_host_segment(
   const uint32_t page = row < length ? storage.indices[row] : 0;
   if constexpr (ROPE) {
     smem_t<KTraits::SWIZZLE_MODE_KPE> shared(storage.kpe_p_smem[0]);
-    auto* source = params.kpe + page * params.kpe_stride_page + (lane % 8) * 8;
+    auto* source =
+        params.kpe + static_cast<int64_t>(page) * params.kpe_stride_page + (lane % 8) * 8;
     const uint32_t offset = shared.template get_permuted_offset<KTraits::UPCAST_STRIDE_KPE>(
         row, lane % 8);
     shared.template load_128b_async<SharedMemFillMode::kFillZero>(offset, source, row < length);
@@ -1215,7 +1217,8 @@ __device__ __forceinline__ void load_private_host_segment(
     smem_t<KTraits::SWIZZLE_MODE_CKV> shared(storage.ckv_smem[0]);
 #pragma unroll
     for (uint32_t feature = BEGIN; feature < END; ++feature) {
-      auto* source = params.ckv + page * params.ckv_stride_page + feature * 64 + (lane % 8) * 8;
+      auto* source = params.ckv + static_cast<int64_t>(page) * params.ckv_stride_page +
+                     feature * 64 + (lane % 8) * 8;
       const uint32_t offset = shared.template get_permuted_offset<KTraits::UPCAST_STRIDE_CKV>(
           row, feature * 8 + lane % 8);
       shared.template load_128b_async<SharedMemFillMode::kFillZero>(offset, source, row < length);
