@@ -153,6 +153,7 @@ def main():
             copy="CPU gathers the batch's unique Host rows into pinned memory; H2D DMA plus native attention in one CUDA graph",
             direct="Native attention reads mapped Host DRAM for every reference",
             batch="Batched Host kernel: in-kernel dedup into HBM staging, fetch CTAs overlap PCIe with HBM attention",
+            meta="Batched Host kernel reusing prebuilt metadata: no prepare, resolve or their grid barriers (experiment)",
             attn="Memcpy's attention with its H2D removed: the same rows read from HBM, no PCIe (timing only)",
         ),
         timing="GPU events around CUDA graphs of repeated calls; CPU gather for copy reported separately",
@@ -183,9 +184,10 @@ def run_batch(args, requests, tokens, cache, host, alias_cache, staged, packed, 
         mode: make_wrapper(rows, indices[mode], torch.empty(args.workspace_mib * 2**20, dtype=torch.uint8, device=device), topk)
         for mode in args.modes
     }
-    if "batch" in wrappers:
-        wrappers["batch"].host_fetch_ctas = args.fetch_ctas
-        wrappers["batch"].host_staging_rows = args.staging_rows
+    for mode in ("batch", "meta"):
+        if mode in wrappers:
+            wrappers[mode].host_fetch_ctas = args.fetch_ctas
+            wrappers[mode].host_staging_rows = args.staging_rows
 
     prepared, actual_fraction = [], {}
     for set_id in range(args.index_sets):
@@ -223,13 +225,24 @@ def run_batch(args, requests, tokens, cache, host, alias_cache, staged, packed, 
         else:
             wrappers[mode].run(
                 query, rope, cache[..., :512], cache[..., 512:], out=output,
-                host_page_start=host_start if mode == "batch" else None,
+                host_page_start=host_start if mode in ("batch", "meta") else None,
             )
+
+    def prime_meta():
+        # meta: the batched kernel reusing metadata a normal launch just built (see
+        # kHostBatchReuseMeta), i.e. as if the top-k stage had emitted it.
+        buffers = wrappers["meta"]._host_batch_buffers
+        if buffers is not None:
+            buffers[5][0] = 0
+        call("meta")
+        wrappers["meta"]._host_batch_buffers[5][0] = 1
 
     def load(case):
         for mode in args.modes:
             indices[mode].copy_(
                 case["remapped"] if mode in ("copy", "attn") else case["selected"])
+        if "meta" in args.modes:
+            prime_meta()
 
     # Warm up (JIT, batch buffers) and size graphs to about target_ms each.
     first = prepared[0]

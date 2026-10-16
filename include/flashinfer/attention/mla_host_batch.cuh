@@ -88,6 +88,11 @@ constexpr uint32_t kHostBatchFetchRows = 64;
 // state layout: counters; per row its Host entry count, its claimed page count and its first Host
 // item; the row of each Host item; one ready flag per kHostBatchFetchRows staging slots; one claim
 // per attention item. Flags and claims hold epoch + 1, so they never need clearing.
+// Experiment: a nonzero state[kHostBatchReuseMeta] makes the launch reuse the remap, slots and
+// item lists the previous launch left, skipping prepare, resolve and their two grid barriers.
+// This bounds what moving that work into the top-k stage could save. Set from the host only.
+constexpr uint32_t kHostBatchReuseMeta = 0;
+constexpr uint32_t kHostBatchUnique = 1;
 constexpr uint32_t kHostBatchExit = 2;
 constexpr uint32_t kHostBatchEpoch = 3;
 constexpr uint32_t kHostBatchHostCounts = 4;
@@ -846,16 +851,23 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
   // The previous launch's last CTA advanced the epoch; ready flags from it no longer match.
   const uint32_t epoch = params.state[kHostBatchEpoch];
 
-  prepare_host_batch_rows<KTraits>(params, scratch);
-  cg::this_grid().sync();
-  const uint32_t unique = resolve_host_batch_slots<KTraits>(params, smem);
+  const bool reuse_meta = params.state[kHostBatchReuseMeta] != 0;
+  uint32_t unique;
+  if (reuse_meta) {
+    unique = params.state[kHostBatchUnique];
+  } else {
+    prepare_host_batch_rows<KTraits>(params, scratch);
+    cg::this_grid().sync();
+    unique = resolve_host_batch_slots<KTraits>(params, smem);
+    if (blockIdx.y == 0 && tid == 0) params.state[kHostBatchUnique] = unique;
+  }
   // unique is the same on every CTA (each runs the same scan), so the branch is grid-uniform and
   // the cooperative barriers below stay matched.
   // Which end of the item list this CTA walks from. This is a partition of the grid and must not
   // depend on `unique`: if the back CTAs also walked from the front they would retrace the same
   // items and contend on the claims (0% Host, 512 rows: 1514 -> 1784 us).
   const bool from_back = blockIdx.y >= gridDim.y - params.fetch_ctas;
-  if (unique > 0) {
+  if (unique > 0 && !reuse_meta) {
     // Rows resolved by other CTAs must be complete before any item or fetch reads them, and fetch
     // CTAs clear the dedup slots the resolve step reads.
     cg::this_grid().sync();
