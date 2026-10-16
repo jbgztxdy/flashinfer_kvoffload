@@ -1,0 +1,56 @@
+{
+  "configuration": {
+    "device": 3,
+    "docs": [
+      "temp/mtp_overlap/docs/novel_victorian.txt",
+      "temp/mtp_overlap/docs/code_flashinfer_attention.txt"
+    ],
+    "context": 65536,
+    "topk": 2048,
+    "mtp": 32,
+    "groups": 16,
+    "chunk": 32,
+    "mlp_chunk": 8192,
+    "output": "temp/mtp_overlap/rounds_ctx65536.json",
+    "model": "/mnt/data/mhy/model/deepseekv2-16b"
+  },
+  "timestamp": "2026-10-15T15:41:55+0800",
+  "git_commit": "ffefda84b3602fd6556c8c17eb5da82fb1c42588",
+  "selection": "per token: top-k of head-averaged softmax attention over keys at positions <= token",
+  "group_starts": [
+    32768,
+    34950,
+    37132,
+    39315,
+    41497,
+    43680,
+    45862,
+    48044,
+    50227,
+    52409,
+    54592,
+    56774,
+    58956,
+    61139,
+    63321,
+    65504
+  ],
+  "documents": [
+    {
+      "name": "novel_victorian",
+      "tokens": 65536,
+      "seconds": 45.62218928337097,
+      "tail_loss": 2.6801702976226807,
+      "selections": "temp/mtp_overlap/rounds_ctx65536_novel_victorian.pt",
+      "peak_memory_gib": 4.25452995300293
+    },
+    {
+      "name": "code_flashinfer_attention",
+      "tokens": 65536,
+      "seconds": 82.00769591331482,
+      "tail_loss": 0.04878325015306473,
+      "selections": "temp/mtp_overlap/rounds_ctx65536_code_flashinfer_attention.pt",
+      "peak_memory_gib": 4.254533767700195
+    }
+  ]
+}

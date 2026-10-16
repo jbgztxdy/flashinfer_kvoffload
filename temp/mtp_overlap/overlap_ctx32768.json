@@ -1,0 +1,90 @@
+{
+  "configuration": {
+    "device": 3,
+    "docs": [
+      "temp/mtp_overlap/docs/code_flashinfer_attention.txt",
+      "temp/mtp_overlap/docs/essays_acton.txt",
+      "temp/mtp_overlap/docs/novel_sacred_games.txt",
+      "temp/mtp_overlap/docs/novel_victorian.txt"
+    ],
+    "context": 32768,
+    "topk": 2048,
+    "mtp": 8,
+    "groups": 32,
+    "chunk": 32,
+    "mlp_chunk": 8192,
+    "output": "temp/mtp_overlap/overlap_ctx32768.json",
+    "model": "/mnt/data/mhy/model/deepseekv2-16b"
+  },
+  "timestamp": "2026-10-13T18:04:07+0800",
+  "git_commit": "86935e3c2f88c72feaf364876e5d9bcb7c676d59",
+  "selection": "per token: top-k of head-averaged softmax attention over keys at positions <= token",
+  "group_starts": [
+    16384,
+    16912,
+    17440,
+    17968,
+    18497,
+    19025,
+    19553,
+    20081,
+    20610,
+    21138,
+    21666,
+    22194,
+    22723,
+    23251,
+    23779,
+    24307,
+    24836,
+    25364,
+    25892,
+    26420,
+    26949,
+    27477,
+    28005,
+    28533,
+    29062,
+    29590,
+    30118,
+    30646,
+    31175,
+    31703,
+    32231,
+    32760
+  ],
+  "documents": [
+    {
+      "name": "code_flashinfer_attention",
+      "tokens": 32768,
+      "seconds": 31.5394344329834,
+      "tail_loss": 0.203148752450943,
+      "selections": "temp/mtp_overlap/overlap_ctx32768_code_flashinfer_attention.pt",
+      "peak_memory_gib": 2.675914764404297
+    },
+    {
+      "name": "essays_acton",
+      "tokens": 32768,
+      "seconds": 26.79873776435852,
+      "tail_loss": 2.7211458683013916,
+      "selections": "temp/mtp_overlap/overlap_ctx32768_essays_acton.pt",
+      "peak_memory_gib": 2.6759185791015625
+    },
+    {
+      "name": "novel_sacred_games",
+      "tokens": 32768,
+      "seconds": 35.63434052467346,
+      "tail_loss": 2.8002941608428955,
+      "selections": "temp/mtp_overlap/overlap_ctx32768_novel_sacred_games.pt",
+      "peak_memory_gib": 2.6759185791015625
+    },
+    {
+      "name": "novel_victorian",
+      "tokens": 32768,
+      "seconds": 26.821879863739014,
+      "tail_loss": 2.435770273208618,
+      "selections": "temp/mtp_overlap/overlap_ctx32768_novel_victorian.pt",
+      "peak_memory_gib": 2.6759185791015625
+    }
+  ]
+}

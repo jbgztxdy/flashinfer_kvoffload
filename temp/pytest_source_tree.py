@@ -1,0 +1,3 @@
+# Purpose: pytest plugin that points FlashInfer JIT at this source checkout (no flashinfer/data links).
+# Usage: PYTHONPATH=.:temp pytest -p pytest_source_tree tests/...
+import bench_glm52_decode  # noqa: F401  (patches flashinfer.jit.env on import)

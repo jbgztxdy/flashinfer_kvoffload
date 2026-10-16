@@ -15,6 +15,7 @@
  */
 #include <cstdint>
 #include <flashinfer/attention/mla.cuh>
+#include <flashinfer/attention/mla_host_batch.cuh>
 #include <flashinfer/attention/scheduler.cuh>
 #include <flashinfer/fastdiv.cuh>
 
@@ -183,4 +184,119 @@ void BatchMLAPagedAttentionRun(TensorView float_workspace_buffer, TensorView int
       float_workspace_buffer, int_workspace_buffer, plan_info_vec, q_nope, q_pe, ckv_cache,
       kpe_cache, kv_indices, o, maybe_lse, mask_mode_code, num_heads, page_size, sm_scale,
       return_lse_base_on_e, -1, Optional<TensorView>(), Optional<TensorView>());
+}
+
+void BatchMLAPagedAttentionRunHostBatch(
+    TensorView q_nope, TensorView q_pe, TensorView ckv_cache, TensorView kpe_cache,
+    TensorView kv_indptr, TensorView kv_indices, TensorView o, Optional<TensorView> maybe_lse,
+    int64_t num_heads, double sm_scale, bool return_lse_base_on_e, int64_t host_page_start,
+    int64_t max_kv_len, TensorView staging, TensorView host_slot, TensorView remap,
+    TensorView unique_pages, TensorView state, TensorView partial_o, TensorView partial_lse,
+    int64_t fetch_ctas) {
+  // q_nope: [rows, num_heads, 512], q_pe: [rows, num_heads, 64], one query token per row
+  // ckv_cache: [num_pages, 1, 512], kpe_cache: [num_pages, 1, 64]
+  CHECK_LAST_DIM_CONTIGUOUS_INPUT(q_nope);
+  CHECK_LAST_DIM_CONTIGUOUS_INPUT(q_pe);
+  CHECK_LAST_DIM_CONTIGUOUS_INPUT(o);
+  CHECK_INPUT(kv_indptr);
+  CHECK_INPUT(kv_indices);
+  CHECK_INPUT(staging);
+  CHECK_INPUT(host_slot);
+  CHECK_INPUT(remap);
+  CHECK_INPUT(unique_pages);
+  CHECK_INPUT(state);
+  CHECK_INPUT(partial_o);
+  CHECK_INPUT(partial_lse);
+  CHECK_DEVICE(q_pe, q_nope);
+  CHECK_DEVICE(ckv_cache, q_nope);
+  CHECK_DEVICE(kpe_cache, q_nope);
+  CHECK_DEVICE(o, q_nope);
+  CHECK_DEVICE(kv_indptr, q_nope);
+  CHECK_DEVICE(kv_indices, q_nope);
+  CHECK_DEVICE(staging, q_nope);
+  CHECK_DEVICE(host_slot, q_nope);
+  CHECK_DEVICE(state, q_nope);
+  CHECK_DEVICE(partial_o, q_nope);
+  CHECK_INPUT_TYPE(kv_indptr, dl_int32);
+  CHECK_INPUT_TYPE(kv_indices, dl_int32);
+  CHECK_INPUT_TYPE(remap, dl_int32);
+  CHECK_INPUT_TYPE(unique_pages, dl_int32);
+  CHECK_INPUT_TYPE(host_slot, dl_int32);
+  CHECK_INPUT_TYPE(state, dl_int32);
+  CHECK_INPUT_TYPE(partial_lse, dl_float32);
+  CHECK_SAME_DTYPE(staging, ckv_cache);
+  CHECK_SAME_DTYPE(partial_o, o);
+  const int64_t rows = q_nope.size(0);
+  const int64_t head_tiles = num_heads / 64;
+  TVM_FFI_ICHECK(num_heads % 64 == 0 && q_nope.size(1) == num_heads && q_pe.size(1) == num_heads)
+      << "Host batch requires a multiple of 64 heads";
+  TVM_FFI_ICHECK(q_nope.size(2) == 512 && q_pe.size(0) == rows && q_pe.size(2) == 64);
+  TVM_FFI_ICHECK(ckv_cache.ndim() == 3 && ckv_cache.size(1) == 1 && ckv_cache.size(2) == 512);
+  TVM_FFI_ICHECK(kpe_cache.ndim() == 3 && kpe_cache.size(0) == ckv_cache.size(0) &&
+                 kpe_cache.size(1) == 1 && kpe_cache.size(2) == 64);
+  TVM_FFI_ICHECK(ckv_cache.stride(0) == 576 && kpe_cache.stride(0) == 576 &&
+                 ckv_cache.stride(2) == 1 && kpe_cache.stride(2) == 1 &&
+                 static_cast<char*>(kpe_cache.data_ptr()) ==
+                     static_cast<char*>(ckv_cache.data_ptr()) + 512 * sizeof(DTypeKV))
+      << "Host batch requires ckv/kpe views of one [num_pages, 1, 576] cache";
+  TVM_FFI_ICHECK(0 <= host_page_start && host_page_start <= ckv_cache.size(0));
+  TVM_FFI_ICHECK_EQ(kv_indptr.size(0), rows + 1);
+  TVM_FFI_ICHECK_GE(remap.size(0), kv_indices.size(0));
+  TVM_FFI_ICHECK_GE(unique_pages.size(0), kv_indices.size(0));
+  TVM_FFI_ICHECK_GE(host_slot.size(0), ckv_cache.size(0) - host_page_start);
+  TVM_FFI_ICHECK(staging.ndim() == 2 && staging.size(1) == 576 && staging.size(0) >= 1);
+  const int64_t capacity = staging.size(0);
+  // Items: at most one per row tile plus the split tail, bounded by the partial capacity.
+  // Per row: Host count, claims, first Host item; the row of each Host item; fetch flags; item
+  // claims (row tiles plus tail item states).
+  const int64_t partials = partial_lse.size(0) / 64;
+  TVM_FFI_ICHECK_GE(state.size(0), mla::kHostBatchHostCounts + 3 * rows + 1 + partials +
+                                       (capacity + mla::kHostBatchFetchRows - 1) /
+                                           mla::kHostBatchFetchRows +
+                                       rows * head_tiles + partials);
+  // host_slot packs (row, rank within the row's claims); see prepare_host_batch_rows.
+  TVM_FFI_ICHECK(rows < (1 << (31 - mla::kHostBatchRankBits)) &&
+                 max_kv_len < (1 << mla::kHostBatchRankBits))
+      << "Host batch supports fewer than 32768 rows of fewer than 65536 pages";
+  TVM_FFI_ICHECK(partial_lse.size(0) % 64 == 0 &&
+                 partial_o.size(0) * partial_o.size(1) >= partial_lse.size(0) * 512);
+
+  ffi::CUDADeviceGuard device_guard(q_nope.device().device_id);
+  const cudaStream_t stream = get_stream(q_nope.device());
+
+  MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType> params;
+  params.q_nope = static_cast<DTypeQ*>(q_nope.data_ptr());
+  params.q_pe = static_cast<DTypeQ*>(q_pe.data_ptr());
+  params.ckv = static_cast<DTypeKV*>(ckv_cache.data_ptr());
+  params.final_o = static_cast<DTypeO*>(o.data_ptr());
+  params.final_lse =
+      maybe_lse.has_value() ? static_cast<float*>(maybe_lse.value().data_ptr()) : nullptr;
+  params.kv_indptr = static_cast<IdType*>(kv_indptr.data_ptr());
+  params.kv_indices = static_cast<IdType*>(kv_indices.data_ptr());
+  params.remap = static_cast<IdType*>(remap.data_ptr());
+  params.unique_pages = static_cast<IdType*>(unique_pages.data_ptr());
+  params.host_slot = static_cast<uint32_t*>(host_slot.data_ptr());
+  params.state = static_cast<uint32_t*>(state.data_ptr());
+  params.staging = static_cast<DTypeKV*>(staging.data_ptr());
+  params.partial_o = static_cast<DTypeO*>(partial_o.data_ptr());
+  params.partial_lse = static_cast<float*>(partial_lse.data_ptr());
+  params.num_heads = uint_fastdiv(num_heads);
+  params.num_rows = rows;
+  params.num_head_tiles = head_tiles;
+  params.staging_capacity = capacity;
+  params.fetch_ctas = fetch_ctas;
+  params.q_nope_stride_n = q_nope.stride(0);
+  params.q_nope_stride_h = q_nope.stride(1);
+  params.q_pe_stride_n = q_pe.stride(0);
+  params.q_pe_stride_h = q_pe.stride(1);
+  params.o_stride_n = o.stride(0);
+  params.o_stride_h = o.stride(1);
+  params.host_page_start = host_page_start;
+  params.sm_scale = sm_scale;
+  params.return_lse_base_on_e = return_lse_base_on_e;
+
+  cudaError_t status = mla::BatchMLAHostBatchAttention<HEAD_DIM_CKV, HEAD_DIM_KPE>(
+      params, max_kv_len, partial_lse.size(0) / 64, stream);
+  TVM_FFI_ICHECK(status == cudaSuccess)
+      << "Failed to run batched Host MLA, error: " << cudaGetErrorString(status);
 }

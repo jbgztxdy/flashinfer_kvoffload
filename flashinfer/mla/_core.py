@@ -327,6 +327,12 @@ class BatchMLAPagedAttentionWrapper:
         self._host_prefetch_module = None
         self._host_prefetch_buffer = None
         self._host_prefetch_state = None
+        self._host_batch_buffers = None
+        self._host_batch_shape = None
+        # Rows of HBM staging for deduplicated Host pages; defaults to half the selected pages.
+        self.host_staging_rows: Optional[int] = None
+        # CTAs copying Host pages before they join attention; 8-12 performed alike on A100.
+        self.host_fetch_ctas = 8
 
         if backend == "cutlass":
             self._backend = backend
@@ -439,6 +445,20 @@ class BatchMLAPagedAttentionWrapper:
             and head_dim_kpe == 64
             and qo_indptr.dtype == torch.int32
         )
+        rows = len(qo_indptr_host) - 1
+        # The batched Host path takes one query per row, e.g. each MTP token with its own top-k.
+        self._host_batch_shape = (
+            (rows, int(kv_indptr_host[-1]), int(kv_len_arr_host.max()))
+            if rows > 0
+            and torch.equal(qo_indptr_host, torch.arange(rows + 1, dtype=qo_indptr_host.dtype))
+            and torch.equal(kv_len_arr_host, kv_indptr_host[1:] - kv_indptr_host[:-1])
+            and num_heads % 64 == 0
+            and head_dim_ckv == 512
+            and head_dim_kpe == 64
+            and kv_indptr.dtype == torch.int32
+            and kv_indices.dtype == torch.int32
+            else None
+        )
         if (
             self._host_prefetch_buffer is not None
             and self._host_prefetch_buffer.dtype != kv_data_type
@@ -546,6 +566,16 @@ class BatchMLAPagedAttentionWrapper:
             5.25 MiB plus 32 KiB of synchronization state.
             Call once before CUDA Graph capture to compile and allocate buffers.
             Calls using the same wrapper must not execute concurrently.
+
+            Other shapes with one query per row (``qo_indptr = arange``), a
+            multiple of 64 heads and page size 1 use the batched Host path: the
+            batch deduplicates its Host pages into HBM staging rows
+            (``host_staging_rows``, default half of the selected pages; pages
+            beyond it are read directly), ``host_fetch_ctas`` CTAs copy them over
+            PCIe while the other CTAs run attention on HBM pages first, all in one
+            cooperative kernel. It requires ``ckv_cache`` and ``kpe_cache`` to be
+            views of one ``[num_pages, 1, 576]`` cache and keeps a 4-byte slot per
+            Host page.
         """
         if host_page_start is not None and self._backend != "fa2":
             raise ValueError("Host overlap requires the FA2 backend")
@@ -606,6 +636,20 @@ class BatchMLAPagedAttentionWrapper:
         profiler_args = (profiler_buffer,) if self._use_profiler else ()
         run_function = self._cached_module.run
         host_args = ()
+        if host_page_start is not None and not (
+            tuple(q_nope.shape) == (1, 64, 512) and self._host_prefetch_shape
+        ):
+            return self._run_host_batch(
+                q_nope,
+                q_pe,
+                ckv_cache,
+                kpe_cache,
+                out,
+                lse,
+                return_lse,
+                return_lse_base_on_e,
+                host_page_start,
+            )
         if host_page_start is not None:
             if (
                 self._backend != "fa2"
@@ -694,6 +738,124 @@ class BatchMLAPagedAttentionWrapper:
             *host_args,
         )
 
+        return (out, lse) if return_lse else out
+
+
+    def _run_host_batch(
+        self,
+        q_nope: torch.Tensor,
+        q_pe: torch.Tensor,
+        ckv_cache: torch.Tensor,
+        kpe_cache: torch.Tensor,
+        out: torch.Tensor,
+        lse: Optional[torch.Tensor],
+        return_lse: bool,
+        return_lse_base_on_e: bool,
+        host_page_start: int,
+    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+        rows, num_heads = q_nope.shape[:2]
+        if (
+            self._backend != "fa2"
+            or self._causal
+            or self._page_size != 1
+            or self._use_profiler
+            or self._host_batch_shape is None
+            or self._host_batch_shape[0] != rows
+            or num_heads % 64
+            or tuple(q_nope.shape) != (rows, num_heads, 512)
+            or tuple(q_pe.shape) != (rows, num_heads, 64)
+        ):
+            raise ValueError(
+                "Batched Host MLA requires FA2 noncausal page-size-one decode with "
+                "one query per row, int32 indices and a multiple of 64 heads"
+            )
+        if (
+            ckv_cache.ndim != 3
+            or tuple(ckv_cache.shape[1:]) != (1, 512)
+            or tuple(kpe_cache.shape) != (ckv_cache.shape[0], 1, 64)
+        ):
+            raise ValueError("Host overlap requires page-size-one 512+64 KV tensors")
+        if (
+            ckv_cache.stride(0) != 576
+            or kpe_cache.stride(0) != 576
+            or kpe_cache.data_ptr() != ckv_cache.data_ptr() + 512 * ckv_cache.element_size()
+        ):
+            raise ValueError(
+                "Batched Host MLA requires ckv/kpe views of one [num_pages, 1, 576] cache"
+            )
+        if not isinstance(host_page_start, int) or not (
+            0 <= host_page_start <= ckv_cache.shape[0]
+        ):
+            raise ValueError("host_page_start must be an integer within the KV cache")
+        if (
+            q_nope.dtype not in (torch.bfloat16, torch.float16)
+            or q_nope.dtype != self._module_args[0]
+            or ckv_cache.dtype != self._module_args[1]
+            or any(t.dtype != q_nope.dtype for t in (q_pe, ckv_cache, kpe_cache))
+        ):
+            raise ValueError("Host overlap requires matching planned BF16 or FP16 inputs")
+        if any(
+            t.device != self.device
+            or t.stride(-1) != 1
+            or t.stride(0) % 8
+            or t.data_ptr() % 16
+            for t in (q_nope, q_pe, ckv_cache, kpe_cache, out)
+        ):
+            raise ValueError(
+                "Host overlap requires aligned CUDA tensors with unit feature stride"
+            )
+        _, nnz, max_kv_len = self._host_batch_shape
+        staging_rows = self.host_staging_rows or max(64, (nnz + 1) // 2)
+        key = (
+            ckv_cache.dtype,
+            ckv_cache.shape[0] - host_page_start,
+            nnz,
+            rows,
+            num_heads,
+            staging_rows,
+        )
+        if self._host_batch_buffers is None or self._host_batch_buffers[0] != key:
+            if torch.cuda.is_current_stream_capturing():
+                raise RuntimeError("Warm up batched Host MLA before CUDA Graph capture")
+            if self._host_prefetch_module is None:
+                self._host_prefetch_module = get_batch_mla_module(
+                    self._backend, *self._module_args, host_prefetch=True
+                )
+            # Bounds the split-row partial states; the launcher only splits small batches.
+            partials = 8 * get_device_sm_count(self.device)
+            int32 = dict(dtype=torch.int32, device=self.device)
+            self._host_batch_buffers = (
+                key,
+                torch.empty((staging_rows, 576), dtype=ckv_cache.dtype, device=self.device),
+                torch.zeros(max(1, key[1]), **int32),
+                torch.empty(max(1, nnz), **int32),
+                torch.empty(max(1, nnz), **int32),
+                torch.zeros(
+                    4 + 3 * rows + 1 + partials + (staging_rows + 63) // 64 + rows * (num_heads // 64) + partials,
+                    **int32,
+                ),
+                torch.empty((partials * 64, 512), dtype=q_nope.dtype, device=self.device),
+                torch.empty(partials * 64, dtype=torch.float32, device=self.device),
+            )
+        if return_lse and lse is None:
+            lse = torch.empty(q_nope.shape[:2], dtype=torch.float32, device=self.device)
+        self._host_prefetch_module.run_host_batch(
+            q_nope,
+            q_pe,
+            ckv_cache,
+            kpe_cache,
+            self._kv_indptr_buf,
+            self._kv_indices_buf,
+            out,
+            lse,
+            num_heads,
+            self._sm_scale,
+            return_lse_base_on_e,
+            host_page_start,
+            max_kv_len,
+            *self._host_batch_buffers[1:],
+            self.host_fetch_ctas,
+        )
         return (out, lse) if return_lse else out
 
 

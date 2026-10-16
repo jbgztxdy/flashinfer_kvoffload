@@ -46,3 +46,13 @@ void BatchMLAPagedAttentionRunHostPrefetch(
     Optional<TensorView> maybe_host_state);
 
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(run_host_prefetch, BatchMLAPagedAttentionRunHostPrefetch);
+
+void BatchMLAPagedAttentionRunHostBatch(
+    TensorView q_nope, TensorView q_pe, TensorView ckv_cache, TensorView kpe_cache,
+    TensorView kv_indptr, TensorView kv_indices, TensorView o, Optional<TensorView> maybe_lse,
+    int64_t num_heads, double sm_scale, bool return_lse_base_on_e, int64_t host_page_start,
+    int64_t max_kv_len, TensorView staging, TensorView host_slot, TensorView remap,
+    TensorView unique_pages, TensorView state, TensorView partial_o, TensorView partial_lse,
+    int64_t fetch_ctas);
+
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(run_host_batch, BatchMLAPagedAttentionRunHostBatch);
