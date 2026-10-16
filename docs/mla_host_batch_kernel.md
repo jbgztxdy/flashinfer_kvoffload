@@ -14,17 +14,23 @@ A100-PCIE-40GB（GPU 3）、BF16、top-k 2048 的测试结果：
 
 ## 对比图
 
-**1024 query 行（128 请求 × 8 MTP）下的 Host 命中率扫描。** 三组柱为同一输入下的三种方法，虚线为纯计算下限（同样的 top-k、KV 全部在 HBM、零传输），即传输最多能被掩盖到的位置。
+下图的 top-k **回放自实测的 MTP token 间重叠**（去重后唯一页占 41%），这是真实 MTP 服务的情形。独立随机 top-k 的悲观下界（唯一页占 96%，几乎无重复可去）见本节末。
+
+**1024 query 行（128 请求 × 8 MTP）下的 Host 命中率扫描。** 三组柱为同一输入下的三种方法。两条参考线：虚线是纯计算下限（同样的 top-k、KV 全在 HBM、零传输），黑线是**实测纯搬运耗时**（同一 kernel 去掉 attention 阶段，只把命中页搬进 HBM）。
 
 ![1024 行下三种方法随 Host 命中率的耗时对比](../temp/host_attention_batch_kernel/batch_kernel_1024rows.png)
 
-**按 query 行归一化后的扩展性。** 绝对耗时从 8 行的 45 µs 到 1024 行的 26 ms 跨三个数量级，柱状图需从零起算，故改用「每 query 行耗时」。小 batch 处三者都偏高，是因为 GPU 未被填满（1 行只到算力峰值的 3.3%，1024 行到 33%）。
+黑线几乎贴着本文 kernel 的柱顶：10% 命中起两者只差 2%～7%（30% 时 10.90 vs 11.13 ms）。**这就是「被 PCIe 带宽约束」的直接证据**——把 attention 整个去掉也只快 2%，计算已经藏进传输里了。
+
+**摊薄到每 query 行的耗时。** 绝对耗时从 8 行的 45 µs 到 1024 行的 26 ms 跨三个数量级，柱状图需从零起算，故改用「总时间 ÷ 行数」。注意这**不是每行独立的耗时**——行与行之间是并行的，该量衡量的是摊薄后的单位成本。小 batch 处三者都偏高，是因为 GPU 未被填满（1 行只到算力峰值的 3.3%，1024 行到 33%）。
 
 ![每 query 行耗时随 batch 规模的变化](../temp/host_attention_batch_kernel/batch_kernel_scaling.png)
 
 **跨 decode 轮持久缓存的效果。** 以页放置模拟（命中走 HBM 副本、未命中走 Host 副本，两份内容相同故输出逐位不变），索引取自 4 个真实连续 verify 轮。Host 命中率始终是 30%，变的是其中实际需要过 PCIe 的比例。
 
 ![持久缓存逐轮预热后的耗时](../temp/host_attention_batch_kernel/batch_kernel_rounds.png)
+
+**悲观下界对照。** 若每个 token 的 top-k 独立随机（唯一页占 96%，跨行去重几乎无效），1024 行 30% 命中时本 kernel 25.3 ms、Memcpy 27.4 ms、Direct 26.8 ms，胜出格子从 50/56 降到 23/56。完整数据见 `temp/host_attention_batch_kernel/random.md`。真实 MTP 服务更接近前者，但这条下界说明：**本 kernel 的优势主要来自跨行去重，没有可去重的页时与基线接近。**
 
 稳态（轮 3）下本 kernel 3.49 ms，为纯计算下限 2.59 ms 的 **1.35×**——30% 的 Host 命中最终只付出 35% 的额外开销。详见 [PCIe roofline 分析](mla_host_pcie_roofline.md) 第 9 节，含该模拟的三项局限。
 

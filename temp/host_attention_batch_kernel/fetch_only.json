@@ -1,0 +1,386 @@
+{
+  "configuration": {
+    "device": 3,
+    "cpu_affinity": "32-63,96-127",
+    "requests": [
+      128
+    ],
+    "mtp": 8,
+    "index_mode": "mtp",
+    "captures": "temp/mtp_overlap/overlap_ctx65536_*.pt",
+    "context": 65536,
+    "fractions": [
+      0.0,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3
+    ],
+    "modes": [
+      "batch"
+    ],
+    "topk": 2048,
+    "rounds": 5,
+    "index_sets": 2,
+    "target_ms": 10.0,
+    "max_repeats": 100,
+    "fetch_ctas": 8,
+    "workspace_mib": 512,
+    "staging_rows": null,
+    "seed": 42,
+    "no_check": true,
+    "output": "temp/host_attention_batch_kernel/fetch_only.json"
+  },
+  "timestamp": "2026-10-16T16:54:11+0800",
+  "device_name": "NVIDIA A100-PCIE-40GB",
+  "torch_version": "2.11.0+cu130",
+  "cuda_version": "13.0",
+  "git_commit": "093ccb513fea58476b6ef147398bc0ef11c3d77b",
+  "git_dirty": true,
+  "source_sha256": {
+    "temp/bench_glm52_host_batch_kernel.py": "bb5c98461ecb811a5b8c1bb6cbca6d5cd295f21c2f44b13da65d1a60eca721bb",
+    "include/flashinfer/attention/mla_host_batch.cuh": "943a56443f84e77ea06151519a8db66089bf2b2223ce3e17e3a9715225371437",
+    "include/flashinfer/attention/mla.cuh": "642000bbb2d531797e3015538cf59c525b4526b1ec88829a00188b970770a950",
+    "csrc/batch_mla_run.cu": "351e63036e1d9afa18e3a081c9bf22314f9b00242a3720d324ea6d04a1cdc27e",
+    "flashinfer/mla/_core.py": "010f7811e50bc390ab04a1dba534c60e6c59d75641f5586199204bb30f6ca294"
+  },
+  "residency": [
+    {
+      "tier": "hbm",
+      "allocation_type": 1,
+      "location_type": 1,
+      "location_id": 3,
+      "address": "0x620000000",
+      "bytes": 9663676416
+    },
+    {
+      "tier": "pinned_host_dram",
+      "allocation_type": 1,
+      "location_type": 3,
+      "location_id": 1,
+      "address": "0x860000000",
+      "bytes": 9663676416
+    }
+  ],
+  "methods": {
+    "copy": "CPU gathers the batch's unique Host rows into pinned memory; H2D DMA plus native attention in one CUDA graph",
+    "direct": "Native attention reads mapped Host DRAM for every reference",
+    "batch": "Batched Host kernel: in-kernel dedup into HBM staging, fetch CTAs overlap PCIe with HBM attention",
+    "attn": "Memcpy's attention with its H2D removed: the same rows read from HBM, no PCIe (timing only)"
+  },
+  "timing": "GPU events around CUDA graphs of repeated calls; CPU gather for copy reported separately",
+  "gpu_before": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 7811 MiB, 32631 MiB, 53 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 4975 MiB, 35467 MiB, 79 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 37707 MiB, 2735 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 11127 MiB, 29315 MiB, 0 %, 1410 MHz, 1215 MHz",
+  "results": [
+    {
+      "requests": 128,
+      "mtp": 8,
+      "query_rows": 1024,
+      "cases": [
+        {
+          "host_fraction": 0.0,
+          "host_fraction_actual": 0.0,
+          "host_refs": [
+            0,
+            0
+          ],
+          "host_unique": [
+            0,
+            0
+          ],
+          "unique_ratio": 0.0,
+          "host_unique_bytes_median": 0,
+          "host_ref_bytes_median": 0,
+          "repeats_per_graph": {
+            "batch": 41
+          },
+          "correctness_max_abs_error": {},
+          "batch": {
+            "median_us": 192.83668006338723,
+            "p10_us": 192.06243608056045,
+            "p90_us": 193.21132287746522,
+            "samples_us": [
+              192.83668006338723,
+              193.21132287746522,
+              192.66185527894555,
+              192.06243608056045,
+              193.3361960620415
+            ]
+          },
+          "cpu_pack": {
+            "median_us": 1.032,
+            "p10_us": 0.709,
+            "p90_us": 1.045,
+            "samples_us": [
+              1.032,
+              4.614,
+              0.941,
+              1.045,
+              0.709
+            ]
+          }
+        },
+        {
+          "host_fraction": 0.05,
+          "host_fraction_actual": 0.049973487854003906,
+          "host_refs": [
+            104915,
+            104689
+          ],
+          "host_unique": [
+            42997,
+            42438
+          ],
+          "unique_ratio": 0.4076019541611801,
+          "host_unique_bytes_median": 49532544,
+          "host_ref_bytes_median": 120862080,
+          "repeats_per_graph": {
+            "batch": 5
+          },
+          "correctness_max_abs_error": {},
+          "batch": {
+            "median_us": 2106.163215637207,
+            "p10_us": 2087.116813659668,
+            "p90_us": 2108.211135864258,
+            "samples_us": [
+              2108.211135864258,
+              2088.140869140625,
+              2108.415985107422,
+              2087.116813659668,
+              2106.163215637207
+            ]
+          },
+          "cpu_pack": {
+            "median_us": 2397.64,
+            "p10_us": 1968.984,
+            "p90_us": 2516.111,
+            "samples_us": [
+              2516.111,
+              2161.18,
+              1968.984,
+              2397.64,
+              2531.344
+            ]
+          }
+        },
+        {
+          "host_fraction": 0.1,
+          "host_fraction_actual": 0.09993743896484375,
+          "host_refs": [
+            209856,
+            209312
+          ],
+          "host_unique": [
+            86391,
+            84787
+          ],
+          "unique_ratio": 0.40837563936178334,
+          "host_unique_bytes_median": 99522432,
+          "host_ref_bytes_median": 241754112,
+          "repeats_per_graph": {
+            "batch": 3
+          },
+          "correctness_max_abs_error": {},
+          "batch": {
+            "median_us": 3953.322728474935,
+            "p10_us": 3883.3494186401367,
+            "p90_us": 3954.005241394043,
+            "samples_us": [
+              3953.322728474935,
+              3889.834721883138,
+              4659.5414479573565,
+              3883.3494186401367,
+              3954.005241394043
+            ]
+          },
+          "cpu_pack": {
+            "median_us": 4059.157,
+            "p10_us": 3065.715,
+            "p90_us": 4814.309,
+            "samples_us": [
+              4964.296,
+              3065.715,
+              4059.157,
+              4019.883,
+              4814.309
+            ]
+          }
+        },
+        {
+          "host_fraction": 0.15,
+          "host_fraction_actual": 0.15006661415100098,
+          "host_refs": [
+            315263,
+            314162
+          ],
+          "host_unique": [
+            129590,
+            126947
+          ],
+          "unique_ratio": 0.40757357906025343,
+          "host_unique_bytes_median": 149287680,
+          "host_ref_bytes_median": 363182976,
+          "repeats_per_graph": {
+            "batch": 2
+          },
+          "correctness_max_abs_error": {},
+          "batch": {
+            "median_us": 5796.864032745361,
+            "p10_us": 5687.295913696289,
+            "p90_us": 5797.3761558532715,
+            "samples_us": [
+              5810.688018798828,
+              5687.295913696289,
+              5796.864032745361,
+              5687.295913696289,
+              5797.3761558532715
+            ]
+          },
+          "cpu_pack": {
+            "median_us": 5720.581,
+            "p10_us": 4325.222,
+            "p90_us": 7257.106,
+            "samples_us": [
+              7838.883,
+              4325.222,
+              5720.581,
+              5683.619,
+              7257.106
+            ]
+          }
+        },
+        {
+          "host_fraction": 0.2,
+          "host_fraction_actual": 0.1994028091430664,
+          "host_refs": [
+            418955,
+            417401
+          ],
+          "host_unique": [
+            171947,
+            168666
+          ],
+          "unique_ratio": 0.4072583923592346,
+          "host_unique_bytes_median": 198082944,
+          "host_ref_bytes_median": 482636160,
+          "repeats_per_graph": {
+            "batch": 2
+          },
+          "correctness_max_abs_error": {},
+          "batch": {
+            "median_us": 7616.511821746826,
+            "p10_us": 7606.783866882324,
+            "p90_us": 8504.32014465332,
+            "samples_us": [
+              7611.904144287109,
+              8575.488090515137,
+              7616.511821746826,
+              8504.32014465332,
+              7606.783866882324
+            ]
+          },
+          "cpu_pack": {
+            "median_us": 7989.207,
+            "p10_us": 7406.507,
+            "p90_us": 8330.682,
+            "samples_us": [
+              7989.207,
+              7700.133,
+              8330.682,
+              8809.026,
+              7406.507
+            ]
+          }
+        },
+        {
+          "host_fraction": 0.25,
+          "host_fraction_actual": 0.2459859848022461,
+          "host_refs": [
+            515670,
+            516070
+          ],
+          "host_unique": [
+            211855,
+            208513
+          ],
+          "unique_ratio": 0.40743598193343283,
+          "host_unique_bytes_median": 244056960,
+          "host_ref_bytes_median": 594512640,
+          "repeats_per_graph": {
+            "batch": 2
+          },
+          "correctness_max_abs_error": {},
+          "batch": {
+            "median_us": 9317.888259887695,
+            "p10_us": 9173.503875732422,
+            "p90_us": 9323.007583618164,
+            "samples_us": [
+              9329.66423034668,
+              9173.503875732422,
+              9317.888259887695,
+              9175.552368164062,
+              9323.007583618164
+            ]
+          },
+          "cpu_pack": {
+            "median_us": 10845.941,
+            "p10_us": 8796.5,
+            "p90_us": 11012.135,
+            "samples_us": [
+              11012.135,
+              9470.43,
+              10845.941,
+              8796.5,
+              11258.755
+            ]
+          }
+        },
+        {
+          "host_fraction": 0.3,
+          "host_fraction_actual": 0.2897677421569824,
+          "host_refs": [
+            606120,
+            609254
+          ],
+          "host_unique": [
+            248675,
+            246012
+          ],
+          "unique_ratio": 0.4070245043912409,
+          "host_unique_bytes_median": 286473600,
+          "host_ref_bytes_median": 701860608,
+          "repeats_per_graph": {
+            "batch": 1
+          },
+          "correctness_max_abs_error": {},
+          "batch": {
+            "median_us": 10900.480270385742,
+            "p10_us": 10779.647827148438,
+            "p90_us": 10902.527809143066,
+            "samples_us": [
+              10900.480270385742,
+              10785.792350769043,
+              10904.576301574707,
+              10779.647827148438,
+              10902.527809143066
+            ]
+          },
+          "cpu_pack": {
+            "median_us": 12080.393,
+            "p10_us": 10843.252,
+            "p90_us": 12801.825,
+            "samples_us": [
+              13041.577,
+              10843.252,
+              12080.393,
+              11396.241,
+              12801.825
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "gpu_after": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 9527 MiB, 30915 MiB, 100 %, 1320 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 4979 MiB, 35463 MiB, 79 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 37707 MiB, 2735 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 17503 MiB, 22939 MiB, 47 %, 1410 MHz, 1215 MHz"
+}

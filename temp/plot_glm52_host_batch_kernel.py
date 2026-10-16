@@ -81,6 +81,8 @@ def main():
     parser.add_argument("--mtp", type=Path, default=Path("temp/host_attention_batch_kernel/mtp_v3.csv"))
     parser.add_argument("--attn", type=Path, default=Path("temp/host_attention_batch_kernel/attn.json"))
     parser.add_argument("--rounds", type=Path, default=Path("temp/host_attention_rounds/rounds128.json"))
+    parser.add_argument("--fetch", type=Path,
+                        default=Path("temp/host_attention_batch_kernel/fetch_only.json"))
     parser.add_argument("--out", type=Path, default=Path("temp/host_attention_batch_kernel"))
     args = parser.parse_args()
     style()
@@ -101,15 +103,28 @@ def main():
     data = {k: [rows[(1024, f)][f"{k}_us"] and float(rows[(1024, f)][f"{k}_us"]) for f in fractions]
             for k, _, _ in SERIES}
     grouped(axis, [f"{f:.0%}" for f in fractions], data, 1000, lambda v: f"{v:.1f}")
+    # Bars occupy every group, so both reference marks are labelled in the axes' free space.
+    note = []
     if floor:
         axis.axhline(floor, color=INK2, linestyle=(0, (4, 3)), linewidth=1.0, zorder=2)
-        # Bars occupy every group here, so label the line in the axes' own free space.
-        axis.annotate(f"— — 纯计算下限 {floor:.1f} ms（KV 全在 HBM）", (0.015, 0.88),
-                      xycoords="axes fraction", fontsize=7.2, color=INK2)
+        note.append(f"— — 纯计算下限 {floor:.1f} ms（KV 全在 HBM、零传输）")
+    if args.fetch.exists():
+        # Measured transfer-only time: the same kernel with the attention phase compiled out.
+        fo = json.loads(args.fetch.read_text())["results"][0]["cases"]
+        got = {c["host_fraction"]: c["batch"]["median_us"] / 1000 for c in fo}
+        axis.plot(range(len(fractions)), [got.get(f) for f in fractions], marker="o",
+                  markersize=4.0, linewidth=1.4, color=INK2, zorder=5,
+                  markeredgecolor=SURFACE, markeredgewidth=1.0)
+        note.append("—●— 纯搬运耗时（同 kernel 去掉 attention，仅把命中页搬进 HBM）")
+    for i, text in enumerate(note):
+        axis.annotate(text, (0.015, 0.885 - i * 0.068), xycoords="axes fraction",
+                      fontsize=7.2, color=INK2)
     dress(axis, "GPU 耗时 (ms)")
     axis.set_ylim(0, max(max(v) for v in data.values()) / 1000 * 1.18)
     axis.set_xlabel("Host 命中率", color=INK2)
-    axis.set_title("1024 query 行（128 请求 × 8 MTP），top-k 2048，A100-PCIe", color=INK, loc="left")
+    axis.set_title("1024 query 行（128 请求 × 8 MTP），top-k 2048，A100-PCIe\n"
+                   "top-k 回放自实测 MTP 重叠：跨行去重后唯一页占 41%",
+                   color=INK, loc="left", fontsize=9)
     axis.legend(frameon=False, loc="upper left", ncol=3, handlelength=1.1, columnspacing=1.3)
     figure.tight_layout()
     figure.savefig(args.out / "batch_kernel_1024rows.png", dpi=200)
@@ -120,13 +135,14 @@ def main():
     for axis, frac in zip(axes, (0.10, 0.30)):
         data = {k: [float(rows[(n, frac)][f"{k}_us"]) / n for n in batches] for k, _, _ in SERIES}
         grouped(axis, [str(n) for n in batches], data, 1, lambda v: f"{v:.0f}", annotate=False)
-        dress(axis, "每 query 行耗时 (µs)")
+        dress(axis, "摊薄到每行的耗时 (µs)")
         axis.set_xlabel("query 行数", color=INK2)
         axis.set_title(f"Host 命中率 {frac:.0%}", color=INK, loc="left")
     axes[0].legend(frameon=False, loc="upper right", handlelength=1.1)
-    figure.suptitle("按 query 行归一化后的耗时：越低越好，小 batch 处 GPU 未填满故整体偏高",
-                    color=INK, fontsize=9.5, x=0.01, ha="left")
-    figure.tight_layout(rect=(0, 0, 1, 0.94))
+    figure.suptitle("摊薄到每 query 行的耗时（总时间 ÷ 行数；行之间是并行的，非每行独立耗时）\n"
+                    "小 batch 处三者都偏高是因 GPU 未被填满；top-k 同样回放自实测 MTP 重叠",
+                    color=INK, fontsize=9, x=0.01, ha="left")
+    figure.tight_layout(rect=(0, 0, 1, 0.90))
     figure.savefig(args.out / "batch_kernel_scaling.png", dpi=200)
     plt.close(figure)
 
