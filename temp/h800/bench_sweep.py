@@ -55,7 +55,7 @@ def main():
     parser.add_argument("--requests", nargs="+", type=int, required=True)
     parser.add_argument("--mtp", type=int, default=8)
     parser.add_argument("--fractions", nargs="+", type=float, default=[0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3])
-    parser.add_argument("--modes", nargs="+", default=["attn", "copy", "direct", "batch"])
+    parser.add_argument("--modes", nargs="+", default=["attn", "copy", "direct", "batch", "batch_inplace"])
     parser.add_argument("--captures", default="temp/mtp_overlap/overlap_ctx65536_*.pt")
     parser.add_argument("--context", type=int, default=65536)
     parser.add_argument("--topk", type=int, default=2048)
@@ -110,7 +110,9 @@ def main():
             copy=("Memcpy: unique far rows gathered (host: CPU index_select into pinned memory, not timed; "
                   "peer: GPU index_select, timed) then H2D/D2D-copied near, then native attention"),
             direct="native attention reading far rows in place, every reference separately",
-            batch="our batched Host kernel: in-kernel dedup, fetch CTAs overlap far reads with near attention",
+            batch="our batched Host kernel, staged: in-kernel dedup, fetch CTAs overlap far reads with near attention",
+            batch_inplace="our batched Host kernel reading far pages in place (host_stage=False), no cache",
+            **{"batch:fN": "batch with N fetch CTAs"},
         ),
         gpu_before=gpu_snapshot(), results=[],
     )
@@ -135,12 +137,14 @@ def run_batch(args, requests, kv, main_kv, alias, far_cpu, packed, captures, dev
     indices = {m: torch.empty(rows * topk, dtype=torch.int32, device=device) for m in args.modes}
     wrappers = {m: make_wrapper(rows, indices[m], torch.empty(args.workspace_mib * 2**20, dtype=torch.uint8, device=device), topk)
                 for m in args.modes}
-    if "batch" in wrappers:
-        wrappers["batch"].host_fetch_ctas = args.fetch_ctas
-        wrappers["batch"].host_staging_rows = args.staging_rows
-        wrappers["batch"].host_item_entries = args.host_item_entries
-        wrappers["batch"].host_split = not args.no_host_split
-        wrappers["batch"].host_stage = not args.no_stage
+    for mode in wrappers:
+        if mode.startswith("batch"):
+            # batch:fN stages with N fetch CTAs.
+            wrappers[mode].host_fetch_ctas = int(mode.split(":f")[1]) if ":f" in mode else args.fetch_ctas
+            wrappers[mode].host_staging_rows = args.staging_rows
+            wrappers[mode].host_item_entries = args.host_item_entries
+            wrappers[mode].host_split = not args.no_host_split
+            wrappers[mode].host_stage = mode != "batch_inplace" and not args.no_stage
     staged = alias[kv.near :]
     far_view = main_kv[kv.near :]
     near_requests = min(args.near_requests, requests)
@@ -175,7 +179,7 @@ def run_batch(args, requests, kv, main_kv, alias, far_cpu, packed, captures, dev
             wrappers[mode].run(query, rope, alias[..., :512], alias[..., 512:], out=output)
         else:
             wrappers[mode].run(query, rope, main_kv[..., :512], main_kv[..., 512:], out=output,
-                               host_page_start=kv.near if mode == "batch" else None)
+                               host_page_start=kv.near if mode.startswith("batch") else None)
 
     def load(case):
         for mode in args.modes:
