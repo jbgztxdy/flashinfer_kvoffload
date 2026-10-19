@@ -334,6 +334,14 @@ class BatchMLAPagedAttentionWrapper:
         self.host_staging_rows: Optional[int] = None
         # CTAs copying Host pages before they join attention; 8-12 performed alike on A100.
         self.host_fetch_ctas = 8
+        # Smallest Host item of a split (small-batch) row: 64 suits PCIe; faster far tiers such
+        # as a peer GPU over NVLink want items near the HBM chunk length (see the kernel).
+        self.host_item_entries = 64
+        # False keeps a split row's Host entries in its chunks instead of separate items.
+        self.host_split = True
+        # False reads uncached Host pages in place instead of staging them (see the kernel's
+        # MLAHostBatchParams::stage): better when the far tier is about as fast as compute.
+        self.host_stage = True
 
         if backend == "cutlass":
             self._backend = backend
@@ -837,7 +845,8 @@ class BatchMLAPagedAttentionWrapper:
                 "Host overlap requires aligned CUDA tensors with unit feature stride"
             )
         _, nnz, max_kv_len = self._host_batch_shape
-        staging_rows = self.host_staging_rows or max(64, (nnz + 1) // 2)
+        stage = self.host_stage
+        staging_rows = (self.host_staging_rows or max(64, (nnz + 1) // 2)) if stage else 0
         cache = self._host_cache
         if cache is not None and cache["num_rows"] != rows:
             raise ValueError("set_host_cache pools must cover exactly the planned rows")
@@ -853,6 +862,7 @@ class BatchMLAPagedAttentionWrapper:
             staging_rows,
             num_pools,
             pool_capacity,
+            stage,
         )
         if self._host_batch_buffers is None or self._host_batch_buffers[0] != key:
             if torch.cuda.is_current_stream_capturing():
@@ -867,7 +877,7 @@ class BatchMLAPagedAttentionWrapper:
             self._host_batch_buffers = (
                 key,
                 torch.empty(
-                    (staging_rows + num_pools * pool_capacity, 576),
+                    (max(1, staging_rows + num_pools * pool_capacity), 576),
                     dtype=ckv_cache.dtype,
                     device=self.device,
                 ),
@@ -883,7 +893,8 @@ class BatchMLAPagedAttentionWrapper:
                 torch.empty(partials * 64, dtype=torch.float32, device=self.device),
                 # victim_of | slot_pool | row_slot_base | pool_flags (see run_host_batch)
                 torch.zeros(
-                    max(1, 2 * staging_rows + rows + 1 + num_pools) if cache else 1, **int32
+                    max(1, 2 * (staging_rows if stage else nnz) + rows + 1 + num_pools) if cache else 1,
+                    **int32,
                 ),
             )
             if cache is not None:
@@ -917,6 +928,9 @@ class BatchMLAPagedAttentionWrapper:
             cache["rows"] if cache is not None else self._host_batch_buffers[8],
             cache["persist"] if cache is not None else self._host_batch_buffers[8],
             self._host_batch_buffers[8],
+            self.host_item_entries,
+            self.host_split,
+            stage,
         )
         return (out, lse) if return_lse else out
 

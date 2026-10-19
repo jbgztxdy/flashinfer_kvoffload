@@ -65,6 +65,8 @@ def _run(
     fetch_ctas=4,
     seed=0,
     repeats=2,
+    stage=True,
+    host_split=True,
 ):
     device = torch.device("cuda")
     torch.manual_seed(seed)
@@ -98,6 +100,8 @@ def _run(
     )
     wrapper.host_staging_rows = staging_rows
     wrapper.host_fetch_ctas = fetch_ctas
+    wrapper.host_stage = stage
+    wrapper.host_split = host_split
     expected_o, expected_lse = _reference(q_nope, q_pe, ckv, kpe, indices, sm_scale)
     for _ in range(repeats):
         out, lse = wrapper.run(
@@ -248,11 +252,21 @@ def _lru_rounds(requests, mtp, kv_len, host_fraction, keep, rounds, seed, share=
     return out, num_pages, host_page_start
 
 
+@pytest.mark.parametrize("requests,mtp", [(1, 8), (4, 8), (64, 4)])
+@pytest.mark.parametrize("host_fraction", [0.2, 1.0])
+@pytest.mark.parametrize("stage,host_split", [(False, True), (True, False)])
+def test_host_batch_layouts(requests, mtp, host_fraction, stage, host_split):
+    """Reading Host pages in place, and keeping a split row's Host entries in its chunks."""
+    _skip_if_unsupported()
+    _run(requests, mtp, 64, 2048, host_fraction, 0.5, stage=stage, host_split=host_split)
+
+
+@pytest.mark.parametrize("stage", [True, False])
 @pytest.mark.parametrize(
     "requests,mtp,capacity,share",
     [(1, 8, 512, 0.0), (4, 8, 640, 0.0), (16, 2, 448, 0.0), (6, 4, 512, 0.3), (3, 8, 192, 0.0)],
 )
-def test_host_batch_lru_cache(requests, mtp, capacity, share):
+def test_host_batch_lru_cache(requests, mtp, capacity, share, stage):
     _skip_if_unsupported()
     device = torch.device("cuda")
     kv_len, rounds, num_heads, dtype = 1024, 6, 64, torch.bfloat16
@@ -277,6 +291,7 @@ def test_host_batch_lru_cache(requests, mtp, capacity, share):
         num_heads, 512, 64, 1, False, sm_scale, q_data_type=dtype, kv_data_type=dtype,
     )
     wrapper.host_fetch_ctas = 4
+    wrapper.host_stage = stage
     wrapper.set_host_cache(torch.arange(requests + 1, dtype=torch.int32) * mtp, capacity)
     last_used = {}
     resident_before = set()

@@ -193,7 +193,8 @@ void BatchMLAPagedAttentionRunHostBatch(
     int64_t max_kv_len, TensorView staging, TensorView host_slot, TensorView remap,
     TensorView unique_pages, TensorView state, TensorView partial_o, TensorView partial_lse,
     int64_t fetch_ctas, int64_t num_pools, int64_t pool_capacity, TensorView cache_rows,
-    TensorView cache_persist, TensorView cache_scratch) {
+    TensorView cache_persist, TensorView cache_scratch, int64_t host_item_entries, bool host_split,
+    bool stage) {
   // q_nope: [rows, num_heads, 512], q_pe: [rows, num_heads, 64], one query token per row
   // ckv_cache: [num_pages, 1, 512], kpe_cache: [num_pages, 1, 64]
   CHECK_LAST_DIM_CONTIGUOUS_INPUT(q_nope);
@@ -250,11 +251,13 @@ void BatchMLAPagedAttentionRunHostBatch(
   // cache_rows: row_pool [rows] | pool_row_start [num_pools + 1].
   // cache_persist (kept across launches, per layer): resident [Host pages] init -1 |
   //   slot_page [slots] init -1 | slot_stamp [slots] init 0.
-  // cache_scratch: victim_of [capacity] | slot_pool [capacity] | row_slot_base [rows + 1] |
+  // cache_scratch: victim_of [misses] | slot_pool [misses] | row_slot_base [rows + 1] |
   //   pool_flags [num_pools] (epoch-tagged, init 0).
   const int64_t cache_slots = num_pools * pool_capacity;
-  TVM_FFI_ICHECK(num_pools >= 0 && pool_capacity >= 0 && staging.size(0) > cache_slots);
-  const int64_t capacity = staging.size(0) - cache_slots;
+  TVM_FFI_ICHECK(num_pools >= 0 && pool_capacity >= 0 && staging.size(0) >= cache_slots);
+  // Without staging only the cache slots are used.
+  const int64_t capacity = stage ? staging.size(0) - cache_slots : 0;
+  TVM_FFI_ICHECK(!stage || capacity > 0);
   // Items: at most one per row tile plus the split tail, bounded by the partial capacity.
   // Per row: Host count, claims, first Host item; the row of each Host item; fetch flags; item
   // claims (row tiles plus tail item states).
@@ -269,6 +272,8 @@ void BatchMLAPagedAttentionRunHostBatch(
                  max_kv_len < (1 << mla::kHostBatchRankBits))
       << "Host batch supports fewer than 32768 rows of fewer than 65536 pages";
   const int64_t host_pages = ckv_cache.size(0) - host_page_start;
+  // Pages that may need a cache slot in one launch: the staged ones, or every miss in place.
+  const int64_t misses = stage ? capacity : kv_indices.size(0);
   if (pool_capacity > 0) {
     TVM_FFI_ICHECK(num_pools > 0);
     CHECK_INPUT(cache_rows);
@@ -279,7 +284,7 @@ void BatchMLAPagedAttentionRunHostBatch(
     CHECK_INPUT_TYPE(cache_scratch, dl_int32);
     TVM_FFI_ICHECK_GE(cache_rows.size(0), rows + num_pools + 1);
     TVM_FFI_ICHECK_GE(cache_persist.size(0), host_pages + 2 * cache_slots);
-    TVM_FFI_ICHECK_GE(cache_scratch.size(0), 2 * capacity + rows + 1 + num_pools);
+    TVM_FFI_ICHECK_GE(cache_scratch.size(0), 2 * misses + rows + 1 + num_pools);
   }
   TVM_FFI_ICHECK(partial_lse.size(0) % 64 == 0 &&
                  partial_o.size(0) * partial_o.size(1) >= partial_lse.size(0) * 512);
@@ -308,6 +313,12 @@ void BatchMLAPagedAttentionRunHostBatch(
   params.num_head_tiles = head_tiles;
   params.staging_capacity = capacity;
   params.fetch_ctas = fetch_ctas;
+  TVM_FFI_ICHECK_GE(host_item_entries, 1);
+  params.host_item_entries = host_item_entries;
+  params.host_split = host_split;
+  params.stage = stage;
+  // Nothing rewrites the indices when neither staging nor caching.
+  if (!stage && pool_capacity == 0) params.remap = params.kv_indices;
   params.num_pools = pool_capacity > 0 ? num_pools : 0;
   params.pool_capacity = pool_capacity;
   if (pool_capacity > 0) {
@@ -320,9 +331,9 @@ void BatchMLAPagedAttentionRunHostBatch(
     params.slot_stamp = reinterpret_cast<uint32_t*>(persist + host_pages + cache_slots);
     auto* scratch = static_cast<int32_t*>(cache_scratch.data_ptr());
     params.victim_of = scratch;
-    params.slot_pool = scratch + capacity;
-    params.row_slot_base = reinterpret_cast<uint32_t*>(scratch + 2 * capacity);
-    params.pool_flags = reinterpret_cast<uint32_t*>(scratch + 2 * capacity + rows + 1);
+    params.slot_pool = scratch + misses;
+    params.row_slot_base = reinterpret_cast<uint32_t*>(scratch + 2 * misses);
+    params.pool_flags = reinterpret_cast<uint32_t*>(scratch + 2 * misses + rows + 1);
   } else {
     params.row_pool = params.pool_row_start = nullptr;
     params.resident = params.slot_page = params.victim_of = params.slot_pool = nullptr;
