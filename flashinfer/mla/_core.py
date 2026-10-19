@@ -645,8 +645,12 @@ class BatchMLAPagedAttentionWrapper:
         profiler_args = (profiler_buffer,) if self._use_profiler else ()
         run_function = self._cached_module.run
         host_args = ()
+        # The single-query Host kernel has neither the cache nor the in-place layout.
         if host_page_start is not None and not (
-            tuple(q_nope.shape) == (1, 64, 512) and self._host_prefetch_shape
+            tuple(q_nope.shape) == (1, 64, 512)
+            and self._host_prefetch_shape
+            and self._host_cache is None
+            and self.host_stage
         ):
             return self._run_host_batch(
                 q_nope,
@@ -885,7 +889,7 @@ class BatchMLAPagedAttentionWrapper:
                 torch.empty(max(1, nnz), **int32),
                 torch.empty(max(1, nnz), **int32),
                 torch.zeros(
-                    4 + 3 * rows + 1 + partials + (staging_rows + 63) // 64 + rows * (num_heads // 64) + partials
+                    4 + 4 * rows + 1 + partials + (staging_rows + 63) // 64 + rows * (num_heads // 64) + partials
                     + num_pools,
                     **int32,
                 ),

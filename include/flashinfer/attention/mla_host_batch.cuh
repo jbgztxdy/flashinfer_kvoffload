@@ -90,6 +90,8 @@ struct MLAHostBatchParams {
   // staging or wait (fast far tiers such as NVLink); with the cache on, fetch CTAs only copy the
   // misses into their victims for later launches. Without the cache the launch skips prepare.
   bool stage;
+  uint32_t prepare_parts;    // prepare units per row (see prepare_host_batch_rows)
+  uint32_t prepare_segment;  // entries per prepare unit
 
   uint32_t q_nope_stride_n;
   uint32_t q_nope_stride_h;
@@ -107,13 +109,11 @@ namespace mla {
 
 // Staging slots copied and published together.
 constexpr uint32_t kHostBatchFetchRows = 64;
-// state layout: counters; per row its Host entry count, its claimed page count and its first Host
-// item; the row of each Host item; one ready flag per kHostBatchFetchRows staging slots; one claim
-// per attention item. Flags and claims hold epoch + 1, so they never need clearing.
-// Experiment: a nonzero state[kHostBatchReuseMeta] makes the launch reuse the remap, slots and
-// item lists the previous launch left, skipping prepare, resolve and their two grid barriers.
-// This bounds what moving that work into the top-k stage could save. Set from the host only.
-constexpr uint32_t kHostBatchReuseMeta = 0;
+// state layout: counters; per row its Host entry count (the front placement cursor), its claimed
+// page count, its HBM (back) placement cursor and its first Host item; the row of each Host item;
+// one ready flag per kHostBatchFetchRows staging slots; one claim per LRU and attention item.
+// Flags and claims hold epoch + 1, so they never need clearing.
+// Unique Host pages of the last launch, for diagnostics.
 constexpr uint32_t kHostBatchUnique = 1;
 constexpr uint32_t kHostBatchExit = 2;
 constexpr uint32_t kHostBatchEpoch = 3;
@@ -146,8 +146,13 @@ __device__ __forceinline__ uint32_t* host_batch_row_claims(const Params& params)
 }
 
 template <typename Params>
-__device__ __forceinline__ uint32_t* host_batch_host_items(const Params& params) {
+__device__ __forceinline__ uint32_t* host_batch_local_cursors(const Params& params) {
   return host_batch_row_claims(params) + params.num_rows;
+}
+
+template <typename Params>
+__device__ __forceinline__ uint32_t* host_batch_host_items(const Params& params) {
+  return host_batch_local_cursors(params) + params.num_rows;
 }
 
 template <typename Params>
@@ -214,70 +219,40 @@ __device__ __forceinline__ uint32_t host_batch_max_host_items(const Params& para
 // each warp takes its ranks with one atomicAdd; per-entry claims serialized eight contended round
 // trips per warp. Waiting here for another row's claim instead of resolving after the barrier took
 // 20-30 us for one request's 8 MTP rows, which share half their pages.
+// Host entries fill each row from the front and HBM entries from the back through two per-row
+// cursors, so no pass has to count the Host entries first, and several CTAs can share a row: the
+// work is (row, segment) units sized by the launcher to cover the grid, so a one-row launch no
+// longer prepares its 2048 entries on a single CTA. The order within each part is arbitrary.
+// The cursors start at zero; the launch's last CTA clears them.
 // With the LRU cache, a Host entry whose page is resident becomes a cached entry, placed with the
 // HBM entries (it needs no wait) and stamped with this launch's `stamp`; only misses are claimed.
-// Nothing changes residency before the grid barrier, so both passes see the same hits.
+// Nothing changes residency before the grid barrier, so every unit sees the same hits.
 template <typename KTraits, typename Params>
-__device__ __forceinline__ void prepare_host_batch_rows(const Params& params, uint32_t* scratch,
-                                                        uint32_t stamp) {
+__device__ __forceinline__ void prepare_host_batch_rows(const Params& params, uint32_t stamp) {
   using IdType = typename Params::IdType;
   constexpr uint32_t THREADS = KTraits::NUM_THREADS;
-  constexpr uint32_t WARPS = THREADS / 32;
   constexpr uint32_t PER_THREAD = 8;
   const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
-  const uint32_t lane = tid % 32, warp = tid / 32;
+  const uint32_t lane = tid % 32;
   const uint32_t lower = (1u << lane) - 1;
+  const uint32_t units = params.num_rows * params.prepare_parts;
+  uint32_t* host_cursors = params.state + kHostBatchHostCounts;
+  uint32_t* local_cursors = host_batch_local_cursors(params);
 #pragma unroll 1
-  for (uint32_t row = blockIdx.y; row < params.num_rows; row += gridDim.y) {
+  for (uint32_t unit = blockIdx.y; unit < units; unit += gridDim.y) {
+    const uint32_t row = unit / params.prepare_parts;
     const IdType begin = params.kv_indptr[row];
     const uint32_t length = params.kv_indptr[row + 1] - begin;
-
-    // HBM entries are placed after all Host entries. Counts Host entries in the high half and
-    // the uncached ones among them in the low half (lengths are below 2^16, see the launcher).
-    uint32_t count = 0;
+    const uint32_t part_begin = unit % params.prepare_parts * params.prepare_segment;
+    const uint32_t part_end = min(part_begin + params.prepare_segment, length);
 #pragma unroll 1
-    for (uint32_t j = tid; j < length; j += THREADS) {
-      const IdType page = params.kv_indices[begin + j];
-      if (page >= params.host_page_start) {
-        const bool cached =
-            host_batch_caching(params) && params.resident[page - params.host_page_start] >= 0;
-        count += (1u << 16) + !cached;
-      }
-    }
-#pragma unroll
-    for (uint32_t offset = 16; offset > 0; offset /= 2) {
-      count += __shfl_xor_sync(0xffffffff, count, offset);
-    }
-    if (lane == 0) scratch[warp] = count;
-    __syncthreads();
-    uint32_t counts = 0;
-#pragma unroll
-    for (uint32_t w = 0; w < WARPS; ++w) counts += scratch[w];
-    __syncthreads();
-    const uint32_t host_total = counts & 0xffff;
-
-    // Rows with no Host entry need no reordering: remap is then kv_indices verbatim (HBM
-    // entries land at begin + local_rank). Skipping the ballots and the cross-warp prefix sum
-    // is what makes an all-HBM launch cost about the same as the native kernel.
-    if (counts == 0) {
-#pragma unroll 1
-      for (uint32_t j = tid; j < length; j += THREADS) {
-        params.remap[begin + j] = params.kv_indices[begin + j];
-      }
-      if (tid == 0) params.state[kHostBatchHostCounts + row] = 0;
-      __syncthreads();
-      continue;
-    }
-
-    uint32_t host_base = 0, local_base = 0;
-#pragma unroll 1
-    for (uint32_t offset = 0; offset < length; offset += PER_THREAD * THREADS) {
+    for (uint32_t offset = part_begin; offset < part_end; offset += PER_THREAD * THREADS) {
       IdType pages[PER_THREAD];
-      uint32_t claimed[PER_THREAD], host_masks[PER_THREAD], local_masks[PER_THREAD];
+      uint32_t claimed[PER_THREAD];
 #pragma unroll
       for (uint32_t i = 0; i < PER_THREAD; ++i) {
         const uint32_t j = offset + i * THREADS + tid;
-        pages[i] = j < length ? params.kv_indices[begin + j] : -1;
+        pages[i] = j < part_end ? params.kv_indices[begin + j] : -1;
       }
       if (host_batch_caching(params)) {
 #pragma unroll
@@ -298,18 +273,29 @@ __device__ __forceinline__ void prepare_host_batch_rows(const Params& params, ui
                          ? atomicCAS(params.host_slot + (pages[i] - params.host_page_start), 0u, 1u)
                          : 2u;
       }
-      uint32_t fresh_masks[PER_THREAD], fresh_total = 0;
+      uint32_t fresh_masks[PER_THREAD], host_masks[PER_THREAD], local_masks[PER_THREAD];
+      uint32_t fresh_total = 0, host_total = 0, local_total = 0;
 #pragma unroll
       for (uint32_t i = 0; i < PER_THREAD; ++i) {
         fresh_masks[i] =
             __ballot_sync(0xffffffff, pages[i] >= params.host_page_start && claimed[i] == 0);
+        host_masks[i] = __ballot_sync(0xffffffff, pages[i] >= params.host_page_start);
+        // Cached entries are negative but never -1, the padding of short passes.
+        local_masks[i] =
+            __ballot_sync(0xffffffff, pages[i] != -1 && pages[i] < params.host_page_start);
         fresh_total += __popc(fresh_masks[i]);
+        host_total += __popc(host_masks[i]);
+        local_total += __popc(local_masks[i]);
       }
-      uint32_t first = 0;
-      if (lane == 0 && fresh_total) {
-        first = atomicAdd(host_batch_row_claims(params) + row, fresh_total);
+      uint32_t first = 0, host_first = 0, local_first = 0;
+      if (lane == 0) {
+        if (fresh_total) first = atomicAdd(host_batch_row_claims(params) + row, fresh_total);
+        if (host_total) host_first = atomicAdd(host_cursors + row, host_total);
+        if (local_total) local_first = atomicAdd(local_cursors + row, local_total);
       }
       first = __shfl_sync(0xffffffff, first, 0);
+      host_first = __shfl_sync(0xffffffff, host_first, 0);
+      local_first = __shfl_sync(0xffffffff, local_first, 0);
 #pragma unroll
       for (uint32_t i = 0; i < PER_THREAD; ++i) {
         if (fresh_masks[i] >> lane & 1) {
@@ -317,41 +303,16 @@ __device__ __forceinline__ void prepare_host_batch_rows(const Params& params, ui
           atomicExch(params.host_slot + (pages[i] - params.host_page_start),
                      (row << kHostBatchRankBits | rank) + 2);
         }
-        first += __popc(fresh_masks[i]);
-        host_masks[i] = __ballot_sync(0xffffffff, pages[i] >= params.host_page_start);
-        // Cached entries are negative but never -1, the padding of short passes.
-        local_masks[i] =
-            __ballot_sync(0xffffffff, pages[i] != -1 && pages[i] < params.host_page_start);
-        if (lane == 0) {
-          scratch[(i * WARPS + warp) * 2] = __popc(host_masks[i]);
-          scratch[(i * WARPS + warp) * 2 + 1] = __popc(local_masks[i]);
-        }
-      }
-      __syncthreads();
-#pragma unroll
-      for (uint32_t i = 0; i < PER_THREAD; ++i) {
-        uint32_t host_rank = host_base + __popc(host_masks[i] & lower);
-        uint32_t local_rank = local_base + __popc(local_masks[i] & lower);
-#pragma unroll
-        for (uint32_t w = 0; w < WARPS; ++w) {
-          const uint32_t host_count = scratch[(i * WARPS + w) * 2];
-          const uint32_t local_count = scratch[(i * WARPS + w) * 2 + 1];
-          if (w < warp) {
-            host_rank += host_count;
-            local_rank += local_count;
-          }
-          host_base += host_count;
-          local_base += local_count;
-        }
         if (pages[i] >= params.host_page_start) {
-          params.remap[begin + host_rank] = pages[i];
+          params.remap[begin + host_first + __popc(host_masks[i] & lower)] = pages[i];
         } else if (pages[i] != -1) {
-          params.remap[begin + host_total + local_rank] = pages[i];
+          params.remap[begin + length - 1 - local_first - __popc(local_masks[i] & lower)] = pages[i];
         }
+        first += __popc(fresh_masks[i]);
+        host_first += __popc(host_masks[i]);
+        local_first += __popc(local_masks[i]);
       }
-      __syncthreads();
     }
-    if (tid == 0) params.state[kHostBatchHostCounts + row] = host_total;
   }
 }
 
@@ -366,14 +327,18 @@ __device__ __forceinline__ void prepare_host_batch_rows_in_place(const Params& p
   constexpr uint32_t THREADS = KTraits::NUM_THREADS;
   const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
   const uint32_t lane = tid % 32;
+  const uint32_t units = params.num_rows * params.prepare_parts;
 #pragma unroll 1
-  for (uint32_t row = blockIdx.y; row < params.num_rows; row += gridDim.y) {
+  for (uint32_t unit = blockIdx.y; unit < units; unit += gridDim.y) {
+    const uint32_t row = unit / params.prepare_parts;
     const IdType begin = params.kv_indptr[row];
     const uint32_t length = params.kv_indptr[row + 1] - begin;
+    const uint32_t part_begin = unit % params.prepare_parts * params.prepare_segment;
+    const uint32_t part_end = min(part_begin + params.prepare_segment, length);
 #pragma unroll 1
-    for (uint32_t base = 0; base < length; base += THREADS) {
+    for (uint32_t base = part_begin; base < part_end; base += THREADS) {
       const uint32_t j = base + tid;
-      IdType page = j < length ? params.kv_indices[begin + j] : -1;
+      IdType page = j < part_end ? params.kv_indices[begin + j] : -1;
       bool fresh = false;
       if (page >= params.host_page_start) {
         const int32_t slot = params.resident[page - params.host_page_start];
@@ -384,7 +349,7 @@ __device__ __forceinline__ void prepare_host_batch_rows_in_place(const Params& p
           fresh = atomicCAS(params.host_slot + (page - params.host_page_start), 0u, 1u) == 0;
           params.remap[begin + j] = page;
         }
-      } else if (j < length) {
+      } else if (j < part_end) {
         params.remap[begin + j] = page;
       }
       const uint32_t mask = __ballot_sync(0xffffffff, fresh);
@@ -397,7 +362,6 @@ __device__ __forceinline__ void prepare_host_batch_rows_in_place(const Params& p
                    (row << kHostBatchRankBits | rank) + 2);
       }
     }
-    if (tid == 0) params.state[kHostBatchHostCounts + row] = 0;
   }
 }
 
@@ -444,14 +408,19 @@ __device__ __forceinline__ uint32_t resolve_host_batch_slots(const Params& param
   // No Host page anywhere: nothing to rewrite, and no Host items to list. The caller then skips
   // the second grid barrier and the fetch entirely.
   if (unique == 0) return 0;
+  // Same (row, segment) units as the prepare step, so a few rows still spread over the grid.
+  const uint32_t units = params.num_rows * params.prepare_parts;
 #pragma unroll 1
-  for (uint32_t row = blockIdx.y; row < params.num_rows; row += gridDim.y) {
+  for (uint32_t unit = blockIdx.y; unit < units; unit += gridDim.y) {
+    const uint32_t row = unit / params.prepare_parts;
     const IdType begin = params.kv_indptr[row];
     // Host entries fill each row's leading positions, or anywhere when not staging.
     const uint32_t host = params.stage ? params.state[kHostBatchHostCounts + row]
                                        : params.kv_indptr[row + 1] - begin;
+    const uint32_t part_begin = unit % params.prepare_parts * params.prepare_segment;
+    const uint32_t part_end = min(part_begin + params.prepare_segment, host);
 #pragma unroll 1
-    for (uint32_t j = tid; j < host; j += THREADS) {
+    for (uint32_t j = part_begin + tid; j < part_end; j += THREADS) {
       const IdType page = params.remap[begin + j];
       if (!params.stage && page < params.host_page_start) continue;
       const uint32_t claim = params.host_slot[page - params.host_page_start] - 2;
@@ -459,7 +428,8 @@ __device__ __forceinline__ uint32_t resolve_host_batch_slots(const Params& param
       const uint32_t slot = row_base[owner] + (claim & ((1u << kHostBatchRankBits) - 1));
       if (owner == row) {
         params.unique_pages[slot] = page;
-        if (host_batch_caching(params) && slot < params.staging_capacity) {
+        // Every page that may get a victim: the staged ones, or all of them in place.
+        if (host_batch_caching(params) && (!params.stage || slot < params.staging_capacity)) {
           params.slot_pool[slot] = params.row_pool[row];
         }
       }
@@ -871,55 +841,119 @@ __device__ __forceinline__ void attend_host_batch_tiles(
   }
 }
 
+// Exclusive scan of one value per thread over the CTA; returns (prefix, total). Two barriers.
+template <uint32_t THREADS>
+__device__ __forceinline__ uint2 host_batch_thread_scan(uint32_t value, uint32_t* warp_sums) {
+  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+  const uint32_t lane = tid % 32, warp = tid / 32;
+  uint32_t sum = value;
+#pragma unroll
+  for (uint32_t offset = 1; offset < 32; offset *= 2) {
+    const uint32_t other = __shfl_up_sync(0xffffffff, sum, offset);
+    if (lane >= offset) sum += other;
+  }
+  if (lane == 31) warp_sums[warp] = sum;
+  __syncthreads();
+  uint32_t prefix = sum - value, total = 0;
+#pragma unroll
+  for (uint32_t w = 0; w < THREADS / 32; ++w) {
+    if (w < warp) prefix += warp_sums[w];
+    total += warp_sums[w];
+  }
+  __syncthreads();
+  return make_uint2(prefix, total);
+}
+
 // LRU item of one pool: give each page the pool's rows missed this launch a cache slot, taking
 // the least recently used slots that no entry of this launch hits, and publish the pool's flag
 // for the fetch loop, which copies the pages in (see fetch_host_batch_pages). Runs after the
-// second grid barrier, when every hit of this launch is stamped and every staged page has its
+// second grid barrier, when every hit of this launch is stamped and every missed page has its
 // slot. Stamps are launch epochs, so this is exact LRU at launch granularity: entries hit in the
-// same launch are equally recent, as in a per-step LRU list. A radix select over the C stamps
-// finds the m-th oldest, and two block scans rank the victims in slot order. Not inlined: the
-// tile loop that shares this item loop must keep its registers (see run_host_batch_items).
+// same launch are equally recent, as in a per-step LRU list.
+// At small batch this item sits on the critical path (the fetch loop waits for its victims), so
+// it is built for latency. The stamps are read once, coalesced, into shared memory; a radix
+// select over only the bytes in which the keys differ finds the m-th oldest (stamps are small
+// epochs, so usually one pass), with warp-aggregated histogram atomics since most keys share a
+// value; the victims are listed in shared memory, and every thread then binds a share of them.
+// Victims pair with missed pages in any order. Reading the stamps per thread in contiguous runs,
+// and binding victims in the thread that found them, serialized dependent global round trips:
+// ~23 us for 4096 slots and 150 victims.
+// Not inlined: the tile loop that shares this item loop must keep its registers.
 template <typename KTraits, typename Params>
 __device__ __noinline__ void run_host_batch_lru(const Params& params, uint8_t* smem,
                                                 uint32_t pool, uint32_t epoch, uint32_t unique) {
   constexpr uint32_t THREADS = KTraits::NUM_THREADS;
   const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+  const uint32_t lane = tid % 32;
   const uint32_t stamp = epoch + 1;
   const uint32_t capacity = params.pool_capacity;
   const uint32_t count = params.stage ? min(unique, params.staging_capacity) : unique;
   const uint32_t first = min(params.row_slot_base[params.pool_row_start[pool]], count);
   const uint32_t last = min(params.row_slot_base[params.pool_row_start[pool + 1]], count);
+  __shared__ uint32_t histogram[256], warp_sums[THREADS / 32], selected[4];
+  uint32_t* keys = reinterpret_cast<uint32_t*>(smem);
+  uint32_t* victim_slots = keys + capacity;
   const uint32_t* stamps = params.slot_stamp + pool * capacity;
-  // Slots hit this launch sort last and are never taken.
-  const auto key = [&](uint32_t i) {
-    const uint32_t value = stamps[i];
-    return value == stamp ? ~0u : value;
-  };
-  __shared__ uint32_t histogram[256], selected[2];
 
-  uint32_t evictable = 0;
-  for (uint32_t i = tid; i < capacity; i += THREADS) evictable += key(i) != ~0u;
+  // Slots hit this launch sort last and are never taken.
+  uint32_t evictable = 0, low = ~0u, high = 0;
+#pragma unroll 8
+  for (uint32_t i = tid; i < capacity; i += THREADS) {
+    const uint32_t value = stamps[i];
+    const uint32_t key = value == stamp ? ~0u : value;
+    keys[i] = key;
+    if (key != ~0u) {
+      ++evictable;
+      low = min(low, key);
+      high = max(high, key);
+    }
+  }
 #pragma unroll
   for (uint32_t offset = 16; offset > 0; offset /= 2) {
     evictable += __shfl_xor_sync(0xffffffff, evictable, offset);
+    low = min(low, __shfl_xor_sync(0xffffffff, low, offset));
+    high = max(high, __shfl_xor_sync(0xffffffff, high, offset));
   }
-  if (tid == 0) selected[0] = 0;
+  if (tid == 0) {
+    selected[0] = 0;
+    selected[1] = ~0u;
+    selected[2] = 0;
+  }
   __syncthreads();
-  if (tid % 32 == 0) atomicAdd(selected, evictable);
+  if (lane == 0) {
+    atomicAdd(selected, evictable);
+    atomicMin(selected + 1, low);
+    atomicMax(selected + 2, high);
+  }
   __syncthreads();
   const uint32_t victims = min(last - first, selected[0]);
+  low = selected[1];
+  high = selected[2];
   __syncthreads();
 
   if (victims > 0) {
-    // The victims-th smallest key, eight bits per pass, most significant first.
-    uint32_t prefix = 0, mask = 0, rank = victims;
+    // The victims-th smallest evictable key: bytes above the highest one in which keys differ
+    // are the common prefix already.
+    const uint32_t differ = low ^ high;
+    int shift = differ == 0 ? -8 : (31 - __clz(differ)) / 8 * 8;
+    uint32_t mask = shift >= 24 ? 0u : ~0u << (shift + 8);
+    uint32_t prefix = low & mask, rank = victims;
 #pragma unroll 1
-    for (int shift = 24; shift >= 0; shift -= 8) {
+    for (; shift >= 0; shift -= 8) {
       for (uint32_t b = tid; b < 256; b += THREADS) histogram[b] = 0;
       __syncthreads();
-      for (uint32_t i = tid; i < capacity; i += THREADS) {
-        const uint32_t k = key(i);
-        if ((k & mask) == prefix) atomicAdd(histogram + (k >> shift & 255), 1u);
+      for (uint32_t base = 0; base < capacity; base += THREADS) {
+        const uint32_t i = base + tid;
+        const uint32_t key = i < capacity ? keys[i] : ~0u;
+        const bool counted = key != ~0u && (key & mask) == prefix;
+        const uint32_t bin = counted ? key >> shift & 255 : 256 + lane;
+        // Slots filled in the same launch are adjacent, so whole warps often share a bin.
+        if (__all_sync(0xffffffff, bin == __shfl_sync(0xffffffff, bin, 0))) {
+          if (lane == 0 && counted) atomicAdd(histogram + bin, 32u);
+        } else {
+          const uint32_t peers = __match_any_sync(0xffffffff, bin);
+          if (counted && lane == __ffs(peers) - 1) atomicAdd(histogram + bin, __popc(peers));
+        }
       }
       __syncthreads();
       if (tid == 0) {
@@ -934,22 +968,27 @@ __device__ __noinline__ void run_host_batch_lru(const Params& params, uint8_t* s
       mask |= 255u << shift;
       __syncthreads();
     }
-    // Every key below the threshold, then the first `rank` keys equal to it.
-    uint32_t* equal_rank = reinterpret_cast<uint32_t*>(smem);
-    uint32_t* victim_rank = equal_rank + capacity;
-    host_batch_block_scan<THREADS>(
-        capacity, [&](uint32_t i) { return static_cast<uint32_t>(key(i) == prefix); }, equal_rank);
-    const auto taken = [&](uint32_t i) {
-      const uint32_t k = key(i);
-      return k < prefix || (k == prefix && equal_rank[i] < rank);
-    };
-    host_batch_block_scan<THREADS>(
-        capacity, [&](uint32_t i) { return static_cast<uint32_t>(taken(i)); }, victim_rank);
-#pragma unroll 1
+    // List every evictable key below the threshold, then the first `rank` keys equal to it.
+    const uint32_t threshold = prefix;
+    uint32_t less = 0, equal = 0;
     for (uint32_t i = tid; i < capacity; i += THREADS) {
-      if (!taken(i)) continue;
-      const uint32_t staged = first + victim_rank[i];
-      const int32_t slot = pool * capacity + i;
+      less += keys[i] < threshold;
+      equal += keys[i] == threshold;
+    }
+    const uint32_t equal_before = host_batch_thread_scan<THREADS>(equal, warp_sums).x;
+    uint32_t take_equal = min(equal, rank > equal_before ? rank - equal_before : 0u);
+    uint32_t position = host_batch_thread_scan<THREADS>(less + take_equal, warp_sums).x;
+    for (uint32_t i = tid; i < capacity; i += THREADS) {
+      const uint32_t key = keys[i];
+      if (key < threshold || (key == threshold && take_equal && take_equal--)) {
+        victim_slots[position++] = i;
+      }
+    }
+    __syncthreads();
+#pragma unroll 1
+    for (uint32_t r = tid; r < victims; r += THREADS) {
+      const uint32_t staged = first + r;
+      const int32_t slot = pool * capacity + victim_slots[r];
       const typename Params::IdType page = params.unique_pages[staged];
       const int32_t evicted = params.slot_page[slot];
       // An evicted page is not referenced this launch: a reference would have hit and stamped it.
@@ -1133,24 +1172,18 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
   extern __shared__ __align__(128) uint8_t host_batch_smem[];
   uint8_t* smem = host_batch_smem;
   auto& storage = reinterpret_cast<typename KTraits::SharedStorage&>(*smem);
-  // Partition counts: 2 per warp for each of the 8 entries a thread handles per pass.
-  __shared__ uint32_t scratch[2 * 8 * KTraits::NUM_THREADS / 32];
+  __shared__ uint32_t scratch[2];
   const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
   // The previous launch's last CTA advanced the epoch; ready flags from it no longer match.
   const uint32_t epoch = params.state[kHostBatchEpoch];
 
   // Not staging and no cache: nothing to prepare; remap is kv_indices (see the launcher) and
-  // the host counts stay zero from allocation.
-  const bool reuse_meta = params.state[kHostBatchReuseMeta] != 0 ||
-                          (!params.stage && !host_batch_caching(params));
-  uint32_t unique;
-  if (!params.stage && !host_batch_caching(params)) {
-    unique = 0;
-  } else if (reuse_meta) {
-    unique = params.state[kHostBatchUnique];
-  } else {
+  // the host counts stay zero.
+  const bool skip_prepare = !params.stage && !host_batch_caching(params);
+  uint32_t unique = 0;
+  if (!skip_prepare) {
     if (params.stage) {
-      prepare_host_batch_rows<KTraits>(params, scratch, epoch + 1);
+      prepare_host_batch_rows<KTraits>(params, epoch + 1);
     } else {
       prepare_host_batch_rows_in_place<KTraits>(params, epoch + 1);
     }
@@ -1164,7 +1197,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
   // depend on `unique`: if the back CTAs also walked from the front they would retrace the same
   // items and contend on the claims (0% Host, 512 rows: 1514 -> 1784 us).
   const bool from_back = blockIdx.y >= gridDim.y - params.fetch_ctas;
-  if (unique > 0 && !reuse_meta) {
+  if (unique > 0) {
     // Rows resolved by other CTAs must be complete before any item or fetch reads them, and fetch
     // CTAs clear the dedup slots the resolve step reads.
     cg::this_grid().sync();
@@ -1186,13 +1219,26 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
     merge_host_batch_chunks<KTraits>(params);
   }
 
-  // The last CTA to leave resets the shared counters for the next launch.
+  // The last CTA to leave resets the shared counters for the next launch: the exit count, the
+  // per-row placement cursors (Host counts included), and then the epoch.
   __syncthreads();
   if (tid == 0) {
     __threadfence();
-    if (atomicAdd(params.state + kHostBatchExit, 1u) == gridDim.y - 1) {
+    scratch[kHostBatchScratchClaimed] =
+        atomicAdd(params.state + kHostBatchExit, 1u) == gridDim.y - 1;
+  }
+  __syncthreads();
+  if (scratch[kHostBatchScratchClaimed]) {
+    if (!skip_prepare) {
+      for (uint32_t row = tid; row < params.num_rows; row += KTraits::NUM_THREADS) {
+        params.state[kHostBatchHostCounts + row] = 0;
+        host_batch_local_cursors(params)[row] = 0;
+      }
+    }
+    __threadfence();
+    __syncthreads();
+    if (tid == 0) {
       params.state[kHostBatchExit] = 0;
-      __threadfence();
       params.state[kHostBatchEpoch] = epoch + 1;
     }
   }
@@ -1230,7 +1276,7 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
       if (blocks_per_sm < 1 || params.fetch_ctas < 1 || params.fetch_ctas >= grid) {
         return cudaErrorInvalidConfiguration;
       }
-      // LRU victim selection scans a pool's slots twice into the dynamic shared memory.
+      // LRU victim selection keeps a pool's keys in the dynamic shared memory.
       if (params.pool_capacity > kHostBatchMaxPool ||
           2 * params.pool_capacity * sizeof(uint32_t) > smem_size) {
         return cudaErrorInvalidConfiguration;
@@ -1250,6 +1296,11 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
       }
       params.partial_capacity = partial_capacity;
       const uint32_t kv_len = max(max_kv_len, 1u);
+      // Prepare units: split rows only while there are fewer than the grid, one thread per entry
+      // at the finest.
+      params.prepare_parts =
+          min(ceil_div(grid, max(params.num_rows, 1u)), ceil_div(kv_len, KTraits::NUM_THREADS));
+      params.prepare_segment = round_up(ceil_div(kv_len, params.prepare_parts), KTraits::NUM_THREADS);
       params.num_chunks = 1;
       uint64_t best_cost = UINT64_MAX;
       for (uint32_t chunks = 1; chunks <= 32 && tail_tiles > 0; ++chunks) {

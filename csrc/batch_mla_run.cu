@@ -259,10 +259,10 @@ void BatchMLAPagedAttentionRunHostBatch(
   const int64_t capacity = stage ? staging.size(0) - cache_slots : 0;
   TVM_FFI_ICHECK(!stage || capacity > 0);
   // Items: at most one per row tile plus the split tail, bounded by the partial capacity.
-  // Per row: Host count, claims, first Host item; the row of each Host item; fetch flags; item
-  // claims (row tiles plus tail item states).
+  // Per row: Host count (front cursor), claims, HBM back cursor, first Host item; the row of each
+  // Host item; fetch flags; item claims (row tiles plus tail item states, plus LRU pools).
   const int64_t partials = partial_lse.size(0) / 64;
-  TVM_FFI_ICHECK_GE(state.size(0), mla::kHostBatchHostCounts + 3 * rows + 1 + partials +
+  TVM_FFI_ICHECK_GE(state.size(0), mla::kHostBatchHostCounts + 4 * rows + 1 + partials +
                                        (capacity + mla::kHostBatchFetchRows - 1) /
                                            mla::kHostBatchFetchRows +
                                        rows * head_tiles + partials +
