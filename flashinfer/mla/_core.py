@@ -645,6 +645,10 @@ class BatchMLAPagedAttentionWrapper:
         profiler_args = (profiler_buffer,) if self._use_profiler else ()
         run_function = self._cached_module.run
         host_args = ()
+        # In place without the cache the batched kernel only adds its scheduling: every entry is
+        # read where it lives, exactly as the native kernel does, so take the native path.
+        if host_page_start is not None and not self.host_stage and self._host_cache is None:
+            host_page_start = None
         # The single-query Host kernel has neither the cache nor the in-place layout.
         if host_page_start is not None and not (
             tuple(q_nope.shape) == (1, 64, 512)
