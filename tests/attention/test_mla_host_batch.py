@@ -210,3 +210,136 @@ def test_host_batch_cuda_graph():
         graph.replay()
         torch.cuda.synchronize()
         torch.testing.assert_close(out.float(), expected_o, rtol=1e-2, atol=1e-2)
+
+
+def _lru_rounds(requests, mtp, kv_len, host_fraction, keep, rounds, seed, share=0.0):
+    """Top-k of consecutive decode rounds: each round keeps `keep` of a request's previous Host
+    pages and draws the rest fresh, so pages are reused, go stale and get evicted. With `share`,
+    request r also reuses that fraction of request r - 1's Host pages (prefix sharing)."""
+    generator = torch.Generator().manual_seed(seed)
+    host_count = round(host_fraction * kv_len)
+    span = 4 * rounds * kv_len
+    num_pages = 2 * requests * span
+    host_page_start = num_pages // 2
+    previous = [None] * requests
+    out = []
+    for _ in range(rounds):
+        rows = []
+        current = []
+        for r in range(requests):
+            host_base = host_page_start + r * span
+            fresh = torch.randperm(span, generator=generator)[:host_count] + host_base
+            if previous[r] is not None:
+                k = round(keep * host_count)
+                fresh[:k] = previous[r][torch.randperm(host_count, generator=generator)[:k]]
+            if share and r > 0:
+                k = round(share * host_count)
+                fresh[-k:] = current[r - 1][:k]
+            fresh = torch.unique(fresh)
+            fresh = torch.cat([fresh, torch.randperm(span, generator=generator)[: host_count - len(fresh)] + host_base])
+            current.append(fresh)
+            for _ in range(mtp):
+                host = fresh[torch.randperm(host_count, generator=generator)[: host_count * 3 // 4]]
+                local = torch.randperm(span, generator=generator)[: kv_len - len(host)] + r * span
+                row = torch.cat([local, host])
+                rows.append(row[torch.randperm(kv_len, generator=generator)])
+        previous = current
+        out.append(torch.stack(rows).int())
+    return out, num_pages, host_page_start
+
+
+@pytest.mark.parametrize(
+    "requests,mtp,capacity,share",
+    [(1, 8, 512, 0.0), (4, 8, 640, 0.0), (16, 2, 448, 0.0), (6, 4, 512, 0.3), (3, 8, 192, 0.0)],
+)
+def test_host_batch_lru_cache(requests, mtp, capacity, share):
+    _skip_if_unsupported()
+    device = torch.device("cuda")
+    kv_len, rounds, num_heads, dtype = 1024, 6, 64, torch.bfloat16
+    rows = requests * mtp
+    rounds_indices, num_pages, host_page_start = _lru_rounds(
+        requests, mtp, kv_len, 0.4, 0.6, rounds, seed=requests, share=share
+    )
+    cache = torch.randn(num_pages, 1, 576, dtype=dtype, device=device)
+    ckv, kpe = cache[..., :512], cache[..., 512:]
+    q_nope = torch.randn(rows, num_heads, 512, dtype=dtype, device=device)
+    q_pe = torch.randn(rows, num_heads, 64, dtype=dtype, device=device)
+    indices = torch.empty(rows * kv_len, dtype=torch.int32, device=device)
+    sm_scale = 1 / 16
+    wrapper = BatchMLAPagedAttentionWrapper(
+        torch.empty(128 * 2**20, dtype=torch.uint8, device=device), backend="fa2"
+    )
+    wrapper.plan(
+        torch.arange(rows + 1, dtype=torch.int32, device=device),
+        torch.arange(rows + 1, dtype=torch.int32, device=device) * kv_len,
+        indices,
+        torch.full((rows,), kv_len, dtype=torch.int32, device=device),
+        num_heads, 512, 64, 1, False, sm_scale, q_data_type=dtype, kv_data_type=dtype,
+    )
+    wrapper.host_fetch_ctas = 4
+    wrapper.set_host_cache(torch.arange(requests + 1, dtype=torch.int32) * mtp, capacity)
+    last_used = {}
+    resident_before = set()
+    pool_before = {}
+    hits = 0
+    for t, round_indices in enumerate(rounds_indices):
+        wrapper._kv_indices_buf.copy_(round_indices.view(-1).to(device))
+        out, _ = wrapper.run(q_nope, q_pe, ckv, kpe, return_lse=True, host_page_start=host_page_start)
+        expected, _ = _reference(q_nope, q_pe, ckv, kpe, round_indices.to(device), sm_scale)
+        torch.testing.assert_close(out.float(), expected, rtol=1e-2, atol=1e-2)
+
+        host_pages = wrapper._host_batch_buffers[0][1]
+        persist = wrapper._host_cache["persist"]
+        slots = requests * capacity
+        resident = persist[:host_pages].cpu()
+        slot_page = persist[host_pages : host_pages + slots].cpu()
+        staging = wrapper._host_batch_buffers[1]
+        staged_rows = staging.shape[0] - slots
+        cached = (resident >= 0).nonzero().view(-1) + host_page_start
+        resident_now = set(cached.tolist())
+        # Maps agree, and every cached copy holds its page's bytes.
+        assert torch.equal(slot_page[resident[cached - host_page_start].long()], cached.int())
+        filled = slot_page >= 0
+        assert int(filled.sum()) == len(resident_now)
+        cache_rows = staging[staged_rows:][filled.nonzero().view(-1).to(device)]
+        assert torch.equal(cache_rows, cache.view(num_pages, 576)[slot_page[filled].long().to(device)])
+
+        selected = set(int(p) for p in round_indices.view(-1).tolist() if p >= host_page_start)
+        hits += len(selected & resident_before)
+        for page in selected:
+            last_used[page] = t
+        pool_now = {p: int(resident[p - host_page_start]) // capacity for p in resident_now}
+        for r in range(requests):
+            assert sum(1 for p in pool_now.values() if p == r) <= capacity
+        # When a pool's pages of this launch fit, all of them must be resident now.
+        if round(kv_len * 0.4) <= capacity and share == 0.0:
+            assert selected <= resident_now
+        # LRU within each pool: an evicted page was never used after a page that stayed there
+        # without being used now.
+        for r in range(requests):
+            evicted = {p for p in resident_before - resident_now if pool_before[p] == r}
+            kept_idle = {
+                p for p in (resident_now & resident_before) - selected if pool_now[p] == r
+            }
+            if evicted and kept_idle:
+                assert max(last_used[p] for p in evicted) <= min(last_used[p] for p in kept_idle)
+        resident_before, pool_before = resident_now, pool_now
+    # Rounds reuse 60% of the previous Host pages, so later rounds must hit.
+    assert hits > 0
+
+
+def test_host_batch_lru_reset_and_disable():
+    _skip_if_unsupported()
+    wrapper, (q_nope, q_pe, ckv, kpe, host_page_start, indices, expected) = _run(
+        2, 8, 64, 512, 0.3, 0.5, repeats=1
+    )
+    wrapper.set_host_cache(torch.tensor([0, 8, 16], dtype=torch.int32), 1024)
+    for _ in range(3):
+        out = wrapper.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+        torch.testing.assert_close(out.float(), expected, rtol=1e-2, atol=1e-2)
+    wrapper.reset_host_cache()
+    out = wrapper.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+    torch.testing.assert_close(out.float(), expected, rtol=1e-2, atol=1e-2)
+    wrapper.set_host_cache(torch.tensor([0, 16], dtype=torch.int32), 0)
+    out = wrapper.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+    torch.testing.assert_close(out.float(), expected, rtol=1e-2, atol=1e-2)

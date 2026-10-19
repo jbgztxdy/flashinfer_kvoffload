@@ -56,9 +56,23 @@ struct MLAHostBatchParams {
   IdType* unique_pages;    // [nnz] Host page of each staging slot
   uint32_t* host_slot;     // [num_pages - host_page_start] 0 free, 1 claiming, slot + 2
   uint32_t* state;         // counters, per-row data, per-slot flags and claims, item claims
-  DTypeKV* staging;        // [staging_capacity, HEAD_DIM_CKV + HEAD_DIM_KPE]
+  DTypeKV* staging;        // [staging_capacity + num_pools * pool_capacity, 576]; cache slots last
   DTypeO* partial_o;       // [items, CTA_TILE_Q, HEAD_DIM_CKV] when rows are split
   float* partial_lse;      // [items, CTA_TILE_Q]
+
+  // Cross-launch LRU cache of Host pages (all null and pool_capacity 0 when disabled). Pool p owns
+  // cache slots [p * pool_capacity, (p + 1) * pool_capacity), stored after the staging slots, and
+  // serves the contiguous rows [pool_row_start[p], pool_row_start[p + 1]), e.g. one request's
+  // MTP tokens. Persistent state is per layer; stamps hold the epoch + 1 of a slot's last use.
+  IdType* row_pool;        // [num_rows] pool of each row
+  IdType* pool_row_start;  // [num_pools + 1]
+  int32_t* resident;       // [num_pages - host_page_start] cache slot of a Host page, or -1
+  int32_t* slot_page;      // [num_pools * pool_capacity] Host page in a cache slot, or -1
+  uint32_t* slot_stamp;    // [num_pools * pool_capacity] 0 = empty
+  int32_t* victim_of;      // [staging_capacity] cache slot a staged page is copied to, or -1
+  int32_t* slot_pool;      // [staging_capacity] pool of the row that claimed a staged page
+  uint32_t* row_slot_base; // [num_rows + 1] first staging slot of each row's claims
+  uint32_t* pool_flags;    // [num_pools] epoch + 1 once the pool's victims are chosen
 
   uint_fastdiv num_heads;
   uint32_t num_rows;
@@ -68,6 +82,8 @@ struct MLAHostBatchParams {
   uint32_t partial_capacity;
   uint32_t staging_capacity;
   uint32_t fetch_ctas;
+  uint32_t num_pools;
+  uint32_t pool_capacity;
 
   uint32_t q_nope_stride_n;
   uint32_t q_nope_stride_h;
@@ -104,6 +120,21 @@ constexpr uint32_t kHostBatchScratchClaimed = 1;
 constexpr uint32_t kHostBatchRankBits = 16;
 // Smallest Host item of a tail row, in entries.
 constexpr uint32_t kHostBatchHostChunk = 64;
+// Largest LRU pool: victim selection keeps two scans of the pool's slots in shared memory.
+constexpr uint32_t kHostBatchMaxPool = 8192;
+
+template <typename Params>
+__device__ __forceinline__ bool host_batch_caching(const Params& params) {
+  return params.pool_capacity != 0;
+}
+
+// Cache slot c is staging row staging_capacity + c, so cached entries take the staged encoding
+// -(row + 1) and the tile loads need no change; only staged rows below staging_capacity wait.
+template <typename Params>
+__device__ __forceinline__ typename Params::IdType host_batch_cached_entry(const Params& params,
+                                                                           int32_t slot) {
+  return -static_cast<typename Params::IdType>(params.staging_capacity + slot) - 1;
+}
 
 template <typename Params>
 __device__ __forceinline__ uint32_t* host_batch_row_claims(const Params& params) {
@@ -167,8 +198,12 @@ __device__ __forceinline__ uint32_t host_batch_max_host_items(const Params& para
 // each warp takes its ranks with one atomicAdd; per-entry claims serialized eight contended round
 // trips per warp. Waiting here for another row's claim instead of resolving after the barrier took
 // 20-30 us for one request's 8 MTP rows, which share half their pages.
+// With the LRU cache, a Host entry whose page is resident becomes a cached entry, placed with the
+// HBM entries (it needs no wait) and stamped with this launch's `stamp`; only misses are claimed.
+// Nothing changes residency before the grid barrier, so both passes see the same hits.
 template <typename KTraits, typename Params>
-__device__ __forceinline__ void prepare_host_batch_rows(const Params& params, uint32_t* scratch) {
+__device__ __forceinline__ void prepare_host_batch_rows(const Params& params, uint32_t* scratch,
+                                                        uint32_t stamp) {
   using IdType = typename Params::IdType;
   constexpr uint32_t THREADS = KTraits::NUM_THREADS;
   constexpr uint32_t WARPS = THREADS / 32;
@@ -181,11 +216,17 @@ __device__ __forceinline__ void prepare_host_batch_rows(const Params& params, ui
     const IdType begin = params.kv_indptr[row];
     const uint32_t length = params.kv_indptr[row + 1] - begin;
 
-    // HBM entries are placed after all Host entries.
+    // HBM entries are placed after all Host entries. Counts Host entries in the high half and
+    // the uncached ones among them in the low half (lengths are below 2^16, see the launcher).
     uint32_t count = 0;
 #pragma unroll 1
     for (uint32_t j = tid; j < length; j += THREADS) {
-      count += params.kv_indices[begin + j] >= params.host_page_start;
+      const IdType page = params.kv_indices[begin + j];
+      if (page >= params.host_page_start) {
+        const bool cached =
+            host_batch_caching(params) && params.resident[page - params.host_page_start] >= 0;
+        count += (1u << 16) + !cached;
+      }
     }
 #pragma unroll
     for (uint32_t offset = 16; offset > 0; offset /= 2) {
@@ -193,15 +234,16 @@ __device__ __forceinline__ void prepare_host_batch_rows(const Params& params, ui
     }
     if (lane == 0) scratch[warp] = count;
     __syncthreads();
-    uint32_t host_total = 0;
+    uint32_t counts = 0;
 #pragma unroll
-    for (uint32_t w = 0; w < WARPS; ++w) host_total += scratch[w];
+    for (uint32_t w = 0; w < WARPS; ++w) counts += scratch[w];
     __syncthreads();
+    const uint32_t host_total = counts & 0xffff;
 
     // Rows with no Host entry need no reordering: remap is then kv_indices verbatim (HBM
     // entries land at begin + local_rank). Skipping the ballots and the cross-warp prefix sum
     // is what makes an all-HBM launch cost about the same as the native kernel.
-    if (host_total == 0) {
+    if (counts == 0) {
 #pragma unroll 1
       for (uint32_t j = tid; j < length; j += THREADS) {
         params.remap[begin + j] = params.kv_indices[begin + j];
@@ -220,6 +262,18 @@ __device__ __forceinline__ void prepare_host_batch_rows(const Params& params, ui
       for (uint32_t i = 0; i < PER_THREAD; ++i) {
         const uint32_t j = offset + i * THREADS + tid;
         pages[i] = j < length ? params.kv_indices[begin + j] : -1;
+      }
+      if (host_batch_caching(params)) {
+#pragma unroll
+        for (uint32_t i = 0; i < PER_THREAD; ++i) {
+          if (pages[i] >= params.host_page_start) {
+            const int32_t slot = params.resident[pages[i] - params.host_page_start];
+            if (slot >= 0) {
+              params.slot_stamp[slot] = stamp;
+              pages[i] = host_batch_cached_entry(params, slot);
+            }
+          }
+        }
       }
       // host_slot: 0 free, 1 claiming, (row << kHostBatchRankBits | rank) + 2 claimed.
 #pragma unroll
@@ -249,7 +303,9 @@ __device__ __forceinline__ void prepare_host_batch_rows(const Params& params, ui
         }
         first += __popc(fresh_masks[i]);
         host_masks[i] = __ballot_sync(0xffffffff, pages[i] >= params.host_page_start);
-        local_masks[i] = __ballot_sync(0xffffffff, pages[i] >= 0 && pages[i] < params.host_page_start);
+        // Cached entries are negative but never -1, the padding of short passes.
+        local_masks[i] =
+            __ballot_sync(0xffffffff, pages[i] != -1 && pages[i] < params.host_page_start);
         if (lane == 0) {
           scratch[(i * WARPS + warp) * 2] = __popc(host_masks[i]);
           scratch[(i * WARPS + warp) * 2 + 1] = __popc(local_masks[i]);
@@ -273,7 +329,7 @@ __device__ __forceinline__ void prepare_host_batch_rows(const Params& params, ui
         }
         if (pages[i] >= params.host_page_start) {
           params.remap[begin + host_rank] = pages[i];
-        } else if (pages[i] >= 0) {
+        } else if (pages[i] != -1) {
           params.remap[begin + host_total + local_rank] = pages[i];
         }
       }
@@ -337,12 +393,24 @@ __device__ __forceinline__ uint32_t resolve_host_batch_slots(const Params& param
       const uint32_t claim = params.host_slot[page - params.host_page_start] - 2;
       const uint32_t owner = claim >> kHostBatchRankBits;
       const uint32_t slot = row_base[owner] + (claim & ((1u << kHostBatchRankBits) - 1));
-      if (owner == row) params.unique_pages[slot] = page;
+      if (owner == row) {
+        params.unique_pages[slot] = page;
+        if (host_batch_caching(params) && slot < params.staging_capacity) {
+          params.slot_pool[slot] = params.row_pool[row];
+        }
+      }
       if (slot < params.staging_capacity) params.remap[begin + j] = -static_cast<IdType>(slot) - 1;
     }
   }
-  // CTA 0 lists the Host items of the tail rows.
+  // CTA 0 lists the Host items of the tail rows, and publishes the row bases that delimit each
+  // LRU pool's staged pages.
   if (blockIdx.y == 0) {
+    if (host_batch_caching(params)) {
+      for (uint32_t row = tid; row < params.num_rows; row += THREADS) {
+        params.row_slot_base[row] = row_base[row];
+      }
+      if (tid == 0) params.row_slot_base[params.num_rows] = unique;
+    }
     const uint32_t max_items = host_batch_max_host_items(params);
     const uint32_t tail_rows = params.num_rows - params.full_rows;
     uint32_t* host_items = host_batch_host_items(params) + params.full_rows;
@@ -437,6 +505,37 @@ __device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uin
       asm volatile("st.release.gpu.global.u32 [%0], %1;" ::"l"(flags + chunk), "r"(epoch + 1)
                    : "memory");
     }
+    // Fill the LRU cache from the same shared-memory copy, after the attention items waiting on
+    // this chunk were released: one more HBM write per staged page, and no reread. The victims
+    // come from the pools' LRU items, which workers run first (see run_host_batch_items); the
+    // next chunk's reads are already in flight while this one waits for them.
+    if (host_batch_caching(params)) {
+      __shared__ int32_t cache_rows[kHostBatchFetchRows];
+      if (tid < kHostBatchFetchRows) {
+        const uint32_t slot = chunk * kHostBatchFetchRows + tid;
+        int32_t victim = -1;
+        if (slot < count) {
+          const uint32_t* pool_flag = params.pool_flags + params.slot_pool[slot];
+          while (host_batch_ld_acquire(pool_flag) != epoch + 1) __nanosleep(64);
+          victim = params.victim_of[slot];
+        }
+        cache_rows[tid] = victim;
+      }
+      __syncthreads();
+#pragma unroll
+      for (uint32_t i = 0; i < CHUNK_VECS / KTraits::NUM_THREADS; ++i) {
+        const uint32_t v = i * KTraits::NUM_THREADS + tid;
+        const int32_t victim = cache_rows[v / VECS_PER_ROW];
+        if (victim >= 0) {
+          reinterpret_cast<uint4*>(
+              params.staging +
+              static_cast<int64_t>(params.staging_capacity + victim) * ROW)[v % VECS_PER_ROW] =
+              buffer[buf * CHUNK_VECS + v];
+        }
+      }
+      // The buffer is refilled next.
+      __syncthreads();
+    }
     if (BUFFERS == 1 && next * kHostBatchFetchRows < count) issue(next, 0);
   }
   // Overflow pages were never staged; clear their dedup entries too.
@@ -475,7 +574,8 @@ __device__ __forceinline__ void wait_host_batch_tile(const Params& params, const
   for (uint32_t i = 0; i < KTraits::CTA_TILE_KV; i += 32) {
     const uint32_t kv_idx = kv_base + i + threadIdx.x;
     const typename KTraits::IdType page = kv_idx < kv_len ? params.remap[index_base + kv_idx] : 0;
-    if (page < 0) {
+    // Cached entries (rows past staging_capacity) are resident already.
+    if (page < 0 && static_cast<uint32_t>(-(page + 1)) < params.staging_capacity) {
       const uint32_t* flag = host_batch_flags(params) + (-(page + 1)) / kHostBatchFetchRows;
       while (host_batch_ld_acquire(flag) != scratch[kHostBatchScratchEpoch] + 1) __nanosleep(64);
     }
@@ -701,6 +801,108 @@ __device__ __forceinline__ void attend_host_batch_tiles(
   }
 }
 
+// LRU item of one pool: give each page the pool's rows missed this launch a cache slot, taking
+// the least recently used slots that no entry of this launch hits, and publish the pool's flag
+// for the fetch loop, which copies the pages in (see fetch_host_batch_pages). Runs after the
+// second grid barrier, when every hit of this launch is stamped and every staged page has its
+// slot. Stamps are launch epochs, so this is exact LRU at launch granularity: entries hit in the
+// same launch are equally recent, as in a per-step LRU list. A radix select over the C stamps
+// finds the m-th oldest, and two block scans rank the victims in slot order. Not inlined: the
+// tile loop that shares this item loop must keep its registers (see run_host_batch_items).
+template <typename KTraits, typename Params>
+__device__ __noinline__ void run_host_batch_lru(const Params& params, uint8_t* smem,
+                                                uint32_t pool, uint32_t epoch, uint32_t unique) {
+  constexpr uint32_t THREADS = KTraits::NUM_THREADS;
+  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+  const uint32_t stamp = epoch + 1;
+  const uint32_t capacity = params.pool_capacity;
+  const uint32_t count = min(unique, params.staging_capacity);
+  const uint32_t first = min(params.row_slot_base[params.pool_row_start[pool]], count);
+  const uint32_t last = min(params.row_slot_base[params.pool_row_start[pool + 1]], count);
+  const uint32_t* stamps = params.slot_stamp + pool * capacity;
+  // Slots hit this launch sort last and are never taken.
+  const auto key = [&](uint32_t i) {
+    const uint32_t value = stamps[i];
+    return value == stamp ? ~0u : value;
+  };
+  __shared__ uint32_t histogram[256], selected[2];
+
+  uint32_t evictable = 0;
+  for (uint32_t i = tid; i < capacity; i += THREADS) evictable += key(i) != ~0u;
+#pragma unroll
+  for (uint32_t offset = 16; offset > 0; offset /= 2) {
+    evictable += __shfl_xor_sync(0xffffffff, evictable, offset);
+  }
+  if (tid == 0) selected[0] = 0;
+  __syncthreads();
+  if (tid % 32 == 0) atomicAdd(selected, evictable);
+  __syncthreads();
+  const uint32_t victims = min(last - first, selected[0]);
+  __syncthreads();
+
+  if (victims > 0) {
+    // The victims-th smallest key, eight bits per pass, most significant first.
+    uint32_t prefix = 0, mask = 0, rank = victims;
+#pragma unroll 1
+    for (int shift = 24; shift >= 0; shift -= 8) {
+      for (uint32_t b = tid; b < 256; b += THREADS) histogram[b] = 0;
+      __syncthreads();
+      for (uint32_t i = tid; i < capacity; i += THREADS) {
+        const uint32_t k = key(i);
+        if ((k & mask) == prefix) atomicAdd(histogram + (k >> shift & 255), 1u);
+      }
+      __syncthreads();
+      if (tid == 0) {
+        uint32_t below = 0, b = 0;
+        while (below + histogram[b] < rank) below += histogram[b++];
+        selected[0] = prefix | b << shift;
+        selected[1] = rank - below;
+      }
+      __syncthreads();
+      prefix = selected[0];
+      rank = selected[1];
+      mask |= 255u << shift;
+      __syncthreads();
+    }
+    // Every key below the threshold, then the first `rank` keys equal to it.
+    uint32_t* equal_rank = reinterpret_cast<uint32_t*>(smem);
+    uint32_t* victim_rank = equal_rank + capacity;
+    host_batch_block_scan<THREADS>(
+        capacity, [&](uint32_t i) { return static_cast<uint32_t>(key(i) == prefix); }, equal_rank);
+    const auto taken = [&](uint32_t i) {
+      const uint32_t k = key(i);
+      return k < prefix || (k == prefix && equal_rank[i] < rank);
+    };
+    host_batch_block_scan<THREADS>(
+        capacity, [&](uint32_t i) { return static_cast<uint32_t>(taken(i)); }, victim_rank);
+#pragma unroll 1
+    for (uint32_t i = tid; i < capacity; i += THREADS) {
+      if (!taken(i)) continue;
+      const uint32_t staged = first + victim_rank[i];
+      const int32_t slot = pool * capacity + i;
+      const typename Params::IdType page = params.unique_pages[staged];
+      const int32_t evicted = params.slot_page[slot];
+      // An evicted page is not referenced this launch: a reference would have hit and stamped it.
+      if (evicted >= 0) params.resident[evicted - params.host_page_start] = -1;
+      params.resident[page - params.host_page_start] = slot;
+      params.slot_page[slot] = page;
+      params.slot_stamp[slot] = stamp;
+      params.victim_of[staged] = slot;
+    }
+  }
+  // Pages beyond the pool's free slots stay uncached.
+  for (uint32_t staged = first + victims + tid; staged < last; staged += THREADS) {
+    params.victim_of[staged] = -1;
+  }
+  __threadfence();
+  __syncthreads();
+  if (tid == 0) {
+    asm volatile("st.release.gpu.global.u32 [%0], %1;" ::"l"(params.pool_flags + pool),
+                 "r"(epoch + 1)
+                 : "memory");
+  }
+}
+
 // Claims an item for this CTA; workers and stealing fetch CTAs may both reach it.
 template <typename Params>
 __device__ __forceinline__ bool claim_host_batch_item(const Params& params, uint32_t* scratch,
@@ -802,6 +1004,9 @@ __device__ __forceinline__ void run_host_batch_item(const Params& params,
 // blockIdx and the loop counter, which keeps the item warp-uniform for the compiler: a
 // shared-memory work queue, or a second inlined copy of the item, spilled the tile loop's
 // shared-memory offsets (~11% slower on HBM pages).
+// With the LRU cache, one item per pool precedes the attention items when any page is staged.
+// Each worker reaches its LRU items before any attention item and they never wait, so the fetch
+// loop, which waits on the pools' flags, cannot deadlock with them.
 template <typename KTraits, typename Params>
 __device__ __forceinline__ void run_host_batch_items(const Params& params,
                                                      typename KTraits::SharedStorage& storage,
@@ -811,7 +1016,9 @@ __device__ __forceinline__ void run_host_batch_items(const Params& params,
   constexpr uint32_t NUM_MMA_D_CKV = KTraits::NUM_MMA_D_CKV;
   // With no Host page the item list has no Host items, and host_batch_host_items was never
   // written this launch, so it must not be read.
-  const int items = (params.full_rows + (params.num_rows - params.full_rows) * params.num_chunks) *
+  const int lru_items = host_batch_caching(params) && unique ? params.num_pools : 0;
+  const int items = lru_items +
+                    (params.full_rows + (params.num_rows - params.full_rows) * params.num_chunks) *
                         params.num_head_tiles +
                     (unique ? host_batch_host_items(params)[params.num_rows] : 0);
   const int workers = gridDim.y - params.fetch_ctas;
@@ -829,7 +1036,14 @@ __device__ __forceinline__ void run_host_batch_items(const Params& params,
       if (fetcher) break;
       continue;
     }
-    run_host_batch_item<KTraits>(params, storage, smem, scratch, item, s_frag, o_frag, m, d);
+    if (item < lru_items) {
+      run_host_batch_lru<KTraits>(params, smem, item, scratch[kHostBatchScratchEpoch], unique);
+      // The next item reuses the shared memory the selection scanned into.
+      __syncthreads();
+      continue;
+    }
+    run_host_batch_item<KTraits>(params, storage, smem, scratch, item - lru_items, s_frag, o_frag,
+                                 m, d);
   }
 }
 
@@ -856,7 +1070,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
   if (reuse_meta) {
     unique = params.state[kHostBatchUnique];
   } else {
-    prepare_host_batch_rows<KTraits>(params, scratch);
+    prepare_host_batch_rows<KTraits>(params, scratch, epoch + 1);
     cg::this_grid().sync();
     unique = resolve_host_batch_slots<KTraits>(params, smem);
     if (blockIdx.y == 0 && tid == 0) params.state[kHostBatchUnique] = unique;
@@ -931,6 +1145,11 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
           &blocks_per_sm, kernel, KTraits::NUM_THREADS, smem_size));
       const uint32_t grid = blocks_per_sm * num_sms;
       if (blocks_per_sm < 1 || params.fetch_ctas < 1 || params.fetch_ctas >= grid) {
+        return cudaErrorInvalidConfiguration;
+      }
+      // LRU victim selection scans a pool's slots twice into the dynamic shared memory.
+      if (params.pool_capacity > kHostBatchMaxPool ||
+          2 * params.pool_capacity * sizeof(uint32_t) > smem_size) {
         return cudaErrorInvalidConfiguration;
       }
       // Full rows give each worker one item less than an even share of all row tiles over the
