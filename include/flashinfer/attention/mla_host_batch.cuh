@@ -119,6 +119,9 @@ constexpr uint32_t kHostBatchFetchRows = 64;
 // page count, its HBM (back) placement cursor and its first Host item; the row of each Host item;
 // one ready flag per kHostBatchFetchRows staging slots; one claim per LRU and attention item.
 // Flags and claims hold epoch + 1, so they never need clearing.
+// Nonzero once prepare dropped an invalid (negative) entry, so rows need compacting; cleared
+// by the launch's last CTA.
+constexpr uint32_t kHostBatchGaps = 0;
 // Unique Host pages of the last launch, for diagnostics.
 constexpr uint32_t kHostBatchUnique = 1;
 constexpr uint32_t kHostBatchExit = 2;
@@ -164,6 +167,17 @@ __device__ __forceinline__ uint32_t* host_batch_row_claims(const Params& params)
 template <typename Params>
 __device__ __forceinline__ uint32_t* host_batch_local_cursors(const Params& params) {
   return host_batch_row_claims(params) + params.num_rows;
+}
+
+// Valid entries of a row after prepare: negative entries of kv_indices (top-k padding, as SGLang
+// emits -1) are dropped and the rest packed to the front, so this is the row's attention length.
+// Without prepare (no staging, no cache) entries are used as given.
+template <typename Params>
+__device__ __forceinline__ uint32_t host_batch_row_len(const Params& params, uint32_t row) {
+  if (!params.stage && !host_batch_caching(params)) {
+    return params.kv_indptr[row + 1] - params.kv_indptr[row];
+  }
+  return params.state[kHostBatchHostCounts + row] + host_batch_local_cursors(params)[row];
 }
 
 template <typename Params>
@@ -270,6 +284,17 @@ __device__ __forceinline__ void prepare_host_batch_rows(const Params& params, ui
         const uint32_t j = offset + i * THREADS + tid;
         pages[i] = j < part_end ? params.kv_indices[begin + j] : kHostBatchNoEntry;
       }
+      // Negative entries (padding) are dropped; their positions leave a gap between the Host
+      // part and the HBM part that resolve_host_batch_slots closes.
+      bool dropped = false;
+#pragma unroll
+      for (uint32_t i = 0; i < PER_THREAD; ++i) {
+        if (pages[i] < 0 && pages[i] != kHostBatchNoEntry) {
+          pages[i] = kHostBatchNoEntry;
+          dropped = true;
+        }
+      }
+      if (__any_sync(0xffffffff, dropped) && lane == 0) params.state[kHostBatchGaps] = 1;
       if (host_batch_caching(params)) {
 #pragma unroll
         for (uint32_t i = 0; i < PER_THREAD; ++i) {
@@ -332,8 +357,8 @@ __device__ __forceinline__ void prepare_host_batch_rows(const Params& params, ui
   }
 }
 
-// prepare_host_batch_rows without staging (params.stage false, cache on): entries keep their
-// order, cached ones are rewritten and stamped, and uncached Host pages stay page ids for the
+// prepare_host_batch_rows without staging (params.stage false, cache on): valid entries are packed
+// to the row's front, cached ones are rewritten and stamped, and uncached Host pages stay page ids for the
 // attention to read in place; they are only claimed, so the fetch CTAs can copy each once into
 // the cache. Rows then have no Host part, so items split them like all-HBM rows.
 template <typename KTraits, typename Params>
@@ -354,24 +379,30 @@ __device__ __forceinline__ void prepare_host_batch_rows_in_place(const Params& p
 #pragma unroll 1
     for (uint32_t base = part_begin; base < part_end; base += THREADS) {
       const uint32_t j = base + tid;
-      IdType page = j < part_end ? params.kv_indices[begin + j] : kHostBatchNoEntry;
+      IdType page = j < part_end ? params.kv_indices[begin + j] : -1;
+      // Negative entries (padding) are dropped; valid ones are packed to the row's front.
+      const bool valid = page >= 0;
       bool fresh = false;
+      IdType entry = page;
       if (page >= params.host_page_start) {
         const int32_t slot = params.resident[page - params.host_page_start];
         if (slot >= 0) {
           params.slot_stamp[slot] = stamp;
-          params.remap[begin + j] = host_batch_cached_entry(params, slot);
+          entry = host_batch_cached_entry(params, slot);
         } else {
           fresh = atomicCAS(params.host_slot + (page - params.host_page_start), 0u, 1u) == 0;
-          params.remap[begin + j] = page;
         }
-      } else if (j < part_end) {
-        params.remap[begin + j] = page;
       }
       const uint32_t mask = __ballot_sync(0xffffffff, fresh);
-      uint32_t first = 0;
-      if (lane == 0 && mask) first = atomicAdd(host_batch_row_claims(params) + row, __popc(mask));
+      const uint32_t valid_mask = __ballot_sync(0xffffffff, valid);
+      uint32_t first = 0, position = 0;
+      if (lane == 0) {
+        if (mask) first = atomicAdd(host_batch_row_claims(params) + row, __popc(mask));
+        position = atomicAdd(host_batch_local_cursors(params) + row, __popc(valid_mask));
+      }
       first = __shfl_sync(0xffffffff, first, 0);
+      position = __shfl_sync(0xffffffff, position, 0);
+      if (valid) params.remap[begin + position + __popc(valid_mask & ((1u << lane) - 1))] = entry;
       if (fresh) {
         const uint32_t rank = first + __popc(mask & ((1u << lane) - 1));
         atomicExch(params.host_slot + (page - params.host_page_start),
@@ -432,7 +463,7 @@ __device__ __forceinline__ uint32_t resolve_host_batch_slots(const Params& param
     const IdType begin = params.kv_indptr[row];
     // Host entries fill each row's leading positions, or anywhere when not staging.
     const uint32_t host = params.stage ? params.state[kHostBatchHostCounts + row]
-                                       : params.kv_indptr[row + 1] - begin;
+                                       : host_batch_row_len(params, row);
     const uint32_t part_begin = unit % params.prepare_parts * params.prepare_segment;
     const uint32_t part_end = min(part_begin + params.prepare_segment, host);
 #pragma unroll 1
@@ -486,6 +517,32 @@ __device__ __forceinline__ uint32_t resolve_host_batch_slots(const Params& param
     }
   }
   return unique;
+}
+
+// After the grid barrier, when prepare dropped padding: a staged row holds its Host entries at
+// [0, host), its HBM entries at [length - local, length) and a gap of dropped positions between.
+// Move the HBM entries that lie at or past host + local into the gap, so the row's valid entries
+// are [0, host + local) (see host_batch_row_len). Holes and movers are disjoint ranges of equal
+// size, so the copy needs no ordering. Rows without padding have no gap and copy nothing.
+template <typename KTraits, typename Params>
+__device__ __forceinline__ void compact_host_batch_rows(const Params& params) {
+  constexpr uint32_t THREADS = KTraits::NUM_THREADS;
+  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+#pragma unroll 1
+  for (uint32_t row = blockIdx.y; row < params.num_rows; row += gridDim.y) {
+    const auto begin = params.kv_indptr[row];
+    const uint32_t length = params.kv_indptr[row + 1] - begin;
+    const uint32_t host = params.state[kHostBatchHostCounts + row];
+    const uint32_t local = host_batch_local_cursors(params)[row];
+    const uint32_t valid = host + local;
+    if (valid == length) continue;
+    const uint32_t local_begin = length - local;
+    const uint32_t holes = min(valid, local_begin) - host;
+    const uint32_t movers = max(valid, local_begin);
+    for (uint32_t k = tid; k < holes; k += THREADS) {
+      params.remap[begin + host + k] = params.remap[begin + movers + k];
+    }
+  }
 }
 
 // Copy staged pages Host -> HBM in slot order, kHostBatchFetchRows slots per chunk, publishing a
@@ -723,7 +780,7 @@ __device__ __forceinline__ void merge_host_batch_chunks(const Params& params) {
     const uint32_t tile = unit / KTraits::CTA_TILE_Q, h = unit % KTraits::CTA_TILE_Q;
     const uint32_t row = params.full_rows + tile / params.num_head_tiles;
     const uint32_t head_tile = tile % params.num_head_tiles;
-    const uint32_t length = params.kv_indptr[row + 1] - params.kv_indptr[row];
+    const uint32_t length = host_batch_row_len(params, row);
     const uint32_t host = host_batch_split_host(params, row);
     const uint32_t hbm_chunk = round_up(ceil_div(length - host, params.num_chunks), KTraits::CTA_TILE_KV);
     const uint32_t hbm_items = hbm_chunk ? ceil_div(length - host, hbm_chunk) : 0;
@@ -1066,7 +1123,7 @@ __device__ __forceinline__ void run_host_batch_item(const Params& params,
     row = item / params.num_head_tiles;
     head_tile = item % params.num_head_tiles;
     kv_start = 0;
-    kv_len = params.kv_indptr[row + 1] - params.kv_indptr[row];
+    kv_len = host_batch_row_len(params, row);
     host_tiles = ceil_div(params.state[kHostBatchHostCounts + row], CTA_TILE_KV);
   } else if (item < hbm_end) {
     const uint32_t tile = (item - full_items) / params.num_chunks;
@@ -1074,7 +1131,7 @@ __device__ __forceinline__ void run_host_batch_item(const Params& params,
     row = params.full_rows + tile / params.num_head_tiles;
     head_tile = tile % params.num_head_tiles;
     partial = item - full_items;
-    const uint32_t length = params.kv_indptr[row + 1] - params.kv_indptr[row];
+    const uint32_t length = host_batch_row_len(params, row);
     const uint32_t host = host_batch_split_host(params, row);
     const uint32_t chunk_len = round_up(ceil_div(length - host, params.num_chunks), CTA_TILE_KV);
     if (chunk * chunk_len >= length - host) return;
@@ -1101,14 +1158,19 @@ __device__ __forceinline__ void run_host_batch_item(const Params& params,
   typename KTraits::AttentionVariant variant(params, row, smem);
   init_states_<KTraits>(o_frag, m, d);
   __syncthreads();
-  load_q<KTraits>(&storage, params.q_nope + row * params.q_nope_stride_n,
-                  params.q_pe + row * params.q_pe_stride_n, params.q_nope_stride_n,
-                  params.q_nope_stride_h, params.q_pe_stride_n, params.q_pe_stride_h, 1,
-                  head_tile * CTA_TILE_Q, params.num_heads);
-  // load_q's copies join the first KV group, as in the native kernel.
-  attend_host_batch_tiles<KTraits>(params, storage, variant, scratch,
-                                   params.kv_indptr[row] + kv_start, kv_len, host_tiles, s_frag,
-                                   o_frag, m, d);
+  // A row of only padding (kv_len 0, e.g. a CUDA Graph filler row) writes a zero output from the
+  // initial state (lse at its -5e4 start); it must not issue load_q, whose copies join the first
+  // KV group.
+  if (kv_len > 0) {
+    load_q<KTraits>(&storage, params.q_nope + row * params.q_nope_stride_n,
+                    params.q_pe + row * params.q_pe_stride_n, params.q_nope_stride_n,
+                    params.q_nope_stride_h, params.q_pe_stride_n, params.q_pe_stride_h, 1,
+                    head_tile * CTA_TILE_Q, params.num_heads);
+    // load_q's copies join the first KV group, as in the native kernel.
+    attend_host_batch_tiles<KTraits>(params, storage, variant, scratch,
+                                     params.kv_indptr[row] + kv_start, kv_len, host_tiles, s_frag,
+                                     o_frag, m, d);
+  }
   __syncthreads();
   normalize_d_<KTraits>(&storage, 0, o_frag, m, d);
   finalize_m_<KTraits>(variant, m);
@@ -1200,6 +1262,8 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
   // the host counts stay zero.
   const bool skip_prepare = !params.stage && !host_batch_caching(params);
   uint32_t unique = 0;
+  // Grid-uniform: every CTA reads the flag after the same barrier.
+  bool gaps = false;
   if (!skip_prepare) {
     if (params.stage) {
       prepare_host_batch_rows<KTraits>(params, epoch + 1);
@@ -1207,7 +1271,9 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
       prepare_host_batch_rows_in_place<KTraits>(params, epoch + 1);
     }
     cg::this_grid().sync();
+    gaps = params.stage && host_batch_ld_acquire(params.state + kHostBatchGaps) != 0;
     unique = resolve_host_batch_slots<KTraits>(params, smem);
+    if (gaps) compact_host_batch_rows<KTraits>(params);
     if (blockIdx.y == 0 && tid == 0) params.state[kHostBatchUnique] = unique;
   }
   // unique is the same on every CTA (each runs the same scan), so the branch is grid-uniform and
@@ -1216,8 +1282,8 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
   // depend on `unique`: if the back CTAs also walked from the front they would retrace the same
   // items and contend on the claims (0% Host, 512 rows: 1514 -> 1784 us).
   const bool from_back = blockIdx.y >= gridDim.y - params.fetch_ctas;
-  if (unique > 0) {
-    // Rows resolved by other CTAs must be complete before any item or fetch reads them, and fetch
+  if (unique > 0 || gaps) {
+    // Rows resolved or compacted by other CTAs must be complete before any item or fetch reads them, and fetch
     // CTAs clear the dedup slots the resolve step reads.
     cg::this_grid().sync();
     // Claim counts were read by every CTA's scan; reset them for the next launch.
@@ -1253,6 +1319,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
         params.state[kHostBatchHostCounts + row] = 0;
         host_batch_local_cursors(params)[row] = 0;
       }
+      if (tid == 0) params.state[kHostBatchGaps] = 0;
     }
     __threadfence();
     __syncthreads();

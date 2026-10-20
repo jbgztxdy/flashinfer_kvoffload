@@ -1,0 +1,410 @@
+{
+ "configuration": {
+  "tier": "host",
+  "device": 0,
+  "peer": 1,
+  "requests": [
+   1,
+   4,
+   16,
+   128
+  ],
+  "mtp": 8,
+  "steps": 4,
+  "fraction": 1.0,
+  "capacity": 4096,
+  "modes": [
+   "ours_stage"
+  ],
+  "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+  "context": 65536,
+  "topk": 2048,
+  "near_requests": 128,
+  "passes": 5,
+  "fetch_ctas": 8,
+  "hisparse_block": 960,
+  "seed": 42,
+  "output": "temp/a100_final/after_padding/rounds_host_mtp8.json"
+ },
+ "timestamp": "2026-10-20T12:54:57+0800",
+ "device_name": "NVIDIA A100-SXM4-40GB",
+ "torch_version": "2.11.0+cu130",
+ "cuda_version": "13.0",
+ "git_commit": "88c9fee42b3f8ca1d24ed82f05a3c8d6f14e336e",
+ "git_dirty": true,
+ "source_sha256": {
+  "temp/h800/bench_rounds.py": "34618a9635f88046a93ff2cab7fd785f3fc5750a8f415d38790a011544804e92",
+  "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+  "include/flashinfer/attention/mla_host_batch.cuh": "d9560eeea8aabea3974ca1a48b9ced1532594cac8c29e5ae8db8ef056b2fd1f5"
+ },
+ "residency": [
+  {
+   "tier": "near_hbm",
+   "address": "0x420000000",
+   "bytes": 9663676416,
+   "location_type": 1,
+   "location_id": 0
+  },
+  {
+   "tier": "far_host_dram",
+   "address": "0x660000000",
+   "bytes": 9663676416,
+   "location_type": 3,
+   "location_id": 0
+  },
+  {
+   "tier": "near_hbm_alias",
+   "address": "0x8a0000000",
+   "bytes": 9663676416,
+   "location_type": 1,
+   "location_id": 0
+  },
+  {
+   "tier": "staging_hbm",
+   "address": "0xae0000000",
+   "bytes": 2415919104,
+   "location_type": 1,
+   "location_id": 0
+  }
+ ],
+ "bandwidth": {
+  "dma_contiguous_GBps": 27.034959853909402,
+  "sm_gather_random_GBps": 26.32032400165473
+ },
+ "methods": {
+  "ours_stage": "our kernel, LRU pool of `capacity` per request, misses staged (PCIe layout)",
+  "ours_inplace": "our kernel, LRU pool of `capacity` per request, misses read in place, fetch CTAs fill the cache",
+  "ours_nocache": "our kernel without cache (staged on host tier, in place on peer tier)",
+  "hisparse": "SGLang HiSparse: load_cache_to_device_buffer_mla (per-request LRU of `capacity` + newest slot, one block per request) then sgl_kernel FlashMLA sparse fwd; MTP rows run one draft token after another, since the HiSparse decode path takes one row per request",
+  "floor_fa2": "native FA2 MLA with every selected row near: compute floor of our kernel",
+  "floor_flashmla": "FlashMLA sparse fwd with every selected row in HBM: compute floor of HiSparse"
+ },
+ "gpu_before": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 12425 MiB, 28017 MiB, 100 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 37707 MiB, 2735 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 40185 MiB, 257 MiB, 100 %, 1410 MHz, 1215 MHz",
+ "results": [
+  {
+   "requests": 1,
+   "mtp": 8,
+   "query_rows": 8,
+   "steps": 4,
+   "correctness_max_abs_error": {
+    "ours_stage": 0.0029505491256713867
+   },
+   "far_refs": [
+    16376,
+    16376,
+    16376,
+    16376
+   ],
+   "far_unique_uncached": [
+    3575,
+    3826,
+    3897,
+    4062
+   ],
+   "cached_misses": {
+    "ours_stage": [
+     3575,
+     1154,
+     1752,
+     1008
+    ]
+   },
+   "per_step": {
+    "ours_stage": [
+     {
+      "median_us": 285.69599986076355,
+      "p10_us": 283.6480140686035,
+      "p90_us": 285.69599986076355,
+      "samples_us": [
+       285.69599986076355,
+       288.7679934501648,
+       283.6480140686035,
+       285.69599986076355,
+       285.69599986076355
+      ]
+     },
+     {
+      "median_us": 128.00000607967377,
+      "p10_us": 121.85599654912949,
+      "p90_us": 129.02399897575378,
+      "samples_us": [
+       121.85599654912949,
+       128.00000607967377,
+       132.09599256515503,
+       129.02399897575378,
+       126.97599828243256
+      ]
+     },
+     {
+      "median_us": 157.69599378108978,
+      "p10_us": 154.62400019168854,
+      "p90_us": 157.69599378108978,
+      "samples_us": [
+       160.76800227165222,
+       157.69599378108978,
+       157.69599378108978,
+       154.62400019168854,
+       156.67200088500977
+      ]
+     },
+     {
+      "median_us": 109.56799983978271,
+      "p10_us": 108.5439994931221,
+      "p90_us": 109.56799983978271,
+      "samples_us": [
+       109.56799983978271,
+       109.56799983978271,
+       109.56799983978271,
+       108.5439994931221,
+       108.5439994931221
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "requests": 4,
+   "mtp": 8,
+   "query_rows": 32,
+   "steps": 4,
+   "correctness_max_abs_error": {
+    "ours_stage": 0.0032722949981689453
+   },
+   "far_refs": [
+    65504,
+    65504,
+    65504,
+    65504
+   ],
+   "far_unique_uncached": [
+    17119,
+    18211,
+    17136,
+    17188
+   ],
+   "cached_misses": {
+    "ours_stage": [
+     17119,
+     6372,
+     5828,
+     6011
+    ]
+   },
+   "per_step": {
+    "ours_stage": [
+     {
+      "median_us": 951.2959718704224,
+      "p10_us": 946.1759924888611,
+      "p90_us": 957.4400186538696,
+      "samples_us": [
+       962.5599980354309,
+       949.2480158805847,
+       946.1759924888611,
+       957.4400186538696,
+       951.2959718704224
+      ]
+     },
+     {
+      "median_us": 395.26399970054626,
+      "p10_us": 391.1679983139038,
+      "p90_us": 397.3119854927063,
+      "samples_us": [
+       395.26399970054626,
+       398.3359932899475,
+       391.1679983139038,
+       393.21601390838623,
+       397.3119854927063
+      ]
+     },
+     {
+      "median_us": 374.783992767334,
+      "p10_us": 368.6400055885315,
+      "p90_us": 376.8320083618164,
+      "samples_us": [
+       376.8320083618164,
+       374.783992767334,
+       385.0240111351013,
+       370.6879913806915,
+       368.6400055885315
+      ]
+     },
+     {
+      "median_us": 384.0000033378601,
+      "p10_us": 381.9519877433777,
+      "p90_us": 387.07199692726135,
+      "samples_us": [
+       387.07199692726135,
+       381.9519877433777,
+       387.07199692726135,
+       381.9519877433777,
+       384.0000033378601
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "requests": 16,
+   "mtp": 8,
+   "query_rows": 128,
+   "steps": 4,
+   "correctness_max_abs_error": {
+    "ours_stage": 0.0032289624214172363
+   },
+   "far_refs": [
+    262016,
+    262016,
+    262016,
+    262016
+   ],
+   "far_unique_uncached": [
+    81672,
+    82676,
+    81020,
+    81267
+   ],
+   "cached_misses": {
+    "ours_stage": [
+     81672,
+     40939,
+     36293,
+     36110
+    ]
+   },
+   "per_step": {
+    "ours_stage": [
+     {
+      "median_us": 3820.5440044403076,
+      "p10_us": 3805.1838874816895,
+      "p90_us": 3821.568012237549,
+      "samples_us": [
+       3821.568012237549,
+       3820.5440044403076,
+       3818.495988845825,
+       3805.1838874816895,
+       3842.047929763794
+      ]
+     },
+     {
+      "median_us": 1980.4160594940186,
+      "p10_us": 1972.2239971160889,
+      "p90_us": 1984.5119714736938,
+      "samples_us": [
+       1980.4160594940186,
+       1990.656018257141,
+       1977.344036102295,
+       1984.5119714736938,
+       1972.2239971160889
+      ]
+     },
+     {
+      "median_us": 1779.7119617462158,
+      "p10_us": 1779.7119617462158,
+      "p90_us": 1794.0479516983032,
+      "samples_us": [
+       1779.7119617462158,
+       1779.7119617462158,
+       1779.7119617462158,
+       1795.0719594955444,
+       1794.0479516983032
+      ]
+     },
+     {
+      "median_us": 1776.6400575637817,
+      "p10_us": 1768.447995185852,
+      "p90_us": 1779.7119617462158,
+      "samples_us": [
+       1779.7119617462158,
+       1768.447995185852,
+       1781.7599773406982,
+       1776.6400575637817,
+       1772.544026374817
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "requests": 128,
+   "mtp": 8,
+   "query_rows": 1024,
+   "steps": 4,
+   "correctness_max_abs_error": {
+    "ours_stage": 0.0018498897552490234
+   },
+   "far_refs": [
+    2096128,
+    2096128,
+    2096128,
+    2096128
+   ],
+   "far_unique_uncached": [
+    667851,
+    686157,
+    668881,
+    668922
+   ],
+   "cached_misses": {
+    "ours_stage": [
+     667851,
+     344273,
+     313535,
+     307873
+    ]
+   },
+   "per_step": {
+    "ours_stage": [
+     {
+      "median_us": 29345.792770385742,
+      "p10_us": 29340.67153930664,
+      "p90_us": 29352.96058654785,
+      "samples_us": [
+       29340.67153930664,
+       29345.792770385742,
+       29352.96058654785,
+       29345.792770385742,
+       29361.15264892578
+      ]
+     },
+     {
+      "median_us": 15225.855827331543,
+      "p10_us": 15182.84797668457,
+      "p90_us": 15226.880073547363,
+      "samples_us": [
+       15205.375671386719,
+       15225.855827331543,
+       15226.880073547363,
+       15182.84797668457,
+       15247.360229492188
+      ]
+     },
+     {
+      "median_us": 13921.279907226562,
+      "p10_us": 13916.159629821777,
+      "p90_us": 13930.496215820312,
+      "samples_us": [
+       13916.159629821777,
+       13941.760063171387,
+       13920.255661010742,
+       13930.496215820312,
+       13921.279907226562
+      ]
+     },
+     {
+      "median_us": 13629.440307617188,
+      "p10_us": 13600.768089294434,
+      "p90_us": 13637.632369995117,
+      "samples_us": [
+       13600.768089294434,
+       13648.896217346191,
+       13637.632369995117,
+       13629.440307617188,
+       13627.391815185547
+      ]
+     }
+    ]
+   }
+  }
+ ],
+ "gpu_after": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 14467 MiB, 25975 MiB, 100 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 4 MiB, 40439 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 37707 MiB, 2735 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 40185 MiB, 257 MiB, 100 %, 1410 MHz, 1215 MHz"
+}

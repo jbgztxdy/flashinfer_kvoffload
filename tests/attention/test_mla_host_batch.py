@@ -480,3 +480,59 @@ def test_host_batch_lru_invalidate(stage):
     out = w.run(q, p, ckv, kpe, host_page_start=host_page_start)
     expected, _ = _reference(q, p, ckv, kpe, indices.view(rows, kv_len), 1 / 16)
     torch.testing.assert_close(out.float(), expected, rtol=1e-2, atol=1e-2)
+
+
+@pytest.mark.parametrize("stage,cached", [(True, False), (True, True), (False, True)])
+@pytest.mark.parametrize("requests,mtp", [(1, 8), (4, 8), (40, 4), (64, 4)])
+def test_host_batch_padding(stage, cached, requests, mtp):
+    """Top-k rows padded with -1 (short sequences, filler rows), as SGLang emits them: only the
+    valid entries count, an all-padding row gives zeros (lse at the initial -5e4), and repeated launches
+    (cursor and gap-flag resets) stay correct."""
+    _skip_if_unsupported()
+    device = torch.device("cuda")
+    kv_len, num_heads, dtype = 1024, 64, torch.bfloat16
+    rows = requests * mtp
+    num_pages = max(8 * kv_len * requests, 4096)
+    host_page_start = num_pages // 2
+    cache = torch.randn(num_pages, 1, 576, dtype=dtype, device=device)
+    ckv, kpe = cache[..., :512], cache[..., 512:]
+    q_nope = torch.randn(rows, num_heads, 512, dtype=dtype, device=device)
+    q_pe = torch.randn(rows, num_heads, 64, dtype=dtype, device=device)
+    w = _plan(rows, kv_len, torch.empty(rows * kv_len, dtype=torch.int32, device=device))
+    w.host_stage = stage
+    if cached:
+        w.set_host_cache(torch.arange(requests + 1, dtype=torch.int32) * mtp, 512)
+    generator = torch.Generator().manual_seed(rows)
+    for launch in range(3):
+        indices = _make_indices(
+            requests, mtp, kv_len, num_pages, host_page_start, 0.3, 0.5, seed=launch
+        ).to(device)
+        # Valid counts: full, short, tiny, none; padding at the tail as in a short sequence, and
+        # some rows with -1 scattered in the middle.
+        valid = torch.randint(0, kv_len + 1, (rows,), generator=generator)
+        valid[0], valid[-1] = kv_len, 0
+        if rows > 2:
+            valid[1] = 1
+        padded = indices.clone()
+        for r in range(rows):
+            padded[r, int(valid[r]) :] = -1
+            if r % 3 == 2 and valid[r] > 8:
+                padded[r, 3:6] = -1
+        w._kv_indices_buf.copy_(padded.view(-1))
+        out, lse = w.run(q_nope, q_pe, ckv, kpe, return_lse=True, host_page_start=host_page_start)
+        for r in range(rows):
+            pages = padded[r][padded[r] >= 0].long()
+            if len(pages) == 0:
+                assert torch.all(out[r] == 0), f"launch {launch} row {r}"
+                # FlashInfer's MLA states start at a finite -5e4 rather than -inf.
+                assert torch.all(lse[r] <= -1e4)
+                continue
+            k = ckv[pages, 0].float()
+            scores = (q_nope[r].float() @ k.T + q_pe[r].float() @ kpe[pages, 0].float().T) / 16
+            expected = scores.softmax(-1) @ k
+            torch.testing.assert_close(out[r].float(), expected, rtol=1e-2, atol=1e-2,
+                                       msg=lambda m, r=r: f"launch {launch} row {r}: {m}")
+            # A one-entry row's lse is that score itself, so no averaging hides the bf16 MMA's
+            # rounding: allow 5e-3 absolute.
+            torch.testing.assert_close(lse[r], torch.logsumexp(scores, -1) / torch.log(torch.tensor(2.0)),
+                                       rtol=1e-3, atol=5e-3)
