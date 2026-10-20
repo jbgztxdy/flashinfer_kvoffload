@@ -66,8 +66,8 @@ def rounds(path, data):
         print(f"| {r['requests']} | {r['query_rows']} | " + " | ".join(cells) + f" | {miss_s} | {uniq:.0f} |")
     print()
     if "hisparse" in modes:
-        ours = [m for m in modes if m.startswith("ours") and m != "ours_nocache"]
-        print("best of ours (cached) / HiSparse, steady state:\n")
+        ours = [m for m in modes if (m.startswith("ours") and m != "ours_nocache") or m.endswith("_lru")]
+        print("cached methods / HiSparse, steady state (memcpy_lru/direct_lru keep the LRU on the CPU, untimed):\n")
         print("| req | " + " | ".join(ours) + " |\n|---:|" + "---:|" * len(ours))
         for r in data["results"]:
             tail = range(r["steps"] // 2, r["steps"])
