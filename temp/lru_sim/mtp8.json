@@ -1,0 +1,162 @@
+{
+ "config": {
+  "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+  "mtp": 8,
+  "requests": 128,
+  "capacity": [
+   2048,
+   4096,
+   8192
+  ],
+  "mixed": false,
+  "seed": 42,
+  "output": "temp/lru_sim/mtp8.json"
+ },
+ "steps": 4,
+ "results": [
+  {
+   "capacity_per_request": 2048,
+   "per_request": {
+    "per_step": [
+     [
+      646731,
+      646731
+     ],
+     [
+      484869,
+      657668
+     ],
+     [
+      467194,
+      643998
+     ],
+     [
+      468378,
+      647017
+     ]
+    ],
+    "steady_miss_share": 0.7246794189068291,
+    "steady_misses": 467786.0
+   },
+   "global": {
+    "per_step": [
+     [
+      646731,
+      646731
+     ],
+     [
+      480974,
+      657668
+     ],
+     [
+      468946,
+      643998
+     ],
+     [
+      472461,
+      647017
+     ]
+    ],
+    "steady_miss_share": 0.7291991185230225,
+    "steady_misses": 470703.5
+   },
+   "global_vs_per_request_misses": 1.006236826241059
+  },
+  {
+   "capacity_per_request": 4096,
+   "per_request": {
+    "per_step": [
+     [
+      646731,
+      646731
+     ],
+     [
+      313071,
+      657668
+     ],
+     [
+      291433,
+      643998
+     ],
+     [
+      294941,
+      647017
+     ]
+    ],
+    "steady_miss_share": 0.4541961170087102,
+    "steady_misses": 293187.0
+   },
+   "global": {
+    "per_step": [
+     [
+      646731,
+      646731
+     ],
+     [
+      305638,
+      657668
+     ],
+     [
+      295884,
+      643998
+     ],
+     [
+      304759,
+      647017
+     ]
+    ],
+    "steady_miss_share": 0.46524866093732453,
+    "steady_misses": 300321.5
+   },
+   "global_vs_per_request_misses": 1.024334298587591
+  },
+  {
+   "capacity_per_request": 8192,
+   "per_request": {
+    "per_step": [
+     [
+      646731,
+      646731
+     ],
+     [
+      226105,
+      657668
+     ],
+     [
+      156602,
+      643998
+     ],
+     [
+      145951,
+      647017
+     ]
+    ],
+    "steady_miss_share": 0.23435281542042502,
+    "steady_misses": 151276.5
+   },
+   "global": {
+    "per_step": [
+     [
+      646731,
+      646731
+     ],
+     [
+      226105,
+      657668
+     ],
+     [
+      147835,
+      643998
+     ],
+     [
+      125355,
+      647017
+     ]
+    ],
+    "steady_miss_share": 0.21160869548378602,
+    "steady_misses": 136595.0
+   },
+   "global_vs_per_request_misses": 0.9029492353405849
+  }
+ ]
+}
