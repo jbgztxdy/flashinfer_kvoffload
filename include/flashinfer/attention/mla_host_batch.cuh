@@ -1488,10 +1488,10 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
       uint64_t best_cost = UINT64_MAX;
       for (uint32_t chunks = 1; chunks <= 32 && tail_tiles > 0; ++chunks) {
         const uint32_t chunk_len = round_up(ceil_div(kv_len, chunks), CTA_TILE_KV);
-        if (chunks > 1 && (tail_tiles * (chunks + 1) > partial_capacity ||
-                           chunk_len * (chunks - 1) >= kv_len)) {
-          break;
-        }
+        if (chunks > 1 && tail_tiles * (chunks + 1) > partial_capacity) break;
+        // A count whose tile-rounded chunks leave the last one empty repeats a smaller split, but
+        // larger counts can still be finer (one row of 2048: 8 chunks, then 13), so skip it.
+        if (chunks > 1 && chunk_len * (chunks - 1) >= kv_len) continue;
         // In KV tiles over the whole row, Host share unknown: rounds of items over the grid,
         // each also loading Q (about two tiles of bytes) and writing a partial state that the
         // merge re-reads (about four).
