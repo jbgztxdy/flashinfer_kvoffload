@@ -267,8 +267,8 @@ void BatchMLAPagedAttentionRunHostBatch(
   // Host item; fetch flags; item claims (row tiles plus tail item states, plus LRU pools).
   const int64_t partials = partial_lse.size(0) / 64;
   TVM_FFI_ICHECK_GE(state.size(0), mla::kHostBatchHostCounts + 4 * rows + 1 + partials +
-                                       (capacity + mla::kHostBatchFetchRows - 1) /
-                                           mla::kHostBatchFetchRows +
+                                       (capacity + mla::kHostBatchMinFetchRows - 1) /
+                                           mla::kHostBatchMinFetchRows +
                                        rows * head_tiles + partials +
                                        (pool_capacity > 0 ? num_pools : 0));
   // host_slot packs (row, rank within the row's claims); see prepare_host_batch_rows.
