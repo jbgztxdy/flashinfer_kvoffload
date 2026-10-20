@@ -303,20 +303,15 @@ def test_host_batch_lru_cache(requests, mtp, capacity, share, stage):
         expected, _ = _reference(q_nope, q_pe, ckv, kpe, round_indices.to(device), sm_scale)
         torch.testing.assert_close(out.float(), expected, rtol=1e-2, atol=1e-2)
 
-        host_pages = wrapper._host_batch_buffers[0][1]
-        persist = wrapper._host_cache["persist"]
-        slots = requests * capacity
-        resident = persist[:host_pages].cpu()
-        slot_page = persist[host_pages : host_pages + slots].cpu()
-        staging = wrapper._host_batch_buffers[1]
-        staged_rows = staging.shape[0] - slots
+        resident, slot_page, _, store = wrapper._host_cache_views()
+        resident, slot_page = resident[:-1].cpu(), slot_page[:-1].cpu()
         cached = (resident >= 0).nonzero().view(-1) + host_page_start
         resident_now = set(cached.tolist())
         # Maps agree, and every cached copy holds its page's bytes.
         assert torch.equal(slot_page[resident[cached - host_page_start].long()], cached.int())
         filled = slot_page >= 0
         assert int(filled.sum()) == len(resident_now)
-        cache_rows = staging[staged_rows:][filled.nonzero().view(-1).to(device)]
+        cache_rows = store["kv"][filled.nonzero().view(-1).to(device)]
         assert torch.equal(cache_rows, cache.view(num_pages, 576)[slot_page[filled].long().to(device)])
 
         selected = set(int(p) for p in round_indices.view(-1).tolist() if p >= host_page_start)
@@ -357,4 +352,131 @@ def test_host_batch_lru_reset_and_disable():
     torch.testing.assert_close(out.float(), expected, rtol=1e-2, atol=1e-2)
     wrapper.set_host_cache(torch.tensor([0, 16], dtype=torch.int32), 0)
     out = wrapper.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+    torch.testing.assert_close(out.float(), expected, rtol=1e-2, atol=1e-2)
+
+
+def _cache_state(wrapper, host_page_start):
+    """(page -> slot) of every cached Host page, checking the maps agree and the copies match."""
+    resident, slot_page, stamps, store = wrapper._host_cache_views()
+    resident, slot_page = resident[:-1].cpu(), slot_page[:-1].cpu()
+    cached = (resident >= 0).nonzero().view(-1)
+    assert torch.equal(slot_page[resident[cached].long()], (cached + host_page_start).int())
+    assert int((slot_page >= 0).sum()) == len(cached)
+    return {int(p) + host_page_start: int(resident[p]) for p in cached}, store
+
+
+def _rows_setup(requests, mtp, kv_len, dtype=torch.bfloat16, num_heads=64):
+    device = torch.device("cuda")
+    rounds_indices, num_pages, host_page_start = _lru_rounds(
+        requests, mtp, kv_len, 0.4, 0.6, 4, seed=7
+    )
+    cache = torch.randn(num_pages, 1, 576, dtype=dtype, device=device)
+    return rounds_indices, num_pages, host_page_start, cache
+
+
+def _plan(rows, kv_len, indices, num_heads=64, dtype=torch.bfloat16):
+    device = torch.device("cuda")
+    wrapper = BatchMLAPagedAttentionWrapper(
+        torch.empty(128 * 2**20, dtype=torch.uint8, device=device), backend="fa2"
+    )
+    wrapper.plan(
+        torch.arange(rows + 1, dtype=torch.int32, device=device),
+        torch.arange(rows + 1, dtype=torch.int32, device=device) * kv_len,
+        indices,
+        torch.full((rows,), kv_len, dtype=torch.int32, device=device),
+        num_heads, 512, 64, 1, False, 1 / 16, q_data_type=dtype, kv_data_type=dtype,
+    )
+    wrapper.host_fetch_ctas = 4
+    return wrapper
+
+
+@pytest.mark.parametrize("stage", [True, False])
+def test_host_batch_lru_persistent_pools(stage):
+    """Pools follow request ids: reordering and shrinking the batch keeps each request's cache,
+    a released pool is emptied, and a later batch with a new request reuses the slot."""
+    _skip_if_unsupported()
+    device = torch.device("cuda")
+    requests, mtp, kv_len, capacity, max_pools = 4, 4, 512, 384, 6
+    rounds_indices, num_pages, host_page_start, cache = _rows_setup(requests, mtp, kv_len)
+    ckv, kpe = cache[..., :512], cache[..., 512:]
+    per_request = [r.view(requests, mtp, kv_len) for r in rounds_indices]
+    q_all = torch.randn(requests, mtp, 64, 512, dtype=torch.bfloat16, device=device)
+    p_all = torch.randn(requests, mtp, 64, 64, dtype=torch.bfloat16, device=device)
+    ids = [5, 0, 3, 2]  # request r lives in persistent pool ids[r]
+
+    def run(order, step):
+        rows = len(order) * mtp
+        indices = torch.cat([per_request[step][r] for r in order]).view(-1).to(device)
+        w = wrappers.get(len(order))
+        if w is None:
+            w = wrappers[len(order)] = _plan(rows, kv_len, torch.empty_like(indices))
+            w.host_stage = stage
+            w._host_cache = shared["cache"]  # one layer: the cache follows the requests
+        w._kv_indices_buf.copy_(indices)
+        w.set_host_cache(
+            torch.arange(len(order) + 1, dtype=torch.int32) * mtp,
+            capacity,
+            pool_ids=torch.tensor([ids[r] for r in order], dtype=torch.int32),
+            max_pools=max_pools,
+        )
+        shared["cache"] = w._host_cache
+        q = q_all[order].reshape(rows, 64, 512)
+        p = p_all[order].reshape(rows, 64, 64)
+        out = w.run(q, p, ckv, kpe, host_page_start=host_page_start)
+        expected, _ = _reference(q, p, ckv, kpe, indices.view(rows, kv_len), 1 / 16)
+        torch.testing.assert_close(out.float(), expected, rtol=1e-2, atol=1e-2)
+        return w
+
+    wrappers, shared = {}, {"cache": None}
+    run([0, 1, 2, 3], 0)
+    state, _ = _cache_state(wrappers[4], host_page_start)
+    owner = {page: slot // capacity for page, slot in state.items()}
+    assert set(owner.values()) == {5, 0, 3, 2}
+    # Reordered: every cached page stays in its pool and is a hit.
+    w = run([2, 0, 3, 1], 1)
+    state2, _ = _cache_state(w, host_page_start)
+    assert all(state2[p] == s for p, s in state.items() if p in state2)
+    selected = set(int(x) for x in per_request[1].reshape(-1).tolist() if x >= host_page_start)
+    assert len(selected & set(state)) > 0
+    # Smaller batch: requests 1 and 3 only; pools of 0 and 2 are kept untouched.
+    kept = {p: s for p, s in state2.items() if s // capacity in (ids[0], ids[2])}
+    w = run([1, 3], 2)
+    state3, _ = _cache_state(w, host_page_start)
+    assert all(state3.get(p) == s for p, s in kept.items())
+    # Request 0 finishes: its pool empties, everything else stays.
+    w.release_host_cache(torch.tensor([ids[0]]))
+    state4, _ = _cache_state(w, host_page_start)
+    assert not any(s // capacity == ids[0] for s in state4.values())
+    assert all(state4.get(p) == s for p, s in state3.items() if s // capacity != ids[0])
+    # A new request takes slot ids[0] (same top-k as request 0 here) and runs correctly.
+    run([0, 2], 3)
+
+
+@pytest.mark.parametrize("stage", [True, False])
+def test_host_batch_lru_invalidate(stage):
+    """Rewriting Host pages after invalidate_host_pages serves the new bytes."""
+    _skip_if_unsupported()
+    requests, mtp, kv_len, capacity = 2, 4, 512, 512
+    rounds_indices, num_pages, host_page_start, cache = _rows_setup(requests, mtp, kv_len)
+    ckv, kpe = cache[..., :512], cache[..., 512:]
+    rows = requests * mtp
+    indices = rounds_indices[0].view(-1).cuda()
+    w = _plan(rows, kv_len, torch.empty_like(indices))
+    w.host_stage = stage
+    w._kv_indices_buf.copy_(indices)
+    w.set_host_cache(torch.arange(requests + 1, dtype=torch.int32) * mtp, capacity)
+    q = torch.randn(rows, 64, 512, dtype=torch.bfloat16, device="cuda")
+    p = torch.randn(rows, 64, 64, dtype=torch.bfloat16, device="cuda")
+    w.run(q, p, ckv, kpe, host_page_start=host_page_start)
+    state, _ = _cache_state(w, host_page_start)
+    pages = torch.tensor(sorted(state)[: len(state) // 2], dtype=torch.int64)
+    # Free and reuse half of the cached pages with new contents (plus ids that are not cached
+    # or not Host pages, which must be ignored).
+    w.invalidate_host_pages(torch.cat([pages, torch.tensor([0, host_page_start - 1, num_pages - 1])]))
+    cache.view(num_pages, 576)[pages.cuda()] = torch.randn(len(pages), 576, dtype=cache.dtype, device="cuda")
+    state2, _ = _cache_state(w, host_page_start)
+    assert not set(pages.tolist()) & set(state2)
+    assert all(state2[x] == s for x, s in state.items() if x not in set(pages.tolist()))
+    out = w.run(q, p, ckv, kpe, host_page_start=host_page_start)
+    expected, _ = _reference(q, p, ckv, kpe, indices.view(rows, kv_len), 1 / 16)
     torch.testing.assert_close(out.float(), expected, rtol=1e-2, atol=1e-2)

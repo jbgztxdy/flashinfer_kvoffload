@@ -758,36 +758,126 @@ class BatchMLAPagedAttentionWrapper:
         return (out, lse) if return_lse else out
 
 
-    def set_host_cache(self, pool_row_start: torch.Tensor, capacity: int) -> None:
-        r"""Enable the cross-launch LRU cache of Host pages for the batched Host path.
+    def set_host_cache(
+        self,
+        pool_row_start: torch.Tensor,
+        capacity: int,
+        pool_ids: Optional[torch.Tensor] = None,
+        max_pools: Optional[int] = None,
+    ) -> None:
+        r"""Enable the cross-launch LRU cache of Host pages for the batched Host path, and say
+        which request each group of rows belongs to.
 
-        Pool ``p`` caches up to ``capacity`` Host pages for rows
-        ``[pool_row_start[p], pool_row_start[p + 1])``, e.g. one request's MTP tokens. The cache
-        state persists across ``run`` calls on this wrapper (one layer), until
-        :meth:`reset_host_cache` or a change of pools or capacity. ``capacity == 0`` disables it.
+        There are ``max_pools`` persistent pools of ``capacity`` cache slots, one per request slot
+        (as SGLang's ``req_pool_idx``). For the following ``run`` calls, the rows
+        ``[pool_row_start[p], pool_row_start[p + 1])`` (one request's MTP tokens) belong to pool
+        ``pool_ids[p]``. Call this again whenever the batch changes: the cached pages stay with
+        their pools, so requests keep their cache when the batch is reordered, resized or a request
+        is paused. A Host page cached by any pool is a hit for every row; a pool only decides where
+        its misses go and what it evicts (least recently used, per launch).
+
+        The cache lives on this wrapper (one layer) until :meth:`reset_host_cache` or a change of
+        ``capacity`` or ``max_pools``. ``capacity == 0`` disables it. When a request finishes, call
+        :meth:`release_host_cache` for its pool; when Host pages are freed or rewritten, call
+        :meth:`invalidate_host_pages` before they are read again, or stale copies would be served.
+        ``pool_ids`` defaults to ``arange(len(pool_row_start) - 1)``, ``max_pools`` to the number of
+        pools; ids must be distinct and below ``max_pools`` (not checked on the device).
         """
         if capacity == 0:
             self._host_cache = None
             return
         starts = pool_row_start.to(device=self.device, dtype=torch.int32)
-        if starts.ndim != 1 or starts.numel() < 2 or int(starts[0]) != 0:
+        num_pools = starts.numel() - 1
+        if starts.ndim != 1 or num_pools < 1 or int(starts[0]) != 0:
             raise ValueError("pool_row_start must be a 1-D prefix of row counts starting at 0")
+        if pool_ids is None:
+            pool_ids = torch.arange(num_pools, dtype=torch.int32)
+        if pool_ids.numel() != num_pools:
+            raise ValueError("pool_ids needs one id per pool")
+        max_pools = num_pools if max_pools is None else int(max_pools)
+        if pool_ids.device.type == "cpu" and (
+            int(pool_ids.min()) < 0
+            or int(pool_ids.max()) >= max_pools
+            or pool_ids.unique().numel() != num_pools
+        ):
+            raise ValueError("pool_ids must be distinct and in [0, max_pools)")
         lengths = starts[1:] - starts[:-1]
         row_pool = torch.repeat_interleave(
-            torch.arange(starts.numel() - 1, dtype=torch.int32, device=self.device), lengths
+            torch.arange(num_pools, dtype=torch.int32, device=self.device), lengths
         )
+        rows = torch.cat([row_pool, starts, pool_ids.to(device=self.device, dtype=torch.int32)])
+        previous = self._host_cache
+        store = None
+        if (
+            previous is not None
+            and previous["capacity"] == int(capacity)
+            and previous["max_pools"] == max_pools
+        ):
+            store = previous["store"]
+            # Same shape: update in place, so a captured CUDA Graph sees the new pools.
+            if previous["rows"].shape == rows.shape:
+                previous["rows"].copy_(rows)
+                rows = previous["rows"]
         self._host_cache = dict(
-            rows=torch.cat([row_pool, starts]),
-            num_pools=starts.numel() - 1,
-            capacity=int(capacity),
+            rows=rows,
+            num_pools=num_pools,
             num_rows=int(starts[-1]),
-            persist=None,
+            capacity=int(capacity),
+            max_pools=max_pools,
+            store=store,
         )
 
     def reset_host_cache(self) -> None:
         """Forget every cached Host page; the next run starts cold."""
         if self._host_cache is not None:
-            self._host_cache["persist"] = None
+            self._host_cache["store"] = None
+
+    def _host_cache_views(self):
+        store = self._host_cache["store"] if self._host_cache is not None else None
+        if store is None:
+            return None
+        hp, slots = store["host_pages"], store["slots"]
+        persist = store["persist"]
+        # Each part ends in a spare sink entry; see run_host_batch.
+        return (
+            persist[: hp + 1],
+            persist[hp + 1 : hp + slots + 2],
+            persist[hp + slots + 2 :],
+            store,
+        )
+
+    def release_host_cache(self, pool_ids: torch.Tensor) -> None:
+        """Empty the given persistent pools, e.g. of finished requests, so a request that takes
+        the slot starts with all of its capacity free. Device-side and sync-free."""
+        views = self._host_cache_views()
+        if views is None:
+            return
+        resident, slot_page, stamps, store = views
+        cap, hp = self._host_cache["capacity"], store["host_pages"]
+        ids = pool_ids.to(device=self.device, dtype=torch.int64).view(-1, 1)
+        slots = (ids * cap + torch.arange(cap, device=self.device)).view(-1)
+        pages = slot_page[slots].long()
+        # Empty slots write their sink entry instead.
+        resident[torch.where(pages >= 0, pages - store["host_page_start"], hp)] = -1
+        slot_page[slots] = -1
+        stamps[slots] = 0
+
+    def invalidate_host_pages(self, pages: torch.Tensor) -> None:
+        """Drop cached copies of the given Host pages (absolute page ids, as in ``kv_indices``),
+        e.g. when the KV allocator frees or rewrites them. Device-side and sync-free; pages that
+        are not cached, or not Host pages, are ignored."""
+        views = self._host_cache_views()
+        if views is None:
+            return
+        resident, slot_page, stamps, store = views
+        hp, slots = store["host_pages"], store["slots"]
+        rel = pages.to(device=self.device, dtype=torch.int64).view(-1) - store["host_page_start"]
+        rel = torch.where((rel >= 0) & (rel < hp), rel, hp)
+        slot = resident[rel].long()
+        slot = torch.where(slot >= 0, slot, slots)
+        slot_page[slot] = -1
+        stamps[slot] = 0
+        resident[rel] = -1
 
     def _run_host_batch(
         self,
@@ -860,6 +950,7 @@ class BatchMLAPagedAttentionWrapper:
             raise ValueError("set_host_cache pools must cover exactly the planned rows")
         num_pools = cache["num_pools"] if cache is not None else 0
         pool_capacity = cache["capacity"] if cache is not None else 0
+        max_pools = cache["max_pools"] if cache is not None else 0
         host_pages = ckv_cache.shape[0] - host_page_start
         key = (
             ckv_cache.dtype,
@@ -870,6 +961,7 @@ class BatchMLAPagedAttentionWrapper:
             staging_rows,
             num_pools,
             pool_capacity,
+            max_pools,
             stage,
         )
         if self._host_batch_buffers is None or self._host_batch_buffers[0] != key:
@@ -884,8 +976,9 @@ class BatchMLAPagedAttentionWrapper:
             int32 = dict(dtype=torch.int32, device=self.device)
             self._host_batch_buffers = (
                 key,
+                # Staging rows; with the cache they live in the cache store instead (below).
                 torch.empty(
-                    (max(1, staging_rows + num_pools * pool_capacity), 576),
+                    (1 if cache else max(1, staging_rows), 576),
                     dtype=ckv_cache.dtype,
                     device=self.device,
                 ),
@@ -905,14 +998,45 @@ class BatchMLAPagedAttentionWrapper:
                     **int32,
                 ),
             )
-            if cache is not None:
-                cache["persist"] = None
-        if cache is not None and cache["persist"] is None:
-            slots = num_pools * pool_capacity
-            # resident (-1) | slot_page (-1) | slot_stamp (0)
-            persist = torch.full((host_pages + 2 * slots,), -1, dtype=torch.int32, device=self.device)
-            persist[host_pages + slots :] = 0
-            cache["persist"] = persist
+        kv = self._host_batch_buffers[1]
+        if cache is not None:
+            store = cache["store"]
+            if store is not None and (
+                store["host_pages"] != host_pages
+                or store["host_page_start"] != host_page_start
+                or store["kv"].dtype != ckv_cache.dtype
+            ):
+                store = None
+            slots = max_pools * pool_capacity
+            if store is None:
+                if torch.cuda.is_current_stream_capturing():
+                    raise RuntimeError("Warm up the Host cache before CUDA Graph capture")
+                # resident (-1) | slot_page (-1) | slot_stamp (0), each with a trailing sink entry.
+                persist = torch.full(
+                    (host_pages + 2 * slots + 3,), -1, dtype=torch.int32, device=self.device
+                )
+                persist[host_pages + slots + 2 :] = 0
+                store = dict(
+                    host_pages=host_pages,
+                    host_page_start=host_page_start,
+                    slots=slots,
+                    persist=persist,
+                    kv=torch.empty(
+                        (max(1, slots + staging_rows), 576), dtype=ckv_cache.dtype, device=self.device
+                    ),
+                )
+                cache["store"] = store
+            elif store["kv"].shape[0] < slots + staging_rows:
+                # More staging for a larger batch: keep the cached rows, which come first.
+                if torch.cuda.is_current_stream_capturing():
+                    raise RuntimeError("Warm up the Host cache at its largest batch before capture")
+                grown = torch.empty(
+                    (slots + staging_rows, 576), dtype=ckv_cache.dtype, device=self.device
+                )
+                grown[:slots].copy_(store["kv"][:slots])
+                store["kv"] = grown
+            # The kernel sizes its staging from the buffer, which may be larger after a bigger batch.
+            kv = store["kv"][: max(1, slots + staging_rows)]
         if return_lse and lse is None:
             lse = torch.empty(q_nope.shape[:2], dtype=torch.float32, device=self.device)
         self._host_prefetch_module.run_host_batch(
@@ -929,12 +1053,14 @@ class BatchMLAPagedAttentionWrapper:
             return_lse_base_on_e,
             host_page_start,
             max_kv_len,
-            *self._host_batch_buffers[1:8],
+            kv,
+            *self._host_batch_buffers[2:8],
             self.host_fetch_ctas,
             num_pools,
+            max_pools,
             pool_capacity,
             cache["rows"] if cache is not None else self._host_batch_buffers[8],
-            cache["persist"] if cache is not None else self._host_batch_buffers[8],
+            cache["store"]["persist"] if cache is not None else self._host_batch_buffers[8],
             self._host_batch_buffers[8],
             self.host_item_entries,
             self.host_split,

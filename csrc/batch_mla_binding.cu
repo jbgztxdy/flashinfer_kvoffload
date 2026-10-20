@@ -53,7 +53,7 @@ void BatchMLAPagedAttentionRunHostBatch(
     int64_t num_heads, double sm_scale, bool return_lse_base_on_e, int64_t host_page_start,
     int64_t max_kv_len, TensorView staging, TensorView host_slot, TensorView remap,
     TensorView unique_pages, TensorView state, TensorView partial_o, TensorView partial_lse,
-    int64_t fetch_ctas, int64_t num_pools, int64_t pool_capacity, TensorView cache_rows,
+    int64_t fetch_ctas, int64_t num_pools, int64_t max_pools, int64_t pool_capacity, TensorView cache_rows,
     TensorView cache_persist, TensorView cache_scratch, int64_t host_item_entries, bool host_split,
     bool stage);
 

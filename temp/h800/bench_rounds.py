@@ -223,12 +223,7 @@ def run_requests(args, requests, steps, kv, main_kv, alias, captures, device):
 
     def reset(mode):
         if mode in ("ours_stage", "ours_inplace"):
-            w = ours[mode][0]
-            cache = w._host_cache
-            if cache["persist"] is not None:
-                hp = w._host_batch_buffers[0][1]
-                cache["persist"][:hp + requests * args.capacity].fill_(-1)
-                cache["persist"][hp + requests * args.capacity :].fill_(0)
+            ours[mode][0].release_host_cache(torch.arange(requests))
         elif mode == "hisparse":
             hisparse.reset()
 
