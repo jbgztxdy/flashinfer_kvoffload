@@ -131,6 +131,10 @@ def main():
                       "draft token after another, since the HiSparse decode path takes one row per request"),
             floor_fa2="native FA2 MLA with every selected row near: compute floor of our kernel",
             floor_flashmla="FlashMLA sparse fwd with every selected row in HBM: compute floor of HiSparse",
+            direct_lru=("Direct with the same LRU: native attention with hits near and misses read in place, then a "
+                        "GPU gather of the misses into the cache for the next step"),
+            memcpy_lru=("Memcpy with the same per-request step LRU: copy only each step's missed pages near "
+                        "(host: untimed CPU gather + H2D DMA; peer: GPU gather), then native attention"),
         ),
         gpu_before=gpu_snapshot(), results=[],
     )
@@ -165,10 +169,48 @@ def run_requests(args, requests, steps, kv, main_kv, alias, captures, device):
         newest = torch.tensor([s + t * mtp for s in reqs.start]).view(-1, 1) + torch.arange(mtp)
         # The newest token is always near (see tiers.Requests.rows).
         newest_page = (torch.arange(requests).view(-1, 1) % near_requests) * args.context + newest
+        far_by_request = [set(x for x in row.tolist() if x >= kv.near) for row in pages.view(requests, -1)]
         plan.append(dict(selected=flat.to(device), remapped=remapped.to(device), far_refs=far_refs,
+                         far_by_request=far_by_request,
                          far_unique_step=len(unique), positions=positions.view(requests, mtp, topk).to(device),
                          newest=newest.to(device), newest_page=newest_page.to(device),
                          seq_lens=(newest + 1).to(device)))
+    if "memcpy_lru" in args.modes or "direct_lru" in args.modes:
+        # Memcpy with the same per-request step LRU (as the kernel): each step copies only the
+        # missed pages near (host: CPU gather into pinned memory, untimed, then one H2D DMA;
+        # peer: a GPU gather), then the native kernel attends with every row near.
+        stamps = [dict() for _ in range(requests)]
+        for t, p in enumerate(plan):
+            missed = []
+            for r, need in enumerate(p["far_by_request"]):
+                st = stamps[r]
+                miss = [x for x in need if x not in st]
+                for x in need:
+                    if x in st:
+                        st[x] = t
+                free = args.capacity - len(st)
+                evictable = sorted((v, x) for x, v in st.items() if v != t)
+                for i, x in enumerate(miss):
+                    if i < free + len(evictable):
+                        if i >= free:
+                            del st[evictable[i - free][1]]
+                        st[x] = t
+                missed += miss
+            ids = torch.tensor(sorted(missed), dtype=torch.int64) - kv.near
+            p["miss_ids"] = ids
+            p["miss_ids_dev"] = ids.to(device)
+            # direct_lru: hits read near (any near page: timing only), misses in place.
+            flat = p["selected"].long()
+            far = flat >= kv.near
+            is_miss = torch.zeros(kv.far, dtype=torch.bool, device=device)
+            is_miss[p["miss_ids_dev"]] = True
+            hit = far & ~is_miss[(flat - kv.near).clamp(min=0)]
+            p["direct_lru_idx"] = torch.where(hit, flat % kv.near, flat).int()
+        far_view = main_kv[kv.near :]
+        staged = alias[kv.near :]
+        far_cpu = kv.far_cpu() if args.tier == "host" else None
+        packed = (torch.empty((max(len(p["miss_ids"]) for p in plan), 1, 576), dtype=torch.bfloat16, pin_memory=True)
+                  if far_cpu is not None else None)
     query = torch.randn((rows, HEADS, 512), dtype=torch.bfloat16, device=device)
     rope = torch.randn((rows, HEADS, 64), dtype=torch.bfloat16, device=device)
     q_cat = torch.cat([query, rope], -1).view(requests, mtp, HEADS, 576)
@@ -178,7 +220,7 @@ def run_requests(args, requests, steps, kv, main_kv, alias, captures, device):
     hisparse = None
     ours = {}
     for mode in args.modes:
-        if mode.startswith("ours") or mode == "floor_fa2":
+        if mode.startswith("ours") or mode in ("floor_fa2", "memcpy_lru", "direct_lru"):
             indices = torch.empty(rows * topk, dtype=torch.int32, device=device)
             # Plans keep their metadata in the workspace, so each wrapper needs its own.
             w = make_wrapper(rows, indices, torch.empty(256 * 2**20, dtype=torch.uint8, device=device), topk)
@@ -194,12 +236,24 @@ def run_requests(args, requests, steps, kv, main_kv, alias, captures, device):
     def load(mode, step):
         p = plan[step]
         if mode in ours:
-            ours[mode][1].copy_(p["remapped"] if mode == "floor_fa2" else p["selected"])
+            ours[mode][1].copy_(p["remapped"] if mode in ("floor_fa2", "memcpy_lru")
+                                else p["direct_lru_idx"] if mode == "direct_lru" else p["selected"])
+        if mode == "memcpy_lru" and far_cpu is not None and len(p["miss_ids"]):
+            torch.index_select(far_cpu, 0, p["miss_ids"], out=packed[: len(p["miss_ids"])])
 
     def run(mode, step, j=None):
         p = plan[step]
-        if mode == "floor_fa2":
+        if mode in ("floor_fa2", "memcpy_lru"):
+            n = len(p["miss_ids"]) if mode == "memcpy_lru" else 0
+            if n and far_cpu is not None:
+                staged[:n].copy_(packed[:n], non_blocking=True)
+            elif n:
+                torch.index_select(far_view, 0, p["miss_ids_dev"], out=staged[:n])
             ours[mode][0].run(query, rope, alias[..., :512], alias[..., 512:], out=output)
+        elif mode == "direct_lru":
+            ours[mode][0].run(query, rope, main_kv[..., :512], main_kv[..., 512:], out=output)
+            if len(p["miss_ids"]):
+                torch.index_select(far_view, 0, p["miss_ids_dev"], out=staged[: len(p["miss_ids"])])
         elif mode in ours:
             ours[mode][0].run(query, rope, main_kv[..., :512], main_kv[..., 512:], out=output, host_page_start=kv.near)
         elif mode == "floor_flashmla":
@@ -228,7 +282,8 @@ def run_requests(args, requests, steps, kv, main_kv, alias, captures, device):
             hisparse.reset()
 
     # Pass 0 checks every step against the reference; it also builds the buffers.
-    errors = {m: 0.0 for m in args.modes if not m.startswith("floor")}
+    # memcpy_lru attends over compacted rows that hold only this step's misses: timing only.
+    errors = {m: 0.0 for m in args.modes if not m.startswith("floor") and not m.endswith("_lru")}
     for mode in args.modes:
         reset(mode)
         for step in range(steps):
