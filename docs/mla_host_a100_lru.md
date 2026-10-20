@@ -1,5 +1,7 @@
 # 远端 KV 稀疏 MLA 算子：融合 LRU 后的 PCIe / NVLink 实测（A100）
 
+> **最终结果在 [`mla_host_a100_full.md`](mla_host_a100_full.md)**（最终版 kernel `dbbc02c6`，全部 batch 点，含结果文件索引）。本文记录开发过程中的测量、方案取舍和失败尝试，第 3、4 节用的是旧版 kernel；各阶段数据在 [`temp/a100_final/`](../temp/a100_final/)（`nvlink_v1/`、`pcie_final/` 等子目录对应各次修改后的复测）。
+
 本文是 H800 排队期间在本机 A100 上完成的全套测试：单步 batch 扫描（PCIe、NVLink，MTP8 和 MTP1），带跨 decode LRU 缓存的多轮测试，以及与 LRU 改动前版本的 A/B 回归。与 SGLang HiSparse 的对比需要 FlashMLA（SM90 起才支持），只能在 H800 上做，作业已排队，结果出来后写入 `docs/mla_host_h800_lru.md`。
 
 ## 结论

@@ -1,6 +1,27 @@
 # 远端 KV 稀疏 MLA 算子：A100 全量 batch 测试（PCIe / NVLink，MTP8 / MTP1，单步与跨 decode）
 
-代码 `dbbc02c6`（融合 LRU 的最终 kernel）。全部原始数据在 `temp/a100_full/*.json`，完整表格（每个 batch 点 × 每个远端占比）在 `temp/a100_full/tables.md`，由 `temp/a100_full/tables.py` 生成；复现：`bash temp/a100_full/run.sh`。与 HiSparse 的对比需要 FlashMLA（SM90+），在 H800 上做。
+代码 `dbbc02c6`（融合 LRU 的最终 kernel）。与 HiSparse 的对比需要 FlashMLA（SM90+），在 H800 上做。本文只摘录部分 batch 点，所有结果见下面的索引。
+
+## 结果文件索引
+
+| 内容 | 每种方法的全部测量值 | 比值表（÷下限 / ÷朴素较快者） | 原始数据 |
+|---|---|---|---|
+| 单步，PCIe，MTP8（25 个 batch 点 × 7 个远端占比） | [full_tables.md#sweep-host-mtp8](../temp/a100_full/full_tables.md#sweep-host-mtp8) | [tables.md](../temp/a100_full/tables.md) | [sweep_host_mtp8.json](../temp/a100_full/sweep_host_mtp8.json) |
+| 单步，NVLink，MTP8 | [full_tables.md#sweep-peer-mtp8](../temp/a100_full/full_tables.md#sweep-peer-mtp8) | [tables.md](../temp/a100_full/tables.md) | [sweep_peer_mtp8.json](../temp/a100_full/sweep_peer_mtp8.json) |
+| 单步，PCIe，MTP1（14 个 batch 点） | [full_tables.md#sweep-host-mtp1](../temp/a100_full/full_tables.md#sweep-host-mtp1) | [tables.md](../temp/a100_full/tables.md) | [sweep_host_mtp1.json](../temp/a100_full/sweep_host_mtp1.json) |
+| 单步，NVLink，MTP1（12 个 batch 点） | [full_tables.md#sweep-peer-mtp1](../temp/a100_full/full_tables.md#sweep-peer-mtp1) | [tables.md](../temp/a100_full/tables.md) | [sweep_peer_mtp1.json](../temp/a100_full/sweep_peer_mtp1.json) |
+| 跨 decode + LRU，PCIe，MTP8（14 个 batch 点，逐步） | [full_tables.md#rounds-host-mtp8](../temp/a100_full/full_tables.md#rounds-host-mtp8) | [tables.md](../temp/a100_full/tables.md) | [rounds_host_mtp8.json](../temp/a100_full/rounds_host_mtp8.json) |
+| 跨 decode + LRU，NVLink，MTP8 | [full_tables.md#rounds-peer-mtp8](../temp/a100_full/full_tables.md#rounds-peer-mtp8) | [tables.md](../temp/a100_full/tables.md) | [rounds_peer_mtp8.json](../temp/a100_full/rounds_peer_mtp8.json) |
+| 跨 decode + LRU，PCIe，MTP1（10 个 batch 点） | [full_tables.md#rounds-host-mtp1](../temp/a100_full/full_tables.md#rounds-host-mtp1) | [tables.md](../temp/a100_full/tables.md) | [rounds_host_mtp1.json](../temp/a100_full/rounds_host_mtp1.json) |
+| 跨 decode + LRU，NVLink，MTP1（9 个 batch 点） | [full_tables.md#rounds-peer-mtp1](../temp/a100_full/full_tables.md#rounds-peer-mtp1) | [tables.md](../temp/a100_full/tables.md) | [rounds_peer_mtp1.json](../temp/a100_full/rounds_peer_mtp1.json) |
+| LRU 容量 2048 槽，PCIe / NVLink | [PCIe](../temp/a100_full/full_tables.md#rounds-host-mtp8-c2048) · [NVLink](../temp/a100_full/full_tables.md#rounds-peer-mtp8-c2048) | [tables.md](../temp/a100_full/tables.md) | [PCIe](../temp/a100_full/rounds_host_mtp8_c2048.json) · [NVLink](../temp/a100_full/rounds_peer_mtp8_c2048.json) |
+| LRU 容量 8192 槽，PCIe / NVLink | [PCIe](../temp/a100_full/full_tables.md#rounds-host-mtp8-c8192) · [NVLink](../temp/a100_full/full_tables.md#rounds-peer-mtp8-c8192) | [tables.md](../temp/a100_full/tables.md) | [PCIe](../temp/a100_full/rounds_host_mtp8_c8192.json) · [NVLink](../temp/a100_full/rounds_peer_mtp8_c8192.json) |
+
+- [`full_tables.md`](../temp/a100_full/full_tables.md)：每种方法的每个测量值。单步给出中位数和 p10～p90，并附实际远端占比、去重率、去重远端字节；跨 decode 给出每一步每种方法的耗时、我们每步的未命中页数，以及不开缓存时的去重远端页数。
+- [`tables.md`](../temp/a100_full/tables.md)：每个格子相对理论下限和相对朴素较快者的比值，以及远端占比 > 0 时输给朴素方法的格子清单。
+- JSON 里还有每个样本的原始耗时（`samples_us`）、配置、GPU 状态、各内存段的实际驻留位置和源码哈希。
+- 生成与复现：[`run.sh`](../temp/a100_full/run.sh)（全部测量）、[`full_tables.py`](../temp/a100_full/full_tables.py)、[`tables.py`](../temp/a100_full/tables.py)；运行日志 `temp/a100_full/run.log`（未纳入 git）。
+- 开发过程中的测量、方案取舍和失败尝试见 [`mla_host_a100_lru.md`](mla_host_a100_lru.md)。
 
 ## 测试设置
 
@@ -73,7 +94,7 @@
 | 128 | 567 | 1270 | 735 | 749 | 1.13 | 0.77 |
 | 256 | 964 | 2392 | 1156 | 1170 | 1.27 | 0.83 |
 
-全部 batch 点见 `temp/a100_full/tables.md`。
+上表只摘了部分 batch 点。全部 batch 点见 [比值表](../temp/a100_full/tables.md)；每一步、每种方法的耗时见 [全量结果](../temp/a100_full/full_tables.md#rounds-host-mtp8)（各层级、各 MTP 分节）。
 
 ## 单步不开缓存（摘录，µs，括号内为 ÷下限 / ÷朴素较快者）
 
@@ -88,9 +109,11 @@
 | 64 | 512 | 1447 (1.06/1.05) | 2253 (1.06/0.68) | 4112 (1.00/0.80) | 5556 (1.00/0.84) |
 | 128 | 1024 | 2758 (0.99/1.06) | 4261 (1.04/0.66) | 8119 (1.01/0.79) | 11418 (1.00/0.84) |
 
-NVLink 和 MTP1 的单步全表见 `temp/a100_full/tables.md`；解读见上面结论第 2 条。
+全部 25 个 batch 点见 [比值表](../temp/a100_full/tables.md)，各方法耗时见 [全量结果](../temp/a100_full/full_tables.md#sweep-host-mtp8)。NVLink 和 MTP1 的单步：[NVLink MTP8](../temp/a100_full/full_tables.md#sweep-peer-mtp8)、[PCIe MTP1](../temp/a100_full/full_tables.md#sweep-host-mtp1)、[NVLink MTP1](../temp/a100_full/full_tables.md#sweep-peer-mtp1)；解读见上面结论第 2 条。
 
 ## LRU 容量（MTP8，ours µs（每步未命中页）/ 朴素较快者 µs）
+
+全部 batch 点见 [比值表](../temp/a100_full/tables.md)；逐步数据见 [2048 槽 PCIe](../temp/a100_full/full_tables.md#rounds-host-mtp8-c2048)、[8192 槽 PCIe](../temp/a100_full/full_tables.md#rounds-host-mtp8-c8192)、[2048 槽 NVLink](../temp/a100_full/full_tables.md#rounds-peer-mtp8-c2048)、[8192 槽 NVLink](../temp/a100_full/full_tables.md#rounds-peer-mtp8-c8192)。
 
 | 层级 | 请求 | 2048 槽 | 4096 槽 | 8192 槽 |
 |---|---:|---:|---:|---:|

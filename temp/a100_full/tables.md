@@ -1,3 +1,6 @@
+# A100 比值表
+
+每格：ours 中位数 µs（÷理论下限 / ÷朴素较快者）。由 `temp/a100_full/tables.py` 生成；说明见 [`docs/mla_host_a100_full.md`](../../docs/mla_host_a100_full.md)，每种方法的全部测量值见 [`full_tables.md`](full_tables.md)，原始数据为同目录的 JSON。
 
 #### sweep_host_mtp8.json（远端带宽 26 GB/s）：ours µs（÷下限 / ÷朴素较快者）
 

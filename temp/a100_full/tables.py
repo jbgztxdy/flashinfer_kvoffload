@@ -57,6 +57,9 @@ def capacity(tier, ours):
         print(f"| {req} | " + " | ".join(cells) + " |")
 
 
+print("# A100 比值表\n")
+print("每格：ours 中位数 µs（÷理论下限 / ÷朴素较快者）。由 `temp/a100_full/tables.py` 生成；说明见 "
+      "[`docs/mla_host_a100_full.md`](../../docs/mla_host_a100_full.md)，每种方法的全部测量值见 [`full_tables.md`](full_tables.md)，原始数据为同目录的 JSON。")
 for n in ("sweep_host_mtp8.json", "sweep_peer_mtp8.json", "sweep_host_mtp1.json", "sweep_peer_mtp1.json"):
     sweep(n)
 rounds("rounds_host_mtp8.json", "ours_stage"); rounds("rounds_peer_mtp8.json", "ours_inplace")
