@@ -76,7 +76,8 @@ struct MLAHostBatchParams {
   uint32_t* slot_stamp;    // [cache_slots] 0 = empty
   int32_t* victim_of;      // [staging_capacity] cache slot a staged page is copied to, or -1
   int32_t* slot_pool;      // [staging_capacity] pool of the row that claimed a staged page
-  int32_t* entry_slot;     // [nnz] in place: miss index of a claiming entry (kHostBatchOwnerBit)
+  int32_t* claim_entry;    // [nnz] in place: entry of each row's k-th claim, at kv_indptr[row] + k
+  int32_t* entry_victim;   // [nnz] in place: LRU victim of a claiming entry, or -1
   uint32_t* row_slot_base; // [num_rows + 1] first staging slot of each row's claims
   uint32_t* pool_flags;    // [num_pools] epoch + 1 once the pool's victims are chosen
 
@@ -140,9 +141,9 @@ constexpr uint32_t kHostBatchScratchFetchRows = 2;
 // host_slot packs the claiming row and the page's rank among that row's claims (see
 // prepare_host_batch_rows); kv lengths and row counts are bounded accordingly.
 constexpr uint32_t kHostBatchRankBits = 16;
-// In place with the cache, the claiming row's entry of a missed Host page carries this bit, and
-// entry_slot holds the page's miss index: the attention CTA that loads it copies it into its
-// LRU victim (see writeback_host_batch_tile). Page ids stay below it (checked by the launcher).
+// In place with the cache, the claiming row's entry of a missed Host page carries this bit; the
+// LRU step stores its victim in entry_victim and the attention CTA that loads it copies it there
+// (see writeback_host_batch_tile). Page ids stay below it (checked by the launcher).
 constexpr int32_t kHostBatchOwnerBit = 1 << 30;
 // Pads the passes of prepare_host_batch_rows; cached entries encode slot 0 as -1.
 constexpr int32_t kHostBatchNoEntry = INT32_MIN;
@@ -377,9 +378,10 @@ __device__ __forceinline__ void prepare_host_batch_rows(const Params& params, ui
 // prepare_host_batch_rows without staging (params.stage false, cache on): valid entries are packed
 // to the row's front, cached ones are rewritten and stamped, and uncached Host pages stay page ids
 // for the attention to read in place. The entry that claims a page (first CAS) is marked with
-// kHostBatchOwnerBit and records its rank among the row's claims in entry_slot; the attention
-// that loads it copies the page into the cache (writeback_host_batch_tile), so no resolve pass
-// over the entries is needed (it took ~100 us at 1024 rows of 2048). Eight entries per thread
+// kHostBatchOwnerBit, and the row's k-th claim records its entry in claim_entry; the LRU step
+// gives it a victim and the attention that loads it copies the page there
+// (writeback_host_batch_tile), so no resolve pass over the entries is needed (it took ~100 us at
+// 1024 rows of 2048). Eight entries per thread
 // per pass overlap the dependent resident/CAS round trips (one per pass took ~225 us there).
 template <typename KTraits, typename Params>
 __device__ __forceinline__ void prepare_host_batch_rows_in_place(const Params& params,
@@ -450,7 +452,7 @@ __device__ __forceinline__ void prepare_host_batch_rows_in_place(const Params& p
           const uint32_t at = begin + position + __popc(valid_masks[i] & lower);
           if (fresh[i]) {
             params.remap[at] = entries[i] | kHostBatchOwnerBit;
-            params.entry_slot[at] = first + __popc(fresh_masks[i] & lower);
+            params.claim_entry[begin + first + __popc(fresh_masks[i] & lower)] = at;
           } else {
             params.remap[at] = entries[i];
           }
@@ -526,10 +528,8 @@ __device__ __forceinline__ uint32_t resolve_host_batch_slots(const Params& param
       const uint32_t slot = row_base[owner] + (claim & ((1u << kHostBatchRankBits) - 1));
       if (owner == row) {
         params.unique_pages[slot] = page;
-        if (host_batch_writes_back(params)) {
-          params.remap[begin + j] = page | kHostBatchOwnerBit;
-          params.entry_slot[begin + j] = slot;
-        } else if (host_batch_caching(params) && slot < params.staging_capacity) {
+        // (In place with the cache prepare already marked the claims; this loop does not run.)
+        if (host_batch_caching(params) && slot < params.staging_capacity) {
           params.slot_pool[slot] = params.row_pool[row];
         }
       }
@@ -836,13 +836,21 @@ __device__ __forceinline__ void read_host_batch_pages(const Params& params, uint
   }
 }
 
+// LRU victims of the rows of each pipeline stage (see load_host_batch_kv).
+template <typename KTraits>
+__device__ __forceinline__ int32_t* host_batch_tile_victims() {
+  __shared__ int32_t victims[KTraits::NUM_STAGES * KTraits::CTA_TILE_KV];
+  return victims;
+}
+
 // load_kv for page size one with staged entries resolved per row.
 template <typename KTraits, typename Params>
 __device__ __forceinline__ void load_host_batch_kv(typename KTraits::SharedStorage* smem_storage,
                                                    const Params& params,
                                                    const typename KTraits::IdType* pages,
                                                    const uint32_t kv_len, const uint32_t kv_base,
-                                                   const uint32_t stage_idx) {
+                                                   const uint32_t stage_idx,
+                                                   const uint32_t index_base) {
   using DTypeKV = typename KTraits::DTypeKV;
   constexpr uint32_t UPCAST_STRIDE_CKV = KTraits::UPCAST_STRIDE_CKV;
   constexpr uint32_t UPCAST_STRIDE_KPE = KTraits::UPCAST_STRIDE_KPE;
@@ -856,6 +864,18 @@ __device__ __forceinline__ void load_host_batch_kv(typename KTraits::SharedStora
     const bool valid = kv_base + smem_row < kv_len;
     DTypeKV *ckv_ptr, *kpe_ptr;
     resolve_host_batch_row<KTraits>(params, pages[j], ckv_ptr, kpe_ptr);
+    // In place with the cache, a claiming entry's victim travels with its tile, so the writeback
+    // reads no global memory after the tile lands.
+    if (host_batch_writes_back(params) && lane_idx % 8 == 0) {
+      int32_t* victim = host_batch_tile_victims<KTraits>() + stage_idx * KTraits::CTA_TILE_KV + smem_row;
+      if (valid && pages[j] >= 0 && (pages[j] & kHostBatchOwnerBit)) {
+        asm volatile("cp.async.ca.shared.global [%0], [%1], 4;" ::"r"(
+                         static_cast<uint32_t>(__cvta_generic_to_shared(victim))),
+                     "l"(params.entry_victim + index_base + kv_base + smem_row));
+      } else {
+        *victim = -1;
+      }
+    }
 #pragma unroll
     for (uint32_t mma_d = 0; mma_d < KTraits::NUM_MMA_D_CKV / 4; ++mma_d) {
       uint32_t ckv_smem_offset_w = ckv_smem.template get_permuted_offset<UPCAST_STRIDE_CKV>(
@@ -947,8 +967,9 @@ __device__ __forceinline__ void merge_host_batch_chunks(const Params& params) {
 }
 
 // In place with the cache: once a KV tile has landed in shared memory, copy the rows of missed
-// Host pages that this row claimed into their LRU victims and bind them (the LRU step chose and
-// stamped the victims before the second grid barrier). Each page is read over the link once, by
+// Host pages that this row claimed into their LRU victims (the LRU step chose, stamped and bound
+// them before the second grid barrier; their slots came with the tile). Metadata loads here
+// stalled the tile loop: ~370 us over 85k misses at 256 rows, even with the far tier in HBM. Each page is read over the link once, by
 // the attention that needs it, and written back from on-chip memory, so no SM is set aside to
 // fetch: a fetch CTA moves at most ~21 GB/s (about 40 KB of far reads in flight per SM), so
 // filling the cache from fetch CTAs took 12+ of 108 SMs to keep up with NVLink and still read
@@ -958,8 +979,7 @@ template <typename KTraits, typename Params>
 __device__ __forceinline__ void writeback_host_batch_tile(const Params& params,
                                                           typename KTraits::SharedStorage& storage,
                                                           uint32_t index_base, uint32_t kv_len,
-                                                          uint32_t kv_base, uint32_t stage_idx,
-                                                          uint32_t slot_base) {
+                                                          uint32_t kv_base, uint32_t stage_idx) {
   using DTypeKV = typename KTraits::DTypeKV;
   constexpr uint32_t ROW = KTraits::HEAD_DIM_CKV + KTraits::HEAD_DIM_KPE;
   constexpr uint32_t UPCAST_STRIDE_CKV = KTraits::UPCAST_STRIDE_CKV;
@@ -974,12 +994,8 @@ __device__ __forceinline__ void writeback_host_batch_tile(const Params& params,
     const uint32_t smem_row = host_batch_tile_row<KTraits>(j);
     const uint32_t kv_idx = kv_base + smem_row;
     if (kv_idx >= kv_len) continue;
-    const typename KTraits::IdType entry = params.remap[index_base + kv_idx];
-    if (entry < 0 || !(entry & kHostBatchOwnerBit)) continue;
-    const typename KTraits::IdType page = entry & ~kHostBatchOwnerBit;
-    // The claim is done with: clear the dedup entry for the next launch.
-    if (lane_idx % 8 == 0) params.host_slot[page - params.host_page_start] = 0;
-    const int32_t victim = params.victim_of[slot_base + params.entry_slot[index_base + kv_idx]];
+    const int32_t victim =
+        host_batch_tile_victims<KTraits>()[stage_idx * KTraits::CTA_TILE_KV + smem_row];
     if (victim < 0) continue;
     DTypeKV* destination = params.staging + static_cast<int64_t>(victim) * ROW +
                            (lane_idx % 8) * upcast_size<DTypeKV>();
@@ -996,13 +1012,6 @@ __device__ __forceinline__ void writeback_host_batch_tile(const Params& params,
           kpe_smem.base[kpe_smem.template get_permuted_offset<UPCAST_STRIDE_KPE>(
               smem_row, 8 * mma_d + lane_idx % 8)];
     }
-    if (lane_idx % 8 == 0) {
-      const int32_t evicted = params.slot_page[victim];
-      // An evicted page is not referenced this launch: a reference would have hit and stamped it.
-      if (evicted >= 0) params.resident[evicted - params.host_page_start] = -1;
-      params.resident[page - params.host_page_start] = victim;
-      params.slot_page[victim] = page;
-    }
   }
 }
 
@@ -1014,8 +1023,7 @@ template <typename KTraits, typename Params>
 __device__ __forceinline__ void attend_host_batch_tiles(
     const Params& params, typename KTraits::SharedStorage& storage,
     typename KTraits::AttentionVariant& variant, const uint32_t* scratch, uint32_t index_base,
-    uint32_t kv_len, int host_tiles, float (*s_frag)[8], float (*o_frag)[8], float* m, float* d,
-    uint32_t slot_base) {
+    uint32_t kv_len, int host_tiles, float (*s_frag)[8], float (*o_frag)[8], float* m, float* d) {
   constexpr uint32_t CTA_TILE_KV = KTraits::CTA_TILE_KV;
   constexpr int32_t NUM_STAGES = KTraits::NUM_STAGES;
   typename KTraits::IdType pages[kHostBatchTileRows<KTraits>];
@@ -1036,7 +1044,7 @@ __device__ __forceinline__ void attend_host_batch_tiles(
                                      (kv_tile_idx - stage_idx) * CTA_TILE_KV, pages);
       load_host_batch_kv<KTraits>(&storage, params, pages, kv_len,
                                   (kv_tile_idx - stage_idx) * CTA_TILE_KV,
-                                  (kv_tile_idx - stage_idx) % NUM_STAGES);
+                                  (kv_tile_idx - stage_idx) % NUM_STAGES, index_base);
       cp_async::commit_group();
     }
   }
@@ -1049,8 +1057,7 @@ __device__ __forceinline__ void attend_host_batch_tiles(
     cp_async::wait_group<NUM_STAGES - 1>();
     __syncthreads();
     writeback_host_batch_tile<KTraits>(params, storage, index_base, kv_len,
-                                       kv_tile_idx * CTA_TILE_KV, kv_tile_idx % NUM_STAGES,
-                                       slot_base);
+                                       kv_tile_idx * CTA_TILE_KV, kv_tile_idx % NUM_STAGES);
     compute_mla_qk<KTraits>(&storage, kv_tile_idx % NUM_STAGES, s_frag);
     logits_mask_<KTraits>(0, kv_tile_idx * CTA_TILE_KV, 1, kv_len, kv_len, params.num_heads,
                           s_frag);
@@ -1062,7 +1069,7 @@ __device__ __forceinline__ void attend_host_batch_tiles(
       }
       __syncthreads();
       load_host_batch_kv<KTraits>(&storage, params, pages, kv_len, next * CTA_TILE_KV,
-                                  next % NUM_STAGES);
+                                  next % NUM_STAGES, index_base);
       cp_async::commit_group();
     }
   }
@@ -1074,8 +1081,7 @@ __device__ __forceinline__ void attend_host_batch_tiles(
     cp_async::wait_group<NUM_STAGES - 1>();
     __syncthreads();
     writeback_host_batch_tile<KTraits>(params, storage, index_base, kv_len,
-                                       kv_tile_idx * CTA_TILE_KV, kv_tile_idx % NUM_STAGES,
-                                       slot_base);
+                                       kv_tile_idx * CTA_TILE_KV, kv_tile_idx % NUM_STAGES);
     compute_mla_qk<KTraits>(&storage, kv_tile_idx % NUM_STAGES, s_frag);
     update_mdo_states_<KTraits>(&storage, kv_tile_idx % NUM_STAGES, variant, s_frag, o_frag, m, d);
     compute_mla_pv<KTraits>(&storage, kv_tile_idx % NUM_STAGES, s_frag, d, o_frag);
@@ -1084,7 +1090,7 @@ __device__ __forceinline__ void attend_host_batch_tiles(
     }
     __syncthreads();
     load_host_batch_kv<KTraits>(&storage, params, pages, kv_len, next * CTA_TILE_KV,
-                                next % NUM_STAGES);
+                                next % NUM_STAGES, index_base);
     cp_async::commit_group();
   }
   cp_async::wait_group<0>();
@@ -1093,8 +1099,7 @@ __device__ __forceinline__ void attend_host_batch_tiles(
 #pragma unroll
   for (; kv_tile_idx >= 0; --kv_tile_idx) {
     writeback_host_batch_tile<KTraits>(params, storage, index_base, kv_len,
-                                       kv_tile_idx * CTA_TILE_KV, kv_tile_idx % NUM_STAGES,
-                                       slot_base);
+                                       kv_tile_idx * CTA_TILE_KV, kv_tile_idx % NUM_STAGES);
     compute_mla_qk<KTraits>(&storage, kv_tile_idx % NUM_STAGES, s_frag);
     logits_mask_<KTraits>(0, kv_tile_idx * CTA_TILE_KV, 1, kv_len, kv_len, params.num_heads,
                           s_frag);
@@ -1124,6 +1129,19 @@ __device__ __forceinline__ uint2 host_batch_thread_scan(uint32_t value, uint32_t
   }
   __syncthreads();
   return make_uint2(prefix, total);
+}
+
+// In place: the claiming entry of the pool's staged-th miss, from the row bases of the claims.
+template <typename Params>
+__device__ __forceinline__ int32_t host_batch_claim_entry(const Params& params, uint32_t pool,
+                                                          const uint32_t* row_base,
+                                                          uint32_t staged) {
+  uint32_t low = params.pool_row_start[pool], high = params.pool_row_start[pool + 1] - 1;
+  while (low < high) {
+    const uint32_t mid = (low + high + 1) / 2;
+    if (row_base[mid] <= staged) low = mid; else high = mid - 1;
+  }
+  return params.claim_entry[params.kv_indptr[low] + staged - row_base[low]];
 }
 
 // LRU item of one pool: give each page the pool's rows missed this launch a cache slot, taking
@@ -1277,9 +1295,18 @@ __device__ __noinline__ void run_host_batch_lru(const Params& params, uint8_t* s
       const uint32_t staged = first + r;
       const int32_t slot = base + victim_slots[r];
       params.slot_stamp[slot] = stamp;
-      params.victim_of[staged] = slot;
-      if (row_base) continue;  // bound by the writing attention CTA
-      const typename Params::IdType page = params.unique_pages[staged];
+      typename Params::IdType page;
+      if (row_base) {
+        // In place: bind here, so the attention only copies the bytes. The page's claiming entry
+        // is the rank-th claim of the pool row whose slot range holds `staged`.
+        const int32_t entry = host_batch_claim_entry(params, pool, row_base, staged);
+        page = params.remap[entry] & ~kHostBatchOwnerBit;
+        params.entry_victim[entry] = slot;
+        params.host_slot[page - params.host_page_start] = 0;
+      } else {
+        params.victim_of[staged] = slot;
+        page = params.unique_pages[staged];
+      }
       const int32_t evicted = params.slot_page[slot];
       // An evicted page is not referenced this launch: a reference would have hit and stamped it.
       if (evicted >= 0) params.resident[evicted - params.host_page_start] = -1;
@@ -1289,7 +1316,13 @@ __device__ __noinline__ void run_host_batch_lru(const Params& params, uint8_t* s
   }
   // Pages beyond the pool's free slots stay uncached.
   for (uint32_t staged = first + victims + tid; staged < last; staged += THREADS) {
-    params.victim_of[staged] = -1;
+    if (row_base) {
+      const int32_t entry = host_batch_claim_entry(params, pool, row_base, staged);
+      params.entry_victim[entry] = -1;
+      params.host_slot[(params.remap[entry] & ~kHostBatchOwnerBit) - params.host_page_start] = 0;
+    } else {
+      params.victim_of[staged] = -1;
+    }
   }
   __threadfence();
   __syncthreads();
@@ -1381,8 +1414,7 @@ __device__ __forceinline__ void run_host_batch_item(const Params& params,
     // load_q's copies join the first KV group, as in the native kernel.
     attend_host_batch_tiles<KTraits>(params, storage, variant, scratch,
                                      params.kv_indptr[row] + kv_start, kv_len, host_tiles, s_frag,
-                                     o_frag, m, d,
-                                     host_batch_writes_back(params) ? params.row_slot_base[row] : 0);
+                                     o_frag, m, d);
   }
   __syncthreads();
   normalize_d_<KTraits>(&storage, 0, o_frag, m, d);

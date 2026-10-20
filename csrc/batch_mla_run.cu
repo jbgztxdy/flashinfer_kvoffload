@@ -341,13 +341,15 @@ void BatchMLAPagedAttentionRunHostBatch(
     auto* scratch = static_cast<int32_t*>(cache_scratch.data_ptr());
     params.victim_of = scratch;
     params.slot_pool = scratch + misses;
-    params.entry_slot = scratch + misses;
+    // In place (misses == nnz): entry_victim over victim_of, claim_entry over slot_pool.
+    params.entry_victim = scratch;
+    params.claim_entry = scratch + misses;
     params.row_slot_base = reinterpret_cast<uint32_t*>(scratch + 2 * misses);
     params.pool_flags = reinterpret_cast<uint32_t*>(scratch + 2 * misses + rows + 1);
   } else {
     params.row_pool = params.pool_row_start = params.pool_id = nullptr;
     params.resident = params.slot_page = params.victim_of = params.slot_pool = nullptr;
-    params.entry_slot = nullptr;
+    params.claim_entry = params.entry_victim = nullptr;
     params.slot_stamp = params.row_slot_base = params.pool_flags = nullptr;
   }
   params.q_nope_stride_n = q_nope.stride(0);
