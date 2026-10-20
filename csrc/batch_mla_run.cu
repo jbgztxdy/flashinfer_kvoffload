@@ -254,11 +254,14 @@ void BatchMLAPagedAttentionRunHostBatch(
   // host-side release and invalidate ops use as a sink, so they need no sync):
   //   resident [Host pages + 1] init -1 |
   //   slot_page [slots] init -1 | slot_stamp [slots] init 0.
-  // cache_scratch: victim_of [misses] | slot_pool [misses] | row_slot_base [rows + 1] |
+  // cache_scratch: victim_of [misses] | slot_pool [misses] (in place: entry_slot [nnz], as misses
+  //   is nnz then) | row_slot_base [rows + 1] |
   //   pool_flags [num_pools] (epoch-tagged, init 0).
   const int64_t cache_slots = pool_capacity > 0 ? max_pools * pool_capacity : 0;
   TVM_FFI_ICHECK(num_pools >= 0 && pool_capacity >= 0 && staging.size(0) >= cache_slots);
   TVM_FFI_ICHECK(pool_capacity == 0 || (num_pools <= max_pools && cache_slots < (1ll << 31)));
+  // In place, claiming entries carry mla::kHostBatchOwnerBit in their page id.
+  TVM_FFI_ICHECK(stage || pool_capacity == 0 || ckv_cache.size(0) <= mla::kHostBatchOwnerBit);
   // Without staging only the cache slots are used.
   const int64_t capacity = stage ? staging.size(0) - cache_slots : 0;
   TVM_FFI_ICHECK(!stage || capacity > 0);
@@ -338,11 +341,13 @@ void BatchMLAPagedAttentionRunHostBatch(
     auto* scratch = static_cast<int32_t*>(cache_scratch.data_ptr());
     params.victim_of = scratch;
     params.slot_pool = scratch + misses;
+    params.entry_slot = scratch + misses;
     params.row_slot_base = reinterpret_cast<uint32_t*>(scratch + 2 * misses);
     params.pool_flags = reinterpret_cast<uint32_t*>(scratch + 2 * misses + rows + 1);
   } else {
     params.row_pool = params.pool_row_start = params.pool_id = nullptr;
     params.resident = params.slot_page = params.victim_of = params.slot_pool = nullptr;
+    params.entry_slot = nullptr;
     params.slot_stamp = params.row_slot_base = params.pool_flags = nullptr;
   }
   params.q_nope_stride_n = q_nope.stride(0);
