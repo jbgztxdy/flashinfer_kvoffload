@@ -32,9 +32,88 @@
 | batch | MTP8：1～128 请求（8～1024 行）25 个点；MTP1：1～512 请求（NVLink 到 256，受 GPU1 显存限制）12～14 个点 |
 | 单步 | 每点 7 个远端占比（0%～30%），8 轮 × 2 组索引，中位数 |
 | 跨 decode | 32 个连续 token（MTP8 为 4 步、MTP1 为 32 步），除最新 token 外全部 KV 在远端，取后一半步的平均；每请求 4096 槽，另测 2048、8192 |
-| ours | PCIe：staged 模式（fetch CTA 去重搬运 + 写缓存）；NVLink：原地读模式（attention CTA 写回缓存） |
+| ours | 同一个 kernel（`BatchMLAHostBatchKernel`），按运行时开关走不同分支：单步测试 PCIe 和 NVLink 都用 staged 模式；跨 decode 测试 PCIe 用 staged + LRU，NVLink 用原地读 + LRU。详见下一节 |
 | 朴素方法 | Memcpy（PCIe：CPU gather 到 pinned 内存不计时 + H2D；NVLink：GPU gather 计时）、Direct（原生 kernel 原地读）。跨 decode 时两者都配同样的逐步 LRU（`memcpy_lru`、`direct_lru`），LRU 记账在 CPU 上且**不计时**，对它们偏宽松 |
 | 下限 | 计算下限 = 所有选中行都在本地时的原生 attention；传输下限 = 去重远端字节 ÷ 实测 gather 带宽；取两者较大值 |
+
+## 各比较对象的实现
+
+**我们的 PCIe 和 NVLink 是同一个 kernel，不是两个 kernel。** 代码和编译产物只有一份（`include/flashinfer/attention/mla_host_batch.cuh`），由两个运行时开关选择分支：`host_stage`（staged / 原地读）和是否调用了 `set_host_cache`（开 / 关 LRU）。两种远端层的唯一区别是远端那段虚拟地址映射到哪里：PCIe 测试映射到 pinned Host DRAM，NVLink 测试映射到 GPU1 的 HBM（`temp/h800/tiers.py`）。kernel 本身不知道远端是什么，只用页号 ≥ `host_page_start` 判断一页在远端。
+
+各测试里实际用的配置：
+
+| 测试 | PCIe 远端 | NVLink 远端 |
+|---|---|---|
+| 单步（`sweep_*`），列名 ours | staged，无缓存，8 个 fetch CTA | **同样是 staged**，无缓存，8 个 fetch CTA |
+| 跨 decode，列名 ours | staged + LRU（`ours_stage`） | 原地读 + LRU（`ours_inplace`） |
+| 跨 decode，列名「不开缓存」 | staged，无缓存（与单步 ours 相同） | 原地读、无缓存：wrapper 直接走原生 kernel，**等同于 Direct** |
+
+所以单步 NVLink 表里的 ours 是 staged 模式，这不是推荐配置。推荐配置（原地读、无缓存）就是原生 Direct，因此单步 NVLink 上我们的推荐配置结果等于 Direct 那一列。
+
+所有方法共享的条件：一次 decode 步里每个 query 行（MTP8 时每请求 8 行）各有 2048 个选中页（page_size 1，一页就是一个 token 的 576 维 KV），一部分在本地 HBM，一部分在远端；计时只包括 GPU 上的执行。
+
+### 一个 kernel 的公共骨架
+
+一次 cooperative launch，所有 CTA 常驻，内部按阶段推进：
+
+1. **prepare**：把每行的条目分成本地和远端两类。远端页在整个 batch 内用原子 CAS 去重，第一个 CAS 成功的行「认领」这一页。行被切成若干段分给多个 CTA 并行处理。
+2. **grid barrier**，然后 **resolve**：按行顺序给认领的页编号（staging 槽号），并据此把条目改写成指向 staging 或缓存的编码。
+3. **attention items**：沿用原生 MLA 的 tile 循环（QK、online softmax、PV），每个 item 是（行，64 个 head，一段 KV）。大 batch 一行一个 item；小 batch 把行拆成多段，最后再做一次 grid barrier，按 LSE 合并各段结果。
+4. 条目的编码：本地页是原页号；`-(r+1)` 表示读 kernel 自管的 HBM buffer 第 r 行。这块 buffer 前面是 LRU 缓存槽，后面是 staging 槽，所以 tile 加载只需一个基址。
+
+### 无 LRU：我们的 staged 模式（单步 PCIe / NVLink、跨 decode PCIe「不开缓存」）
+
+- **去重**：同一个远端页在整个 batch 里只取一次。MTP8 时 8 个 token 选中的页约一半重叠，去重率约 0.41。
+- **取数**：grid 末尾的 8 个 fetch CTA 按 staging 槽号顺序，用 `cp.async` 把远端页读进 shared memory（双缓冲），再写到 HBM staging，每写完一块（16 或 64 行）发布一个就绪标志。读完后，这些 CTA 也转去做 attention item。
+- **重叠**：attention item 先算本地 tile，只在要用远端 tile 之前等对应块的标志。所以远端传输和本地部分的计算是并行的。
+- **适用**：PCIe（约 27 GB/s）。瓶颈是带宽，去重直接减少要搬的字节数。在 NVLink 上，8 个 fetch CTA 最多只能读约 130～170 GB/s（单个 SM 约 21 GB/s 上限），所以这个模式在 NVLink 上慢于 Direct。
+
+### 无 LRU：我们的原地读模式（跨 decode NVLink「不开缓存」）
+
+不需要 prepare 也不需要 staging：每个条目直接按原页号由 attention 读远端。这和原生 kernel 完全一样，所以 wrapper 在这种配置下直接调原生 kernel，结果等同于 Direct。
+
+### Memcpy（单步）
+
+1. 对本步所有远端引用做去重（`torch.unique`），得到去重后的远端页列表，并把条目改写成指向一段本地 staging 区。
+2. PCIe：CPU 用 `index_select` 把这些页从 pinned Host 内存收集到一块连续的 pinned buffer（**不计时**），然后一次 H2D DMA 拷到 HBM staging 区。NVLink：GPU 上 `index_select` 从 GPU1 收集到 GPU0 的 staging 区（计时）。
+3. 原生 MLA kernel 在全本地的条目上做 attention。
+4. 传输和计算串行，但只搬去重后的字节。
+
+### Direct（单步）
+
+原生 MLA kernel（`BatchMLAPagedAttentionWrapper.run`，不传 `host_page_start`）直接用原始条目。远端页通过统一地址映射原地读取，**每个引用各读一次**，不去重；传输和计算在 tile 流水线里自然重叠。
+
+### 计算下限（`attn` / `floor_fa2`）
+
+原生 MLA kernel，条目改写成全部指向本地 HBM（与 Memcpy 相同的改写），不做任何拷贝。只用于计时（staging 区内容是什么不重要），表示「没有任何远端访问」时的耗时。
+
+### 有 LRU 的四种方法（跨 decode `rounds_*`）
+
+设定：每个请求一个 LRU 池（默认 4096 槽），跨 decode 步保留。LRU 语义四种方法相同：本步被引用的页刷新最近使用时间；未命中的页按「最久未用、且本步没有被引用」的顺序淘汰槽位；池满且没有可淘汰的槽时，这一页就不缓存。缓存是远端页的只读副本，淘汰不需要回写。
+
+**ours，staged + LRU（PCIe，`ours_stage`）**
+1. prepare：每个远端条目先查全局表 `resident[page]`。命中就改写成缓存槽编码，并写入本 launch 的时间戳；未命中的才去重、进 staging。
+2. LRU item（每池一个，排在所有 attention item 之前，由 worker CTA 执行）：读入池内全部时间戳，用 radix select 选出最旧的若干槽（数量 = 本池本步的未命中页数），并更新 `resident`、`slot_page`、`victim_of`。
+3. fetch CTA 照常取数、写 staging、发布就绪标志，然后从 shared memory 里的同一份数据把页再写进它的 victim 槽。如果这一块的 victim 还没选好，就记下来，循环结束后再从 staging 拷到缓存（HBM 到 HBM），这样 PCIe 读取不会被 LRU 卡住。
+4. 远端每页只读一次，命中的页完全不走远端。
+
+**ours，原地读 + LRU（NVLink，`ours_inplace`）**
+1. prepare：命中同上；未命中的页由认领的那个条目打上标记位，并记录它是该行第几个认领。
+2. 第一次 grid barrier 后，每个池的 LRU 由一个 CTA 选出 victim、完成绑定，并把 victim 写进 `entry_victim[条目]`。
+3. attention 加载 tile 时，用 `cp.async` 把这一 tile 各行的 victim 一起预取进 shared memory。tile 落地后，认领行直接把 shared memory 里的这一行写到 victim 槽。没有 fetch CTA，108 个 SM 都参与读远端。
+4. 代价：只去重「写缓存」这一步。同一页被同一步的多个 MTP 行引用时，每个引用各读一次远端（MTP8 平均 2.1 次）。NVLink 带宽够用，所以这比占用 SM 做 fetch 更快。
+
+**Memcpy + LRU（`memcpy_lru`）**
+1. LRU 记账在 CPU 上模拟（与上面同样的逐步 LRU），提前算好每一步的未命中页，**不计时**。
+2. 每步只把未命中页拷到本地（PCIe：CPU gather 不计时 + H2D；NVLink：GPU gather 计时），然后原生 kernel 在全本地的条目上做 attention。
+3. 只用于计时：attention 读的是包含本步全部远端页的紧凑区域（相当于命中页已经在缓存里），不检查结果正确性。
+
+**Direct + LRU（`direct_lru`）**
+1. LRU 同样在 CPU 上提前算好，不计时。
+2. 原生 kernel 中，命中的条目读本地页（读任意本地页，只用于计时），未命中的条目原地读远端。
+3. 随后用 GPU gather 把未命中页拷进本地，模拟填充缓存（计时）。
+
+**说明**：两种朴素方法没有设备端的缓存管理，它们的命中检测和淘汰开销没有计入，这对它们有利。真正在设备上做 LRU 的对比对象是 SGLang HiSparse（swap-in kernel + FlashMLA），要在 H800 上测。
 
 ## 结论
 
