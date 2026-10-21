@@ -127,10 +127,12 @@ def main():
             ours_inplace="our kernel, LRU pool of `capacity` per request, misses read in place, fetch CTAs fill the cache",
             ours_nocache="our kernel without cache (staged on host tier, in place on peer tier)",
             hisparse=("SGLang HiSparse: load_cache_to_device_buffer_mla (per-request LRU of `capacity` + newest "
-                      "slot, one block per request) then sgl_kernel FlashMLA sparse fwd; MTP rows run one "
-                      "draft token after another, since the HiSparse decode path takes one row per request"),
+                      "slot, one block per request) then sgl_kernel FlashMLA sparse fwd; with MTP each draft token "
+                      "runs its own swap-in and attention in turn: the decode path takes one row per request, and "
+                      "the LRU only protects the current row's pages, so one attention over all rows after all "
+                      "swap-ins could read evicted slots"),
             floor_fa2="native FA2 MLA with every selected row near: compute floor of our kernel",
-            floor_flashmla="FlashMLA sparse fwd with every selected row in HBM: compute floor of HiSparse",
+            floor_flashmla="FlashMLA sparse fwd with every selected row in HBM, one call over all rows: compute floor of HiSparse",
             direct_lru=("Direct with the same LRU: native attention with hits near and misses read in place, then a "
                         "GPU gather of the misses into the cache for the next step"),
             memcpy_lru=("Memcpy with the same per-request step LRU: copy only each step's missed pages near "
@@ -257,12 +259,10 @@ def run_requests(args, requests, steps, kv, main_kv, alias, captures, device):
         elif mode in ours:
             ours[mode][0].run(query, rope, main_kv[..., :512], main_kv[..., 512:], out=output, host_page_start=kv.near)
         elif mode == "floor_flashmla":
-            # Every selected row in HBM: positions index the compacted rows directly.
-            for jj in range(mtp):
-                torch.ops.sgl_kernel.sparse_prefill_fwd.default(
-                    q_cat[:, jj].contiguous(), compact.view(-1, 1, 576),
-                    (p["remapped"].view(requests, mtp, topk)[:, jj]).contiguous().view(requests, 1, topk),
-                    SM_SCALE, 512, None, None)
+            # Every selected row in HBM, one call over all rows (s_q = rows).
+            torch.ops.sgl_kernel.sparse_prefill_fwd.default(
+                q_cat.view(rows, HEADS, 576), compact.view(-1, 1, 576),
+                p["remapped"].view(rows, 1, topk), SM_SCALE, 512, None, None)
 
     def hisparse_step(step, check=False):
         p = plan[step]
