@@ -13,26 +13,70 @@
 | 单步不开缓存，PCIe，MTP8，远端 5%～30% | 128 请求 1.03～1.21 | **0.61～0.94**（远端 > 0 的 150 格中只有 1 请求、5% 一格输） | — |
 | **H800，PCIe，对比 SGLang HiSparse**（小规模） | — | **HiSparse 耗时为本文的 1.6～5.5 倍** | — |
 
-优势来源：
-1. **全 batch 去重 + 只搬未命中**：一个远端页在整个 batch 里只搬一次（MTP8 时去重后只剩约 41%），命中 LRU 的页完全不走远端链路。
-2. **搬运与计算重叠在一个 kernel 里**：attention 先算本地 tile，远端 tile 到了再算；Memcpy 和 HiSparse 都是先搬后算，两步串行。
-3. **LRU 在 kernel 内完成**：命中检测、淘汰选择（radix select）、写缓存都在同一次 launch 里，没有额外的 kernel 和 CPU 同步。
-4. **按链路选择搬运方式**：PCIe 带宽低，用少量 fetch CTA 去重搬运；NVLink 带宽高，由全部 attention CTA 原地读并顺手写回缓存。
+这些优势来自第 1 节的几项设计：统一地址（UVA + VMM）让 kernel 直接读远端；全 batch 去重让每个远端页每步最多过一次链路；LRU 融合在同一个 kernel 里，命中的页不走链路，也没有额外的 kernel 和 CPU 同步；远端搬运与本地计算在同一个 kernel 内重叠；按链路特性选择由少量 fetch CTA 搬运（PCIe）还是由全部 attention CTA 原地读并写回缓存（NVLink）。
 
-## 1. 算子写法（简述）
+## 1. 算子设计
 
-PCIe 和 NVLink 用的是**同一个 kernel**（`include/flashinfer/attention/mla_host_batch.cuh` 中的 `BatchMLAHostBatchKernel`），由两个运行时开关选择分支：`host_stage`（staged / 原地读）和是否调用 `set_host_cache`（开 / 关 LRU）。kernel 只用「页号 ≥ `host_page_start`」判断一页在远端，远端是 Host DRAM 还是 peer GPU HBM 只取决于这段虚拟地址映射到哪里。一次 cooperative launch 的流程：prepare（行内分类 + 全 batch 原子去重）→ grid barrier → resolve（给远端页编号）→ attention items（原生 MLA tile 循环）→（小 batch 拆 KV 时）合并。
+### 1.1 场景与对照：SGLang HiSparse 的做法
 
-| 配置 | 远端页怎么到 attention | LRU 怎么维护 | 用在 |
+场景：DSA sparse MLA decode。每个 query 行从本请求的 KV 中选 top-k = 2048 个 token（page_size 1，一页 = 一个 token，576 维 BF16，每层 1152 B），对这 2048 个 token 做 MLA attention（64 头）。KV 的大部分放在远端：Host DRAM（经 PCIe）或其他 GPU 的 HBM（经 NVLink）；本地 HBM 只放最近的 token 和缓存。
+
+SGLang HiSparse（原版）每步用两个 kernel：
+1. **swap-in**（`load_cache_to_device_buffer_mla`，每个请求一个 CTA）：每个请求在 HBM 上有一块独立的设备 buffer（`capacity` 个槽 + 最新 token 1 槽），在请求内做 LRU。kernel 检查本请求的 top-k 哪些已在 buffer 里，把未命中的页从 Host 拷进 buffer（淘汰最久未用的槽），并输出每个 top-k 在 buffer 中的槽号。
+2. **attention**（`sgl_kernel` FlashMLA sparse decode）：按槽号读 buffer 做 attention。
+
+由此带来的特点：
+- 两个 kernel 串行，必须先搬完再算，链路和计算单元不能同时忙。
+- decode 路径每个请求只接受 1 个 query 行。MTP 的 k 个 draft token 要依次各做一次 swap-in 和一次 attention，同一请求不同行共享的页每行各判断一次。
+- 缓存按请求划分，只能按请求内的槽号访问。
+
+### 1.2 本文 kernel 的设计特色
+
+1. **统一地址：UVA + VMM，kernel 直接读远端。** KV pool 用 CUDA 虚拟内存管理接口分配：`cuMemAddressReserve` 预留一段连续虚拟地址，`cuMemCreate` + `cuMemMap` 把本地 HBM 和远端物理内存（Host NUMA 上的 pinned DRAM，或 peer GPU 的 HBM）首尾相接映射进去。在 UVA 下，GPU 可以直接解引用这段地址。kernel 只拿一个基址，第 p 页的地址就是 `基址 + p × 1152 B`，本地页和远端页用同一种编码。地址翻译由 GPU MMU 完成，访问远端页时硬件直接走 PCIe 或 NVLink（零拷贝，不迁移页）。kernel 只用「页号 ≥ `host_page_start`」判断一页在远端，以决定是否去重、查缓存、搬运。
+2. **一个 cooperative kernel 完成整步。** 分类、去重、查缓存、LRU 淘汰、远端搬运、attention、拆 KV 后的合并，全部在一次 launch 内用 grid barrier 分阶段完成。每步只有一次 kernel 启动，没有 CPU 参与，也没有 kernel 之间的同步。
+3. **全 batch 去重。** 远端页用原子 CAS 在整个 batch（所有请求、所有 MTP 行）范围内去重，第一个 CAS 成功的行「认领」这一页。每个远端页每步最多搬一次；MTP8 时同一请求的 8 行选中的页大量重叠，去重后只剩约 41%。
+4. **LRU 融合在算子内。** 缓存槽和 staging 在同一块 HBM buffer 里（前段是缓存槽，后段是 staging 槽），条目用负数编码指向这块 buffer，所以 attention 的 tile 加载只需要一个分支：
+   - **全局表** `resident[远端页] = 缓存槽`：命中检测对所有请求的缓存都有效。
+   - **每请求一个缓存池**（池号 = 请求的 `req_pool_idx`），淘汰和放置在池内进行。每个槽记录最近使用的 launch 编号；每步每池用 radix select 选出最久未用、且本步没被引用的槽作为 victim。
+   - 命中检测、淘汰选择、写缓存都在同一次 launch 内完成，状态在 kernel 末尾由最后一个 CTA 复位，不需要 host 侧维护。
+   - 配套接口：`set_host_cache` 设定池和容量，`release_host_cache` 在请求结束时释放池，`invalidate_host_pages` 在远端页被复用前作废。
+5. **远端搬运与本地计算重叠。** attention 沿用原生 MLA 的 tile 循环（QK、online softmax、PV）。每个 item 先算本地 tile，只在用到远端 tile 前等待它就绪（按块发布的 release/acquire 标志），远端传输时间被本地计算覆盖。
+6. **按链路特性选择搬运方式。** PCIe 带宽低（A100 约 27 GB/s），瓶颈在字节数，所以由少量 fetch CTA 去重搬运。NVLink 带宽高（约 281 GB/s），而单个 SM 的远端读上限约 21 GB/s，8 个 fetch CTA 远远喂不满，所以改为全部 attention CTA 原地读远端，并顺手把未命中页写进缓存。两种方式是同一个 kernel 的两个运行时分支。
+7. **MTP 多行一次处理，小 batch 拆 KV。** 所有请求的所有 MTP 行在同一次 launch 内处理。batch 小、行数不足以占满 SM 时，把一行的 KV 拆成若干段分给多个 CTA，最后按 LSE 合并。
+
+### 1.3 执行流程
+
+所有配置共用同一个 kernel（`BatchMLAHostBatchKernel`），由两个运行时开关选择分支：`host_stage`（staged / 原地读）和是否调用了 `set_host_cache`（开 / 关 LRU）。
+
+**staged，不开缓存**（PCIe 单步）
+1. prepare：每行把条目分成本地和远端两类；远端页做全 batch 去重。
+2. grid barrier → resolve：按行顺序给被认领的远端页编号，作为 staging 槽号，并把条目改写为指向 staging 的编码。
+3. grid barrier → grid 末尾的 8 个 fetch CTA 按槽号顺序用 `cp.async` 把远端页读入 shared memory（shared memory 够时双缓冲，下一块的读取与本块的写出重叠），写到 HBM staging，每写完一块（16 或 64 行）发布一个就绪标志，然后转去做 attention item。其余 CTA 直接做 attention item：本地 tile 先算，staging tile 等对应标志。
+4. （拆 KV 时）grid barrier → 合并。
+
+**staged + LRU**（**PCIe 推荐**）
+1. prepare：每个远端条目先查 `resident`。命中的改写为缓存槽编码并刷新时间戳，未命中的才进入去重。
+2. resolve：同上，只给未命中页编号。
+3. LRU item（每池一个，排在 attention item 之前）：为本池本步的未命中页选出同样数量的 victim 槽，更新 `resident`、槽→页映射和 victim 表。
+4. fetch CTA 照常搬运并发布标志，同时从 shared memory 里的同一份数据把页写进它的 victim 槽。若这一块的 victim 还没选好，就记下来，等搬运循环结束后再从 staging 拷到缓存（HBM 到 HBM），所以 PCIe 读取从不等待 LRU。
+5. 结果：每个远端页最多读一次，命中的页不走链路。
+
+**原地读，不开缓存**（NVLink 单步）：每个条目直接按原页号读远端，与原生 kernel 完全相同，wrapper 直接调用原生 kernel。
+
+**原地读 + LRU**（**NVLink 推荐**）
+1. prepare：命中的条目同上改写为缓存槽；未命中的保留原页号（由 attention 原地读），其中认领这一页的条目打上标记位，并记下它是本行第几个认领。不需要 resolve 遍历。
+2. grid barrier → 每个池由一个 CTA 选出 victim、完成绑定，并把 victim 写进认领条目对应的位置。
+3. grid barrier → attention：加载每个 tile 时，用 `cp.async` 把这一 tile 各行的 victim 一起预取进 shared memory。tile 落地后，认领行把 shared memory 里的这一行写入 victim 槽。没有 fetch CTA，所有 SM 都参与读远端。
+4. 代价：只有「写缓存」这一步去重。同一页被同一步的多个 MTP 行引用时，每个引用各读一次远端（MTP8 稳态平均 2.1 次）。NVLink 带宽足以承受，这比占用 SM 专门做 fetch 更快。
+
+| | HiSparse | 本文 staged + LRU（PCIe） | 本文原地读 + LRU（NVLink） |
 |---|---|---|---|
-| staged，不开缓存 | 8 个 fetch CTA 把去重后的远端页 `cp.async` 进 HBM staging，按块发布就绪标志；attention 先算本地 tile，用到远端 tile 前等对应块的标志 | — | PCIe 单步 |
-| staged + LRU | 同上，但命中的页直接读缓存槽，只有未命中的页才搬 | 每个池一个 LRU item（radix select 选最久未用的槽）；fetch CTA 从 shared memory 顺手把页写进 victim 槽 | **PCIe 推荐** |
-| 原地读，不开缓存 | 每个引用直接读远端（等同原生 kernel，wrapper 直接调原生） | — | NVLink 单步 |
-| 原地读 + LRU | 命中读缓存；未命中由 attention 原地读远端，108 个 SM 一起读 | 第一次 barrier 后每池选好 victim；tile 落地后，认领这一页的行把 shared memory 里的数据写到 victim 槽 | **NVLink 推荐** |
-
-为什么两种链路要不同写法：PCIe（约 27 GB/s）瓶颈在带宽，去重直接减少搬运字节；NVLink（约 262 GB/s）的瓶颈是单个 SM 的远端读能力（每 SM 约 21 GB/s），8 个 fetch CTA 喂不满，必须让全部 SM 一起读。在 PCIe 上用原地读，MTP8 时会慢 1.94×（重复读共享页）。
-
-各对象（包括朴素方法和下限）的完整实现说明见 [`mla_host_a100_full.md`「各比较对象的实现」](mla_host_a100_full.md#各比较对象的实现)。
+| kernel 数 / 步 | 2（swap-in → attention），MTP8 时 16 | 1 | 1 |
+| 远端访问方式 | swap-in kernel 拷进设备 buffer | UVA + VMM 统一地址，fetch CTA 读 | UVA + VMM 统一地址，attention CTA 直接读 |
+| 每个未命中页每步过链路的次数 | 每个引用它的 MTP 行各判断一次 | 1 | 每个引用 1 次（MTP8 平均 2.1） |
+| 缓存命中范围 | 本请求的 buffer | 全局（任意请求的缓存池） | 全局 |
+| 搬运与计算 | 串行 | 重叠（本地 tile 先算） | 重叠（全部 SM 读远端） |
+| MTP 多行 | 逐 token | 一次 launch | 一次 launch |
 
 ## 2. 测试设置
 
@@ -44,6 +88,7 @@ PCIe 和 NVLink 用的是**同一个 kernel**（`include/flashinfer/attention/ml
 | 跨 decode | 32 个连续 token（MTP8 为 4 步，MTP1 为 32 步），除最新 token 外的 KV 全在远端，取后一半步的平均；每请求一个 LRU 池，默认 4096 槽 |
 | 计时 | CUDA event，只计 GPU 执行；单步每格 8 轮 × 2 组索引取中位数 |
 | 代码 | `dbbc02c6` |
+| 原生 kernel | FlashInfer `BatchMLAPagedAttentionWrapper`（FA2 后端），Memcpy、Direct 和计算下限都用它 |
 
 **理论下限** = max(计算下限, 传输下限)，两项都取实测的最好值，保证没有任何实现能低于它：
 - **计算下限**：所有选中行都在本地 HBM、零传输时测得的最快 attention 耗时。单步测试取「原生 kernel 全本地」和「0% 远端时原生 / 本文 kernel」三者中最快的（原生 kernel 的 KV 拆分不是每种形状都最优，本文 kernel 在部分 batch 上全本地也更快）；跨 decode 测试取原生 kernel 全本地。
@@ -57,11 +102,9 @@ PCIe 和 NVLink 用的是**同一个 kernel**（`include/flashinfer/attention/ml
 
 ## 3. 跨 decode 稳态（目标场景，开 LRU）
 
-![跨 decode 稳态：耗时 ÷ 理论下限](../temp/report_lru/rounds_vs_floor.png)
+![跨 decode 稳态：每步耗时与理论下限](../temp/report_lru/rounds_vs_floor.png)
 
-图中每组柱是一个 batch 点，纵轴是「耗时 ÷ 理论下限」，虚线 1.0 就是理论下限，越低越好。为了把重点放在目标规模上，NVLink MTP8 从 8 请求、PCIe MTP1 从 16 请求、NVLink MTP1 从 64 请求开始画；更小的 batch 见下面的完整表格和第 7 节。
-
-![PCIe MTP8 跨 decode 绝对耗时](../temp/report_lru/rounds_pcie_mtp8_ms.png)
+每组柱是一个 batch 点，纵轴是每步实际 GPU 耗时，黑色虚线是该 batch 的理论下限。图中每个面板选了 3～5 个代表性 batch；全部 batch 点见下面各小节的表格（小 batch 的情况另见第 7 节）。
 
 ### 3.1 PCIe，MTP8（全部 14 个 batch 点，µs）
 
@@ -105,7 +148,7 @@ PCIe 和 NVLink 用的是**同一个 kernel**（`include/flashinfer/attention/ml
 | 128 | 1024 | 3223 | 3909 | 4838 | 9474 | 2488 | 1273 | 1.30 | **0.82** | 2.94× |
 
 - 8、16、32～128 请求时为朴素较快者的 0.82～0.89 倍，128 请求时比 Memcpy + LRU 快 18%（3223 vs 3909 µs）、比 Direct + LRU 快 33%。
-- 离计算下限还有 1.16～1.38×（大 batch），原因是原地读不在行之间去重：同一步里 MTP 的 8 行平均每个未命中页读 2.1 次（128 请求时每步约 704 MB 引用 vs 336 MB 去重页），704 MB ÷ 262 GB/s = 2.7 ms，已经超过 2.45 ms 的计算时间。原地读模式下真正可达的下限是「命中读本地 + 未命中原地读」，本文离它 1.02～1.19×（见 [`mla_host_a100_lru.md` 第 7 节](mla_host_a100_lru.md)）。
+- 离理论下限还有 1.16～1.38×（大 batch）。理论下限只按去重后的未命中字节算传输，而原地读模式对未命中页的每个引用各读一次（第 1.3 节）。128 请求时，NVLink 计数器实测每步读入 687 MB（去重后只有 355 MB），按 281 GB/s 峰值需要 2.44 ms，与 2.45 ms 的计算时间相当，两者无法完全重叠。
 
 ### 3.3 PCIe，MTP1（µs）
 
@@ -184,8 +227,6 @@ PCIe 和 NVLink 用的是**同一个 kernel**（`include/flashinfer/attention/ml
 - **PCIe，MTP1**：每个请求只有 1 行，没有可以去重的页，staging 只是多一次中转，单步基本都慢于 Direct（大 batch 慢 2%～5%）。这个场景的收益全部来自跨 decode 缓存（第 3.3 节），单步应直接用原生 kernel。
 - **NVLink**：原生 Direct 已经只比理论下限慢 1.0～1.3×，推荐配置（原地读、不开缓存）在 wrapper 里直接走原生 kernel，所以单步 NVLink 上本文的结果等于 Direct。
 
-全表：[`full_tables.md`](../temp/a100_full/full_tables.md)（每种方法的中位数和 p10～p90）、[`tables.md`](../temp/a100_full/tables.md)（比值）。
-
 ## 5. LRU 的收益与容量
 
 ![LRU 收益](../temp/report_lru/lru_gain.png)
@@ -219,9 +260,9 @@ LRU 容量（MTP8，每请求槽数），每格为 本文 / 朴素较快者 µs�
 | 项目 | 设置 |
 |---|---|
 | GPU | H800（g40），PCIe Gen5 x16，实测 DMA 55 GB/s，SM gather 35 GB/s |
-| HiSparse | SGLang 原版实现：`load_cache_to_device_buffer_mla`（每请求 LRU，4096 槽 + 最新 token 一槽）把未命中页 swap-in 到设备 buffer，再调 `sgl_kernel` FlashMLA sparse decode。它的 decode 路径每个请求只接受 1 行，所以 MTP8 时 8 个 draft token 依次各做一次 swap-in 和一次 attention——这就是它实际的运行方式，不做跨行去重 |
+| HiSparse | SGLang 原版实现，按第 1.1 节的方式运行：每请求 4096 槽 + 最新 token 1 槽；MTP8 时 8 个 draft token 依次各做一次 swap-in 和一次 FlashMLA sparse decode，这是它实际的运行方式 |
 | 本文 | 同一个 kernel，同样每请求 4096 槽。PCIe 推荐 staged，图和倍数都用 staged；原地读也列在表里 |
-| 规模 | 1～4 请求，2 次 pass（验证作业 697235）。正式的全 batch 对比作业（700539、700540）在排队，结果会写进 [`mla_host_h800_lru.md`](mla_host_h800_lru.md) |
+| 规模 | 1～4 请求，2 次 pass（H800 验证作业）。全 batch 对比在排队，结果出来后补入本节 |
 
 跨 decode 稳态（µs）：
 
@@ -233,10 +274,10 @@ LRU 容量（MTP8，每请求槽数），每格为 本文 / 朴素较快者 µs�
 
 所有方法（含 HiSparse）的输出与参考实现的最大误差都在 0.0019～0.0041 之间（BF16）。
 
-HiSparse 比本文慢的原因，对应本文 kernel 的设计：
-1. **MTP 行一次 launch 处理 + 跨行去重**：HiSparse 每个 draft token 单独 swap-in、单独 attention，同一请求 8 行共享的页每行判断一次；MTP8 时差距最大（5.5×）。
-2. **搬运与计算重叠**：HiSparse 先 swap-in 再 attention，两步串行；本文在同一个 kernel 里边搬边算。
-3. **小 batch 拆 KV**：FlashMLA sparse decode 在 1～4 行时不拆 KV，SM 用不满；本文的 kernel 在小 batch 下把 KV 拆到多个 CTA 再合并。
+差距对应第 1.2 节的设计：
+1. **MTP 多行一次 launch + 全 batch 去重**（特色 3、7）：HiSparse 每个 draft token 单独 swap-in、单独 attention，MTP8 时一步要 16 个 kernel；本文 1 个 kernel，共享页只搬一次。MTP8 时差距最大（5.5×）。
+2. **搬运与计算重叠**（特色 2、5）：HiSparse 先 swap-in 再 attention，两步串行；本文在同一个 kernel 里边搬边算。
+3. **小 batch 拆 KV**（特色 7）：1～4 行时 FlashMLA sparse decode 的纯计算就要 62 µs（FA2 为 23～30 µs）；本文把 KV 拆到多个 CTA 再合并，SM 利用率更高。
 
 ## 7. 局限
 
@@ -246,13 +287,10 @@ HiSparse 比本文慢的原因，对应本文 kernel 的设计：
 - top-k 为 DSA 代理 trace（不是 GLM-5.2 indexer 的真实输出）；跨 decode 只有 32 个连续 token。
 - A100 数据；H800 的全量 batch 扫描在排队。
 
-## 文件
+## 数据与复现
 
 | 内容 | 位置 |
 |---|---|
-| 本报告的图 / 图与表的生成脚本 | [`temp/report_lru/*.png`](../temp/report_lru/)、[`plot.py`](../temp/report_lru/plot.py)、[`tables.py`](../temp/report_lru/tables.py) |
-| A100 全量原始数据（12 个 JSON） | [`temp/a100_full/`](../temp/a100_full/)；复现 [`run.sh`](../temp/a100_full/run.sh) |
-| A100 全量结果（每种方法每个测量值） | [`full_tables.md`](../temp/a100_full/full_tables.md)、[`tables.md`](../temp/a100_full/tables.md) |
-| A100 详细报告（实现、方法定义、文件索引） | [`mla_host_a100_full.md`](mla_host_a100_full.md) |
-| 开发过程（方案取舍、失败尝试） | [`mla_host_a100_lru.md`](mla_host_a100_lru.md) |
-| H800 结果（验证作业 + 待补的正式结果） | [`mla_host_h800_lru.md`](mla_host_h800_lru.md)；原始数据 [`temp/h800/results/fi-validate-697235/`](../temp/h800/results/fi-validate-697235/) |
+| 图与表的生成脚本 | [`temp/report_lru/plot.py`](../temp/report_lru/plot.py)、[`temp/report_lru/tables.py`](../temp/report_lru/tables.py) |
+| A100 原始数据（12 个 JSON）与测量脚本 | [`temp/a100_full/`](../temp/a100_full/)，复现：`bash temp/a100_full/run.sh` |
+| H800 原始数据 | [`temp/h800/results/fi-validate-697235/`](../temp/h800/results/fi-validate-697235/) |

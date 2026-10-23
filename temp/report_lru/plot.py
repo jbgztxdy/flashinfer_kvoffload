@@ -100,54 +100,32 @@ def rounds_rows(name, ours, min_requests=0):
 
 def fig_rounds():
     panels = [
-        ("rounds_host_mtp8.json", "ours_stage", 0, "PCIe，MTP8（每请求 8 行）"),
-        ("rounds_peer_mtp8.json", "ours_inplace", 8, "NVLink，MTP8（≥ 8 请求）"),
-        ("rounds_host_mtp1.json", "ours_stage", 16, "PCIe，MTP1（≥ 16 请求）"),
-        ("rounds_peer_mtp1.json", "ours_inplace", 64, "NVLink，MTP1（≥ 64 请求）"),
+        ("rounds_host_mtp8.json", "ours_stage", (4, 16, 32, 64, 128), "PCIe，MTP8"),
+        ("rounds_peer_mtp8.json", "ours_inplace", (8, 16, 32, 64, 128), "NVLink，MTP8"),
+        ("rounds_host_mtp1.json", "ours_stage", (32, 64, 128, 256, 512), "PCIe，MTP1"),
+        ("rounds_peer_mtp1.json", "ours_inplace", (64, 128, 256), "NVLink，MTP1"),
     ]
-    fig, axes = plt.subplots(2, 2, figsize=(12.5, 7.4))
-    for axis, (name, ours, lo, title) in zip(axes.flat, panels):
-        rows = rounds_rows(name, ours, lo)
-        labels = [f"{r['req']}" for r in rows]
-        grouped(axis, labels, [
-            ("Direct + LRU", BLUE, [r["direct"] / r["floor"] for r in rows]),
-            ("Memcpy + LRU", ORANGE, [r["memcpy"] / r["floor"] for r in rows]),
-            ("本文 kernel + LRU", GREEN, [r["ours"] / r["floor"] for r in rows]),
-        ], lambda v: f"{v:.2f}", fontsize=5.6)
-        axis.axhline(1.0, color=INK2, linestyle=(0, (4, 3)), linewidth=1.0, zorder=2)
+    fig, axes = plt.subplots(2, 2, figsize=(12.5, 7.6))
+    for axis, (name, ours, pick, title) in zip(axes.flat, panels):
+        rows = [r for r in rounds_rows(name, ours) if r["req"] in pick]
+        grouped(axis, [f"{r['req']} 请求\n{r['rows']} 行" for r in rows], [
+            ("Direct + LRU", BLUE, [r["direct"] / 1e3 for r in rows]),
+            ("Memcpy + LRU", ORANGE, [r["memcpy"] / 1e3 for r in rows]),
+            ("本文 kernel + LRU", GREEN, [r["ours"] / 1e3 for r in rows]),
+        ], lambda v: f"{v:.1f}" if v >= 1 else f"{v:.2f}", fontsize=5.8)
+        for i, r in enumerate(rows):
+            axis.plot([i - 0.42, i + 0.42], [r["floor"] / 1e3] * 2, color=INK, linestyle=(0, (4, 3)),
+                      linewidth=1.1, zorder=5)
         axis.set_title(title, loc="left")
-        axis.set_xlabel("请求数")
-        dress(axis, "耗时 ÷ 理论下限")
-        axis.set_ylim(0, max(max(r["direct"], r["memcpy"], r["ours"]) / r["floor"] for r in rows) * 1.12)
-    axes[0][0].legend(loc="upper right", frameon=False, ncol=3)
-    axes[0][0].text(0.01, 0.97, "— — 理论下限 = 1.0", transform=axes[0][0].transAxes, fontsize=7.5, color=INK2, va="top")
-    fig.suptitle("跨 decode 稳态（全部 KV 在远端，每请求 4096 槽 LRU），A100：耗时 ÷ max(计算下限, 未命中字节 ÷ 带宽)，越低越好",
+        dress(axis, "每步 GPU 耗时 (ms)")
+        top = max(max(r["direct"], r["memcpy"], r["ours"]) for r in rows) / 1e3
+        axis.set_ylim(0, top * 1.12)
+    axes[0][0].plot([], [], color=INK, linestyle=(0, (4, 3)), label="理论下限")
+    axes[0][0].legend(loc="upper left", frameon=False, ncol=2)
+    fig.suptitle("跨 decode 稳态（除最新 token 外 KV 全在远端，每请求 4096 槽 LRU），A100：每步耗时，虚线为该 batch 的理论下限",
                  x=0.01, ha="left", fontsize=10)
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     fig.savefig(OUT / "rounds_vs_floor.png", dpi=170)
-    plt.close(fig)
-
-
-def fig_rounds_abs():
-    rows = rounds_rows("rounds_host_mtp8.json", "ours_stage")
-    pick = [r for r in rows if r["req"] in (16, 32, 64, 96, 128)]
-    fig, axis = plt.subplots(figsize=(10, 4.2))
-    grouped(axis, [f"{r['req']} 请求\n{r['rows']} 行" for r in pick], [
-        ("Direct + LRU", BLUE, [r["direct"] / 1e3 for r in pick]),
-        ("Memcpy + LRU", ORANGE, [r["memcpy"] / 1e3 for r in pick]),
-        ("本文 kernel + LRU", GREEN, [r["ours"] / 1e3 for r in pick]),
-    ], lambda v: f"{v:.1f}", fontsize=6.8)
-    for i, r in enumerate(pick):
-        axis.plot([i - 0.42, i + 0.42], [r["floor"] / 1e3] * 2, color=INK, linestyle=(0, (4, 3)), linewidth=1.1, zorder=5)
-    axis.plot([], [], color=INK, linestyle=(0, (4, 3)), label="理论下限")
-    axis.legend(loc="upper left", frameon=False, ncol=4)
-    dress(axis, "每步 GPU 耗时 (ms)")
-    fl = [r["ours"] / r["floor"] for r in pick]
-    sp = [1 - r["ours"] / r["memcpy"] for r in pick]
-    axis.set_title(f"PCIe，MTP8，跨 decode 稳态：本文 kernel 贴着理论下限（{min(fl):.2f}～{max(fl):.2f}×），"
-                   f"比 Memcpy + LRU 快 {min(sp):.0%}～{max(sp):.0%}", loc="left")
-    fig.tight_layout()
-    fig.savefig(OUT / "rounds_pcie_mtp8_ms.png", dpi=170)
     plt.close(fig)
 
 
@@ -264,7 +242,6 @@ def fig_capacity():
 if __name__ == "__main__":
     style()
     fig_rounds()
-    fig_rounds_abs()
     fig_single_step()
     fig_lru_gain()
     fig_capacity()
