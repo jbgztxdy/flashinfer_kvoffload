@@ -66,13 +66,13 @@ def capacity():
 
 
 def hisparse():
-    print("| 场景 | 本文 staged + LRU | 本文原地读 + LRU | 本文不开缓存 | **HiSparse** | FA2 计算下限 | **HiSparse ÷ 本文较快者** |")
+    print("| 场景 | **本文 staged + LRU** | 本文原地读 + LRU | 本文不开缓存 | **HiSparse** | FA2 计算下限 | **HiSparse ÷ 本文 staged** |")
     print("|---|---:|---:|---:|---:|---:|---:|")
     for name, req, label in (("rounds_host_tiny.json", 1, "MTP1，1 请求"), ("rounds_host_tiny.json", 4, "MTP1，4 请求"),
                              ("rounds_host_mtp8_tiny.json", 2, "MTP8，2 请求（16 行）")):
         r = next(x for x in json.loads((H800 / name).read_text())["results"] if x["requests"] == req)
         s, i, n, h, f = (steady(r, k) for k in ("ours_stage", "ours_inplace", "ours_nocache", "hisparse", "floor_fa2"))
-        print(f"| {label} | {s:.1f} | {i:.1f} | {n:.1f} | {h:.1f} | {f:.1f} | **{h / min(s, i):.2f}×** |")
+        print(f"| {label} | {s:.1f} | {i:.1f} | {n:.1f} | {h:.1f} | {f:.1f} | **{h / s:.2f}×** |")
 
 
 arg = sys.argv[1]

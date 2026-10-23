@@ -210,11 +210,11 @@ def fig_hisparse():
         d = json.loads((H800 / name).read_text())
         r = next(x for x in d["results"] if x["requests"] == req)
         vals["hisparse"].append(steady(r, "hisparse"))
-        vals["ours"].append(min(steady(r, "ours_stage"), steady(r, "ours_inplace")))
+        vals["ours"].append(steady(r, "ours_stage"))  # the PCIe configuration
     fig, axis = plt.subplots(figsize=(8.5, 4.0))
     grouped(axis, [c[2] for c in cases], [
         ("SGLang HiSparse（swap-in + FlashMLA）", BLUE, vals["hisparse"]),
-        ("本文 kernel + LRU", GREEN, vals["ours"]),
+        ("本文 kernel + LRU（staged）", GREEN, vals["ours"]),
     ], lambda v: f"{v:.0f} µs", fontsize=7.2)
     for i, (h, o) in enumerate(zip(vals["hisparse"], vals["ours"])):
         axis.annotate(f"快 {h / o:.1f}×", (i, h), textcoords="offset points", xytext=(0, 14), ha="center",
