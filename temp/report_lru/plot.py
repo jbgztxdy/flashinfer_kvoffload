@@ -120,9 +120,9 @@ def fig_rounds():
         dress(axis, "每步 GPU 耗时 (ms)")
         top = max(max(r["direct"], r["memcpy"], r["ours"]) for r in rows) / 1e3
         axis.set_ylim(0, top * 1.12)
-    axes[0][0].plot([], [], color=INK, linestyle=(0, (4, 3)), label="理论下限")
+    axes[0][0].plot([], [], color=INK, linestyle=(0, (4, 3)), label="参考下限")
     axes[0][0].legend(loc="upper left", frameon=False, ncol=2)
-    fig.suptitle("跨 decode 稳态（除最新 token 外 KV 全在远端，每请求 4096 槽 LRU），A100：每步耗时，虚线为该 batch 的理论下限",
+    fig.suptitle("跨 decode 稳态（除最新 token 外 KV 全在远端，每请求 4096 槽 LRU），A100：每步耗时，虚线为该 batch 的参考下限",
                  x=0.01, ha="left", fontsize=10)
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     fig.savefig(OUT / "rounds_vs_floor.png", dpi=170)
@@ -145,7 +145,7 @@ def fig_single_step():
         floors = [max(compute_floor(r), sorted(c["far_unique_bytes"])[len(c["far_unique_bytes"]) // 2] / bw / 1e3) / 1e3
                   for c in cases]
         axis.plot(range(len(cases)), floors, color=INK2, marker="o", markersize=4, markerfacecolor=SURFACE,
-                  linewidth=1.2, zorder=5, label="理论下限")
+                  linewidth=1.2, zorder=5, label="参考下限")
         axis.set_xlabel("远端（Host）命中率")
         dress(axis, "GPU 耗时 (ms)")
         axis.set_title(f"{req} 请求 × MTP8 = {r['query_rows']} 行", loc="left")
@@ -160,6 +160,35 @@ def fig_single_step():
                  f"Direct 的 {min(rd):.2f}～{max(rd):.2f} 倍", x=0.01, ha="left", fontsize=10)
     fig.tight_layout(rect=(0, 0, 1, 0.94))
     fig.savefig(OUT / "single_step_pcie_mtp8.png", dpi=170)
+    plt.close(fig)
+
+
+def fig_single_step_nvlink():
+    d = load("sweep_peer_mtp8_inplace.json")
+    bw = max(d["bandwidth"]["sm_gather_random_GBps"], d["bandwidth"]["dma_contiguous_GBps"])
+    fig, axes = plt.subplots(1, 2, figsize=(13, 4.4))
+    for axis, req in zip(axes, (16, 128)):
+        r = next(x for x in d["results"] if x["requests"] == req)
+        cases = r["cases"]
+        grouped(axis, [f"{c['far_fraction']:.0%}" for c in cases], [
+            ("原生直访 Direct", BLUE, [c["direct"]["median_us"] / 1e3 for c in cases]),
+            ("提前拷贝 Memcpy", ORANGE, [c["copy"]["median_us"] / 1e3 for c in cases]),
+            ("本文 kernel（原地读，NVLink 配置）", GREEN, [c["batch_inplace"]["median_us"] / 1e3 for c in cases]),
+        ], lambda v: f"{v:.2f}", fontsize=6.0)
+        floors = [max(compute_floor(r), sorted(c["far_unique_bytes"])[len(c["far_unique_bytes"]) // 2] / bw / 1e3) / 1e3
+                  for c in cases]
+        axis.plot(range(len(cases)), floors, color=INK2, marker="o", markersize=4,
+                  markerfacecolor=SURFACE, linewidth=1.2, zorder=5, label="参考下限")
+        axis.set_xlabel("远端（peer HBM）选中 KV 占比")
+        dress(axis, "GPU 耗时 (ms)")
+        axis.set_title(f"{req} 请求 × MTP8 = {r['query_rows']} 行", loc="left")
+        top = max(c[k]["median_us"] / 1e3 for c in cases for k in ("direct", "copy", "batch_inplace"))
+        axis.set_ylim(0, top * 1.30)
+    axes[0].legend(loc="upper left", frameon=False, ncol=2, fontsize=7)
+    fig.suptitle("单步、不开缓存，NVLink，A100：本文原地读不开缓存时即原生 kernel，与 Direct 相同，远端占比 ≥ 10% 时快于 Memcpy",
+                 x=0.01, ha="left", fontsize=10)
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
+    fig.savefig(OUT / "single_step_nvlink_mtp8.png", dpi=170)
     plt.close(fig)
 
 
@@ -243,6 +272,7 @@ if __name__ == "__main__":
     style()
     fig_rounds()
     fig_single_step()
+    fig_single_step_nvlink()
     fig_lru_gain()
     fig_capacity()
     print(fig_hisparse())
