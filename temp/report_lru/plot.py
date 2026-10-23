@@ -29,6 +29,14 @@ INK, INK2, GRID, SPINE = "#0b0b0b", "#52514e", "#E6E9EC", "#ADB4BA"
 ROW = 1152  # bytes per token per layer
 
 
+
+def compute_floor(result):
+    """Fastest all-local attention measured for this batch: the native kernel with every row
+    remapped to HBM, or either kernel at 0% far (native's fixed KV split is not optimal at every
+    shape, so taking only it would put the floor above what was measured)."""
+    zero = next(c for c in result["cases"] if c["far_fraction"] == 0)
+    return min(min(c["attn"]["median_us"] for c in result["cases"]), zero["batch"]["median_us"], zero["direct"]["median_us"])
+
 def style():
     plt.rcParams.update({
         "figure.facecolor": SURFACE, "axes.facecolor": SURFACE, "savefig.facecolor": SURFACE,
@@ -76,7 +84,7 @@ def steady(r, mode):
 
 def rounds_rows(name, ours, min_requests=0):
     d = load(name)
-    bw = d["bandwidth"]["sm_gather_random_GBps"]
+    bw = max(d["bandwidth"]["sm_gather_random_GBps"], d["bandwidth"]["dma_contiguous_GBps"])
     rows = []
     for r in d["results"]:
         if r["requests"] < min_requests:
@@ -145,7 +153,7 @@ def fig_rounds_abs():
 
 def fig_single_step():
     d = load("sweep_host_mtp8.json")
-    bw = d["bandwidth"]["sm_gather_random_GBps"]
+    bw = max(d["bandwidth"]["sm_gather_random_GBps"], d["bandwidth"]["dma_contiguous_GBps"])
     fig, axes = plt.subplots(1, 2, figsize=(13, 4.4))
     for axis, req in zip(axes, (16, 128)):
         r = next(x for x in d["results"] if x["requests"] == req)
@@ -156,7 +164,7 @@ def fig_single_step():
             ("提前拷贝 Memcpy", ORANGE, [c["copy"]["median_us"] / 1e3 for c in cases]),
             ("本文 kernel", GREEN, [c["batch"]["median_us"] / 1e3 for c in cases]),
         ], lambda v: f"{v:.1f}" if v >= 1 else f"{v:.2f}", fontsize=6.0)
-        floors = [max(c["attn"]["median_us"], sorted(c["far_unique_bytes"])[len(c["far_unique_bytes"]) // 2] / bw / 1e3) / 1e3
+        floors = [max(compute_floor(r), sorted(c["far_unique_bytes"])[len(c["far_unique_bytes"]) // 2] / bw / 1e3) / 1e3
                   for c in cases]
         axis.plot(range(len(cases)), floors, color=INK2, marker="o", markersize=4, markerfacecolor=SURFACE,
                   linewidth=1.2, zorder=5, label="理论下限")

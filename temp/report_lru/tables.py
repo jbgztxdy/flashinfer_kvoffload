@@ -9,6 +9,14 @@ H800 = Path("temp/h800/results/fi-validate-697235")
 ROW = 1152
 
 
+
+def compute_floor(result):
+    """Fastest all-local attention measured for this batch: the native kernel with every row
+    remapped to HBM, or either kernel at 0% far (native's fixed KV split is not optimal at every
+    shape, so taking only it would put the floor above what was measured)."""
+    zero = next(c for c in result["cases"] if c["far_fraction"] == 0)
+    return min(min(c["attn"]["median_us"] for c in result["cases"]), zero["batch"]["median_us"], zero["direct"]["median_us"])
+
 def steady(r, m):
     t = range(r["steps"] // 2, r["steps"])
     return sum(r["per_step"][m][x]["median_us"] for x in t) / len(t)
@@ -17,7 +25,7 @@ def steady(r, m):
 def rounds(name):
     d = json.loads((A100 / f"{name}.json").read_text())
     ours = "ours_stage" if "host" in name else "ours_inplace"
-    bw = d["bandwidth"]["sm_gather_random_GBps"]
+    bw = max(d["bandwidth"]["sm_gather_random_GBps"], d["bandwidth"]["dma_contiguous_GBps"])
     print("| 请求 | 行 | 本文 kernel + LRU | Memcpy + LRU | Direct + LRU | 本文不开缓存 | 计算下限 | 传输下限 | **本文 ÷ 理论下限** | **本文 ÷ 朴素较快者** | LRU 加速 |")
     print("|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
     for r in d["results"]:
@@ -33,7 +41,7 @@ def rounds(name):
 
 def sweep(name):
     d = json.loads((A100 / f"{name}.json").read_text())
-    bw = d["bandwidth"]["sm_gather_random_GBps"]
+    bw = max(d["bandwidth"]["sm_gather_random_GBps"], d["bandwidth"]["dma_contiguous_GBps"])
     fr = [c["far_fraction"] for c in d["results"][0]["cases"]]
     print("| 请求 | 行 | " + " | ".join(f"{f:.0%}" for f in fr) + " |")
     print("|---:|---:|" + "---:|" * len(fr))
@@ -43,7 +51,7 @@ def sweep(name):
             o = c["batch"]["median_us"]
             nv = min(c["copy"]["median_us"], c["direct"]["median_us"])
             ub = sorted(c["far_unique_bytes"])[len(c["far_unique_bytes"]) // 2]
-            fl = max(c["attn"]["median_us"], ub / bw / 1e3)
+            fl = max(compute_floor(r), ub / bw / 1e3)
             b = "**" if o < nv and c["far_fraction"] > 0 else ""
             cells.append(f"{o:.0f} ({o / fl:.2f} / {b}{o / nv:.2f}{b})")
         print(f"| {r['requests']} | {r['query_rows']} | " + " | ".join(cells) + " |")

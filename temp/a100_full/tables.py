@@ -4,8 +4,16 @@ O = "temp/a100_full/"
 L = lambda n: json.load(open(O + n))
 
 
+
+def compute_floor(result):
+    """Fastest all-local attention measured for this batch: the native kernel with every row
+    remapped to HBM, or either kernel at 0% far (native's fixed KV split is not optimal at every
+    shape, so taking only it would put the floor above what was measured)."""
+    zero = next(c for c in result["cases"] if c["far_fraction"] == 0)
+    return min(min(c["attn"]["median_us"] for c in result["cases"]), zero["batch"]["median_us"], zero["direct"]["median_us"])
+
 def sweep(name):
-    d = L(name); bw = d["bandwidth"]["sm_gather_random_GBps"]
+    d = L(name); bw = max(d["bandwidth"]["sm_gather_random_GBps"], d["bandwidth"]["dma_contiguous_GBps"])
     fr = [c["far_fraction"] for c in d["results"][0]["cases"]]
     print(f"\n#### {name}（远端带宽 {bw:.0f} GB/s）：ours µs（÷下限 / ÷朴素较快者）\n")
     print("| 请求 | 行 | " + " | ".join(f"{f:.0%}" for f in fr) + " |")
@@ -16,7 +24,7 @@ def sweep(name):
         for c in r["cases"]:
             o = c["batch"]["median_us"]; nv = min(c["copy"]["median_us"], c["direct"]["median_us"])
             ub = sorted(c["far_unique_bytes"])[len(c["far_unique_bytes"]) // 2]
-            fl = max(c["attn"]["median_us"], ub / bw / 1e3)
+            fl = max(compute_floor(r), ub / bw / 1e3)
             cells.append(f"{o:.0f} ({o / fl:.2f}/{o / nv:.2f})")
             if c["far_fraction"] > 0 and o >= nv:
                 lose.append(f"{r['requests']}请求/{c['far_fraction']:.0%}")
@@ -25,7 +33,7 @@ def sweep(name):
 
 
 def rounds(name, ours):
-    d = L(name); bw = d["bandwidth"]["sm_gather_random_GBps"]
+    d = L(name); bw = max(d["bandwidth"]["sm_gather_random_GBps"], d["bandwidth"]["dma_contiguous_GBps"])
     print(f"\n#### {name}：稳态 µs（后一半步的平均）\n")
     print("| 请求 | 行 | ours | 不开缓存 | memcpy_lru | direct_lru | 计算下限 | 传输下限 | ours÷max(下限) | ours÷朴素较快者 | 缓存加速 |")
     print("|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
@@ -60,6 +68,9 @@ def capacity(tier, ours):
 print("# A100 比值表\n")
 print("每格：ours 中位数 µs（÷理论下限 / ÷朴素较快者）。由 `temp/a100_full/tables.py` 生成；说明见 "
       "[`docs/mla_host_a100_full.md`](../../docs/mla_host_a100_full.md)，每种方法的全部测量值见 [`full_tables.md`](full_tables.md)，原始数据为同目录的 JSON。")
+print("\n理论下限 = max(计算下限, 传输下限)：计算下限取全本地时测得的最快 attention（原生全本地，或 0% 远端时两种 kernel），传输下限用链路实测峰值 max(DMA, SM gather)。"
+      "唯一低于 1 的是 NVLink、MTP1、1 请求、25%～30% 远端两格（0.95、0.93）：单行时 staged 模式把 Host 条目单独拆成 item，"
+      "KV 拆分比原生 kernel 更细，计算本身更快；这是单步 NVLink 的非推荐配置，不出现在报告中。")
 for n in ("sweep_host_mtp8.json", "sweep_peer_mtp8.json", "sweep_host_mtp1.json", "sweep_peer_mtp1.json"):
     sweep(n)
 rounds("rounds_host_mtp8.json", "ours_stage"); rounds("rounds_peer_mtp8.json", "ours_inplace")
