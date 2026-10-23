@@ -1,0 +1,82 @@
+job=697235 name=fi-validate node=g40 gpus=0 tree=/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer start=2026-10-21T16:38:22+08:00
+commit=dbbc02c6caea3e80cde4f2dafb650a6a24854878 dirty=1
+index, name, pci.bus_id, memory.used [MiB], memory.total [MiB], clocks.max.sm [MHz]
+0, NVIDIA H800, 00000000:0F:00.0, 0 MiB, 81559 MiB, 1980 MHz
+	[4mGPU0	NIC0	NIC1	NIC2	NIC3	NIC4	NIC5	NIC6	NIC7	NIC8	CPU Affinity	NUMA Affinity	GPU NUMA ID[0m
+GPU0	 X 	PIX	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	0,37-43	0		N/A
+NIC0	PIX	 X 	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC1	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC2	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC3	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE				
+NIC4	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE				
+NIC5	NODE	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE				
+NIC6	NODE	NODE	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE				
+NIC7	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	 X 	NODE				
+NIC8	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	 X 				
+
+Legend:
+
+  X    = Self
+  SYS  = Connection traversing PCIe as well as the SMP interconnect between NUMA nodes (e.g., QPI/UPI)
+  NODE = Connection traversing PCIe as well as the interconnect between PCIe Host Bridges within a NUMA node
+  PHB  = Connection traversing PCIe as well as a PCIe Host Bridge (typically the CPU)
+  PXB  = Connection traversing multiple PCIe bridges (without traversing the PCIe Host Bridge)
+  PIX  = Connection traversing at most a single PCIe bridge
+  NV#  = Connection traversing a bonded set of # NVLinks
+
+NIC Legend:
+
+  NIC0: mlx5_0
+  NIC1: mlx5_1
+  NIC2: mlx5_2
+  NIC3: mlx5_3
+  NIC4: mlx5_4
+  NIC5: mlx5_5
+  NIC6: mlx5_6
+  NIC7: mlx5_7
+  NIC8: mlx5_8
+
+            PCIe Generation
+                Max                                    : 5
+                Current                                : 5
+--
+            Link Width
+                Max                                    : 16x
+                Current                                : 16x
+torch 2.13.0+cu130 13.0 NVIDIA H800
+Build cuda_13.0.r13.0/compiler.36424714_0
+available: 2 nodes (0-1)
+node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51
+node 0 size: 515652 MB
+node 0 free: 380127 MB
+cmd: bash temp/h800/validate.sh
++ cp temp/h800/pydeps_jitpaths.py temp/h800/pydeps/jitpaths.py
++ python -m pytest -q -p no:cacheprovider -p jitpaths tests/attention/test_mla_host_batch.py
++ tail -5
+.......................................................................  [100%]
+71 passed in 117.91s (0:01:57)
++ python temp/h800/bench_sweep.py --tier host --requests 1 16 --fractions 0 0.3 --rounds 3 --near-requests 16 --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-validate-697235/sweep_host_tiny.json
++ grep -v Warn
++ tail -8
+bandwidth {'dma_contiguous_GBps': 55.31955183130663, 'sm_gather_random_GBps': 35.41423011686273}
+tier=host requests=1 rows=8 far=0% (actual 0.000, unique 0.000) attn=28.7us copy=28.8us direct=28.5us batch=28.1us batch_inplace=28.6us
+tier=host requests=1 rows=8 far=30% (actual 0.286, unique 0.448) attn=28.4us copy=87.2us direct=172.3us batch=109.4us batch_inplace=173.0us
+tier=host requests=16 rows=128 far=0% (actual 0.000, unique 0.000) attn=156.0us copy=156.8us direct=155.9us batch=204.5us batch_inplace=156.0us
+tier=host requests=16 rows=128 far=30% (actual 0.290, unique 0.400) attn=157.0us copy=779.4us direct=2451.3us batch=1111.5us batch_inplace=2450.8us
+results=/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-validate-697235/sweep_host_tiny.json
++ python -c 'from sgl_kernel.flash_mla import flash_mla_sparse_fwd; from sglang.kernels.ops.kvcache.hisparse import load_cache_to_device_buffer_mla; print('\''hisparse imports ok'\'')'
+hisparse imports ok
++ python temp/h800/bench_rounds.py --tier host --requests 1 4 --mtp 1 --steps 8 --passes 2 --near-requests 4 --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-validate-697235/rounds_host_tiny.json
++ grep -v Warn
++ tail -8
+bandwidth {'dma_contiguous_GBps': 54.32660948221193, 'sm_gather_random_GBps': 34.33201496789247}
+tier=host requests=1 mtp=1 rows=1 steady(mean of last half, us): ours_stage=42.1 ours_inplace=48.2 ours_nocache=85.3 hisparse=106.5 floor_fa2=22.8 floor_flashmla=62.0 misses={'ours_stage': 95, 'ours_inplace': 89} unique_uncached=2047
+tier=host requests=4 mtp=1 rows=4 steady(mean of last half, us): ours_stage=87.8 ours_inplace=78.5 ours_nocache=305.0 hisparse=142.7 floor_fa2=29.5 floor_flashmla=63.1 misses={'ours_stage': 735, 'ours_inplace': 701} unique_uncached=8188
+results=/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-validate-697235/rounds_host_tiny.json
++ python temp/h800/bench_rounds.py --tier host --requests 2 --mtp 8 --steps 4 --passes 2 --near-requests 2 --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-validate-697235/rounds_host_mtp8_tiny.json
++ grep -v Warn
++ tail -5
+bandwidth {'dma_contiguous_GBps': 54.88521612021041, 'sm_gather_random_GBps': 35.29344058471898}
+tier=host requests=2 mtp=8 rows=16 steady(mean of last half, us): ours_stage=205.6 ours_inplace=325.4 ours_nocache=392.3 hisparse=1124.6 floor_fa2=34.8 floor_flashmla=524.3 misses={'ours_stage': 4132, 'ours_inplace': 4090} unique_uncached=10211
+results=/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-validate-697235/rounds_host_mtp8_tiny.json
+end=2026-10-21T16:44:43+08:00 status=0

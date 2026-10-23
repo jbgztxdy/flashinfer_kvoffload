@@ -1,0 +1,451 @@
+{
+ "configuration": {
+  "tier": "host",
+  "device": 0,
+  "peer": 1,
+  "requests": [
+   1,
+   16
+  ],
+  "mtp": 8,
+  "fractions": [
+   0.0,
+   0.3
+  ],
+  "modes": [
+   "attn",
+   "copy",
+   "direct",
+   "batch",
+   "batch_inplace"
+  ],
+  "captures": "temp/mtp_overlap/overlap_ctx65536_*.pt",
+  "context": 65536,
+  "topk": 2048,
+  "near_requests": 16,
+  "rounds": 3,
+  "index_sets": 2,
+  "target_ms": 8.0,
+  "max_repeats": 100,
+  "fetch_ctas": 8,
+  "host_item_entries": 64,
+  "no_host_split": false,
+  "no_stage": false,
+  "staging_rows": null,
+  "workspace_mib": 512,
+  "seed": 42,
+  "no_check": false,
+  "output": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-validate-697235/sweep_host_tiny.json"
+ },
+ "timestamp": "2026-10-21T16:42:49+0800",
+ "device_name": "NVIDIA H800",
+ "torch_version": "2.13.0+cu130",
+ "cuda_version": "13.0",
+ "git_commit": "dbbc02c6caea3e80cde4f2dafb650a6a24854878",
+ "git_dirty": true,
+ "source_sha256": {
+  "temp/h800/bench_sweep.py": "5eaa82ec07f1ddbe575db74a2112c444db83a60bad0050948f9f25b54069bfc7",
+  "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+  "include/flashinfer/attention/mla_host_batch.cuh": "29667eafcf7a863b4e11dec62451fee8fbeb0594e9de454787eeba8ff5493b36"
+ },
+ "residency": [
+  {
+   "tier": "near_hbm",
+   "address": "0x302000000",
+   "bytes": 1207959552,
+   "location_type": 1,
+   "location_id": 0
+  },
+  {
+   "tier": "far_host_dram",
+   "address": "0x34a000000",
+   "bytes": 1207959552,
+   "location_type": 3,
+   "location_id": 0
+  },
+  {
+   "tier": "near_hbm_alias",
+   "address": "0x392000000",
+   "bytes": 1207959552,
+   "location_type": 1,
+   "location_id": 0
+  },
+  {
+   "tier": "staging_hbm",
+   "address": "0x3da000000",
+   "bytes": 150994944,
+   "location_type": 1,
+   "location_id": 0
+  }
+ ],
+ "bandwidth": {
+  "dma_contiguous_GBps": 55.31955183130663,
+  "sm_gather_random_GBps": 35.41423011686273
+ },
+ "methods": {
+  "attn": "native FA2 MLA attention, every selected row near (compute floor, no transfer)",
+  "copy": "Memcpy: unique far rows gathered (host: CPU index_select into pinned memory, not timed; peer: GPU index_select, timed) then H2D/D2D-copied near, then native attention",
+  "direct": "native attention reading far rows in place, every reference separately",
+  "batch": "our batched Host kernel, staged: in-kernel dedup, fetch CTAs overlap far reads with near attention",
+  "batch_inplace": "our batched Host kernel reading far pages in place (host_stage=False), no cache",
+  "batch:fN": "batch with N fetch CTAs"
+ },
+ "gpu_before": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA H800, 1981 MiB, 79091 MiB, 36 %, 1980 MHz, 2619 MHz",
+ "results": [
+  {
+   "requests": 1,
+   "mtp": 8,
+   "query_rows": 8,
+   "cases": [
+    {
+     "far_fraction": 0.0,
+     "far_fraction_actual": 0.0,
+     "far_refs": [
+      0,
+      0
+     ],
+     "far_unique": [
+      0,
+      0
+     ],
+     "unique_ratio": 0.0,
+     "far_unique_bytes": [
+      0,
+      0
+     ],
+     "repeats_per_graph": {
+      "attn": 100,
+      "copy": 100,
+      "direct": 100,
+      "batch": 100,
+      "batch_inplace": 100
+     },
+     "correctness_max_abs_error": {
+      "batch_inplace": 0.00379788875579834,
+      "copy": 0.00379788875579834,
+      "direct": 0.00379788875579834,
+      "batch": 0.0025835633277893066
+     },
+     "attn": {
+      "median_us": 28.673279285430908,
+      "p10_us": 27.868800163269043,
+      "p90_us": 28.673279285430908,
+      "samples_us": [
+       28.703360557556152,
+       28.673279285430908,
+       27.868800163269043
+      ]
+     },
+     "copy": {
+      "median_us": 28.76863956451416,
+      "p10_us": 28.68096113204956,
+      "p90_us": 28.76863956451416,
+      "samples_us": [
+       29.105279445648193,
+       28.68096113204956,
+       28.76863956451416
+      ]
+     },
+     "direct": {
+      "median_us": 28.46463918685913,
+      "p10_us": 28.40384006500244,
+      "p90_us": 28.46463918685913,
+      "samples_us": [
+       29.630401134490967,
+       28.46463918685913,
+       28.40384006500244
+      ]
+     },
+     "batch": {
+      "median_us": 28.084800243377686,
+      "p10_us": 27.94975996017456,
+      "p90_us": 28.084800243377686,
+      "samples_us": [
+       28.653759956359863,
+       27.94975996017456,
+       28.084800243377686
+      ]
+     },
+     "batch_inplace": {
+      "median_us": 28.592960834503174,
+      "p10_us": 28.290560245513916,
+      "p90_us": 28.592960834503174,
+      "samples_us": [
+       28.968000411987305,
+       28.592960834503174,
+       28.290560245513916
+      ]
+     }
+    },
+    {
+     "far_fraction": 0.3,
+     "far_fraction_actual": 0.28643798828125,
+     "far_refs": [
+      4591,
+      4795
+     ],
+     "far_unique": [
+      2277,
+      1924
+     ],
+     "unique_ratio": 0.447581504368208,
+     "far_unique_bytes": [
+      2623104,
+      2216448
+     ],
+     "repeats_per_graph": {
+      "attn": 100,
+      "copy": 84,
+      "direct": 47,
+      "batch": 72,
+      "batch_inplace": 47
+     },
+     "correctness_max_abs_error": {
+      "batch_inplace": 0.004062056541442871,
+      "batch": 0.004062056541442871,
+      "copy": 0.004062056541442871,
+      "direct": 0.004062056541442871
+     },
+     "attn": {
+      "median_us": 28.397440910339355,
+      "p10_us": 28.290879726409912,
+      "p90_us": 28.397440910339355,
+      "samples_us": [
+       29.297919273376465,
+       28.397440910339355,
+       28.290879726409912
+      ]
+     },
+     "copy": {
+      "median_us": 87.17676003774007,
+      "p10_us": 85.95466613769531,
+      "p90_us": 87.17676003774007,
+      "samples_us": [
+       87.35657305944534,
+       85.95466613769531,
+       87.17676003774007
+      ]
+     },
+     "direct": {
+      "median_us": 172.29208033135598,
+      "p10_us": 169.45905888334235,
+      "p90_us": 172.29208033135598,
+      "samples_us": [
+       173.6217864016269,
+       169.45905888334235,
+       172.29208033135598
+      ]
+     },
+     "batch": {
+      "median_us": 109.4306641154819,
+      "p10_us": 93.26577848858304,
+      "p90_us": 109.4306641154819,
+      "samples_us": [
+       110.13199885686238,
+       93.26577848858304,
+       109.4306641154819
+      ]
+     },
+     "batch_inplace": {
+      "median_us": 173.03761015547082,
+      "p10_us": 169.4624677617499,
+      "p90_us": 173.03761015547082,
+      "samples_us": [
+       173.84851739761677,
+       169.4624677617499,
+       173.03761015547082
+      ]
+     },
+     "cpu_gather": {
+      "median_us": 308.949,
+      "p10_us": 268.843,
+      "p90_us": 308.949,
+      "samples_us": [
+       1575.248,
+       308.949,
+       268.843
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "requests": 16,
+   "mtp": 8,
+   "query_rows": 128,
+   "cases": [
+    {
+     "far_fraction": 0.0,
+     "far_fraction_actual": 0.0,
+     "far_refs": [
+      0,
+      0
+     ],
+     "far_unique": [
+      0,
+      0
+     ],
+     "unique_ratio": 0.0,
+     "far_unique_bytes": [
+      0,
+      0
+     ],
+     "repeats_per_graph": {
+      "attn": 50,
+      "copy": 50,
+      "direct": 50,
+      "batch": 39,
+      "batch_inplace": 50
+     },
+     "correctness_max_abs_error": {
+      "direct": 0.0018692612648010254,
+      "copy": 0.0018692612648010254,
+      "batch_inplace": 0.0018692612648010254,
+      "batch": 0.0018692612648010254
+     },
+     "attn": {
+      "median_us": 155.9545612335205,
+      "p10_us": 155.2236843109131,
+      "p90_us": 155.9545612335205,
+      "samples_us": [
+       155.9545612335205,
+       159.64159965515137,
+       155.2236843109131
+      ]
+     },
+     "copy": {
+      "median_us": 156.81856155395508,
+      "p10_us": 155.93728065490723,
+      "p90_us": 156.81856155395508,
+      "samples_us": [
+       155.93728065490723,
+       158.74624252319336,
+       156.81856155395508
+      ]
+     },
+     "direct": {
+      "median_us": 155.94176292419434,
+      "p10_us": 154.8960018157959,
+      "p90_us": 155.94176292419434,
+      "samples_us": [
+       155.94176292419434,
+       159.89312171936035,
+       154.8960018157959
+      ]
+     },
+     "batch": {
+      "median_us": 204.50543134640424,
+      "p10_us": 198.75610791719876,
+      "p90_us": 204.50543134640424,
+      "samples_us": [
+       204.7425661331568,
+       204.50543134640424,
+       198.75610791719876
+      ]
+     },
+     "batch_inplace": {
+      "median_us": 155.96863746643066,
+      "p10_us": 154.99008178710938,
+      "p90_us": 155.96863746643066,
+      "samples_us": [
+       155.96863746643066,
+       158.95487785339355,
+       154.99008178710938
+      ]
+     }
+    },
+    {
+     "far_fraction": 0.3,
+     "far_fraction_actual": 0.2902812957763672,
+     "far_refs": [
+      73971,
+      78220
+     ],
+     "far_unique": [
+      29364,
+      31579
+     ],
+     "unique_ratio": 0.40043760800572964,
+     "far_unique_bytes": [
+      33827328,
+      36379008
+     ],
+     "repeats_per_graph": {
+      "attn": 50,
+      "copy": 11,
+      "direct": 4,
+      "batch": 8,
+      "batch_inplace": 4
+     },
+     "correctness_max_abs_error": {
+      "batch": 0.0029918551445007324,
+      "direct": 0.0020943880081176758,
+      "batch_inplace": 0.0020943880081176758,
+      "copy": 0.0020943880081176758
+     },
+     "attn": {
+      "median_us": 156.99135780334473,
+      "p10_us": 156.83839797973633,
+      "p90_us": 156.99135780334473,
+      "samples_us": [
+       156.99135780334473,
+       158.75264167785645,
+       156.83839797973633
+      ]
+     },
+     "copy": {
+      "median_us": 779.429782520641,
+      "p10_us": 778.3185785466975,
+      "p90_us": 779.429782520641,
+      "samples_us": [
+       779.429782520641,
+       872.8844035755504,
+       778.3185785466975
+      ]
+     },
+     "direct": {
+      "median_us": 2451.256036758423,
+      "p10_us": 2357.0799827575684,
+      "p90_us": 2451.256036758423,
+      "samples_us": [
+       2451.256036758423,
+       2578.9198875427246,
+       2357.0799827575684
+      ]
+     },
+     "batch": {
+      "median_us": 1111.523985862732,
+      "p10_us": 1079.9200534820557,
+      "p90_us": 1111.523985862732,
+      "samples_us": [
+       1111.523985862732,
+       1196.720004081726,
+       1079.9200534820557
+      ]
+     },
+     "batch_inplace": {
+      "median_us": 2450.792074203491,
+      "p10_us": 2355.91197013855,
+      "p90_us": 2450.792074203491,
+      "samples_us": [
+       2450.792074203491,
+       2580.9359550476074,
+       2355.91197013855
+      ]
+     },
+     "cpu_gather": {
+      "median_us": 1544.702,
+      "p10_us": 1450.429,
+      "p90_us": 1544.702,
+      "samples_us": [
+       1544.702,
+       1574.836,
+       1450.429
+      ]
+     }
+    }
+   ]
+  }
+ ],
+ "gpu_after": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA H800, 2121 MiB, 78951 MiB, 99 %, 1980 MHz, 2619 MHz"
+}
