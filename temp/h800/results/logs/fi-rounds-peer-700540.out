@@ -1,0 +1,68 @@
+job=700540 name=fi-rounds-peer node=g40 gpus=0,1 tree=/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer start=2026-10-26T00:37:47+08:00
+commit=dbbc02c6caea3e80cde4f2dafb650a6a24854878 dirty=1
+index, name, pci.bus_id, memory.used [MiB], memory.total [MiB], clocks.max.sm [MHz]
+0, NVIDIA H800, 00000000:87:00.0, 0 MiB, 81559 MiB, 1980 MHz
+1, NVIDIA H800, 00000000:AE:00.0, 0 MiB, 81559 MiB, 1980 MHz
+	[4mGPU0	GPU1	NIC0	NIC1	NIC2	NIC3	NIC4	NIC5	NIC6	NIC7	NIC8	CPU Affinity	NUMA Affinity	GPU NUMA ID[0m
+GPU0	 X 	NV8	NODE	NODE	NODE	NODE	PIX	NODE	NODE	NODE	NODE	52-67	1		N/A
+GPU1	NV8	 X 	NODE	NODE	NODE	NODE	NODE	NODE	PIX	NODE	NODE	52-67	1		N/A
+NIC0	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC1	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC2	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC3	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE				
+NIC4	PIX	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE				
+NIC5	NODE	NODE	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE				
+NIC6	NODE	PIX	NODE	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE				
+NIC7	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	 X 	NODE				
+NIC8	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	 X 				
+
+Legend:
+
+  X    = Self
+  SYS  = Connection traversing PCIe as well as the SMP interconnect between NUMA nodes (e.g., QPI/UPI)
+  NODE = Connection traversing PCIe as well as the interconnect between PCIe Host Bridges within a NUMA node
+  PHB  = Connection traversing PCIe as well as a PCIe Host Bridge (typically the CPU)
+  PXB  = Connection traversing multiple PCIe bridges (without traversing the PCIe Host Bridge)
+  PIX  = Connection traversing at most a single PCIe bridge
+  NV#  = Connection traversing a bonded set of # NVLinks
+
+NIC Legend:
+
+  NIC0: mlx5_0
+  NIC1: mlx5_1
+  NIC2: mlx5_2
+  NIC3: mlx5_3
+  NIC4: mlx5_4
+  NIC5: mlx5_5
+  NIC6: mlx5_6
+  NIC7: mlx5_7
+  NIC8: mlx5_8
+
+            PCIe Generation
+                Max                                    : 5
+                Current                                : 5
+--
+            Link Width
+                Max                                    : 16x
+                Current                                : 16x
+torch 2.13.0+cu130 13.0 NVIDIA H800
+Build cuda_13.0.r13.0/compiler.36424714_0
+available: 2 nodes (0-1)
+node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51
+node 0 size: 515652 MB
+node 0 free: 383095 MB
+cmd: python temp/h800/bench_rounds.py --tier peer --mtp 8 --requests 1 4 16 64 128 --passes 5 --modes ours_inplace memcpy_lru direct_lru hisparse floor_fa2 floor_flashmla --output $OUT/rounds_mtp8.json && python temp/h800/bench_rounds.py --tier peer --mtp 1 --requests 1 8 64 256 --passes 5 --modes ours_inplace memcpy_lru direct_lru hisparse floor_fa2 floor_flashmla --output $OUT/rounds_mtp1.json
+bandwidth {'dma_contiguous_GBps': 177.49055018702558, 'sm_gather_random_GBps': 167.20023846045945}
+tier=peer requests=1 mtp=8 rows=8 steady(mean of last half, us): ours_inplace=83.2 memcpy_lru=45.9 direct_lru=60.7 hisparse=829.0 floor_fa2=32.9 floor_flashmla=62.3 misses={'ours_inplace': 1005} unique_uncached=4062
+tier=peer requests=4 mtp=8 rows=32 steady(mean of last half, us): ours_inplace=157.0 memcpy_lru=97.5 direct_lru=141.5 hisparse=968.8 floor_fa2=53.2 floor_flashmla=63.3 misses={'ours_inplace': 6041} unique_uncached=17188
+tier=peer requests=16 mtp=8 rows=128 steady(mean of last half, us): ours_inplace=610.0 memcpy_lru=430.5 direct_lru=861.3 hisparse=1436.7 floor_fa2=162.4 floor_flashmla=83.1 misses={'ours_inplace': 36259} unique_uncached=81267
+tier=peer requests=64 mtp=8 rows=512 steady(mean of last half, us): ours_inplace=2304.5 memcpy_lru=1703.0 direct_lru=3592.1 hisparse=2596.6 floor_fa2=612.0 floor_flashmla=291.3 misses={'ours_inplace': 150890} unique_uncached=327414
+tier=peer requests=128 mtp=8 rows=1024 steady(mean of last half, us): ours_inplace=4581.6 memcpy_lru=3450.3 direct_lru=7408.4 hisparse=4367.1 floor_fa2=1201.6 floor_flashmla=568.5 misses={'ours_inplace': 309084} unique_uncached=668922
+results=/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-rounds-peer-700540/rounds_mtp8.json
+bandwidth {'dma_contiguous_GBps': 177.3823453757422, 'sm_gather_random_GBps': 167.06084862030843}
+tier=peer requests=1 mtp=1 rows=1 steady(mean of last half, us): ours_inplace=44.6 memcpy_lru=26.5 direct_lru=27.9 hisparse=105.8 floor_fa2=21.7 floor_flashmla=61.2 misses={'ours_inplace': 152} unique_uncached=2047
+tier=peer requests=8 mtp=1 rows=8 steady(mean of last half, us): ours_inplace=77.4 memcpy_lru=56.8 direct_lru=66.8 hisparse=150.9 floor_fa2=33.5 floor_flashmla=62.1 misses={'ours_inplace': 2494} unique_uncached=16376
+tier=peer requests=64 mtp=1 rows=64 steady(mean of last half, us): ours_inplace=249.1 memcpy_lru=266.3 direct_lru=361.4 hisparse=314.1 floor_fa2=95.7 floor_flashmla=78.3 misses={'ours_inplace': 21065} unique_uncached=131008
+tier=peer requests=256 mtp=1 rows=256 steady(mean of last half, us): ours_inplace=793.9 memcpy_lru=938.3 direct_lru=1279.6 hisparse=907.6 floor_fa2=320.7 floor_flashmla=231.8 misses={'ours_inplace': 85562} unique_uncached=524032
+results=/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-rounds-peer-700540/rounds_mtp1.json
+end=2026-10-26T00:41:19+08:00 status=0

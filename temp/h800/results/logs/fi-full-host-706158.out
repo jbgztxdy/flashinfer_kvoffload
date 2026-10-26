@@ -1,0 +1,80 @@
+job=706158 name=fi-full-host node=g40 gpus=0 tree=/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer start=2026-10-26T00:37:47+08:00
+commit=dbbc02c6caea3e80cde4f2dafb650a6a24854878 dirty=1
+index, name, pci.bus_id, memory.used [MiB], memory.total [MiB], clocks.max.sm [MHz]
+0, NVIDIA H800, 00000000:0F:00.0, 0 MiB, 81559 MiB, 1980 MHz
+	[4mGPU0	NIC0	NIC1	NIC2	NIC3	NIC4	NIC5	NIC6	NIC7	NIC8	CPU Affinity	NUMA Affinity	GPU NUMA ID[0m
+GPU0	 X 	PIX	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	0-15	0		N/A
+NIC0	PIX	 X 	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC1	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC2	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC3	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE				
+NIC4	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE				
+NIC5	NODE	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE				
+NIC6	NODE	NODE	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE				
+NIC7	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	 X 	NODE				
+NIC8	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	 X 				
+
+Legend:
+
+  X    = Self
+  SYS  = Connection traversing PCIe as well as the SMP interconnect between NUMA nodes (e.g., QPI/UPI)
+  NODE = Connection traversing PCIe as well as the interconnect between PCIe Host Bridges within a NUMA node
+  PHB  = Connection traversing PCIe as well as a PCIe Host Bridge (typically the CPU)
+  PXB  = Connection traversing multiple PCIe bridges (without traversing the PCIe Host Bridge)
+  PIX  = Connection traversing at most a single PCIe bridge
+  NV#  = Connection traversing a bonded set of # NVLinks
+
+NIC Legend:
+
+  NIC0: mlx5_0
+  NIC1: mlx5_1
+  NIC2: mlx5_2
+  NIC3: mlx5_3
+  NIC4: mlx5_4
+  NIC5: mlx5_5
+  NIC6: mlx5_6
+  NIC7: mlx5_7
+  NIC8: mlx5_8
+
+            PCIe Generation
+                Max                                    : 5
+                Current                                : 5
+--
+            Link Width
+                Max                                    : 16x
+                Current                                : 16x
+torch 2.13.0+cu130 13.0 NVIDIA H800
+Build cuda_13.0.r13.0/compiler.36424714_0
+available: 2 nodes (0-1)
+node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51
+node 0 size: 515652 MB
+node 0 free: 383095 MB
+cmd: bash temp/h800/full_host.sh
++ R8='1 2 3 4 5 6 8 10 12 16 20 24 32 40 48 64 80 96 112 128'
++ R1='1 2 4 8 16 32 64 128 256 512'
++ F='0 0.05 0.1 0.15 0.2 0.25 0.3'
++ python temp/h800/bench_sweep.py --tier host --mtp 8 --requests 1 2 3 4 5 6 8 10 12 16 20 24 32 40 48 64 80 96 112 128 --fractions 0 0.05 0.1 0.15 0.2 0.25 0.3 --rounds 6 --modes attn copy direct batch --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-full-host-706158/sweep_host_mtp8.json
++ grep -v Warn
++ tail -3
+tier=host requests=128 rows=1024 far=25% (actual 0.255, unique 0.417) attn=1201.9us copy=5856.0us direct=17352.5us batch=7826.4us
+tier=host requests=128 rows=1024 far=30% (actual 0.297, unique 0.416) attn=1196.4us copy=6593.6us direct=20174.0us batch=9032.0us
+results=/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-full-host-706158/sweep_host_mtp8.json
++ python temp/h800/bench_sweep.py --tier host --mtp 1 --requests 1 2 4 8 16 32 64 128 256 512 --fractions 0 0.05 0.1 0.15 0.2 0.25 0.3 --rounds 6 --modes attn copy direct batch --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-full-host-706158/sweep_host_mtp1.json
++ grep -v Warn
++ tail -3
+tier=host requests=512 rows=512 far=25% (actual 0.244, unique 1.000) attn=625.8us copy=5951.5us direct=8431.8us batch=8921.8us
+tier=host requests=512 rows=512 far=30% (actual 0.285, unique 1.000) attn=619.8us copy=6848.8us direct=9822.8us batch=10353.7us
+results=/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-full-host-706158/sweep_host_mtp1.json
++ python temp/h800/bench_rounds.py --tier host --mtp 8 --requests 1 2 4 8 12 16 24 32 48 64 96 128 --passes 5 --modes ours_stage ours_nocache memcpy_lru direct_lru floor_fa2 --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-full-host-706158/rounds_host_mtp8.json
++ grep -v Warn
++ tail -3
+tier=host requests=96 mtp=8 rows=768 steady(mean of last half, us): ours_stage=8132.0 ours_nocache=17216.4 memcpy_lru=5901.5 direct_lru=22584.0 floor_fa2=905.6 misses={'ours_stage': 204148} unique_uncached=475496
+tier=host requests=128 mtp=8 rows=1024 steady(mean of last half, us): ours_stage=12001.3 ours_nocache=23451.7 memcpy_lru=8697.1 direct_lru=34587.2 floor_fa2=1199.7 misses={'ours_stage': 308974} unique_uncached=668922
+results=/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-full-host-706158/rounds_host_mtp8.json
++ python temp/h800/bench_rounds.py --tier host --mtp 1 --requests 1 2 4 8 16 32 64 128 256 512 --passes 5 --modes ours_stage ours_nocache memcpy_lru direct_lru floor_fa2 --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-full-host-706158/rounds_host_mtp1.json
++ grep -v Warn
++ tail -3
+tier=host requests=256 mtp=1 rows=256 steady(mean of last half, us): ours_stage=3504.0 ours_nocache=17467.2 memcpy_lru=2563.4 direct_lru=5770.8 floor_fa2=317.5 misses={'ours_stage': 85562} unique_uncached=524032
+tier=host requests=512 mtp=1 rows=512 steady(mean of last half, us): ours_stage=6979.7 ours_nocache=34672.1 memcpy_lru=4636.1 direct_lru=11703.6 floor_fa2=616.8 misses={'ours_stage': 181180} unique_uncached=1048064
+results=/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-full-host-706158/rounds_host_mtp1.json
+end=2026-10-26T00:43:41+08:00 status=0
