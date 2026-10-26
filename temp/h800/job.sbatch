@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH --partition=h01
-#SBATCH --nodelist=g40
+# Partition h01 is g40 and g44 (both H800 x8); either node is fine.
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --chdir=/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer
