@@ -17,6 +17,7 @@
 #define FLASHINFER_MLA_HOST_BATCH_CUH_
 
 #include "mla.cuh"
+#include "far_link_emu.cuh"
 
 namespace flashinfer {
 
@@ -640,6 +641,8 @@ __device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uin
   __shared__ int32_t cache_rows[kHostBatchFetchRows];
   __shared__ uint32_t deferred[kHostBatchMaxDeferred], deferred_count;
   if (tid == 0) deferred_count = 0;
+  FAR_EMU_INIT(2);
+  FAR_EMU_SYNC();
   auto issue = [&](uint32_t chunk, uint32_t buf) {
 #pragma unroll
     for (uint32_t i = 0; i < CHUNK_VECS / KTraits::NUM_THREADS; ++i) {
@@ -652,6 +655,7 @@ __device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uin
                                                        source + v % VECS_PER_ROW);
       }
     }
+    FAR_EMU_TILE(2, buf, tid == 0 ? min(rows, count - chunk * rows) : 0, ROW * sizeof(DTypeKV));
     cp_async::commit_group();
   };
 
@@ -666,6 +670,7 @@ __device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uin
     } else {
       cp_async::wait_group<0>();
     }
+    FAR_EMU_WAIT(2, BUFFERS == 2 ? k % 2 : 0);
     __syncthreads();
     const uint32_t buf = BUFFERS == 2 ? k % 2 : 0;
     auto* destination = reinterpret_cast<uint4*>(
@@ -890,6 +895,10 @@ __device__ __forceinline__ void load_host_batch_kv(typename KTraits::SharedStora
       kpe_smem.load_128b_async<SharedMemFillMode::kFillZero>(kpe_smem_offset_w, kpe_ptr, valid);
       kpe_ptr += 8 * upcast_size<DTypeKV>();
     }
+    FAR_EMU_TILE(KTraits::NUM_STAGES, stage_idx,
+                 lane_idx % 8 == 0 && valid && pages[j] >= 0 &&
+                     (pages[j] & ~kHostBatchOwnerBit) >= params.host_page_start,
+                 (KTraits::HEAD_DIM_CKV + KTraits::HEAD_DIM_KPE) * sizeof(DTypeKV));
   }
 }
 
@@ -1029,6 +1038,7 @@ __device__ __forceinline__ void attend_host_batch_tiles(
   typename KTraits::IdType pages[kHostBatchTileRows<KTraits>];
   int kv_tile_idx = ceil_div(kv_len, CTA_TILE_KV) - 1;
   const int mask_tile_idx = kv_len / CTA_TILE_KV;
+  FAR_EMU_INIT(NUM_STAGES);
 #pragma unroll
   for (int stage_idx = 0; stage_idx < NUM_STAGES; ++stage_idx) {
     if (kv_tile_idx - stage_idx >= 0 && kv_tile_idx - stage_idx < host_tiles) {
@@ -1055,7 +1065,9 @@ __device__ __forceinline__ void attend_host_batch_tiles(
     const int next = kv_tile_idx - NUM_STAGES;
     if (next >= 0) read_host_batch_pages<KTraits>(params, index_base, kv_len, next * CTA_TILE_KV, pages);
     cp_async::wait_group<NUM_STAGES - 1>();
+    FAR_EMU_WAIT(NUM_STAGES, kv_tile_idx % NUM_STAGES);
     __syncthreads();
+    FAR_EMU_PREFETCH(NUM_STAGES, (kv_tile_idx + NUM_STAGES - 1) % NUM_STAGES);
     writeback_host_batch_tile<KTraits>(params, storage, index_base, kv_len,
                                        kv_tile_idx * CTA_TILE_KV, kv_tile_idx % NUM_STAGES);
     compute_mla_qk<KTraits>(&storage, kv_tile_idx % NUM_STAGES, s_frag);
@@ -1079,7 +1091,9 @@ __device__ __forceinline__ void attend_host_batch_tiles(
     const int next = kv_tile_idx - NUM_STAGES;
     read_host_batch_pages<KTraits>(params, index_base, kv_len, next * CTA_TILE_KV, pages);
     cp_async::wait_group<NUM_STAGES - 1>();
+    FAR_EMU_WAIT(NUM_STAGES, kv_tile_idx % NUM_STAGES);
     __syncthreads();
+    FAR_EMU_PREFETCH(NUM_STAGES, (kv_tile_idx + NUM_STAGES - 1) % NUM_STAGES);
     writeback_host_batch_tile<KTraits>(params, storage, index_base, kv_len,
                                        kv_tile_idx * CTA_TILE_KV, kv_tile_idx % NUM_STAGES);
     compute_mla_qk<KTraits>(&storage, kv_tile_idx % NUM_STAGES, s_frag);
@@ -1094,6 +1108,7 @@ __device__ __forceinline__ void attend_host_batch_tiles(
     cp_async::commit_group();
   }
   cp_async::wait_group<0>();
+  FAR_EMU_WAIT_ALL(NUM_STAGES);
   __syncthreads();
 
 #pragma unroll

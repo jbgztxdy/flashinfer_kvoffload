@@ -21,6 +21,7 @@
 #include <sstream>
 
 #include "../profiler.cuh"
+#include "far_link_emu.cuh"
 #include "mla_params.cuh"
 #include "prefill.cuh"
 #include "variant_helper.cuh"
@@ -226,6 +227,10 @@ __device__ __forceinline__ void load_kv(
                                                                packed_block_iter < packed_kv_bound);
         kpe_ptr += 8 * upcast_size<DTypeKV>();
       }
+      FAR_EMU_TILE(KTraits::NUM_STAGES, stage_idx,
+                   lane_idx % 8 == 0 && packed_block_iter < packed_kv_bound &&
+                       FAR_EMU_IS_FAR(ckv + page * ckv_stride_page),
+                   (KTraits::HEAD_DIM_CKV + KTraits::HEAD_DIM_KPE) * sizeof(DTypeKV));
     }
   } else {
 #pragma unroll
@@ -260,6 +265,10 @@ __device__ __forceinline__ void load_kv(
                                                                packed_block_iter < packed_kv_bound);
         kpe_ptr += 8 * upcast_size<DTypeKV>();
       }
+      FAR_EMU_TILE(KTraits::NUM_STAGES, stage_idx,
+                   lane_idx % 8 == 0 && packed_block_iter < packed_kv_bound &&
+                       FAR_EMU_IS_FAR(ckv + page * ckv_stride_page),
+                   (KTraits::HEAD_DIM_CKV + KTraits::HEAD_DIM_KPE) * sizeof(DTypeKV));
     }
   }
 }
@@ -858,6 +867,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
         min(q_len, ceil_div(qo_packed_idx_base + KTraits::CTA_TILE_Q, num_heads));
 
     init_states_<KTraits>(o_frag, m, d);
+    FAR_EMU_INIT(NUM_STAGES);
 
     __syncthreads();
     load_q<KTraits>(&smem_storage, q_nope + q_indptr * q_nope_stride_n,
@@ -901,7 +911,9 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
 #pragma unroll 1
     for (; kv_tile_idx >= mask_tile_idx && kv_tile_idx > 0; --kv_tile_idx) {
       cp_async::wait_group<NUM_STAGES - 1>();
+      FAR_EMU_WAIT(NUM_STAGES, kv_tile_idx % NUM_STAGES);
       __syncthreads();
+      FAR_EMU_PREFETCH(NUM_STAGES, (kv_tile_idx + NUM_STAGES - 1) % NUM_STAGES);
 
       // compute mla qk
       compute_mla_qk<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, s_frag);
@@ -931,7 +943,9 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
 #pragma unroll 1
     for (; kv_tile_idx + 1 > NUM_STAGES; --kv_tile_idx) {
       cp_async::wait_group<NUM_STAGES - 1>();
+      FAR_EMU_WAIT(NUM_STAGES, kv_tile_idx % NUM_STAGES);
       __syncthreads();
+      FAR_EMU_PREFETCH(NUM_STAGES, (kv_tile_idx + NUM_STAGES - 1) % NUM_STAGES);
 
       // compute mla qk
       compute_mla_qk<KTraits>(&smem_storage, kv_tile_idx % NUM_STAGES, s_frag);
@@ -950,6 +964,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKe
       cp_async::commit_group();
     }
     cp_async::wait_group<0>();
+    FAR_EMU_WAIT_ALL(NUM_STAGES);
     __syncthreads();
 
     // last tiles

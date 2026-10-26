@@ -166,6 +166,7 @@ void BatchMLAPagedAttentionRunHostPrefetch(
                 ? static_cast<unsigned long long*>(maybe_host_state.value().data_ptr())
                 : nullptr;
 
+        FAR_EMU_CONFIGURE(stream);
         cudaError_t status = mla::BatchMLAPagedAttention<MASK_MODE, HEAD_DIM_CKV, HEAD_DIM_KPE>(
             params, plan_info.num_blks_x, plan_info.num_blks_y, stream);
 
@@ -362,6 +363,7 @@ void BatchMLAPagedAttentionRunHostBatch(
   params.sm_scale = sm_scale;
   params.return_lse_base_on_e = return_lse_base_on_e;
 
+  FAR_EMU_CONFIGURE(stream);
   cudaError_t status = mla::BatchMLAHostBatchAttention<HEAD_DIM_CKV, HEAD_DIM_KPE>(
       params, max_kv_len, partial_lse.size(0) / 64, stream);
   TVM_FFI_ICHECK(status == cudaSuccess)

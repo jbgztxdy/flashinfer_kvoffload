@@ -28,6 +28,34 @@ from bench_glm52_sparse_decode_p2p import gpu_snapshot, summarize  # noqa: E402
 HEADS = 64
 
 
+# Emulated far link (temp/sim_link): set by --emu, used by far gathers and the bandwidth probe.
+EMU = None
+
+
+def setup_emu(spec, kv):
+    """--emu "<GB/s>:<latency ns>": route far reads through the emulated link (needs the kernels
+    built with -DFLASHINFER_FAR_EMU, i.e. FLASHINFER_EXTRA_CUDAFLAGS)."""
+    global EMU
+    if not spec:
+        return None
+    if "-DFLASHINFER_FAR_EMU" not in os.environ.get("FLASHINFER_EXTRA_CUDAFLAGS", ""):
+        raise SystemExit("--emu needs FLASHINFER_EXTRA_CUDAFLAGS=-DFLASHINFER_FAR_EMU (and its own workspace)")
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "sim_link"))
+    import emu
+    gbps, lat = spec.split(":")
+    far = kv.main()[kv.near].data_ptr()
+    emu.kernel_env(float(gbps), int(lat), far, far + kv.far * tiers.ROW_BYTES)
+    EMU = dict(gbps=float(gbps), latency_ns=int(lat), module=emu)
+    return {k: v for k, v in EMU.items() if k != "module"}
+
+
+def far_gather(src, ids, out):
+    """GPU gather of far rows (Memcpy baselines), over the emulated link when --emu is set."""
+    if EMU:
+        return EMU["module"].gather(src, ids, out)
+    return torch.index_select(src, 0, ids, out=out)
+
+
 def probe_bandwidth(kv, main, alias, device, gib=1.0):
     """Far-tier read bandwidth: one contiguous DMA copy and an SM gather of random rows."""
     rows = min(int(gib * 2**30) // tiers.ROW_BYTES, kv.far, kv.staging)
@@ -37,7 +65,7 @@ def probe_bandwidth(kv, main, alias, device, gib=1.0):
     start, end = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
     out = {}
     for name, fn in (("dma_contiguous", lambda: dst.copy_(far)),
-                     ("sm_gather_random", lambda: torch.index_select(main[kv.near :], 0, ids, out=dst))):
+                     ("sm_gather_random", lambda: far_gather(main, ids + kv.near, dst))):
         fn()
         times = []
         for _ in range(5):
@@ -50,6 +78,7 @@ def probe_bandwidth(kv, main, alias, device, gib=1.0):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--tier", choices=("host", "peer"), required=True)
+    parser.add_argument("--emu", default=None, help="emulated far link '<GB/s>:<latency ns>' (temp/sim_link)")
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--peer", type=int, default=1)
     parser.add_argument("--requests", nargs="+", type=int, required=True)
@@ -104,6 +133,7 @@ def main():
         source_sha256={n: hashlib.sha256(Path(n).read_bytes()).hexdigest() for n in (
             "temp/h800/bench_sweep.py", "temp/h800/tiers.py", "include/flashinfer/attention/mla_host_batch.cuh")},
         residency=kv.residency,
+        emulated_link=setup_emu(args.emu, kv),
         bandwidth=probe_bandwidth(kv, main_kv, alias, device),
         methods=dict(
             attn="native FA2 MLA attention, every selected row near (compute floor, no transfer)",
@@ -175,7 +205,7 @@ def run_batch(args, requests, kv, main_kv, alias, far_cpu, packed, captures, dev
                 if far_cpu is not None:
                     staged[:n].copy_(packed[:n], non_blocking=True)
                 else:
-                    torch.index_select(far_view, 0, case["far_ids_dev"], out=staged[:n])
+                    far_gather(far_view, case["far_ids_dev"], staged[:n])
             wrappers[mode].run(query, rope, alias[..., :512], alias[..., 512:], out=output)
         else:
             wrappers[mode].run(query, rope, main_kv[..., :512], main_kv[..., 512:], out=output,

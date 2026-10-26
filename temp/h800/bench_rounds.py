@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import tiers  # noqa: E402
 from bench_glm52_host_batch import make_wrapper, reference  # noqa: E402
 from bench_glm52_sparse_decode_p2p import gpu_snapshot, summarize  # noqa: E402
-from bench_sweep import probe_bandwidth  # noqa: E402
+from bench_sweep import far_gather, probe_bandwidth, setup_emu  # noqa: E402
 
 HEADS, SM_SCALE = 64, 1 / 16
 
@@ -71,6 +71,7 @@ class HiSparse:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--tier", choices=("host", "peer"), required=True)
+    parser.add_argument("--emu", default=None, help="emulated far link '<GB/s>:<latency ns>' (temp/sim_link)")
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--peer", type=int, default=1)
     parser.add_argument("--requests", nargs="+", type=int, required=True)
@@ -121,7 +122,8 @@ def main():
         git_dirty=bool(subprocess.check_output(["git", "status", "--porcelain", "include", "csrc", "flashinfer"], text=True).strip()),
         source_sha256={n: hashlib.sha256(Path(n).read_bytes()).hexdigest() for n in (
             "temp/h800/bench_rounds.py", "temp/h800/tiers.py", "include/flashinfer/attention/mla_host_batch.cuh")},
-        residency=kv.residency, bandwidth=probe_bandwidth(kv, main_kv, alias, device),
+        residency=kv.residency, emulated_link=setup_emu(args.emu, kv),
+        bandwidth=probe_bandwidth(kv, main_kv, alias, device),
         methods=dict(
             ours_stage="our kernel, LRU pool of `capacity` per request, misses staged (PCIe layout)",
             ours_inplace="our kernel, LRU pool of `capacity` per request, misses read in place, fetch CTAs fill the cache",
@@ -250,12 +252,12 @@ def run_requests(args, requests, steps, kv, main_kv, alias, captures, device):
             if n and far_cpu is not None:
                 staged[:n].copy_(packed[:n], non_blocking=True)
             elif n:
-                torch.index_select(far_view, 0, p["miss_ids_dev"], out=staged[:n])
+                far_gather(far_view, p["miss_ids_dev"], staged[:n])
             ours[mode][0].run(query, rope, alias[..., :512], alias[..., 512:], out=output)
         elif mode == "direct_lru":
             ours[mode][0].run(query, rope, main_kv[..., :512], main_kv[..., 512:], out=output)
             if len(p["miss_ids"]):
-                torch.index_select(far_view, 0, p["miss_ids_dev"], out=staged[: len(p["miss_ids"])])
+                far_gather(far_view, p["miss_ids_dev"], staged[: len(p["miss_ids"])])
         elif mode in ours:
             ours[mode][0].run(query, rope, main_kv[..., :512], main_kv[..., 512:], out=output, host_page_start=kv.near)
         elif mode == "floor_flashmla":
