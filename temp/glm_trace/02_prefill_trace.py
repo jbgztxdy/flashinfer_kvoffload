@@ -9,8 +9,16 @@
 #        Every rank holds all hidden states; the indexer and the sparse attention split the rows
 #        across ranks and all-gather; the 256 routed experts are split across ranks and their
 #        outputs all-reduced. Attention runs in MLA's absorbed (latent, 512-wide) form.
-# Output (rank 0): <out>/doc<i>.pt with selections [indexer layers, groups, span, topk] (int32
-#        positions within the document, -1 padded), group_starts, layer ids, members, loss.
+# Output (rank 0): <out>/doc<i>.pt with, per indexer layer, group and position:
+#        selections [indexer layers, groups, span, topk] int32 key positions within the document
+#          (-1 padded), sorted by index score descending;
+#        scores, same shape, fp32 index scores of those keys (-inf where padded), so scores[..., -1]
+#          is the admission threshold when the row has >= topk keys;
+#        row_stats [indexer layers, groups, span, 5] fp32 over all causal in-document keys:
+#          n_valid, sum, sum of squares, max, top-k sum (mean/std/top-k share derive from these);
+#        optional full_rows (--full-rows): full score row of each group's last position;
+#        plus positions, group_starts, layer ids, source_layer (indexer layer used by each of the
+#        78 layers), members (source sessions), doc index, loss and the run config.
 # Usage: torchrun --nproc-per-node 8 02_prefill_trace.py --corpus corpus_64k.pt --out traces/
 import argparse
 import json
@@ -34,6 +42,7 @@ ap.add_argument("--layers", type=int, default=0, help="stop after this many laye
 ap.add_argument("--chunk", type=int, default=128, help="query rows per indexer chunk")
 ap.add_argument("--attn-chunk", type=int, default=256, help="query rows per sparse-attention chunk")
 ap.add_argument("--check", action="store_true", help="check chunked indexer/attention against dense references")
+ap.add_argument("--full-rows", action="store_true", help="also save the full score row of each group's last position")
 args = ap.parse_args()
 
 dist.init_process_group("nccl")
@@ -135,24 +144,40 @@ def indexer_scores(L, x, q_resid, k, rows, cos, sin, d0, d1):
     return torch.einsum("rh,rht->rt", w, sc)
 
 
-def indexer_topk(L, x, q_resid, cos, sin, doc_bounds, T):
-    """Top-k key positions (within the row's document, causal) for every row; -1 padded."""
+def indexer_topk(L, x, q_resid, cos, sin, doc_bounds, T, full_rows=None):
+    """Top-k key positions (within the row's document, causal) for every row, -1 padded, with
+    their index scores (-inf padded) and per-row statistics; `full_rows` (global row ids) also
+    returns those rows' whole score rows [len, T] (-inf outside the row's causal document)."""
     k = indexer_keys(L, x, cos, sin)
     per, mine = my_rows(T)
     out = torch.full((len(mine), TOPK), -1, dtype=torch.int32, device=dev)
+    vals = torch.full((len(mine), TOPK), float("-inf"), dtype=torch.float32, device=dev)
+    stats = torch.zeros((len(mine), 5), dtype=torch.float32, device=dev)
+    full = torch.full((len(full_rows), T), float("-inf"), device=dev) if full_rows is not None else None
     for c0 in range(0, len(mine), args.chunk):
         rows = mine[c0 : c0 + args.chunk]
         lo = doc_bounds[torch.searchsorted(doc_bounds, rows, right=True) - 1]
         d0, d1 = int(lo.min()), int(rows.max()) + 1
         sc = indexer_scores(L, x, q_resid, k, rows, cos, sin, d0, d1)
         t = torch.arange(d0, d1, device=dev)
-        sc.masked_fill_((t[None] > rows[:, None]) | (t[None] < lo[:, None]), float("-inf"))
+        ok = (t[None] <= rows[:, None]) & (t[None] >= lo[:, None])
+        z = sc.where(ok, 0.0)
+        stats[c0 : c0 + len(rows), :4] = torch.stack([ok.sum(-1).float(), z.sum(-1), z.pow(2).sum(-1),
+                                                      sc.masked_fill(~ok, float("-inf")).amax(-1)], -1)
+        sc.masked_fill_(~ok, float("-inf"))
+        if full is not None:
+            hit = (full_rows[:, None] == rows[None]).nonzero()
+            full[hit[:, 0], d0:d1] = sc[hit[:, 1]]
         n = min(TOPK, sc.shape[1])
         val, top = sc.topk(n, -1)
         top = (top + d0 - lo[:, None]).int()
         top[val == float("-inf")] = -1
         out[c0 : c0 + len(rows), :n] = top
-    return gather_rows(out, per, T)
+        vals[c0 : c0 + len(rows), :n] = val
+        stats[c0 : c0 + len(rows), 4] = val.where(val > float("-inf"), 0.0).sum(-1)
+    if full is not None:
+        dist.all_reduce(full, dist.ReduceOp.MAX)  # each row lives on exactly one rank
+    return gather_rows(out, per, T), gather_rows(vals, per, T), gather_rows(stats, per, T), full
 
 
 def attention(L, x, cos, sin, doc_bounds, topk_all):
@@ -230,16 +255,21 @@ for i, n in enumerate(lens):
     for s in st:
         want.append(int(doc_bounds[i]) + torch.arange(int(s), int(s) + args.span))
 want = torch.cat(want).to(dev)
+last = want.view(-1, args.span)[:, -1] if args.full_rows else None  # each group's last position
 cos, sin = rope_tables(pos, D_ROPE)
 hs = F.embedding(tokens, raw("model.embed_tokens.weight").to(dev))
-records, layer_ids, topk_all = [], [], None
+records, layer_ids, source_layer, topk_all = [], [], [], None
 t0 = time.time()
 for L in range(N_LAYERS):
     x = rms(hs, vec(f"model.layers.{L}.input_layernorm.weight"))
     if TYPES[L] == "full":
         q_resid = rms(x @ weight(f"model.layers.{L}.self_attn.q_a_proj").T,
                       vec(f"model.layers.{L}.self_attn.q_a_layernorm.weight"))
-        topk_all = indexer_topk(L, x, q_resid, cos, sin, doc_bounds, T)
+        topk_all, score_all, stats_all, full = indexer_topk(L, x, q_resid, cos, sin, doc_bounds, T, last)
+        if rank == 0:
+            records.append((topk_all[want].cpu(), score_all[want].cpu(), stats_all[want].cpu(),
+                            full.cpu() if full is not None else None))
+            layer_ids.append(L)
         if args.check and L == 0 and rank == 0:
             # Dense reference on the first document's last 256 rows: same scores without chunking.
             k = indexer_keys(L, x, cos, sin)
@@ -250,6 +280,15 @@ for L in range(N_LAYERS):
             got = topk_all[rows].long()
             overlap = torch.tensor([len(set(a.tolist()) & set(b.tolist())) / TOPK for a, b in zip(ref_top, got)])
             print(f"check layer 0: chunked vs dense top-k overlap mean {overlap.mean():.4f} min {overlap.min():.4f}", flush=True)
+            # Recorded scores are the dense scores at the recorded positions, sorted descending.
+            ref_at = ref.gather(1, got.clamp(min=0)).masked_fill(got < 0, float("-inf"))
+            fin = ref_at > float("-inf")
+            serr = ((ref_at - score_all[rows]).abs() / ref.where(ref > float("-inf"), 0.0).abs().amax(-1, keepdim=True))[fin].max()
+            desc = bool((score_all[rows][:, 1:] <= score_all[rows][:, :-1]).all())
+            nv = (ref > float("-inf")).sum(-1).float()
+            print(f"check layer 0: recorded vs dense scores max rel error {serr:.2e}, sorted {desc}, "
+                  f"n_valid ok {bool((nv == stats_all[rows, 0]).all())}, -1 iff -inf "
+                  f"{bool(((got < 0) == (score_all[rows] == float('-inf'))).all())}", flush=True)
     if args.check and L == 0:
         # Absorbed vs expanded sparse attention on a few rows of the first document.
         a_abs, _ = attention(L, x, cos, sin, doc_bounds, topk_all)
@@ -268,9 +307,7 @@ for L in range(N_LAYERS):
             ref = o.reshape(len(rows), -1).to(x.dtype) @ weight(p + "o_proj").T
             err = (ref.float() - a_abs[rows].float()).abs().max() / ref.float().abs().max()
             print(f"check layer 0: absorbed vs expanded attention, max rel error {err:.2e}", flush=True)
-        if rank == 0:
-            records.append(topk_all[want].cpu())
-            layer_ids.append(L)
+    source_layer.append(layer_ids[-1] if rank == 0 else -1)
     a, _ = attention(L, x, cos, sin, doc_bounds, topk_all)
     hs = hs + a
     x = rms(hs, vec(f"model.layers.{L}.post_attention_layernorm.weight"))
@@ -295,13 +332,23 @@ if rank == 0:
         loss = (torch.stack(losses).sum() / int(ok.sum())).item()
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    sel = torch.stack(records)
+    sel, scr, sts = (torch.stack([r[j] for r in records]) for j in range(3))
     per_doc = args.groups * args.span
+    nl, G, S = len(layer_ids), args.groups, args.span
     for i in range(len(docs)):
-        s = sel[:, i * per_doc : (i + 1) * per_doc].view(len(layer_ids), args.groups, args.span, TOPK)
-        torch.save(dict(selections=s.contiguous(), group_starts=starts[i], layers=layer_ids, tokens=lens[i],
-                        members=corpus["members"][i], config=vars(args), model=args.model, loss=loss),
-                   out / f"doc{i}.pt")
+        d = slice(i * per_doc, (i + 1) * per_doc)
+        rec = dict(selections=sel[:, d].reshape(nl, G, S, TOPK).contiguous(),
+                   scores=scr[:, d].reshape(nl, G, S, TOPK).contiguous(),
+                   row_stats=sts[:, d].reshape(nl, G, S, 5).contiguous(),
+                   row_stats_fields=["n_valid", "sum", "sumsq", "max", "topk_sum"],
+                   positions=starts[i][:, None] + torch.arange(S), group_starts=starts[i],
+                   layers=layer_ids, source_layer=source_layer, topk=TOPK, doc=i, tokens=lens[i],
+                   members=corpus["members"][i], corpus=args.corpus, config=vars(args), model=args.model,
+                   loss=loss, layers_run=N_LAYERS)
+        if args.full_rows:
+            b0, b1 = int(doc_bounds[i]), int(doc_bounds[i + 1])
+            rec["full_rows"] = torch.stack([r[3][i * G : (i + 1) * G, b0:b1] for r in records]).contiguous()
+        torch.save(rec, out / f"doc{i}.pt")
     print(f"saved {len(docs)} docs, indexer layers {layer_ids}, next-token loss {loss:.3f}, {time.time() - t0:.0f} s",
           flush=True)
 dist.destroy_process_group()
