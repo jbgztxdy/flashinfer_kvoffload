@@ -42,6 +42,8 @@ ap.add_argument("--layers", type=int, default=0, help="stop after this many laye
 ap.add_argument("--chunk", type=int, default=128, help="query rows per indexer chunk")
 ap.add_argument("--attn-chunk", type=int, default=256, help="query rows per sparse-attention chunk")
 ap.add_argument("--check", action="store_true", help="check chunked indexer/attention against dense references")
+ap.add_argument("--indexer-interleave", type=int, choices=[0, 1], default=None,
+                help="override config.indexer_rope_interleave (diagnostics)")
 ap.add_argument("--full-rows", action="store_true", help="also save the full score row of each group's last position")
 args = ap.parse_args()
 
@@ -57,7 +59,7 @@ IH, ID, TOPK = cfg["index_n_heads"], cfg["index_head_dim"], cfg["index_topk"]
 E, TOP_E, N_GROUP, TOPK_GROUP = cfg["n_routed_experts"], cfg["num_experts_per_tok"], cfg["n_group"], cfg["topk_group"]
 SCALE_E, FIRST_DENSE = cfg["routed_scaling_factor"], cfg["first_k_dense_replace"]
 THETA = cfg["rope_parameters"]["rope_theta"]
-INDEXER_INTERLEAVE = cfg.get("indexer_rope_interleave", False)
+INDEXER_INTERLEAVE = cfg.get("indexer_rope_interleave", False) if args.indexer_interleave is None else bool(args.indexer_interleave)
 TYPES = cfg["indexer_types"]
 N_LAYERS = args.layers or cfg["num_hidden_layers"]
 assert E % world == 0
@@ -324,12 +326,15 @@ if rank == 0:
         lm = raw("lm_head.weight").to(dev)
         nxt = want + 1
         ok = (nxt < T) & (torch.searchsorted(doc_bounds, nxt, right=True) == torch.searchsorted(doc_bounds, want, right=True))
-        losses = []
-        for c0 in range(0, int(ok.sum()), 1024):
-            r = want[ok][c0 : c0 + 1024]
+        tok_loss = torch.full((len(want),), float("nan"), device=dev)
+        idx = ok.nonzero()[:, 0]
+        for c0 in range(0, len(idx), 1024):
+            r = want[idx[c0 : c0 + 1024]]
             logits = (rms(hs[r], vec("model.norm.weight")) @ lm.T).float()
-            losses.append(F.cross_entropy(logits, tokens[r + 1], reduction="sum"))
-        loss = (torch.stack(losses).sum() / int(ok.sum())).item()
+            tok_loss[idx[c0 : c0 + 1024]] = F.cross_entropy(logits, tokens[r + 1], reduction="none")
+        loss = tok_loss[ok].mean().item()
+        print("next-token loss per group:", " ".join(f"{v:.3f}" for v in tok_loss.view(-1, args.span).nanmean(-1).tolist()),
+              flush=True)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     sel, scr, sts = (torch.stack([r[j] for r in records]) for j in range(3))
