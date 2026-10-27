@@ -44,6 +44,8 @@ ap.add_argument("--attn-chunk", type=int, default=256, help="query rows per spar
 ap.add_argument("--check", action="store_true", help="check chunked indexer/attention against dense references")
 ap.add_argument("--indexer-interleave", type=int, choices=[0, 1], default=None,
                 help="override config.indexer_rope_interleave (diagnostics)")
+ap.add_argument("--dense", action="store_true", help="attention over all causal keys (diagnostics; short docs)")
+ap.add_argument("--loss-all", action="store_true", help="save the next-token loss of every position to <out>/loss.pt")
 ap.add_argument("--full-rows", action="store_true", help="also save the full score row of each group's last position")
 args = ap.parse_args()
 
@@ -204,8 +206,12 @@ def attention(L, x, cos, sin, doc_bounds, topk_all):
         q_lat = torch.einsum("rhd,hdc->rhc", q[..., :D_NOPE].float(), w_uk.float())
         q_rope = rope(q[..., D_NOPE:], cos[rows], sin[rows], True).float()
         lo = doc_bounds[torch.searchsorted(doc_bounds, rows, right=True) - 1]
-        sel = topk_all[rows].long()
-        valid = sel >= 0
+        if args.dense:
+            sel = torch.arange(int((rows - lo).max()) + 1, device=dev).expand(len(rows), -1)
+            valid = sel <= (rows - lo)[:, None]
+        else:
+            sel = topk_all[rows].long()
+            valid = sel >= 0
         g = lo[:, None] + sel.clamp(min=0)
         cg = c[g].float()  # [r, K, 512]
         s = torch.einsum("rhc,rkc->rhk", q_lat, cg) + torch.einsum("rhd,rkd->rhk", q_rope, k_rope[g].float())
@@ -333,6 +339,19 @@ if rank == 0:
             logits = (rms(hs[r], vec("model.norm.weight")) @ lm.T).float()
             tok_loss[idx[c0 : c0 + 1024]] = F.cross_entropy(logits, tokens[r + 1], reduction="none")
         loss = tok_loss[ok].mean().item()
+        if args.loss_all:
+            every = torch.full((T,), float("nan"), device=dev)
+            nxt_ok = torch.ones(T, dtype=torch.bool, device=dev)
+            nxt_ok[doc_bounds[1:] - 1] = False
+            r_all = nxt_ok.nonzero()[:, 0]
+            for c0 in range(0, len(r_all), 1024):
+                r = r_all[c0 : c0 + 1024]
+                logits = (rms(hs[r], vec("model.norm.weight")) @ lm.T).float()
+                every[r] = F.cross_entropy(logits, tokens[r + 1], reduction="none")
+            Path(args.out).mkdir(parents=True, exist_ok=True)
+            torch.save(dict(loss=every.cpu(), tokens=tokens.cpu(), doc_bounds=doc_bounds.cpu()), Path(args.out) / "loss.pt")
+            print("next-token loss per 256 positions:", " ".join(f"{v:.2f}" for v in every[: T // 256 * 256].view(-1, 256).nanmean(-1).tolist()),
+                  flush=True)
         print("next-token loss per group:", " ".join(f"{v:.3f}" for v in tok_loss.view(-1, args.span).nanmean(-1).tolist()),
               flush=True)
     out = Path(args.out)
