@@ -46,6 +46,9 @@ ap.add_argument("--indexer-interleave", type=int, choices=[0, 1], default=None,
                 help="override config.indexer_rope_interleave (diagnostics)")
 ap.add_argument("--dense", action="store_true", help="attention over all causal keys (diagnostics; short docs)")
 ap.add_argument("--loss-all", action="store_true", help="save the next-token loss of every position to <out>/loss.pt")
+ap.add_argument("--ref-layers", default="", help="comma-separated layers to compare against transformers' "
+                "GlmMoeDsaDecoderLayer (1 rank, one doc, with --dense)")
+ap.add_argument("--pos-offset", type=int, default=0, help="add to every RoPE position (diagnostics)")
 ap.add_argument("--full-rows", action="store_true", help="also save the full score row of each group's last position")
 args = ap.parse_args()
 
@@ -70,6 +73,48 @@ SM_SCALE = (D_NOPE + D_ROPE) ** -0.5
 
 index = json.load(open(f"{args.model}/model.safetensors.index.json"))["weight_map"]
 _handles = {}
+REF_LAYERS = {int(v) for v in args.ref_layers.split(",") if v}
+
+
+def ref_layer_check(L, h_in, h_out):
+    """Run transformers' decoder layer L (eager, dense causal attention) on h_in with the same
+    dequantized weights and report its relative error against this script's output h_out."""
+    from transformers import AutoConfig
+    from transformers.models.glm_moe_dsa import modeling_glm_moe_dsa as M
+    assert world == 1 and args.dense
+    conf = AutoConfig.from_pretrained(args.model)
+    conf._attn_implementation, conf._experts_implementation = "eager", "eager"
+    with torch.device("meta"):
+        layer = M.GlmMoeDsaDecoderLayer(conf, L)
+    layer.self_attn.indexer = None
+    layer = layer.to_empty(device=dev).to(torch.bfloat16)
+    p = f"model.layers.{L}."
+    for name, t in layer.state_dict().items():
+        if ".experts." in name:
+            e = range(E)
+            if name.endswith("gate_up_proj"):
+                t.copy_(torch.stack([torch.cat([weight(f"{p}mlp.experts.{i}.gate_proj"), weight(f"{p}mlp.experts.{i}.up_proj")]) for i in e]))
+            else:
+                t.copy_(torch.stack([weight(f"{p}mlp.experts.{i}.down_proj") for i in e]))
+        elif name.endswith(".weight"):
+            t.copy_(weight(p + name[:-7]))
+        else:
+            t.copy_(raw(p + name).to(dev))
+    if L >= FIRST_DENSE:  # the routing bias stays fp32, as in transformers
+        layer.mlp.gate.e_score_correction_bias = vec(p + "mlp.gate.e_score_correction_bias").float()
+    rot = M.GlmMoeDsaRotaryEmbedding(conf, device=dev)
+    n = h_in.shape[0]
+    pid = torch.arange(n, device=dev)[None]
+    pe = rot(h_in[None], pid)
+    mask = torch.full((n, n), torch.finfo(torch.bfloat16).min, device=dev).triu(1)[None, None].to(torch.bfloat16)
+    allk = torch.arange(n, device=dev, dtype=torch.int32).expand(1, n, n)
+    with torch.no_grad():
+        out = layer(h_in[None], attention_mask=mask, position_ids=pid, position_embeddings=pe, prev_topk_indices=allk)[0][0]
+    d, ref = (out.float() - h_out.float()), (out.float() - h_in.float())
+    print(f"ref check layer {L}: |ours - transformers| / |layer delta| = {d.norm() / ref.norm():.3e}, "
+          f"max abs {d.abs().max():.3e}, per-row worst rel {(d.norm(dim=-1) / ref.norm(dim=-1)).max():.3e}", flush=True)
+    del layer
+    torch.cuda.empty_cache()
 
 
 def raw(name):
@@ -254,7 +299,7 @@ if args.tokens:
 lens = [len(d) for d in docs]
 doc_bounds = torch.tensor([0] + torch.tensor(lens).cumsum(0).tolist(), device=dev)
 tokens = torch.cat(docs).to(dev).long()
-pos = torch.cat([torch.arange(n) for n in lens]).to(dev)
+pos = torch.cat([torch.arange(n) for n in lens]).to(dev) + args.pos_offset
 T = len(tokens)
 starts, want = [], []
 for i, n in enumerate(lens):
@@ -269,6 +314,7 @@ hs = F.embedding(tokens, raw("model.embed_tokens.weight").to(dev))
 records, layer_ids, source_layer, topk_all = [], [], [], None
 t0 = time.time()
 for L in range(N_LAYERS):
+    h_in = hs.clone() if L in REF_LAYERS else None
     x = rms(hs, vec(f"model.layers.{L}.input_layernorm.weight"))
     if TYPES[L] == "full":
         q_resid = rms(x @ weight(f"model.layers.{L}.self_attn.q_a_proj").T,
@@ -320,6 +366,8 @@ for L in range(N_LAYERS):
     hs = hs + a
     x = rms(hs, vec(f"model.layers.{L}.post_attention_layernorm.weight"))
     hs = hs + (dense_mlp(f"model.layers.{L}.mlp.", x) if L < FIRST_DENSE else moe(L, x))
+    if h_in is not None:
+        ref_layer_check(L, h_in, hs)
     _handles.clear()
     torch.cuda.empty_cache()
     if rank == 0:
@@ -341,6 +389,7 @@ if rank == 0:
         loss = tok_loss[ok].mean().item()
         if args.loss_all:
             every = torch.full((T,), float("nan"), device=dev)
+            pred = torch.full((T, 5), -1, dtype=torch.int32, device=dev)
             nxt_ok = torch.ones(T, dtype=torch.bool, device=dev)
             nxt_ok[doc_bounds[1:] - 1] = False
             r_all = nxt_ok.nonzero()[:, 0]
@@ -348,8 +397,10 @@ if rank == 0:
                 r = r_all[c0 : c0 + 1024]
                 logits = (rms(hs[r], vec("model.norm.weight")) @ lm.T).float()
                 every[r] = F.cross_entropy(logits, tokens[r + 1], reduction="none")
+                pred[r] = logits.topk(5, -1).indices.int()
             Path(args.out).mkdir(parents=True, exist_ok=True)
-            torch.save(dict(loss=every.cpu(), tokens=tokens.cpu(), doc_bounds=doc_bounds.cpu()), Path(args.out) / "loss.pt")
+            torch.save(dict(loss=every.cpu(), pred_top5=pred.cpu(), tokens=tokens.cpu(), doc_bounds=doc_bounds.cpu()),
+                       Path(args.out) / "loss.pt")
             print("next-token loss per 256 positions:", " ".join(f"{v:.2f}" for v in every[: T // 256 * 256].view(-1, 256).nanmean(-1).tolist()),
                   flush=True)
         print("next-token loss per group:", " ".join(f"{v:.3f}" for v in tok_loss.view(-1, args.span).nanmean(-1).tolist()),
