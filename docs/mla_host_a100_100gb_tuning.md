@@ -2,6 +2,8 @@
 
 用户明确了两个独立方向：100 GB/s 加较高访问延迟，以及小 batch。MTP8 的 128 请求对应 **1024 行，是大 batch**；小 batch 在本文单列，覆盖 MTP1 的 1/4/16 请求和 MTP8 的 1/2/4 请求。
 
+后续第二轮 LRU/小 batch 分块改进及反向顺序对照见 [`mla_host_a100_lru_tuning.md`](mla_host_a100_lru_tuning.md)。本文保留第一轮数据，避免不同版本的耗时混用。
+
 ## 最终改动与结果
 
 保留的 kernel 改动只调整 `host_batch_fetch_rows`：fetch CTA 多于 8 个时，未命中页足够每个 fetch CTA 分到一块 64 行后，就使用 64 行搬运块；此前要达到三块才切换。这样在较多 fetch CTA 下提高在途字节量，并减少 16 行小块造成的串行等待。8 个及以下 fetch CTA 的选择规则保持。仍为单个 cooperative kernel，融合 prepare、去重、搬运、LRU 和 attention；模拟器未改。

@@ -1,0 +1,20 @@
+{
+  "label": "candidate_repeat",
+  "suite": "full",
+  "passes": 7,
+  "source_sha256": {
+    "include/flashinfer/attention/mla_host_batch.cuh": "addd989a91190caab301afabb97f631147c7f5c6d6e2df6df20c9afc3e1fb619",
+    "include/flashinfer/attention/far_link_emu.cuh": "5e409035aa4edc83f72135c09c453e825ce59e5dcc4bae63c04ff3909d024095",
+    "temp/sim_link/bench_tune.py": "4acfa4d9aa7c178d81550714b2ba0080d49cda10a25f4dfb437bc5db7af7d1a4",
+    "/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_lru/run.py": "04ab16ba19f87cffb5043a4f459b213825881d45c75a027e2a2c7ea7ce5577c2"
+  },
+  "files": [
+    "temp/sim_link/tune_lru/candidate_repeat_mtp8_l0.json",
+    "temp/sim_link/tune_lru/candidate_repeat_mtp1_l0.json",
+    "temp/sim_link/tune_lru/candidate_repeat_mtp8_l20000.json",
+    "temp/sim_link/tune_lru/candidate_repeat_mtp1_l20000.json",
+    "temp/sim_link/tune_lru/candidate_repeat_host_mtp8.json",
+    "temp/sim_link/tune_lru/candidate_repeat_glm8k_mtp1.json",
+    "temp/sim_link/tune_lru/candidate_repeat_g50_mtp8_l20000.json"
+  ]
+}

@@ -16,7 +16,15 @@ parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument("--host-item-entries", type=int, default=None)
 parser.add_argument("--host-split", type=int, choices=(0, 1), default=None)
 parser.add_argument("--grid-ctas", type=int, default=None)
+parser.add_argument("--kv-chunks", type=int, default=None)
 overrides, remaining = parser.parse_known_args()
+if overrides.kv_chunks is not None:
+    if "-DFLASHINFER_HOST_BATCH_TUNE" not in os.environ.get("FLASHINFER_EXTRA_CUDAFLAGS", ""):
+        raise SystemExit("--kv-chunks needs the experiment-only FLASHINFER_HOST_BATCH_TUNE build")
+    if 'std::getenv("FLASHINFER_HOST_BATCH_KV_CHUNKS")' not in Path(
+            "include/flashinfer/attention/mla_host_batch.cuh").read_text():
+        raise SystemExit("--kv-chunks needs the saved planner patch applied")
+    os.environ["FLASHINFER_HOST_BATCH_KV_CHUNKS"] = str(overrides.kv_chunks)
 if overrides.grid_ctas is not None:
     if "-DFLASHINFER_HOST_BATCH_TUNE" not in os.environ.get("FLASHINFER_EXTRA_CUDAFLAGS", ""):
         raise SystemExit("--grid-ctas needs the experiment-only FLASHINFER_HOST_BATCH_TUNE build")

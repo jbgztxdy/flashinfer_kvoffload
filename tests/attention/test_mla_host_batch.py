@@ -271,7 +271,8 @@ def test_host_batch_layouts(requests, mtp, host_fraction, stage, host_split):
 @pytest.mark.parametrize("stage", [True, False])
 @pytest.mark.parametrize(
     "requests,mtp,capacity,share",
-    [(1, 8, 512, 0.0), (4, 8, 640, 0.0), (16, 2, 448, 0.0), (6, 4, 512, 0.3), (3, 8, 192, 0.0)],
+    [(1, 8, 512, 0.0), (4, 8, 640, 0.0), (16, 2, 448, 0.0), (6, 4, 512, 0.3),
+     (3, 8, 192, 0.0), (1, 8, 8192, 0.0)],
 )
 def test_host_batch_lru_cache(requests, mtp, capacity, share, stage):
     _skip_if_unsupported()
@@ -395,6 +396,38 @@ def _plan(rows, kv_len, indices, num_heads=64, dtype=torch.bfloat16):
     )
     wrapper.host_fetch_ctas = 4
     return wrapper
+
+
+@pytest.mark.parametrize("stage", [True, False])
+def test_host_batch_lru_one_pool_hits_other_evicts(stage):
+    """One pool has no misses while another replaces its entire cache, across repeated launches."""
+    _skip_if_unsupported()
+    kv_len, mtp, host_start = 512, 4, 64
+    cache = torch.randn(2048, 1, 576, dtype=torch.bfloat16, device="cuda")
+    q = torch.randn(2 * mtp, 64, 512, dtype=cache.dtype, device="cuda")
+    p = torch.randn(2 * mtp, 64, 64, dtype=cache.dtype, device="cuda")
+    w = _plan(2 * mtp, kv_len, torch.empty(2 * mtp * kv_len, dtype=torch.int32, device="cuda"))
+    w.host_stage = stage
+    w.set_host_cache(torch.tensor([0, mtp, 2 * mtp], dtype=torch.int32), kv_len)
+    fixed = torch.arange(host_start, host_start + kv_len, dtype=torch.int32)
+    fixed_slots = None
+    for step in range(6):
+        other = fixed + (1 + step % 2) * kv_len
+        ids = torch.stack([fixed, other])[:, None].expand(2, mtp, kv_len).reshape(2 * mtp, kv_len).cuda()
+        w._kv_indices_buf.copy_(ids.flatten())
+        out = w.run(q, p, cache[..., :512], cache[..., 512:], host_page_start=host_start)
+        expected, _ = _reference(q, p, cache[..., :512], cache[..., 512:], ids, 1 / 16)
+        torch.testing.assert_close(out.float(), expected, rtol=1e-2, atol=1e-2)
+        state, store = _cache_state(w, host_start)
+        selected = set(ids.cpu().flatten().tolist())
+        assert set(state) == selected
+        fixed_now = {page: state[page] for page in fixed.tolist()}
+        if fixed_slots is not None:
+            assert fixed_now == fixed_slots
+        fixed_slots = fixed_now
+        pages = torch.tensor(sorted(state), dtype=torch.long, device="cuda")
+        slots = torch.tensor([state[int(page)] for page in pages.cpu()], device="cuda")
+        assert torch.equal(store["kv"][slots], cache[pages, 0])
 
 
 @pytest.mark.parametrize("stage", [True, False])

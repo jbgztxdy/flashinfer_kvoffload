@@ -612,6 +612,20 @@ __device__ __forceinline__ uint32_t host_batch_fetch_rows(const Params& params, 
                                                                : kHostBatchFetchRows;
 }
 
+// Prepare has finished every resident lookup before the fetch starts. The staging path may
+// therefore bind a selected victim here, after releasing the staged bytes to attention, instead
+// of putting these dependent map loads/stores on the LRU item's critical path.
+template <typename Params>
+__device__ __forceinline__ void bind_host_batch_staged_slot(const Params& params, uint32_t staged,
+                                                           int32_t victim) {
+  if (victim < 0) return;
+  const auto page = params.unique_pages[staged];
+  const int32_t evicted = params.slot_page[victim];
+  if (evicted >= 0) params.resident[evicted - params.host_page_start] = -1;
+  params.resident[page - params.host_page_start] = victim;
+  params.slot_page[victim] = page;
+}
+
 // Copy staged pages Host -> HBM in slot order, `rows` slots per chunk (host_batch_fetch_rows),
 // publishing a ready flag per chunk. Slots follow row order (see prepare_host_batch_rows), as do attention
 // items. cp.async into shared memory keeps enough PCIe reads in flight: register loads
@@ -722,6 +736,7 @@ __device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uin
             victim = params.victim_of[slot];
           }
           cache_rows[tid] = victim;
+          bind_host_batch_staged_slot(params, slot, victim);
         }
         __syncthreads();
 #pragma unroll
@@ -756,6 +771,7 @@ __device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uin
         victim = params.victim_of[slot];
       }
       cache_rows[tid] = victim;
+      bind_host_batch_staged_slot(params, slot, victim);
     }
     __syncthreads();
     const auto* source = reinterpret_cast<const uint4*>(
@@ -1191,6 +1207,13 @@ __device__ __noinline__ void run_host_batch_lru(const Params& params, uint8_t* s
   };
   const uint32_t first = min(slot_base(params.pool_row_start[pool]), count);
   const uint32_t last = min(slot_base(params.pool_row_start[pool + 1]), count);
+  if (first == last) {
+    if (tid == 0 && !row_base) {
+      asm volatile("st.release.gpu.global.u32 [%0], %1;" ::"l"(params.pool_flags + pool),
+                   "r"(epoch + 1) : "memory");
+    }
+    return;
+  }
   __shared__ uint32_t histogram[256], warp_sums[THREADS / 32], selected[4];
   // In place, the row bases occupy the start of the shared memory.
   uint32_t* keys = reinterpret_cast<uint32_t*>(smem) + (row_base ? round_up(params.num_rows, 32u) : 0u);
@@ -1293,9 +1316,12 @@ __device__ __noinline__ void run_host_batch_lru(const Params& params, uint8_t* s
       less += keys[i] < threshold;
       equal += keys[i] == threshold;
     }
-    const uint32_t equal_before = host_batch_thread_scan<THREADS>(equal, warp_sums).x;
+    // Counts in either half stay below 2^16 (pool capacity <= 8192), so one scan gives both
+    // prefixes without a carry between them. Equal-key victims consume the first `rank` ties.
+    const uint32_t packed = host_batch_thread_scan<THREADS>(less | (equal << 16), warp_sums).x;
+    const uint32_t equal_before = packed >> 16;
     uint32_t take_equal = min(equal, rank > equal_before ? rank - equal_before : 0u);
-    uint32_t position = host_batch_thread_scan<THREADS>(less + take_equal, warp_sums).x;
+    uint32_t position = (packed & 65535u) + min(equal_before, rank);
     for (uint32_t i = tid; i < capacity; i += THREADS) {
       const uint32_t key = keys[i];
       if (key < threshold || (key == threshold && take_equal && take_equal--)) {
@@ -1308,23 +1334,20 @@ __device__ __noinline__ void run_host_batch_lru(const Params& params, uint8_t* s
       const uint32_t staged = first + r;
       const int32_t slot = base + victim_slots[r];
       params.slot_stamp[slot] = stamp;
-      typename Params::IdType page;
       if (row_base) {
         // In place: bind here, so the attention only copies the bytes. The page's claiming entry
         // is the rank-th claim of the pool row whose slot range holds `staged`.
         const int32_t entry = host_batch_claim_entry(params, pool, row_base, staged);
-        page = params.remap[entry] & ~kHostBatchOwnerBit;
+        const auto page = params.remap[entry] & ~kHostBatchOwnerBit;
         params.entry_victim[entry] = slot;
         params.host_slot[page - params.host_page_start] = 0;
+        const int32_t evicted = params.slot_page[slot];
+        if (evicted >= 0) params.resident[evicted - params.host_page_start] = -1;
+        params.resident[page - params.host_page_start] = slot;
+        params.slot_page[slot] = page;
       } else {
         params.victim_of[staged] = slot;
-        page = params.unique_pages[staged];
       }
-      const int32_t evicted = params.slot_page[slot];
-      // An evicted page is not referenced this launch: a reference would have hit and stamped it.
-      if (evicted >= 0) params.resident[evicted - params.host_page_start] = -1;
-      params.resident[page - params.host_page_start] = slot;
-      params.slot_page[slot] = page;
     }
   }
   // Pages beyond the pool's free slots stay uncached.
@@ -1671,8 +1694,14 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
           min(ceil_div(grid, max(params.num_rows, 1u)), ceil_div(kv_len, KTraits::NUM_THREADS));
       params.prepare_segment = round_up(ceil_div(kv_len, params.prepare_parts), KTraits::NUM_THREADS);
       params.num_chunks = 1;
+      // Staged rows also produce Host items after these HBM chunks. Leave part of the first
+      // wave for those items and the LRU, rather than sizing the HBM work to fill it alone.
+      const uint32_t max_chunks = params.stage && params.host_split && params.pool_capacity > 0 &&
+                                          tail_tiles > 0 && tail_tiles < grid
+                                      ? min(32u, max(1u, grid * 3 / (tail_tiles * 4)))
+                                      : 32u;
       uint64_t best_cost = UINT64_MAX;
-      for (uint32_t chunks = 1; chunks <= 32 && tail_tiles > 0; ++chunks) {
+      for (uint32_t chunks = 1; chunks <= max_chunks && tail_tiles > 0; ++chunks) {
         const uint32_t chunk_len = round_up(ceil_div(kv_len, chunks), CTA_TILE_KV);
         if (chunks > 1 && tail_tiles * (chunks + 1) > partial_capacity) break;
         // A count whose tile-rounded chunks leave the last one empty repeats a smaller split, but
