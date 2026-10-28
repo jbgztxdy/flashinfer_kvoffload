@@ -55,11 +55,15 @@
 | **1004362** `fi-tune-host` | h01，1 张 H800，40 分钟 | PCIe 调优：staged 的 fetch CTA 取 8/16/32/64，另测原地读和 HiSparse。脚本 `temp/h800/tune_host.sh` | PENDING，调度器估计 11/02 02:34 开始 | 集群 `rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/`，日志在 `temp/h800/logs/` |
 | **1004363** `fi-tune-peer` | h01，2 张 H800，30 分钟 | NVLink 调优：staged（16/32/64 个 fetch CTA，去重）对比原地读。脚本 `temp/h800/tune_peer.sh` | PENDING，估计 11/02 | 同上，目录 `fi-tune-peer-1004363/` |
 | **1040680** `fi-bulkbw` | h01，1 张 H800，10 分钟 | **关键实验**：Hopper 的 `cp.async.bulk`（1-D TMA）读 Host 随机行，能否快于 SM cp.async（约 33 GB/s），接近 DMA 的 55 GB/s。同时校验拷贝内容是否正确（`bulk copy check: 0 bad vectors`）。源码 `temp/fetch_bw/bulk_bw.cu` | PENDING，估计 11/02 | 同上，目录 `fi-bulkbw-1040680/host.txt` |
-| **1040732** `glm-corpus` | a01，只用 CPU，1 小时 | 用新数据集构建 4 × 64K 的语料 `corpus_swe.pt`。带 `--show`，会打印第一篇文档的开头 | 刚提交 | 集群 `rtx/yjw/test/glm_trace/corpus_swe.pt`，日志 `rtx/yjw/test/glm_trace/logs/glm-corpus-1040732.out` |
+| **1040732** `glm-corpus` | a01，只用 CPU，1 小时 | 用新数据集构建 4 × 64K 的语料 `corpus_swe.pt` | **COMPLETED，0:0，12 分 25 秒** | 集群 `rtx/yjw/test/glm_trace/corpus_swe.pt`，日志 `rtx/yjw/test/glm_trace/logs/glm-corpus-1040732.out` |
+| **1040816** `glm-swe-check` | a01，2 张 A800，90 分钟 | 新语料 loss + top-k 验证：原语料第 2 篇，8K，`--groups 2 --span 256 --loss-all --check` | **RUNNING，g57，10/28 11:13 启动**；尚无 loss 结论 | 集群 `rtx/yjw/test/glm_trace/traces/swe_check_20261028/`，日志 `logs/glm-swe-check-1040816.out` |
 
+- 10/28 11:22：1040816 已完成第 28 层（共 78 层）；第 0 层 top-k 重合率 mean/min 均 1.0000，记录分数最大相对误差 5.21e-07，排序/有效数/补位检查均通过；absorbed vs expanded attention 最大相对误差 4.27e-03。这些只证明初步检查通过，尚未证明最终 loss 达标。H800 新调优顺序仍待用户确认。
 - h01 的两个节点 g40、g44，16 张 H800 一直被别人占满，作业只能排队，没有办法加速。重新提交也一样，不要重复提交。
 - 上一次语料作业 1040688 立即失败，退出码 127。原因是用 `--wrap` 时节点上的 sh 没有执行 `source`。已改为用 bash 写的 `04_corpus.sbatch` 重新提交。
-- 本 session 后台的轮询脚本会随 session 结束；下一个 agent 要自己重新设置静默轮询。
+- 10/28 11:07 再查：三个 H800 作业仍为 Priority 排队，预计 11/02 02:34:29，无结果目录；没有重复提交。
+- 静默轮询脚本：`temp/glm_trace/watch_jobs.sh`，每 600 秒查一次，查询失败继续重试。10/28 11:19 已在集群 nohup 启动，PID `4160646`，观察三个 H800 作业和 `1040816`；日志和 PID 文件在 `rtx/yjw/test/glm_trace/logs/watch_20261028.{log,pid}`。继续工作前先用 `ps -p 4160646 -o pid,etime,args` 核查进程，避免重复启动。
+- 两地 `mla_host_batch.cuh` 的哈希不同：已逐行比对，差异均为本机的 `FAR_EMU_*` 模拟钩子，集群版本不含这些钩子。后续实卡优化仍以集群代码为准，不能直接用本机文件覆盖。
 
 ## 4. 未完成的任务和下一步
 
@@ -148,12 +152,13 @@
 - 作业脚本 `temp/glm_trace/04_corpus.sbatch`（**未提交**）。
 
 **后续步骤**：
-1. 看 1040732 的日志：
-   - 如果 64K 的轨迹不够 4 条，assert 会报出实际长度，这时降低 `--tokens`，或把 `--shortlist` 调大；
-   - 肉眼检查打印出的渲染文本。
-2. **验证**：`sbatch --job-name=glm-swe-check --time=01:30:00 03_trace.sbatch --corpus corpus_swe.pt --docs 1 --tokens 4096 --groups 2 --span 256 --loss-all --check`，可用 `NPROC=2 --gres=gpu:a800:2`。
+1. **语料构建和格式检查已完成（10/28）**：4 篇原长 122916 / 121172 / 119659 / 118550，均截到 65536；单条轨迹/文档，角色字段齐全。文档 0 仅有一个 `[gMASK]`，50 个原生 `<tool_call>`、49 个 `<tool_response>`；已检查 user / assistant / tool 的渲染片段。CPU 检查记录见 `temp/glm_trace/results/corpus_swe_inspection_20261028.json`（集群原件为 `corpus_swe_inspection.json`）。
+2. **验证作业 1040816 已启动**：`NPROC=2 sbatch --job-name=glm-swe-check --time=01:30:00 --gres=gpu:a800:2 03_trace.sbatch --corpus corpus_swe_check.pt --docs 1 --tokens 8192 --groups 2 --span 256 --loss-all --check --out traces/swe_check_20261028`。
+   - `corpus_swe_check.pt` 保留原语料第 2 篇（索引 1）及其角色、元数据，用于本次短验证，不替换正式的 4 篇语料。
+   - **不要使用原建议的 4K 前缀**：4 篇的前 5675 token 全为 system，4K 验证没有 assistant；所选 8K 前缀含 793 个 assistant token（第 1 篇只有 121 个）。
    - 判据：按 `role` 分开统计 loss，assistant token 应 ≤ 约 1.5；除第一块外，没有 ≥ 约 6 的 256 位置块；tool 输出可以在 3～5。
    - 注意：现在的 `loss` 字段只统计记录窗口，请看 `--loss-all` 的全位置统计。
+   - `loss.pt` 中 `loss[r]` 预测 `tokens[r+1]`，按角色统计时要用目标 token 的 `role[r+1]`，不能直接用 `role[r]`。
 3. **正式采集**：先跑 1 篇 64K 测时间。indexer 部分与长度平方成正比；4K、2 卡约 17 分钟，64K 要外推，可能需要 8 卡和较长时限。然后跑全部 4 篇。
    - 记录窗口：现在是在文档后半段均匀取 `--groups 16` 组、每组 `--span 1024` 个连续位置。
    - 可以考虑只取 assistant 段作为 decode 位置，因为真实 decode 只生成 assistant token；或者保留全部位置，回放时用 `role` 过滤。
@@ -172,7 +177,7 @@
   - Python 环境：`source rtx/env.sh`，用 `rtx/.venv`（transformers 5.12.1、torch cu130）。
   - 网络：hf-mirror 能访问，huggingface.co 不能。
   - ssh 后台命令要加 `-n`。用 pkill 时注意别匹配到自己的命令，上次就因此误杀并导致重复下载。
-- **本机**：路径 `/home/rtx/projects/flashinfer`（= `/mnt/data/rtx/projects/flashinfer`），分支为 detached HEAD。
+- **本机**：路径 `/home/rtx/projects/flashinfer`（= `/mnt/data/rtx/projects/flashinfer`），10/28 接续检查时实际分支为 `codex/mla-host-overlap`。
   - GPU：GPU0、GPU1 是 A100-SXM4-40GB，两者之间是 NV12；GPU3 是 A100-PCIE。
   - GPU0 作近端，GPU1 经 NVLink 作远端；Host 内存在 NUMA0。
   - 常用环境：`CUDA_DEVICE_ORDER=PCI_BUS_ID PYTHONPATH=. FLASHINFER_WORKSPACE_BASE=$PWD/temp/jit_a100_final FLASHINFER_CUDA_ARCH_LIST=8.0 CUDA_VISIBLE_DEVICES=0,1 numactl -N0 -m0 /mnt/data/mhy-vllm-venv/bin/python ...`。
