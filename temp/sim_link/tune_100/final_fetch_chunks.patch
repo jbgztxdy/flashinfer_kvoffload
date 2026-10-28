@@ -1,0 +1,20 @@
+--- a/include/flashinfer/attention/mla_host_batch.cuh
++++ b/include/flashinfer/attention/mla_host_batch.cuh
+@@ -602,5 +602,5 @@
+-// Staging slots per fetch chunk, the same on every CTA (unique is grid-uniform). Below ~3 chunks
+-// of 64 per fetch CTA, 16-row chunks let the first pages land early: a CTA moves only ~3-8 GB/s
+-// over PCIe, so with 8 CTAs each holding two 64-row chunks (1.2 MB) the first chunk took ~43 us
+-// while its items waited. Above that, 64-row chunks keep the link fuller (fewer flag releases
+-// and barriers per byte); on A100 16 rows lost 12-23% from ~3000 pages up.
++// Staging slots per fetch chunk, the same on every CTA (unique is grid-uniform). With at most
++// eight fetch CTAs, keep 16-row chunks below three rounds of 64-row chunks: this lets the first
++// pages arrive early on PCIe. More fetch CTAs supply enough concurrent reads to use 64-row chunks
++// after one round. Keeping 16-row chunks for three rounds there limits bytes in flight and adds
++// serial waits on higher-latency links. Less than one full round still uses the smaller chunks.
+@@ -610,4 +610,2 @@
+-  // Small transfers: 16-row chunks, so 8 CTAs keep ~300 KB in flight (enough for PCIe) and the
+-  // first chunks land after a few us. Large ones: 64-row chunks, whose fewer flag releases and
+-  // barriers per byte kept the link fuller (16 rows lost ~15% at 6000 pages).
+-  return count < 3 * params.fetch_ctas * kHostBatchFetchRows ? kHostBatchMinFetchRows
++  const uint32_t rounds = params.fetch_ctas <= 8 ? 3 : 1;
++  return count < rounds * params.fetch_ctas * kHostBatchFetchRows ? kHostBatchMinFetchRows

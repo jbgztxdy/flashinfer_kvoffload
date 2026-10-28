@@ -139,10 +139,17 @@ def test_host_batch_staging_overflow(staging_rows):
     _run(8, 8, 64, 2048, 0.3, shared=0.3, staging_rows=staging_rows, repeats=3)
 
 
-@pytest.mark.parametrize("fetch_ctas", [1, 8])
+@pytest.mark.parametrize("fetch_ctas", [1, 8, 16, 24])
 def test_host_batch_fetch_ctas(fetch_ctas):
     _skip_if_unsupported()
     _run(8, 8, 64, 2048, 0.3, shared=0.5, fetch_ctas=fetch_ctas)
+
+
+@pytest.mark.parametrize("fetch_ctas", [16, 24])
+def test_host_batch_many_fetch_ctas_small_transfer(fetch_ctas):
+    _skip_if_unsupported()
+    # Shared MTP selections leave fewer than 2048 distinct Host pages and a partial final chunk.
+    _run(1, 8, 64, 2048, 0.9, shared=1.0, fetch_ctas=fetch_ctas, repeats=3)
 
 
 def test_host_batch_base_e_and_index_update():

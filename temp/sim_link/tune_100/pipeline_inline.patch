@@ -1,0 +1,82 @@
+--- a/include/flashinfer/attention/mla_host_batch.cuh
++++ b/include/flashinfer/attention/mla_host_batch.cuh
+@@ -620,6 +620,5 @@
+-// (ld.global.cg) reached only ~15 GB/s on sparse 1152-byte rows, cp.async ~26 GB/s. Two buffers
+-// overlap the next chunk's reads with the copy-out of the current one when shared memory allows.
+-template <typename KTraits, typename Params>
+-__device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uint8_t* smem,
+-                                                       uint32_t epoch, uint32_t unique,
+-                                                       uint32_t rows) {
++// (ld.global.cg) reached only ~15 GB/s on sparse 1152-byte rows, cp.async ~26 GB/s. Compact
++// 16-row buffers allow four chunks in flight; 64-row chunks use two when shared memory allows.
++template <uint32_t ROWS, typename KTraits, typename Params>
++__device__ __forceinline__ void fetch_host_batch_pages_impl(const Params& params, uint8_t* smem,
++                                                        uint32_t epoch, uint32_t unique) {
+@@ -629 +628,2 @@
+-  constexpr uint32_t CHUNK_VECS = kHostBatchFetchRows * VECS_PER_ROW;
++  constexpr uint32_t rows = ROWS;
++  constexpr uint32_t CHUNK_VECS = ROWS * VECS_PER_ROW;
+@@ -631 +631,2 @@
+-      sizeof(typename KTraits::SharedStorage) >= 2 * CHUNK_VECS * 16 ? 2 : 1;
++      sizeof(typename KTraits::SharedStorage) / (CHUNK_VECS * 16) >= 4 ? 4 :
++      sizeof(typename KTraits::SharedStorage) / (CHUNK_VECS * 16) >= 2 ? 2 : 1;
+@@ -633 +633,0 @@
+-  static_assert(CHUNK_VECS % KTraits::NUM_THREADS == 0);
+@@ -641 +641 @@
+-  __shared__ int32_t cache_rows[kHostBatchFetchRows];
++  __shared__ int32_t cache_rows[ROWS];
+@@ -644 +644 @@
+-  FAR_EMU_INIT(2);
++  FAR_EMU_INIT(BUFFERS);
+@@ -648 +648 @@
+-    for (uint32_t i = 0; i < CHUNK_VECS / KTraits::NUM_THREADS; ++i) {
++    for (uint32_t i = 0; i < ceil_div(CHUNK_VECS, KTraits::NUM_THREADS); ++i) {
+@@ -658 +658,4 @@
+-    FAR_EMU_TILE(2, buf, tid == 0 ? min(rows, count - chunk * rows) : 0, ROW * sizeof(DTypeKV));
++    if (chunk * rows < count) {
++      FAR_EMU_TILE(BUFFERS, buf, tid == 0 ? min(rows, count - chunk * rows) : 0,
++                   ROW * sizeof(DTypeKV));
++    }
+@@ -663 +666,2 @@
+-  if (chunk * rows < count) issue(chunk, 0);
++#pragma unroll
++  for (uint32_t k = 0; k < BUFFERS - 1; ++k) issue(chunk + k * params.fetch_ctas, k);
+@@ -666,8 +670,4 @@
+-    const uint32_t next = chunk + params.fetch_ctas;
+-    if (BUFFERS == 2 && next * rows < count) {
+-      issue(next, (k + 1) % 2);
+-      cp_async::wait_group<1>();
+-    } else {
+-      cp_async::wait_group<0>();
+-    }
+-    FAR_EMU_WAIT(2, BUFFERS == 2 ? k % 2 : 0);
++    // Empty groups drain the tail using the same wait depth as the steady-state pipeline.
++    issue(chunk + (BUFFERS - 1) * params.fetch_ctas, (k + BUFFERS - 1) % BUFFERS);
++    cp_async::wait_group<BUFFERS - 1>();
++    FAR_EMU_WAIT(BUFFERS, k % BUFFERS);
+@@ -675 +675 @@
+-    const uint32_t buf = BUFFERS == 2 ? k % 2 : 0;
++    const uint32_t buf = k % BUFFERS;
+@@ -680 +680 @@
+-    for (uint32_t i = 0; i < CHUNK_VECS / KTraits::NUM_THREADS; ++i) {
++    for (uint32_t i = 0; i < ceil_div(CHUNK_VECS, KTraits::NUM_THREADS); ++i) {
+@@ -730 +730 @@
+-        for (uint32_t i = 0; i < CHUNK_VECS / KTraits::NUM_THREADS; ++i) {
++        for (uint32_t i = 0; i < ceil_div(CHUNK_VECS, KTraits::NUM_THREADS); ++i) {
+@@ -744,2 +744,2 @@
+-    if (BUFFERS == 1 && next * rows < count) issue(next, 0);
+-  }
++  }
++  cp_async::wait_group<0>();
+@@ -779,0 +780,11 @@
++  }
++}
++
++template <typename KTraits, typename Params>
++__device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uint8_t* smem,
++                                                       uint32_t epoch, uint32_t unique,
++                                                       uint32_t rows) {
++  if (rows == kHostBatchMinFetchRows) {
++    fetch_host_batch_pages_impl<kHostBatchMinFetchRows, KTraits>(params, smem, epoch, unique);
++  } else {
++    fetch_host_batch_pages_impl<kHostBatchFetchRows, KTraits>(params, smem, epoch, unique);

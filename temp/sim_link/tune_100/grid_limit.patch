@@ -1,0 +1,11 @@
+--- a/include/flashinfer/attention/mla_host_batch.cuh
++++ b/include/flashinfer/attention/mla_host_batch.cuh
+@@ -1643 +1643,7 @@
+-      const uint32_t grid = blocks_per_sm * num_sms;
++      uint32_t grid = blocks_per_sm * num_sms;
++#ifdef FLASHINFER_HOST_BATCH_TUNE
++      if (const char* value = std::getenv("FLASHINFER_HOST_BATCH_GRID_LIMIT")) {
++        const int limit = std::atoi(value);
++        if (limit > 0) grid = min(grid, static_cast<uint32_t>(limit));
++      }
++#endif

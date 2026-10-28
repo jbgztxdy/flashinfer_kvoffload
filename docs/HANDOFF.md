@@ -28,6 +28,7 @@
 | 开发过程、方案取舍、失败的尝试 | `docs/mla_host_a100_lru.md` |
 | H800 结果（验证、HiSparse 对比、全量） | `docs/mla_host_h800_lru.md`，数据在 `temp/h800/results/`，汇总在 `temp/h800/results/summary.md` |
 | 链路带宽和延迟模拟（A100） | `docs/mla_host_link_emulation.md`，数据在 `temp/sim_link/`，模拟器在 `include/flashinfer/attention/far_link_emu.cuh`（只在 `-DFLASHINFER_FAR_EMU` 下编入） |
+| A100 100 GB/s 高延迟与小 batch 新调优（10/28） | `docs/mla_host_a100_100gb_tuning.md`；对照数据/源码哈希/未采用补丁在 `temp/sim_link/tune_100/`，75 项测试通过 |
 | kernel | `include/flashinfer/attention/mla_host_batch.cuh`（约 1700 行；主体是 `BatchMLAHostBatchKernel`，在约 1505 行） |
 | launcher | `csrc/batch_mla_run.cu` |
 | Python 接口 | `flashinfer/mla/_core.py`（`host_stage`、`host_fetch_ctas`、`set_host_cache`、`_run_host_batch`） |
@@ -72,6 +73,8 @@
 ## 4. 未完成的任务和下一步
 
 ### 4.1 H800 kernel 性能：最优先，这是用户的核心目的
+
+**10/28 用户后续明确认可在本机 A100 优化 100 GB/s＋高延迟，以及单独优化小 batch，已执行，不再等待这两项确认。** 保留单 kernel 融合 LRU。新结果见 `docs/mla_host_a100_100gb_tuning.md`：kernel 调整 fetch CTA>8 时的搬运块切换阈值；100 GB/s＋20 µs，MTP8 单请求 f16 同参数 125.95→101.89 µs（−19.1%），128 请求结合 f24 调参 5609.98→4444.16 µs（−20.8%）；MTP1 四请求结合 f32 为 101.18→79.36 µs（−21.6%）。这是相对旧版固定 f16/h64 基线，不能称为相对旧版所有最优配置。75 项完整测试通过，最终 7-pass 对照每步采样行 max abs 0.006007。模拟器未修改。更深流水、单 warp 扫描、缩 grid 的候选未采用，补丁与数据保留。H800 原排队作业源码未改，本轮 H800 性能尚未验证；涉及拆 kernel 的架构决策仍需用户确认。
 
 **现状**：H800 默认配置下，大部分场景输给 Memcpy+LRU；PCIe MTP1 ≥ 64 请求和 NVLink MTP8 128 请求输给 HiSparse。数据在 `docs/mla_host_h800_lru.md` §2。
 
