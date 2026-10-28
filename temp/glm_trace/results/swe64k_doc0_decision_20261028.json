@@ -1,0 +1,90 @@
+{
+  "recorded_at": "2026-10-28T18:27:34+08:00",
+  "capture_job": 1040875,
+  "capture_state": "COMPLETED",
+  "capture_exit": "0:0",
+  "elapsed": "00:17:59",
+  "node": "g08",
+  "inspector_job": 1079470,
+  "inspector_state": "FAILED",
+  "inspector_exit": "1:0",
+  "strict_gate_passed": false,
+  "inspection_sha256": "b4c4ce63481b515de682e6a521d797abc01b7da6e5d40e494f44b835145f164f",
+  "data_checks": {
+    "shape": true,
+    "all_21_indexer_layers": true,
+    "all_78_layers": true,
+    "positions": true,
+    "consecutive_windows": true,
+    "dtypes": true,
+    "score_rows": true,
+    "loss_finite": true
+  },
+  "gates": {
+    "data": true,
+    "assistant_loss": true,
+    "blocks_after_first": false
+  },
+  "loss_by_target_role": {
+    "system": {
+      "count": 5674,
+      "mean": 4.134227100057938,
+      "p50": 3.0523180961608887,
+      "p90": 9.978279113769531,
+      "p99": 14.365422248840332,
+      "max": 23.406282424926758
+    },
+    "user": {
+      "count": 954,
+      "mean": 3.1731858723934967,
+      "p50": 2.107974052429199,
+      "p90": 8.284972190856934,
+      "p99": 13.150171279907227,
+      "max": 17.292720794677734
+    },
+    "assistant": {
+      "count": 7635,
+      "mean": 0.5498016308528888,
+      "p50": 0.00015209948469419032,
+      "p90": 1.3209813833236694,
+      "p99": 11.418845176696777,
+      "max": 18.92300033569336
+    },
+    "tool": {
+      "count": 51272,
+      "mean": 9.841871616671702,
+      "p50": 10.665729522705078,
+      "p90": 17.4951114654541,
+      "p99": 21.883670806884766,
+      "max": 30.750097274780273
+    }
+  },
+  "high_blocks": {
+    "count": 154,
+    "system_only": 1,
+    "tool_only_or_last_partial_tool": 138,
+    "assistant_majority": 0
+  },
+  "decision": "Continue the already-authorized four-document capture with the prepared window plan, preserving the strict failed gate and source data. Use the first trace only as mixed-role performance evidence, and inspect all four documents before drawing assistant-decode conclusions.",
+  "reason": "Saved top-k/score/layer data and assistant mean-loss gate pass. The failed all-position gate is dominated by tool outputs (mean 9.842), plus one system block; no high block has an assistant majority. Doc0 has no complete 1024-token assistant window, so the prepared windows in docs1/3 are required.",
+  "thresholds_unchanged": true,
+  "corpus_unchanged": true,
+  "source_trace_sha256": "169b10b9a3ca58af1a56e601aa52485832fd7dc182bf5756cd3841925cb4fd9d",
+  "loss_sha256": "05626fdb8caa01f33a75bd75a6b8917d9e637f9f06d3aac85a7c720c1f0ba89d",
+  "followup_jobs": {
+    "replay_export": 1079523,
+    "full_capture": 1079524,
+    "full_inspection": 1079527
+  },
+  "full_capture": {
+    "gpus": 8,
+    "partition": "a01",
+    "time_limit": "01:30:00",
+    "docs": 4,
+    "tokens": 65536,
+    "groups": 16,
+    "span": 1024,
+    "window_plan": "results/swe_windows_64k.json",
+    "output": "traces/swe64k_full_20261028"
+  }
+}

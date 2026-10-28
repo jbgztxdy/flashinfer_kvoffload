@@ -1,0 +1,111 @@
+job=1040875 node=g08 start=2026-10-28T17:29:50+08:00
+0, NVIDIA A800-SXM4-80GB, 81920 MiB
+1, NVIDIA A800-SXM4-80GB, 81920 MiB
+2, NVIDIA A800-SXM4-80GB, 81920 MiB
+3, NVIDIA A800-SXM4-80GB, 81920 MiB
+4, NVIDIA A800-SXM4-80GB, 81920 MiB
+5, NVIDIA A800-SXM4-80GB, 81920 MiB
+6, NVIDIA A800-SXM4-80GB, 81920 MiB
+7, NVIDIA A800-SXM4-80GB, 81920 MiB
+W1028 17:30:52.575000 1667279 torch/distributed/run.py:874] 
+W1028 17:30:52.575000 1667279 torch/distributed/run.py:874] *****************************************
+W1028 17:30:52.575000 1667279 torch/distributed/run.py:874] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1028 17:30:52.575000 1667279 torch/distributed/run.py:874] *****************************************
+/WORK/PUBLIC/luyouy_work/rtx/.venv/lib/python3.12/site-packages/torch/distributed/c10d_logger.py:83: FutureWarning: `torch.distributed.all_gather_into_tensor` is deprecated. Please use `torch.distributed.all_gather_single` instead.
+  return func(*args, **kwargs)
+/WORK/PUBLIC/luyouy_work/rtx/.venv/lib/python3.12/site-packages/torch/distributed/c10d_logger.py:83: FutureWarning: `torch.distributed.all_gather_into_tensor` is deprecated. Please use `torch.distributed.all_gather_single` instead.
+  return func(*args, **kwargs)
+/WORK/PUBLIC/luyouy_work/rtx/.venv/lib/python3.12/site-packages/torch/distributed/c10d_logger.py:83: FutureWarning: `torch.distributed.all_gather_into_tensor` is deprecated. Please use `torch.distributed.all_gather_single` instead.
+  return func(*args, **kwargs)
+/WORK/PUBLIC/luyouy_work/rtx/.venv/lib/python3.12/site-packages/torch/distributed/c10d_logger.py:83: FutureWarning: `torch.distributed.all_gather_into_tensor` is deprecated. Please use `torch.distributed.all_gather_single` instead.
+  return func(*args, **kwargs)
+/WORK/PUBLIC/luyouy_work/rtx/.venv/lib/python3.12/site-packages/torch/distributed/c10d_logger.py:83: FutureWarning: `torch.distributed.all_gather_into_tensor` is deprecated. Please use `torch.distributed.all_gather_single` instead.
+  return func(*args, **kwargs)
+/WORK/PUBLIC/luyouy_work/rtx/.venv/lib/python3.12/site-packages/torch/distributed/c10d_logger.py:83: FutureWarning: `torch.distributed.all_gather_into_tensor` is deprecated. Please use `torch.distributed.all_gather_single` instead.
+  return func(*args, **kwargs)
+/WORK/PUBLIC/luyouy_work/rtx/.venv/lib/python3.12/site-packages/torch/distributed/c10d_logger.py:83: FutureWarning: `torch.distributed.all_gather_into_tensor` is deprecated. Please use `torch.distributed.all_gather_single` instead.
+  return func(*args, **kwargs)
+/WORK/PUBLIC/luyouy_work/rtx/.venv/lib/python3.12/site-packages/torch/distributed/c10d_logger.py:83: FutureWarning: `torch.distributed.all_gather_into_tensor` is deprecated. Please use `torch.distributed.all_gather_single` instead.
+  return func(*args, **kwargs)
+layer  0 (full) at     22 s, mean |h| 0.6, mem 8.3 GiB
+layer  1 (full) at     39 s, mean |h| 0.6, mem 8.7 GiB
+layer  2 (full) at     55 s, mean |h| 0.6, mem 8.7 GiB
+layer  3 (shared) at     68 s, mean |h| 0.6, mem 8.7 GiB
+layer  4 (shared) at     79 s, mean |h| 0.6, mem 8.7 GiB
+layer  5 (shared) at     91 s, mean |h| 0.6, mem 8.7 GiB
+layer  6 (full) at    103 s, mean |h| 0.7, mem 8.7 GiB
+layer  7 (shared) at    113 s, mean |h| 0.8, mem 8.7 GiB
+layer  8 (shared) at    125 s, mean |h| 0.9, mem 8.7 GiB
+layer  9 (shared) at    135 s, mean |h| 1.1, mem 8.7 GiB
+layer 10 (full) at    147 s, mean |h| 1.2, mem 8.7 GiB
+layer 11 (shared) at    159 s, mean |h| 1.4, mem 8.7 GiB
+layer 12 (shared) at    171 s, mean |h| 1.5, mem 8.7 GiB
+layer 13 (shared) at    184 s, mean |h| 1.8, mem 8.7 GiB
+layer 14 (full) at    197 s, mean |h| 1.9, mem 8.7 GiB
+layer 15 (shared) at    209 s, mean |h| 2.0, mem 8.7 GiB
+layer 16 (shared) at    220 s, mean |h| 2.2, mem 8.7 GiB
+layer 17 (shared) at    231 s, mean |h| 2.4, mem 8.7 GiB
+layer 18 (full) at    241 s, mean |h| 2.7, mem 8.7 GiB
+layer 19 (shared) at    254 s, mean |h| 2.9, mem 8.7 GiB
+layer 20 (shared) at    267 s, mean |h| 3.2, mem 8.7 GiB
+layer 21 (shared) at    279 s, mean |h| 3.4, mem 8.7 GiB
+layer 22 (full) at    291 s, mean |h| 3.8, mem 8.7 GiB
+layer 23 (shared) at    304 s, mean |h| 4.3, mem 8.7 GiB
+layer 24 (shared) at    315 s, mean |h| 4.6, mem 8.7 GiB
+layer 25 (shared) at    328 s, mean |h| 4.9, mem 8.7 GiB
+layer 26 (full) at    341 s, mean |h| 5.1, mem 8.7 GiB
+layer 27 (shared) at    352 s, mean |h| 5.2, mem 8.7 GiB
+layer 28 (shared) at    363 s, mean |h| 5.5, mem 8.7 GiB
+layer 29 (shared) at    375 s, mean |h| 5.9, mem 8.7 GiB
+layer 30 (full) at    387 s, mean |h| 6.3, mem 8.7 GiB
+layer 31 (shared) at    398 s, mean |h| 7.2, mem 8.7 GiB
+layer 32 (shared) at    409 s, mean |h| 7.7, mem 8.7 GiB
+layer 33 (shared) at    420 s, mean |h| 8.8, mem 8.7 GiB
+layer 34 (full) at    432 s, mean |h| 9.4, mem 8.7 GiB
+layer 35 (shared) at    444 s, mean |h| 10.2, mem 8.7 GiB
+layer 36 (shared) at    455 s, mean |h| 11.7, mem 8.7 GiB
+layer 37 (shared) at    467 s, mean |h| 13.4, mem 8.7 GiB
+layer 38 (full) at    480 s, mean |h| 14.5, mem 8.7 GiB
+layer 39 (shared) at    492 s, mean |h| 15.2, mem 8.7 GiB
+layer 40 (shared) at    503 s, mean |h| 16.6, mem 8.7 GiB
+layer 41 (shared) at    514 s, mean |h| 18.0, mem 8.7 GiB
+layer 42 (full) at    527 s, mean |h| 19.2, mem 8.7 GiB
+layer 43 (shared) at    537 s, mean |h| 21.5, mem 8.7 GiB
+layer 44 (shared) at    549 s, mean |h| 22.5, mem 8.7 GiB
+layer 45 (shared) at    560 s, mean |h| 24.3, mem 8.7 GiB
+layer 46 (full) at    572 s, mean |h| 25.9, mem 8.7 GiB
+layer 47 (shared) at    584 s, mean |h| 27.9, mem 8.7 GiB
+layer 48 (shared) at    595 s, mean |h| 29.5, mem 8.7 GiB
+layer 49 (shared) at    606 s, mean |h| 32.4, mem 8.7 GiB
+layer 50 (full) at    617 s, mean |h| 36.1, mem 8.7 GiB
+layer 51 (shared) at    630 s, mean |h| 38.0, mem 8.7 GiB
+layer 52 (shared) at    641 s, mean |h| 40.4, mem 8.7 GiB
+layer 53 (shared) at    653 s, mean |h| 42.7, mem 8.7 GiB
+layer 54 (full) at    666 s, mean |h| 45.3, mem 8.7 GiB
+layer 55 (shared) at    678 s, mean |h| 49.4, mem 8.7 GiB
+layer 56 (shared) at    688 s, mean |h| 51.2, mem 8.7 GiB
+layer 57 (shared) at    699 s, mean |h| 52.7, mem 8.7 GiB
+layer 58 (full) at    711 s, mean |h| 54.1, mem 8.7 GiB
+layer 59 (shared) at    722 s, mean |h| 56.3, mem 8.7 GiB
+layer 60 (shared) at    734 s, mean |h| 58.0, mem 8.7 GiB
+layer 61 (shared) at    749 s, mean |h| 60.6, mem 8.7 GiB
+layer 62 (full) at    761 s, mean |h| 62.7, mem 8.7 GiB
+layer 63 (shared) at    774 s, mean |h| 65.0, mem 8.7 GiB
+layer 64 (shared) at    786 s, mean |h| 68.3, mem 8.7 GiB
+layer 65 (shared) at    797 s, mean |h| 71.5, mem 8.7 GiB
+layer 66 (full) at    809 s, mean |h| 72.0, mem 8.7 GiB
+layer 67 (shared) at    822 s, mean |h| 75.6, mem 8.7 GiB
+layer 68 (shared) at    832 s, mean |h| 76.9, mem 8.7 GiB
+layer 69 (shared) at    843 s, mean |h| 79.5, mem 8.7 GiB
+layer 70 (full) at    854 s, mean |h| 81.8, mem 8.7 GiB
+layer 71 (shared) at    866 s, mean |h| 85.6, mem 8.7 GiB
+layer 72 (shared) at    878 s, mean |h| 90.3, mem 8.7 GiB
+layer 73 (shared) at    890 s, mean |h| 95.7, mem 8.7 GiB
+layer 74 (full) at    905 s, mean |h| 103.6, mem 8.7 GiB
+layer 75 (shared) at    916 s, mean |h| 106.9, mem 8.7 GiB
+layer 76 (shared) at    929 s, mean |h| 108.4, mem 8.7 GiB
+layer 77 (shared) at    941 s, mean |h| 111.3, mem 8.7 GiB
+next-token loss per 256 positions: 3.62 4.37 3.88 3.87 5.19 5.62 6.20 5.71 5.13 5.04 3.49 4.78 5.10 3.21 3.29 3.26 3.07 3.02 3.11 2.70 3.90 3.38 3.14 3.31 3.00 3.24 3.95 6.34 6.65 6.60 4.18 4.45 4.98 5.42 0.74 3.38 7.72 10.70 11.11 11.50 11.78 10.94 2.59 2.21 2.35 2.65 3.96 7.44 11.62 11.86 12.26 11.71 11.53 4.30 3.50 4.18 9.34 11.72 12.52 12.31 12.24 11.60 4.67 11.94 12.20 12.43 12.26 12.43 10.55 3.29 5.35 4.88 2.30 4.17 10.54 7.95 8.41 10.14 1.73 1.66 8.12 10.90 10.51 5.47 4.01 4.77 8.66 12.24 12.31 12.75 12.39 12.65 12.30 7.70 4.32 4.97 4.59 2.90 3.69 3.52 3.65 4.75 4.56 4.08 3.00 6.05 5.08 5.23 9.66 13.54 13.09 13.40 13.31 13.21 10.05 7.89 5.43 5.74 6.06 13.12 12.97 13.25 13.34 13.21 10.68 6.63 0.32 1.08 5.01 1.98 0.27 0.50 1.55 0.01 0.00 0.00 2.14 7.14 0.03 3.83 5.90 3.63 4.13 4.71 5.65 12.44 12.67 12.80 12.96 12.67 9.20 4.69 13.27 13.42 13.26 13.17 13.07 10.29 7.82 13.60 13.26 13.31 13.27 13.13 9.05 12.35 13.36 13.19 13.39 13.32 12.97 7.39 1.12 0.54 0.87 1.94 1.11 4.19 3.97 0.80 0.28 5.51 5.37 6.03 13.13 13.02 12.69 12.90 12.93 10.57 6.39 13.02 13.09 12.91 13.04 13.20 11.55 7.89 13.86 13.08 13.45 12.85 13.00 9.47 9.99 13.67 13.26 13.38 13.11 13.03 10.75 3.39 0.16 4.56 6.09 5.91 12.66 12.48 12.32 12.48 12.26 8.73 6.68 12.92 12.95 12.92 12.21 12.74 11.93 7.82 9.50 13.00 12.52 12.96 12.81 12.19 10.17 9.31 12.53 12.54 12.39 12.24 12.00 10.45 6.50 2.04 4.37 8.90 12.35 11.72 12.37 11.98 12.14 11.76 9.50 6.78
+next-token loss per group: 1.942 3.835 11.950 13.302 12.088 7.613 2.408 12.591 11.440 11.575 3.753 10.048 10.475 11.116 5.181 10.049
+saved 1 docs, indexer layers [0, 1, 2, 6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50, 54, 58, 62, 66, 70, 74], next-token loss 8.710, 952 s
+end=2026-10-28T17:47:48+08:00 status=0

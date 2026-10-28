@@ -1,6 +1,6 @@
 # GLM-5.3 真实 top-k trace：新语料验证与回放接入（2026-10-28）
 
-正式目标是用 64K 上下文、1024 连续位置的真实 top-k 和 index score，比较融合 LRU 的远端 KV sparse MLA 与朴素方法、HiSparse，并逐步报告缓存命中率和两个下限。**目前新语料和 8K 验证已完成，64K 单篇采集排队；下面的 A100 数据只证明回放接入可用，不能替代正式性能结果。**
+正式目标是用 64K 上下文、1024 连续位置的真实 top-k 和 index score，比较融合 LRU 的远端 KV sparse MLA 与朴素方法、HiSparse，并逐步报告缓存命中率和两个下限。**64K 单篇采集已完成，完整数据检查通过但全位置 loss gate 失败；四篇带 assistant 窗口的采集已排队。下面的 8K A100 数据仅为接入检查。**
 
 ## 语料与验证
 
@@ -46,14 +46,52 @@
 
 这些窗口包括 system/user/tool 位置，且上下文仅 8K；不能据其高命中率外推正式 64K assistant decode。单请求和 NVLink 4 请求仍输给朴素方法，不能隐去。
 
+## 64K 单篇采集与检查
+
+**1040875 已完成**：8×A800、g08、17 分 59 秒（GPU 计算 952 秒），峰值每卡 8.7 GiB。保存 21 个 indexer 层、16×1024 连续位置、top-k 2048 的 selections/scores，原始 `doc0.pt` 为 5.3 GiB。CPU 作业 **1079470** 验证全部保存行的形状、因果范围、无重复、分数排序和统计，以及 78 层复用映射，数据检查全部通过。
+
+| 目标角色 | token 数 | 平均 loss |
+|---|---:|---:|
+| system | 5674 | 4.134 |
+| user | 954 | 3.173 |
+| assistant | 7635 | **0.550** |
+| tool | 51272 | **9.842** |
+
+**严格 gate 返回 1，未全部达标。** 154 个首块之后的高 loss 块有 1 个纯 system、138 个纯 tool（包含最后不足 256 token 的块），其余为混合角色，没有 assistant 占多数的高块。assistant 平均 loss 通过；不能用它掩盖工具输出明显高于预期。继续已授权的四篇采集以获得完整 assistant 窗口，保留失败报告、不更改阈值和语料，不再重复排查已验证的采集实现。证据和复核决定为 [`swe64k_doc0_inspection_20261028.json`](../temp/glm_trace/results/swe64k_doc0_inspection_20261028.json)、[`swe64k_doc0_decision_20261028.json`](../temp/glm_trace/results/swe64k_doc0_decision_20261028.json)。
+
+原始 trace SHA-256 为 `169b10b9a3ca58af1a56e601aa52485832fd7dc182bf5756cd3841925cb4fd9d`。`08_export_replay.py` 仅导出未改动的全部 top-k 和窗口/角色/层出处，scores 保留在原件。CPU 导出 **1079523** 成功，2.7 GiB 的本机副本为 `temp/glm_trace/replay64k/doc0.pt`，SHA-256 `15b21ce91eeeb40b48d6d77db708f912a40a4259ffcef301d3ee681a41690d72`。binary 不纳入 git，导出凭据在 [`swe64k_doc0_replay_export_20261028.json`](../temp/glm_trace/results/swe64k_doc0_replay_export_20261028.json)。`run_64k_replay.py` 在本机串行覆盖真实 PCIe/NVLink 及 50/100 GB/s＋20 µs，1024 连续位置、7 pass，并保存实际选用窗口和角色计数；第 0 篇没有完整 assistant 窗口，结果须标为混合角色回放。
+
+## A100：64K、1024 连续位置的混合角色回放
+
+已完成 6 份计时 JSON、15 个 batch 配置，每配置 7 次冷启动，LRU 4096 槽/请求，固定 f16/h64。MTP1 为 1024 步，MTP8 为 128 步；请求数 1/4/16 分别对应 MTP8 的 8/32/128 行。两种本文模式共 14592 次 launch 的逐步采样行校验通过，最大绝对误差 0.004352。kernel 为第二轮优化 `614655f1` 的版本，完整 header SHA-256、输入出处和全部 pass 数据见 [`manifest.json`](../temp/glm_trace/results/a100_64k_doc0/manifest.json)。
+
+以下为后一半步的逐步中位数平均，µs。此处比较方法间耗时，**不作为相对旧 kernel 的优化幅度**；旧/新代码的严格对照仍见两份 A100 调优报告。
+
+| 链路 | MTP | 请求 | 本文模式 | 本文 | Memcpy+LRU | Direct+LRU | 下限 a | 下限 b | 本文÷a | 本文÷b |
+|---|---:|---:|---|---:|---:|---:|---:|---:|---:|---:|
+| 真实 NVLink | 1 | 1 | staged | 63.84 | 46.75 | 46.07 | 31.74 | 31.74 | 2.01 | 2.01 |
+| 真实 NVLink | 1 | 4 | staged | 57.25 | 56.89 | 60.28 | 46.08 | 46.08 | 1.24 | 1.24 |
+| 真实 NVLink | 8 | 16 | 原地读 | 543.15 | 615.74 | 616.03 | 494.59 | 494.59 | 1.10 | 1.10 |
+| 真实 PCIe | 1 | 4 | staged | 75.74 | 96.28 | 93.62 | 47.19 | 46.08 | 1.61 | 1.64 |
+| 100 GB/s＋20 µs | 1 | 1 | staged | 85.08 | 69.58 | 116.35 | 31.74 | 31.74 | 2.68 | 2.68 |
+| 100 GB/s＋20 µs | 8 | 1 | staged | 150.05 | 133.63 | 250.64 | 50.94 | 47.10 | 2.95 | 3.19 |
+| 100 GB/s＋20 µs | 8 | 4 | staged | 231.30 | 204.34 | 558.24 | 108.54 | 108.54 | 2.13 | 2.13 |
+| 100 GB/s＋20 µs | 8 | 16 | staged | 685.25 | 867.33 | 2445.07 | 494.59 | 494.59 | 1.39 | 1.39 |
+| 50 GB/s＋20 µs | 8 | 4 | staged | 233.65 | 248.85 | 625.86 | 114.80 | 108.54 | 2.04 | 2.15 |
+| 50 GB/s＋20 µs | 8 | 16 | staged | 722.05 | 1122.06 | 2801.26 | 522.30 | 494.59 | 1.38 | 1.46 |
+
+下限 b 采用相同 trace/批次的**正常构建**全 HBM attention 最快样本；a = max(b, 逐步未命中字节/链路带宽)。模拟场景使用设置的 50/100 GB/s，不能误用物理 NVLink 的 DMA 测量值；固定访问延迟未计入 a，所以 a 是乐观下限。所有比值直接计算，未截断。全部模式、配置、逐步命中率、两下限及误差在 [`results.md`](../temp/glm_trace/results/a100_64k_doc0/results.md)。
+
+100 GB/s＋20 µs 的 MTP8 16 请求，staged 比 Memcpy+LRU 快约 21%，但仍是纯 device 下限的 1.39 倍；小 batch 单/四请求仍有输给 Memcpy 的场景。真实 NVLink 的 16 请求原地读距下限约 10%，这不表示高延迟场景也能达到同样比例。混合窗口的稳态去重页命中率：MTP1 单请求约 64%、四请求约 92%；MTP8 的 1/4/16 请求约 42%/73%/67%。不同请求数选中的真实层/窗口不同，不能将曲线差异全归因于 batch。朴素基线仍只计 GPU，PCIe CPU gather 和 CPU LRU 未计时、数值不校验；HiSparse 仍待 H800。
+
 ## 正在排队及后续
 
-- **1040875**：a01，8 张 A800，2 小时，第 0 篇 64K，16×1024 记录窗口，保存 selections、scores、row_stats、角色及完整 loss。最初依赖严格检查，复核 system 异常后解除原依赖，没有重复提交。10/28 11:43 为 Priority 排队，暂估 10/31 09:19。
-- 单篇完成后检查保存数据、角色 loss 和耗时，再采集其余文档；真实 64K/1024 trace 尚未得到，不能标记完成。
+- **1079524**：a01，8 张 A800，90 分钟，全部四篇 64K，`--window-plan results/swe_windows_64k.json`，16×1024 窗口，完整 loss，输出 `traces/swe64k_full_20261028`。18:23 为 Priority 排队。
+- **1079527**：CPU 4 核 / 16G，依赖 `afterok:1079524`，逐篇执行原严格检查；某篇失败也继续检查其余篇，保留各自 JSON 和整体失败退出码。
 - 正式回放记录每步缓存命中率、本文/纯本地比值和两下限；包括 A100，以及 H800 的 HiSparse 对比。
 - 角色过滤要保留真实位置和时间顺序。四篇中只有文档 1 有 3 段、文档 3 有 1 段 assistant 连续长度 ≥1024；不能删去中间 tool/user 位置后仍假称 1024 连续 token。
 - **后续全量的窗口计划已准备**：原来的 16 个均匀窗口在四篇中都没有完整覆盖一段 1024 连续 assistant token。`07_plan_windows.py` 将最近的窗口移至文档 1 的 35184 / 41887 / 48296、文档 3 的 50621，每篇仍为 16×1024，其他窗口保留，文档 0/2 不变。完整位置及角色计数在 [`swe_windows_64k.json`](../temp/glm_trace/results/swe_windows_64k.json)。已用真实语料检查四段均全为 assistant、窗口有序/无重叠/在文档后半段，默认 64K/8K/4K 窗口与此前逐个一致，错误的语料或 span 会拒绝。
-- 采集脚本新增可选 `--window-plan results/swe_windows_64k.json`；已同步集群。作业 1040875 未传该选项，继续原均匀窗口，用于单篇计时；**全量采集尚未提交**，应等单篇耗时和数据核查后带该参数。模型计算路径未改，输出增加采集脚本/窗口助手的源码哈希及计划哈希。新窗口路径目前通过 CPU 检查，GPU 全流程须随正式采集验证。
-- H800 优化顺序仍待用户确认，单 kernel 融合约束保留。
+- 采集脚本新增可选 `--window-plan results/swe_windows_64k.json`，已同步并由 1079524 使用。1040875 未传该参数，保留原均匀窗口。模型计算路径未改，输出增加采集脚本/窗口助手的源码哈希及计划哈希。新窗口路径通过 CPU 检查，GPU 全流程须随正式采集验证。
+- 持续常规调优已获用户授权，保留单 kernel 融合；H800 仍待三个硬件实验结果，拆 kernel 的架构取舍仍需先询问。
 
 作业、源码哈希和依赖变更见 [`swe_pipeline_20261028.json`](../temp/glm_trace/results/swe_pipeline_20261028.json)，集群数据根目录为 `/WORK/PUBLIC/luyouy_work/rtx/yjw/test/glm_trace`。语料 SHA-256 为 `f82182b02107b998bf87a95fa855890a919fd9cb6f3438a4e8f73b5fbf67bbaa`，8K trace SHA-256 为 `742c9a61dc6db424a9c7fca5a38fc25c573fbf702ee59afb27f4b1ed0ea906fe`。二进制 trace 保存在集群，接入检查的本地副本在 `temp/glm_trace/validation8k/doc0.pt`，未纳入 git。

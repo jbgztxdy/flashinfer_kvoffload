@@ -1,0 +1,214 @@
+{
+  "captures": [
+    {
+      "path": "temp/glm_trace/replay64k/doc0.pt",
+      "sha256": "15b21ce91eeeb40b48d6d77db708f912a40a4259ffcef301d3ee681a41690d72",
+      "layers": [
+        0,
+        1,
+        2,
+        6,
+        10,
+        14,
+        18,
+        22,
+        26,
+        30,
+        34,
+        38,
+        42,
+        46,
+        50,
+        54,
+        58,
+        62,
+        66,
+        70,
+        74
+      ],
+      "group_starts": [
+        32768,
+        34884,
+        37000,
+        39116,
+        41233,
+        43349,
+        45465,
+        47581,
+        49698,
+        51814,
+        53930,
+        56046,
+        58163,
+        60279,
+        62395,
+        64512
+      ],
+      "group_role_counts": [
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 748,
+          "tool": 276
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 443,
+          "tool": 581
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 0,
+          "tool": 1024
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 0,
+          "tool": 1024
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 0,
+          "tool": 1024
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 369,
+          "tool": 655
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 562,
+          "tool": 462
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 0,
+          "tool": 1024
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 0,
+          "tool": 1024
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 0,
+          "tool": 1024
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 515,
+          "tool": 509
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 49,
+          "tool": 975
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 95,
+          "tool": 929
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 49,
+          "tool": 975
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 268,
+          "tool": 756
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 57,
+          "tool": 967
+        }
+      ],
+      "provenance": {
+        "source_trace": "traces/swe64k_doc0_20261028/doc0.pt",
+        "source_trace_sha256": "169b10b9a3ca58af1a56e601aa52485832fd7dc182bf5756cd3841925cb4fd9d",
+        "source_groups": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "assistant_only": false,
+        "scores_preserved_in_source": true,
+        "topk_values_unchanged": true,
+        "selections_shape": [
+          21,
+          16,
+          1024,
+          2048
+        ],
+        "group_starts": [
+          32768,
+          34884,
+          37000,
+          39116,
+          41233,
+          43349,
+          45465,
+          47581,
+          49698,
+          51814,
+          53930,
+          56046,
+          58163,
+          60279,
+          62395,
+          64512
+        ],
+        "export_script_sha256": "addb79d174495fcbe7502807bfb202e0634618520e92b39e5e3abafcbe611bea"
+      }
+    }
+  ],
+  "outputs": {
+    "temp/glm_trace/results/a100_64k_doc0/peer_mtp1.json": "651c3f7692a54992ec93658d5791e0e73eb2943b09dffa93b288146bba68e8c4",
+    "temp/glm_trace/results/a100_64k_doc0/peer_mtp8.json": "b70dfbd0df4163def91dc073274dd33c657fd85c5b925c29f3f2691412e71328",
+    "temp/glm_trace/results/a100_64k_doc0/host_mtp1.json": "394c27e78678f7b2da93b2b6233e25718447fc61321003fab39e4849083ca2d5",
+    "temp/glm_trace/results/a100_64k_doc0/g100_l20_mtp1.json": "4d13a62e1ea724d8c9fa6f101b300b3c2c6106c500c890cb63a0da5da7ba98eb",
+    "temp/glm_trace/results/a100_64k_doc0/g100_l20_mtp8.json": "1cb4833af9db4d09c62e18cab8edbc13eea8280983b0e4e5c32586beaa67c415",
+    "temp/glm_trace/results/a100_64k_doc0/g50_l20_mtp8.json": "77265c896a3e7d6a828b939a015be6bb62da9f72ed101ba94b2adc47ca1ba230"
+  },
+  "source_sha256": {
+    "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/run_64k_replay.py": "266b6bc72df8afa36b5b63c6ee9bcf4f2fd96101cec433a3cbe7df181720f1b8",
+    "temp/glm_trace/06_report_replay.py": "f562f673fa72ac49b7badf63dfbf297e2387b5e9fe9a76c937ec1c840072f4e8",
+    "temp/sim_link/bench_tune.py": "4acfa4d9aa7c178d81550714b2ba0080d49cda10a25f4dfb437bc5db7af7d1a4",
+    "temp/h800/bench_rounds.py": "df8f7be1ad18829ff2925e595bb756efa157cd33a80403257d19170a2ad6af6a",
+    "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+    "include/flashinfer/attention/mla_host_batch.cuh": "addd989a91190caab301afabb97f631147c7f5c6d6e2df6df20c9afc3e1fb619",
+    "include/flashinfer/attention/far_link_emu.cuh": "5e409035aa4edc83f72135c09c453e825ce59e5dcc4bae63c04ff3909d024095"
+  }
+}

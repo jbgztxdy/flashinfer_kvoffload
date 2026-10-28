@@ -7,7 +7,10 @@
     "05_inspect_trace.py": "bfd2d8bf3ab9f3e3406a48450f847ef975b9bb3172d2dfebd9c66e9244fd7374",
     "05_inspect.sbatch": "47507ce735f15b2d9c59b3e7294e0acb2141f9373858e3bb8f54a0f3a8624b98",
     "trace_windows.py": "9aaa2fd567f4c42019977522b9b289cd9ed1b4883a594e203fb15275deab87fb",
-    "07_plan_windows.py": "1b80d52b19a281907147fe5f8444b17da80f6c959bf99f3a29ddfff2e6f92e53"
+    "07_plan_windows.py": "1b80d52b19a281907147fe5f8444b17da80f6c959bf99f3a29ddfff2e6f92e53",
+    "08_export_replay.py": "addb79d174495fcbe7502807bfb202e0634618520e92b39e5e3abafcbe611bea",
+    "08_export_replay.sbatch": "562e0b417bc218e7f46fae05c905f8e344addf2ed3f1feb728f45ac219d29424",
+    "09_inspect_full.sbatch": "37c02173ce738e3bfd662a865abbb11ce42b35ed1bf7740fe88a9d561157a524"
   },
   "jobs": [
     {
@@ -65,21 +68,67 @@
       "check": false,
       "output": "traces/swe64k_doc0_20261028",
       "purpose": "First full-length trace and runtime measurement before collecting all four documents",
-      "current_state": "PENDING (Priority)",
+      "current_state": "COMPLETED",
       "initial_dependency": "afterok:1040870",
       "current_dependency": null,
       "dependency_removed_after_review": true,
       "decision_record": "results/swe_check_decision_20261028.json",
-      "estimated_start": "2026-10-31T09:19:45+08:00"
+      "estimated_start": "2026-10-31T09:19:45+08:00",
+      "exit_code": "0:0",
+      "elapsed": "00:17:59",
+      "node": "g08",
+      "started": "2026-10-28T17:29:59+08:00",
+      "ended": "2026-10-28T17:47:58+08:00",
+      "inspection": "results/swe64k_doc0_inspection_20261028.json",
+      "review": "results/swe64k_doc0_decision_20261028.json"
+    },
+    {
+      "job_id": 1079470,
+      "name": "glm-swe64k-inspect",
+      "current_state": "FAILED",
+      "exit_code": "1:0",
+      "elapsed": "00:00:49",
+      "reason": "Strict block-loss gate fails; all data checks and assistant-loss gate pass."
+    },
+    {
+      "job_id": 1079523,
+      "name": "glm-swe64k-export",
+      "current_state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:00:13",
+      "gpus": 0,
+      "output": "replay/swe64k_doc0_20261028.pt"
+    },
+    {
+      "job_id": 1079524,
+      "name": "glm-swe64k-full",
+      "current_state": "PENDING (Priority)",
+      "gpus": 8,
+      "partition": "a01",
+      "time_limit": "01:30:00",
+      "docs": 4,
+      "tokens": 65536,
+      "groups": 16,
+      "span": 1024,
+      "window_plan": "results/swe_windows_64k.json",
+      "output": "traces/swe64k_full_20261028"
+    },
+    {
+      "job_id": 1079527,
+      "name": "glm-swe64k-fullcheck",
+      "current_state": "PENDING (Dependency)",
+      "gpus": 0,
+      "dependency": "afterok:1079524",
+      "script": "09_inspect_full.sbatch",
+      "output": "results/swe64k_full_inspection_20261028_doc{0..3}.json"
     }
   ],
   "remaining": [
-    "Read and inspect the first 64K trace when pending job 1040875 completes",
-    "Collect all four 64K documents",
-    "Formal 1024-position replay on A100 and H800 with per-step hit rates, comparisons and both floors",
-    "H800 tuning order still awaits user confirmation"
+    "Inspect full four-document capture including complete assistant windows",
+    "A100 assistant-window and H800 replay with per-step hit rates, comparisons and both floors",
+    "H800 performance tuning awaits hardware jobs; conventional A100 tuning has continuing user authorization, single fused kernel retained"
   ],
-  "updated_at": "2026-10-28T12:07:53+08:00",
+  "updated_at": "2026-10-28T18:37:08+08:00",
   "initial_inspection_source_sha256": "cd87205b9df025b18555ea42eef55e311c8e850e6fce7440d64613f014ddc20e",
   "initial_collector_source_sha256": "a4c1e440e8dd16c3788e5e6b2458417a023cfac79e53949fb76da7a0766128ce",
   "future_full_capture_windows": {
@@ -107,7 +156,38 @@
     "gpu_validated": false,
     "capture_args": "--window-plan results/swe_windows_64k.json",
     "job_1040875_uses_plan": false,
-    "all_four_document_job_submitted": false,
-    "cluster_cpu_validated_at": "2026-10-28T12:07:53+08:00"
+    "all_four_document_job_submitted": true,
+    "cluster_cpu_validated_at": "2026-10-28T12:07:53+08:00",
+    "job_id": 1079524
+  },
+  "watchers": {
+    "h800": {
+      "pid": 4160646,
+      "log": "logs/watch_20261028.log"
+    },
+    "old_trace": {
+      "pid": 65160,
+      "state": "exited"
+    },
+    "full_trace": {
+      "pid": 1788755,
+      "jobs": [
+        1079523,
+        1079524
+      ],
+      "log": "logs/watch_full_20261028.log"
+    }
+  },
+  "a100_64k_mixed_role_replay": {
+    "state": "complete",
+    "outputs": "results/a100_64k_doc0",
+    "configuration_count": 15,
+    "timing_files": 6,
+    "passes": 7,
+    "correctness_checked_launches": 14592,
+    "max_abs": 0.004351377487182617,
+    "assistant_only": false,
+    "kernel_commit": "614655f1",
+    "h800_validated": false
   }
 }
