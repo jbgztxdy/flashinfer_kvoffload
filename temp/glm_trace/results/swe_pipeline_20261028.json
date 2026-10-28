@@ -1,0 +1,82 @@
+{
+  "recorded_at": "2026-10-28T11:31:31+08:00",
+  "cluster_root": "/WORK/PUBLIC/luyouy_work/rtx/yjw/test/glm_trace",
+  "corpus_sha256": "f82182b02107b998bf87a95fa855890a919fd9cb6f3438a4e8f73b5fbf67bbaa",
+  "source_sha256": {
+    "02_prefill_trace.py": "a4c1e440e8dd16c3788e5e6b2458417a023cfac79e53949fb76da7a0766128ce",
+    "05_inspect_trace.py": "bfd2d8bf3ab9f3e3406a48450f847ef975b9bb3172d2dfebd9c66e9244fd7374",
+    "05_inspect.sbatch": "47507ce735f15b2d9c59b3e7294e0acb2141f9373858e3bb8f54a0f3a8624b98"
+  },
+  "jobs": [
+    {
+      "job_id": 1040816,
+      "name": "glm-swe-check",
+      "state_at_recording": "RUNNING",
+      "partition": "a01",
+      "gpus": 2,
+      "corpus": "corpus_swe_check.pt",
+      "original_corpus_doc": 1,
+      "tokens": 8192,
+      "groups": 2,
+      "span": 256,
+      "output": "traces/swe_check_20261028",
+      "current_state": "COMPLETED",
+      "elapsed": "00:19:15",
+      "exit_code": "0:0"
+    },
+    {
+      "job_id": 1040870,
+      "name": "glm-swe-inspect",
+      "state_at_recording": "PENDING",
+      "partition": "a01",
+      "gpus": 0,
+      "cpus": 4,
+      "memory_gib": 8,
+      "dependency": "afterok:1040816",
+      "output": "results/swe_check_20261028.json",
+      "success_requires": {
+        "all_saved_data_checks": true,
+        "assistant_target_loss_mean_max": 1.5,
+        "block_256_loss_mean_exclusive_max": 6.0,
+        "excluded_blocks": [
+          0
+        ]
+      },
+      "current_state": "FAILED",
+      "elapsed": "00:00:59",
+      "exit_code": "1:0",
+      "failure": "One system-only block at 1536 has mean loss 6.3025; all saved data and assistant-loss checks pass."
+    },
+    {
+      "job_id": 1040875,
+      "name": "glm-swe-64k1",
+      "state_at_recording": "PENDING",
+      "partition": "a01",
+      "gpus": 8,
+      "time_limit": "02:00:00",
+      "corpus": "corpus_swe.pt",
+      "docs": 1,
+      "tokens": 65536,
+      "groups": 16,
+      "span": 1024,
+      "loss_all": true,
+      "check": false,
+      "output": "traces/swe64k_doc0_20261028",
+      "purpose": "First full-length trace and runtime measurement before collecting all four documents",
+      "current_state": "PENDING (Priority)",
+      "initial_dependency": "afterok:1040870",
+      "current_dependency": null,
+      "dependency_removed_after_review": true,
+      "decision_record": "results/swe_check_decision_20261028.json",
+      "estimated_start": "2026-10-31T09:19:45+08:00"
+    }
+  ],
+  "remaining": [
+    "Read and inspect the first 64K trace when pending job 1040875 completes",
+    "Collect all four 64K documents",
+    "Formal 1024-position replay on A100 and H800 with per-step hit rates, comparisons and both floors",
+    "H800 tuning order still awaits user confirmation"
+  ],
+  "updated_at": "2026-10-28T11:43:39+08:00",
+  "initial_inspection_source_sha256": "cd87205b9df025b18555ea42eef55e311c8e850e6fce7440d64613f014ddc20e"
+}

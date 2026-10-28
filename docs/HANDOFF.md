@@ -33,6 +33,7 @@
 | Python 接口 | `flashinfer/mla/_core.py`（`host_stage`、`host_fetch_ctas`、`set_host_cache`、`_run_host_batch`） |
 | 测试 | `tests/attention/test_mla_host_batch.py`（71 项） |
 | 跨 decode 测试脚本（含 HiSparse 和各下限） | `temp/h800/bench_rounds.py` |
+| GLM-5.3 新语料验证、真实 top-k 回放接入及未完成项 | `docs/mla_host_glm53_trace.md`；8K 接入结果 `temp/glm_trace/results/a100_8k_smoke.md`（尚非正式 64K/1024 结果） |
 | 单步测试脚本 | `temp/h800/bench_sweep.py` |
 | VMM 远端映射 | `temp/h800/tiers.py` |
 | H800 作业模板 | `temp/h800/job.sbatch`，环境 `temp/h800/env_job.sh` |
@@ -56,13 +57,16 @@
 | **1004363** `fi-tune-peer` | h01，2 张 H800，30 分钟 | NVLink 调优：staged（16/32/64 个 fetch CTA，去重）对比原地读。脚本 `temp/h800/tune_peer.sh` | PENDING，估计 11/02 | 同上，目录 `fi-tune-peer-1004363/` |
 | **1040680** `fi-bulkbw` | h01，1 张 H800，10 分钟 | **关键实验**：Hopper 的 `cp.async.bulk`（1-D TMA）读 Host 随机行，能否快于 SM cp.async（约 33 GB/s），接近 DMA 的 55 GB/s。同时校验拷贝内容是否正确（`bulk copy check: 0 bad vectors`）。源码 `temp/fetch_bw/bulk_bw.cu` | PENDING，估计 11/02 | 同上，目录 `fi-bulkbw-1040680/host.txt` |
 | **1040732** `glm-corpus` | a01，只用 CPU，1 小时 | 用新数据集构建 4 × 64K 的语料 `corpus_swe.pt` | **COMPLETED，0:0，12 分 25 秒** | 集群 `rtx/yjw/test/glm_trace/corpus_swe.pt`，日志 `rtx/yjw/test/glm_trace/logs/glm-corpus-1040732.out` |
-| **1040816** `glm-swe-check` | a01，2 张 A800，90 分钟 | 新语料 loss + top-k 验证：原语料第 2 篇，8K，`--groups 2 --span 256 --loss-all --check` | **RUNNING，g57，10/28 11:13 启动**；尚无 loss 结论 | 集群 `rtx/yjw/test/glm_trace/traces/swe_check_20261028/`，日志 `logs/glm-swe-check-1040816.out` |
+| **1040816** `glm-swe-check` | a01，2 张 A800，90 分钟 | 新语料 loss + top-k 验证：原语料第 2 篇，8K，`--groups 2 --span 256 --loss-all --check` | **COMPLETED，0:0，19 分 15 秒** | 集群 `rtx/yjw/test/glm_trace/traces/swe_check_20261028/`，日志 `logs/glm-swe-check-1040816.out` |
+| **1040870** `glm-swe-inspect` | a01，只用 CPU，4 核 / 8G / 10 分钟 | `05_inspect_trace.py` 检查保存的全部 top-k/分数，并按目标 token 角色统计完整 loss | **FAILED，1:0：仅一块 system 文本 loss 6.30 超阈值；数据/assistant 检查通过** | 集群 `rtx/yjw/test/glm_trace/results/swe_check_20261028.json`，日志 `logs/glm-swe-inspect-1040870.out` |
+| **1040875** `glm-swe-64k1` | a01，8 张 A800，2 小时 | 第 1 篇 64K，16×1024 记录窗口，保留完整 loss；先测单篇耗时 | **PENDING，Priority，暂估 10/31 09:19**；已核查 system 异常并于 11:39 解除依赖，见 §4.2 | 集群 `rtx/yjw/test/glm_trace/traces/swe64k_doc0_20261028/`，日志 `logs/glm-swe-64k1-1040875.out` |
 
-- 10/28 11:22：1040816 已完成第 28 层（共 78 层）；第 0 层 top-k 重合率 mean/min 均 1.0000，记录分数最大相对误差 5.21e-07，排序/有效数/补位检查均通过；absorbed vs expanded attention 最大相对误差 4.27e-03。这些只证明初步检查通过，尚未证明最终 loss 达标。H800 新调优顺序仍待用户确认。
+- 1040816 已完成全部 78 层；第 0 层 top-k 重合率 mean/min 均 1.0000，记录分数最大相对误差 5.21e-07，排序/有效数/补位检查均通过；absorbed vs expanded attention 最大相对误差 4.27e-03。最终数据和角色 loss 见 §4.2。H800 新调优顺序仍待用户确认。
 - h01 的两个节点 g40、g44，16 张 H800 一直被别人占满，作业只能排队，没有办法加速。重新提交也一样，不要重复提交。
 - 上一次语料作业 1040688 立即失败，退出码 127。原因是用 `--wrap` 时节点上的 sh 没有执行 `source`。已改为用 bash 写的 `04_corpus.sbatch` 重新提交。
 - 10/28 11:07 再查：三个 H800 作业仍为 Priority 排队，预计 11/02 02:34:29，无结果目录；没有重复提交。
 - 静默轮询脚本：`temp/glm_trace/watch_jobs.sh`，每 600 秒查一次，查询失败继续重试。10/28 11:19 已在集群 nohup 启动，PID `4160646`，观察三个 H800 作业和 `1040816`；日志和 PID 文件在 `rtx/yjw/test/glm_trace/logs/watch_20261028.{log,pid}`。继续工作前先用 `ps -p 4160646 -o pid,etime,args` 核查进程，避免重复启动。
+- 新 trace 链的静默轮询 PID `65160`，观察 `1040870,1040875`，日志/PID 在同目录 `watch_trace_20261028.{log,pid}`；10/28 11:42 已用 `ps` 核实存活。
 - 两地 `mla_host_batch.cuh` 的哈希不同：已逐行比对，差异均为本机的 `FAR_EMU_*` 模拟钩子，集群版本不含这些钩子。后续实卡优化仍以集群代码为准，不能直接用本机文件覆盖。
 
 ## 4. 未完成的任务和下一步
@@ -153,16 +157,22 @@
 
 **后续步骤**：
 1. **语料构建和格式检查已完成（10/28）**：4 篇原长 122916 / 121172 / 119659 / 118550，均截到 65536；单条轨迹/文档，角色字段齐全。文档 0 仅有一个 `[gMASK]`，50 个原生 `<tool_call>`、49 个 `<tool_response>`；已检查 user / assistant / tool 的渲染片段。CPU 检查记录见 `temp/glm_trace/results/corpus_swe_inspection_20261028.json`（集群原件为 `corpus_swe_inspection.json`）。
-2. **验证作业 1040816 已启动**：`NPROC=2 sbatch --job-name=glm-swe-check --time=01:30:00 --gres=gpu:a800:2 03_trace.sbatch --corpus corpus_swe_check.pt --docs 1 --tokens 8192 --groups 2 --span 256 --loss-all --check --out traces/swe_check_20261028`。
+2. **验证作业 1040816 已完成**：`NPROC=2 sbatch --job-name=glm-swe-check --time=01:30:00 --gres=gpu:a800:2 03_trace.sbatch --corpus corpus_swe_check.pt --docs 1 --tokens 8192 --groups 2 --span 256 --loss-all --check --out traces/swe_check_20261028`。
    - `corpus_swe_check.pt` 保留原语料第 2 篇（索引 1）及其角色、元数据，用于本次短验证，不替换正式的 4 篇语料。
    - **不要使用原建议的 4K 前缀**：4 篇的前 5675 token 全为 system，4K 验证没有 assistant；所选 8K 前缀含 793 个 assistant token（第 1 篇只有 121 个）。
    - 判据：按 `role` 分开统计 loss，assistant token 应 ≤ 约 1.5；除第一块外，没有 ≥ 约 6 的 256 位置块；tool 输出可以在 3～5。
    - 注意：现在的 `loss` 字段只统计记录窗口，请看 `--loss-all` 的全位置统计。
    - `loss.pt` 中 `loss[r]` 预测 `tokens[r+1]`，按角色统计时要用目标 token 的 `role[r+1]`，不能直接用 `role[r]`。
+   - CPU 检查脚本 `temp/glm_trace/05_inspect_trace.py` 和 `05_inspect.sbatch`：输出 JSON，只有数据完整性、assistant mean ≤ 1.5、首块之后所有 256-token 块 mean < 6 均通过才返回 0。
+   - **结果**：全部 21 层的 `[21,2,256,2048]` selections/scores、78 层复用映射、每行因果范围/无重复/分数排序/有效数/统计一致性通过。按目标角色的 mean loss：system 4.224，user 2.843，**assistant 0.827（793 token）**，tool 4.367。唯一超阈值块 `[1536,1792)` mean 6.3025，全是 system 工具描述中的转义 JSON 文本。严格 gate 返回失败，未把它写成完全达标。
+   - **复核决定（11:39）**：assistant/tool 达到预期，唯一高块已定位为原始 system 工具描述，格式和采集实现无异常；按已授权的 trace 流程继续单篇 64K，保留严格失败与复核原因，不改语料或阈值。已用 `scontrol update JobId=1040875 Dependency=""` 解锁原作业，未重提交。证据：`temp/glm_trace/results/swe_check_20261028.json`、`swe_check_with_roles_20261028.json`、`swe_check_decision_20261028.json`、`glm-swe-check-1040816.out`（集群原件同名/对应日志）。
 3. **正式采集**：先跑 1 篇 64K 测时间。indexer 部分与长度平方成正比；4K、2 卡约 17 分钟，64K 要外推，可能需要 8 卡和较长时限。然后跑全部 4 篇。
+   - 单篇计时作业 1040875 已按原授权流程排队；最初依赖 CPU gate 1040870，现已按上面的复核解除依赖。`NPROC=8`、`--docs 1 --tokens 65536 --groups 16 --span 1024 --loss-all`，2 小时时限。源码哈希、原依赖和当前状态在 `temp/glm_trace/results/swe_pipeline_20261028.json`。
    - 记录窗口：现在是在文档后半段均匀取 `--groups 16` 组、每组 `--span 1024` 个连续位置。
    - 可以考虑只取 assistant 段作为 decode 位置，因为真实 decode 只生成 assistant token；或者保留全部位置，回放时用 `role` 过滤。
 4. 把 trace 转成 `temp/h800/tiers.py` 的格式（`selections [layers, groups, span, topk]`、`group_starts`），在本机 A100 上做多步回放（span 1024）。
+   - **8K/256 位置接入检查已完成**：实际无需转换，`tiers.py` 可直接读取 GLM 的保存格式。A100 PCIe MTP1（1/4 请求，256 步）和 NVLink MTP8（1/4/16 请求，32 步）每步采样行校验通过，max abs ≤0.006066；完整逐步耗时/未命中/去重页命中率/两下限及比值在 `temp/glm_trace/results/a100_8k_smoke.md`，复现 `bash temp/glm_trace/run_8k_smoke.sh`。这是短上下文接入检查，包含 system/user/tool，不能替代 64K/1024 正式结果。
+   - 8K MTP8 的 16 请求原地读测得 496.2 µs；原生纯本地初测最好样本 496.6 µs，出现比值略低于 1，已另测 0% 远端的 attention（原生 + 本文无缓存）CUDA graph，最好为 435.5 µs；报告取该最好实测值并保留补测原始数据，没有截断比值。
    - 记录每步命中率，以及本文 ÷ 纯本地，还有两个下限（见 §5）。
    - 真实 trace 的未命中量会改变传输和计算的比例，这也会影响 §4.1 的结论。最后在 H800 上也跑一遍。
 

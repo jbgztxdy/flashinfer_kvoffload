@@ -1,0 +1,20 @@
+{
+  "check_job": 1040816,
+  "inspect_job": 1040870,
+  "capture_job": 1040875,
+  "strict_gate_result": "FAIL: one 256-token block at 1536 has loss 6.3025",
+  "inspection_report_sha256": "f4c991b00a9ca3b35176e1811ac9a65fb71a7b70054fe486c224ad6c934eafba",
+  "high_block_target_role_counts": {
+    "system": 256,
+    "user": 0,
+    "assistant": 0,
+    "tool": 0
+  },
+  "high_block_content": "Escaped JSON tool description in the original system prompt; task_tracker examples.",
+  "assistant_loss_mean": 0.8265816070863402,
+  "tool_loss_mean": 4.367298873432082,
+  "decision": "Proceed with the already authorized one-document 64K timing capture",
+  "rationale": "Saved trace data pass all checks. Assistant loss is 0.827 and tool loss is 4.37. The only block above the approximate handoff threshold is system tool-schema text, not a malformed dialogue or assistant segment. Keep the strict failure and this contextual decision visible; do not rewrite either as a full numerical gate pass.",
+  "architecture_change": false,
+  "corpus_changed": false
+}
