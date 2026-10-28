@@ -17,7 +17,7 @@
 #        row_stats [indexer layers, groups, span, 5] fp32 over all causal in-document keys:
 #          n_valid, sum, sum of squares, max, top-k sum (mean/std/top-k share derive from these);
 #        optional full_rows (--full-rows): full score row of each group's last position;
-#        plus positions, group_starts, layer ids, source_layer (indexer layer used by each of the
+#        plus positions, group_starts, role (per document position, if the corpus has it), layer ids, source_layer (indexer layer used by each of the
 #        78 layers), members (source sessions), doc index, loss and the run config.
 # Usage: torchrun --nproc-per-node 8 02_prefill_trace.py --corpus corpus_64k.pt --out traces/
 import argparse
@@ -419,6 +419,9 @@ if rank == 0:
                    positions=starts[i][:, None] + torch.arange(S), group_starts=starts[i],
                    layers=layer_ids, source_layer=source_layer, topk=TOPK, doc=i, tokens=lens[i],
                    members=corpus["members"][i], corpus=args.corpus, config=vars(args), model=args.model,
+                   meta=corpus["meta"][i] if "meta" in corpus else None,
+                   role=corpus["role"][i][: lens[i]] if "role" in corpus else None,
+                   role_names=corpus.get("role_names"),
                    loss=loss, layers_run=N_LAYERS)
         if args.full_rows:
             b0, b1 = int(doc_bounds[i]), int(doc_bounds[i + 1])
