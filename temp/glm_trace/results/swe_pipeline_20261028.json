@@ -3,9 +3,11 @@
   "cluster_root": "/WORK/PUBLIC/luyouy_work/rtx/yjw/test/glm_trace",
   "corpus_sha256": "f82182b02107b998bf87a95fa855890a919fd9cb6f3438a4e8f73b5fbf67bbaa",
   "source_sha256": {
-    "02_prefill_trace.py": "a4c1e440e8dd16c3788e5e6b2458417a023cfac79e53949fb76da7a0766128ce",
+    "02_prefill_trace.py": "386e90fc0c41cb4a05e0d9c4ceb89e2ce009bcfa38793c438e191f8ea6f8e0d1",
     "05_inspect_trace.py": "bfd2d8bf3ab9f3e3406a48450f847ef975b9bb3172d2dfebd9c66e9244fd7374",
-    "05_inspect.sbatch": "47507ce735f15b2d9c59b3e7294e0acb2141f9373858e3bb8f54a0f3a8624b98"
+    "05_inspect.sbatch": "47507ce735f15b2d9c59b3e7294e0acb2141f9373858e3bb8f54a0f3a8624b98",
+    "trace_windows.py": "9aaa2fd567f4c42019977522b9b289cd9ed1b4883a594e203fb15275deab87fb",
+    "07_plan_windows.py": "1b80d52b19a281907147fe5f8444b17da80f6c959bf99f3a29ddfff2e6f92e53"
   },
   "jobs": [
     {
@@ -77,6 +79,35 @@
     "Formal 1024-position replay on A100 and H800 with per-step hit rates, comparisons and both floors",
     "H800 tuning order still awaits user confirmation"
   ],
-  "updated_at": "2026-10-28T11:43:39+08:00",
-  "initial_inspection_source_sha256": "cd87205b9df025b18555ea42eef55e311c8e850e6fce7440d64613f014ddc20e"
+  "updated_at": "2026-10-28T12:07:53+08:00",
+  "initial_inspection_source_sha256": "cd87205b9df025b18555ea42eef55e311c8e850e6fce7440d64613f014ddc20e",
+  "initial_collector_source_sha256": "a4c1e440e8dd16c3788e5e6b2458417a023cfac79e53949fb76da7a0766128ce",
+  "future_full_capture_windows": {
+    "plan": "results/swe_windows_64k.json",
+    "plan_sha256": "7de0c304ab5b657a1cb305540f66953b913f8fae02bff6f688e4c5f280a76ae3",
+    "groups_per_doc": 16,
+    "span": 1024,
+    "all_assistant_windows_by_doc": [
+      0,
+      3,
+      0,
+      1
+    ],
+    "all_assistant_starts": {
+      "1": [
+        35184,
+        41887,
+        48296
+      ],
+      "3": [
+        50621
+      ]
+    },
+    "cpu_validated": true,
+    "gpu_validated": false,
+    "capture_args": "--window-plan results/swe_windows_64k.json",
+    "job_1040875_uses_plan": false,
+    "all_four_document_job_submitted": false,
+    "cluster_cpu_validated_at": "2026-10-28T12:07:53+08:00"
+  }
 }

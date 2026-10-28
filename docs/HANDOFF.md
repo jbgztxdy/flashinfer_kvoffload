@@ -170,6 +170,8 @@
    - 单篇计时作业 1040875 已按原授权流程排队；最初依赖 CPU gate 1040870，现已按上面的复核解除依赖。`NPROC=8`、`--docs 1 --tokens 65536 --groups 16 --span 1024 --loss-all`，2 小时时限。源码哈希、原依赖和当前状态在 `temp/glm_trace/results/swe_pipeline_20261028.json`。
    - 记录窗口：现在是在文档后半段均匀取 `--groups 16` 组、每组 `--span 1024` 个连续位置。
    - 可以考虑只取 assistant 段作为 decode 位置，因为真实 decode 只生成 assistant token；或者保留全部位置，回放时用 `role` 过滤。
+   - **窗口覆盖准备已完成**：原均匀 16×1024 窗口没有一个全为 assistant；已生成 `temp/glm_trace/results/swe_windows_64k.json`。文档 1 将最近的 3 个窗口起点移至 35184 / 41887 / 48296，文档 3 移至 50621，共覆盖 4 段完整的 1024 连续 assistant token；其余窗口保持，文档 0/2 不变。没有拼接或跳过中间 token。
+   - `02_prefill_trace.py` 新增可选 `--window-plan`，复用 CPU 模块 `trace_windows.py`，核对语料 SHA-256、文档 members、长度、窗口顺序/范围/不重叠；输出新增 `source_sha256` / `window_plan_sha256`。已同步集群，默认窗口经 CPU 检查与原 64K/8K/4K 版本完全一致。1040875 未传参数，仍为原默认；后续全量待单篇核查后加 `--window-plan results/swe_windows_64k.json`。新可选路径尚待 GPU 全流程验证。
 4. 把 trace 转成 `temp/h800/tiers.py` 的格式（`selections [layers, groups, span, topk]`、`group_starts`），在本机 A100 上做多步回放（span 1024）。
    - **8K/256 位置接入检查已完成**：实际无需转换，`tiers.py` 可直接读取 GLM 的保存格式。A100 PCIe MTP1（1/4 请求，256 步）和 NVLink MTP8（1/4/16 请求，32 步）每步采样行校验通过，max abs ≤0.006066；完整逐步耗时/未命中/去重页命中率/两下限及比值在 `temp/glm_trace/results/a100_8k_smoke.md`，复现 `bash temp/glm_trace/run_8k_smoke.sh`。这是短上下文接入检查，包含 system/user/tool，不能替代 64K/1024 正式结果。
    - 8K MTP8 的 16 请求原地读测得 496.2 µs；原生纯本地初测最好样本 496.6 µs，出现比值略低于 1，已另测 0% 远端的 attention（原生 + 本文无缓存）CUDA graph，最好为 435.5 µs；报告取该最好实测值并保留补测原始数据，没有截断比值。

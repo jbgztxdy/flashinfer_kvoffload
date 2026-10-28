@@ -52,6 +52,8 @@
 - 单篇完成后检查保存数据、角色 loss 和耗时，再采集其余文档；真实 64K/1024 trace 尚未得到，不能标记完成。
 - 正式回放记录每步缓存命中率、本文/纯本地比值和两下限；包括 A100，以及 H800 的 HiSparse 对比。
 - 角色过滤要保留真实位置和时间顺序。四篇中只有文档 1 有 3 段、文档 3 有 1 段 assistant 连续长度 ≥1024；不能删去中间 tool/user 位置后仍假称 1024 连续 token。
+- **后续全量的窗口计划已准备**：原来的 16 个均匀窗口在四篇中都没有完整覆盖一段 1024 连续 assistant token。`07_plan_windows.py` 将最近的窗口移至文档 1 的 35184 / 41887 / 48296、文档 3 的 50621，每篇仍为 16×1024，其他窗口保留，文档 0/2 不变。完整位置及角色计数在 [`swe_windows_64k.json`](../temp/glm_trace/results/swe_windows_64k.json)。已用真实语料检查四段均全为 assistant、窗口有序/无重叠/在文档后半段，默认 64K/8K/4K 窗口与此前逐个一致，错误的语料或 span 会拒绝。
+- 采集脚本新增可选 `--window-plan results/swe_windows_64k.json`；已同步集群。作业 1040875 未传该选项，继续原均匀窗口，用于单篇计时；**全量采集尚未提交**，应等单篇耗时和数据核查后带该参数。模型计算路径未改，输出增加采集脚本/窗口助手的源码哈希及计划哈希。新窗口路径目前通过 CPU 检查，GPU 全流程须随正式采集验证。
 - H800 优化顺序仍待用户确认，单 kernel 融合约束保留。
 
 作业、源码哈希和依赖变更见 [`swe_pipeline_20261028.json`](../temp/glm_trace/results/swe_pipeline_20261028.json)，集群数据根目录为 `/WORK/PUBLIC/luyouy_work/rtx/yjw/test/glm_trace`。语料 SHA-256 为 `f82182b02107b998bf87a95fa855890a919fd9cb6f3438a4e8f73b5fbf67bbaa`，8K trace SHA-256 为 `742c9a61dc6db424a9c7fca5a38fc25c573fbf702ee59afb27f4b1ed0ea906fe`。二进制 trace 保存在集群，接入检查的本地副本在 `temp/glm_trace/validation8k/doc0.pt`，未纳入 git。

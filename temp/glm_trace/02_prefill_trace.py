@@ -21,6 +21,7 @@
 #        78 layers), members (source sessions), doc index, loss and the run config.
 # Usage: torchrun --nproc-per-node 8 02_prefill_trace.py --corpus corpus_64k.pt --out traces/
 import argparse
+import hashlib
 import json
 import time
 from pathlib import Path
@@ -30,6 +31,8 @@ import torch.distributed as dist
 import torch.nn.functional as F
 from safetensors import safe_open
 
+from trace_windows import recording_starts
+
 ap = argparse.ArgumentParser()
 ap.add_argument("--model", default="/WORK/PUBLIC/luyouy_work/rtx/models/zai-org--GLM-5.3")
 ap.add_argument("--corpus", required=True)
@@ -38,6 +41,7 @@ ap.add_argument("--docs", type=int, default=0, help="number of documents (0 = al
 ap.add_argument("--tokens", type=int, default=0, help="truncate documents to this length (0 = full)")
 ap.add_argument("--groups", type=int, default=16)
 ap.add_argument("--span", type=int, default=1024, help="consecutive positions recorded per group")
+ap.add_argument("--window-plan", default=None, help="explicit per-document windows from 07_plan_windows.py")
 ap.add_argument("--layers", type=int, default=0, help="stop after this many layers (0 = all)")
 ap.add_argument("--chunk", type=int, default=128, help="query rows per indexer chunk")
 ap.add_argument("--attn-chunk", type=int, default=256, help="query rows per sparse-attention chunk")
@@ -51,6 +55,9 @@ ap.add_argument("--ref-layers", default="", help="comma-separated layers to comp
 ap.add_argument("--pos-offset", type=int, default=0, help="add to every RoPE position (diagnostics)")
 ap.add_argument("--full-rows", action="store_true", help="also save the full score row of each group's last position")
 args = ap.parse_args()
+source_sha256 = {name: hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+                 for name in ("02_prefill_trace.py", "trace_windows.py")}
+window_plan_sha256 = hashlib.sha256(Path(args.window_plan).read_bytes()).hexdigest() if args.window_plan else None
 
 dist.init_process_group("nccl")
 rank, world = dist.get_rank(), dist.get_world_size()
@@ -301,10 +308,9 @@ doc_bounds = torch.tensor([0] + torch.tensor(lens).cumsum(0).tolist(), device=de
 tokens = torch.cat(docs).to(dev).long()
 pos = torch.cat([torch.arange(n) for n in lens]).to(dev) + args.pos_offset
 T = len(tokens)
-starts, want = [], []
-for i, n in enumerate(lens):
-    st = torch.linspace(n // 2, n - args.span, args.groups).long()
-    starts.append(st)
+starts = recording_starts(corpus, lens, args.groups, args.span, args.window_plan, args.corpus)
+want = []
+for i, st in enumerate(starts):
     for s in st:
         want.append(int(doc_bounds[i]) + torch.arange(int(s), int(s) + args.span))
 want = torch.cat(want).to(dev)
@@ -419,6 +425,8 @@ if rank == 0:
                    positions=starts[i][:, None] + torch.arange(S), group_starts=starts[i],
                    layers=layer_ids, source_layer=source_layer, topk=TOPK, doc=i, tokens=lens[i],
                    members=corpus["members"][i], corpus=args.corpus, config=vars(args), model=args.model,
+                   source_sha256=source_sha256,
+                   window_plan_sha256=window_plan_sha256,
                    meta=corpus["meta"][i] if "meta" in corpus else None,
                    role=corpus["role"][i][: lens[i]] if "role" in corpus else None,
                    role_names=corpus.get("role_names"),
