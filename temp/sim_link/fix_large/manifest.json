@@ -1,0 +1,338 @@
+{
+  "base_commit": "5c44fd70",
+  "source_sha256": {
+    "old": "6929f6f953be0d0353c0fc17c936a77062c6e9b65bc9a99e6ff838d9dc169d7a",
+    "regressed": "3f5f60cd7b37ba29ebeb8f993af15290734833dbe538baf0214f0d46b5ab7d2a",
+    "fixed": "71901e72e6ddbe7a9955afab3c805bb0f4b744a8437d3376356f32106c1e4ff2",
+    "specialized": "5b27bd0176803f5b52150d533ce8bfca4fef27de26d5feac44a47b2ff91cbbb4"
+  },
+  "source_recovery": {
+    "old": "git show 109b1c76:include/flashinfer/attention/mla_host_batch.cuh",
+    "regressed": "git show 5c44fd70:include/flashinfer/attention/mla_host_batch.cuh",
+    "specialized": "5c44fd70 + initial_specialization.patch",
+    "fixed": "5c44fd70 + fixed.patch"
+  },
+  "notes": [
+    "regressed_screen was originally mislabeled specialized after candidate generation aborted; the recorded source SHA identified the actual 5c44fd70 kernel. Renaming metadata is retained.",
+    "specialized is the initial fix; fixed adds comments/formatting. All measurements are retained.",
+    "f16/h64 abbreviates fetch_ctas=16/host_item_entries=64; performance inputs are BF16 with 64 heads.",
+    "Kernel compiler dumps are archived as gzip; .cuh snapshots and redundant raw SASS are excluded.",
+    "H800 production and pending third-round snapshot were not modified."
+  ],
+  "tests": {
+    "passed": 93,
+    "seconds": 154.23,
+    "log": "pytest_final.log"
+  },
+  "coverage": {
+    "timing_files": 44,
+    "configurations": 152,
+    "accepted_enqueue_segments": 13552,
+    "timed_launches": 411712,
+    "sampled_row_max_abs_error": 0.0065958499908447266,
+    "final_paired_configurations": 55,
+    "final_paired_mode_cells": 110,
+    "final_large_mode_cells": 30,
+    "worst_large_fixed_to_old": 1.0046586700840596
+  },
+  "timings": [
+    {
+      "file": "fixed_assistant_g100_mtp1.json",
+      "sha256": "3d12d308e63708593c6a931c60c9bc63db25fd5b01554593e09268fd856e2ca0",
+      "version": "fixed",
+      "configurations": 3
+    },
+    {
+      "file": "fixed_assistant_g100_mtp8.json",
+      "sha256": "d192379b58ef28966dc3ba3177d9262431ed34ecb0b0babb4d3e7b54e505ee47",
+      "version": "fixed",
+      "configurations": 3
+    },
+    {
+      "file": "fixed_assistant_g50_mtp1.json",
+      "sha256": "5689243268107cb74084ee8722200f589f629038f947e94f57c13e178fc1b4a2",
+      "version": "fixed",
+      "configurations": 3
+    },
+    {
+      "file": "fixed_assistant_g50_mtp8.json",
+      "sha256": "9bd72a89b5fae7aa4ee5dcf8f1981620160fb62563ffef5f9bb18175eac7515d",
+      "version": "fixed",
+      "configurations": 3
+    },
+    {
+      "file": "fixed_assistant_host_mtp1.json",
+      "sha256": "77a959ed76af98d0c6f76be175a2b3be887358af0ade46b50982338cb040030d",
+      "version": "fixed",
+      "configurations": 3
+    },
+    {
+      "file": "fixed_assistant_host_mtp8.json",
+      "sha256": "0a85844a80fc31eb85f1bb66e00ceab7b44ac940bbbb0f31982ce1d3209ec3a6",
+      "version": "fixed",
+      "configurations": 3
+    },
+    {
+      "file": "fixed_assistant_peer_mtp1.json",
+      "sha256": "cc14fe3803b2aec3881412c131cdd8ba3b80bfed0e7162b3e8ca1a28d9bee3c8",
+      "version": "fixed",
+      "configurations": 3
+    },
+    {
+      "file": "fixed_assistant_peer_mtp8.json",
+      "sha256": "21ed35a947891a9cc8bbb3388c180c4cc6b2fe24f921fa1f94a2ac6ad4980619",
+      "version": "fixed",
+      "configurations": 3
+    },
+    {
+      "file": "fixed_proxy_g100_mtp1.json",
+      "sha256": "614e5b252b854ed2db5eddeca45eadbd260450a5abedc2e44d33a6e6777d71fd",
+      "version": "fixed",
+      "configurations": 3
+    },
+    {
+      "file": "fixed_proxy_g100_mtp8.json",
+      "sha256": "0936aa14fbdef86d661c3bad0bda30d09a19352ac7e1e14ae3c2a1b5c116c208",
+      "version": "fixed",
+      "configurations": 4
+    },
+    {
+      "file": "fixed_proxy_g50_mtp1.json",
+      "sha256": "8a75ac00471cf8f089e19c6d68315cdb290cb15cff593d6c77df2ca999e6bb0b",
+      "version": "fixed",
+      "configurations": 4
+    },
+    {
+      "file": "fixed_proxy_g50_mtp8.json",
+      "sha256": "c3cd40078d48eab9273cdaa60a8bf679c145e349b511c8cf314d401b68e47cf7",
+      "version": "fixed",
+      "configurations": 4
+    },
+    {
+      "file": "fixed_proxy_host_mtp1.json",
+      "sha256": "fd5fbc0a2c73cca48dbca34ccb79a06555f94c420da8537bf4a0db77c7f9d9b0",
+      "version": "fixed",
+      "configurations": 4
+    },
+    {
+      "file": "fixed_proxy_host_mtp8.json",
+      "sha256": "3cf98790e60eabcd7c109a07b72dc4c26d17f5767cd8fd89d7bb458d37ef13ec",
+      "version": "fixed",
+      "configurations": 4
+    },
+    {
+      "file": "fixed_proxy_peer_mtp1.json",
+      "sha256": "6da59aa09b4a8377a5e3e4ee3f4d4d0ae4df1c0a1657c57cef0031c1896bcbde",
+      "version": "fixed",
+      "configurations": 4
+    },
+    {
+      "file": "fixed_proxy_peer_mtp8.json",
+      "sha256": "1714ab8693ba21f8691e56bcb5964838ecf75cf755fadc85bc1e80adcf35789c",
+      "version": "fixed",
+      "configurations": 4
+    },
+    {
+      "file": "fixed_repeat_proxy_g100_mtp1.json",
+      "sha256": "0fd7566c2a8a728b601b842e61ab6cc81d87401938c301b9901a1780d63287d1",
+      "version": "fixed",
+      "configurations": 3
+    },
+    {
+      "file": "fixed_repeat_proxy_g100_mtp8.json",
+      "sha256": "94ba42f0e8a77b986995472c3d842be5bd37e5cba34cfbcc12113a9aee1510eb",
+      "version": "fixed",
+      "configurations": 4
+    },
+    {
+      "file": "old_full_assistant_g100_mtp1.json",
+      "sha256": "045c7ec01acf5558aa9b42c539f8b20c8824d344854814af5e3c0a173c83ed27",
+      "version": "old",
+      "configurations": 3
+    },
+    {
+      "file": "old_full_assistant_g100_mtp8.json",
+      "sha256": "d5da6b10e589618a30b0a0a84e9996f392be3dc0520433e923f199dc5d25f6c8",
+      "version": "old",
+      "configurations": 3
+    },
+    {
+      "file": "old_full_assistant_g50_mtp1.json",
+      "sha256": "da5975c5438c0f4888de71790a049707d93338809273792518e901789a1cae94",
+      "version": "old",
+      "configurations": 3
+    },
+    {
+      "file": "old_full_assistant_g50_mtp8.json",
+      "sha256": "932498e41e091f33418501b97edbd482cd171827e9723da40b761383e75ba0b6",
+      "version": "old",
+      "configurations": 3
+    },
+    {
+      "file": "old_full_assistant_host_mtp1.json",
+      "sha256": "5ab8c9c212f492d0d3b5f2e249d02c47d723dccd4181d832f951f71837e483b2",
+      "version": "old",
+      "configurations": 3
+    },
+    {
+      "file": "old_full_assistant_host_mtp8.json",
+      "sha256": "f8874ebfcc2234800b0a348b8a1d1c73289075f448d4668c328366cde42b5401",
+      "version": "old",
+      "configurations": 3
+    },
+    {
+      "file": "old_full_assistant_peer_mtp1.json",
+      "sha256": "8845f5ae3abcac54dc7f9a5b256104195d1b4472e2ace99dad894adbb7f83737",
+      "version": "old",
+      "configurations": 3
+    },
+    {
+      "file": "old_full_assistant_peer_mtp8.json",
+      "sha256": "ebe78091b5ea924909f3104831763ae8b5a2fafe922eeea6001cde6030f70da5",
+      "version": "old",
+      "configurations": 3
+    },
+    {
+      "file": "old_full_proxy_g100_mtp1.json",
+      "sha256": "6a244acb4decba1792489b7dd70532b96233c33280155f5e0677a66956da507c",
+      "version": "old",
+      "configurations": 3
+    },
+    {
+      "file": "old_full_proxy_g100_mtp8.json",
+      "sha256": "5811c80b142f5837c5fbf65454125dc5c3182dfa36645183a65d4582002570b3",
+      "version": "old",
+      "configurations": 4
+    },
+    {
+      "file": "old_full_proxy_g50_mtp1.json",
+      "sha256": "4119d918989929c7508608c7f163e0ae3e8b8204d5115c661bdee3e61053f7db",
+      "version": "old",
+      "configurations": 4
+    },
+    {
+      "file": "old_full_proxy_g50_mtp8.json",
+      "sha256": "2d1778dad65157d29b4627c8bee5a233a5c86a4b0cda724eb35607f04cebc346",
+      "version": "old",
+      "configurations": 4
+    },
+    {
+      "file": "old_full_proxy_host_mtp1.json",
+      "sha256": "ca14c8ceed8af199f13d9e229c17fe7978d33d47d03439c01dc81d232714b2bf",
+      "version": "old",
+      "configurations": 4
+    },
+    {
+      "file": "old_full_proxy_host_mtp8.json",
+      "sha256": "cd377170d2d0859a2dc59f24b3a13ad6369325b4e894ab744d0cf24e48454d35",
+      "version": "old",
+      "configurations": 4
+    },
+    {
+      "file": "old_full_proxy_peer_mtp1.json",
+      "sha256": "ce45587c25ea7d2ec86c4385ab2ef58820a49da1eeb37a934ea801a9cafc584a",
+      "version": "old",
+      "configurations": 4
+    },
+    {
+      "file": "old_full_proxy_peer_mtp8.json",
+      "sha256": "95efa4e499f4cf2b911f2a9131028cb38f0c278c546deb66a94851ecbd0f0523",
+      "version": "old",
+      "configurations": 4
+    },
+    {
+      "file": "old_proxy_g100_mtp1.json",
+      "sha256": "2dc45776c2576c41f52f8867f17c680b6433f0d393300797ac5564fb9c8f4a02",
+      "version": "old",
+      "configurations": 3
+    },
+    {
+      "file": "old_proxy_g100_mtp8.json",
+      "sha256": "22f47470597c513b539c3bafeefd2b975f1c8dd09980dedcdaf9da579753d23b",
+      "version": "old",
+      "configurations": 4
+    },
+    {
+      "file": "regressed_proxy_g100_mtp1.json",
+      "sha256": "fe7fbf1c9bc7c6709e06d536bce4fda0e36dfc9135b951aae56efeb648f2822d",
+      "version": "regressed",
+      "configurations": 3
+    },
+    {
+      "file": "regressed_proxy_g100_mtp8.json",
+      "sha256": "7063a2f5f0f2a672886e3cae8284e5034b86b04e1800236c450b42db3304bc9b",
+      "version": "regressed",
+      "configurations": 4
+    },
+    {
+      "file": "regressed_repeat_proxy_g100_mtp1.json",
+      "sha256": "4c99bd86f1e415294e7618d384044c8186809a7982bb0f8d4cd485a85828487b",
+      "version": "regressed",
+      "configurations": 3
+    },
+    {
+      "file": "regressed_repeat_proxy_g100_mtp8.json",
+      "sha256": "06911592348015565f01ac8a0de8ba8b532d9ae581bfa4373567d027749be114",
+      "version": "regressed",
+      "configurations": 4
+    },
+    {
+      "file": "regressed_screen_proxy_g100_mtp1.json",
+      "sha256": "f96cf26f33ca4954e1b6be9e7ab191551607da242f3cd71ee5aa89bcf2bfca24",
+      "version": "regressed",
+      "configurations": 3
+    },
+    {
+      "file": "regressed_screen_proxy_g100_mtp8.json",
+      "sha256": "b9e29fb20119c0f247e7080e2628450f8f69b759b5948fc155bda2248640c971",
+      "version": "regressed",
+      "configurations": 4
+    },
+    {
+      "file": "specialized_proxy_g100_mtp1.json",
+      "sha256": "d24b067e345cb16f879fcb96dc071879e4c0ad202c352f3422a4114a537e9a9a",
+      "version": "specialized",
+      "configurations": 3
+    },
+    {
+      "file": "specialized_proxy_g100_mtp8.json",
+      "sha256": "622d5144adc1d2b3c4935cfeda8df47ea56b4d9b2d2f5d8d29b1bd4ffd5924be",
+      "version": "specialized",
+      "configurations": 4
+    }
+  ],
+  "compiler_artifacts": {
+    "fixed_normal_sass.txt.gz": {
+      "sha256": "bfbe435815119ff0abf8be671412b506565fbe53e6d22f4863fa380758311662",
+      "raw_sha256": "c8998d2de5cbeffe7b6c8531f631f8c8c305ec1c56831eb0330d00a9e66e1dd3"
+    },
+    "fixed_sass.txt.gz": {
+      "sha256": "fac5001d4e358c9be116241e2accd17487f27a806e1525c9218379b22d13ca9e",
+      "raw_sha256": "bd8ef51ef2c09e334101a05d403614b01347626f0a0d4a36613ab9db3ad38f2b"
+    },
+    "old_normal_sass.txt.gz": {
+      "sha256": "99d1f9af0dae28cba270a652553cfd057cfe98dcdeeced747770b902773b421a",
+      "raw_sha256": "c8c76dc446f32d7f7cea74cf5224a196dbb6a88b046302c4a6f500f1546a3ecf"
+    },
+    "old_sass.txt.gz": {
+      "sha256": "98f94294f4b5c5d0c1e1e1b26963fa50c7b9b12772f87079b879c1c2020bb4c1",
+      "raw_sha256": "c82412584d9035edbf19cc4515674fad8e8af28ac3e64c5c6cbf98346c98786d"
+    },
+    "regressed_sass.txt.gz": {
+      "sha256": "49c54d7c8f2af6afa141a97e6fc7f39c74a159b5a1a9569a7192712b8999fe14",
+      "raw_sha256": "591d4fac94e7fea058795fe1de07097b4e526e0c007a4adead3ce93f09433f5c"
+    },
+    "specialized_sass.txt.gz": {
+      "sha256": "9363e70ab0520598269f4fb002ea15f683f83ae02182d44549bd3958a465adc2",
+      "raw_sha256": "bd8ef51ef2c09e334101a05d403614b01347626f0a0d4a36613ab9db3ad38f2b"
+    }
+  },
+  "resource_artifacts": {
+    "fixed_normal_resources.txt": "969033a784076056fdc6ab9a58e327d5b07982f09d2d9a3423e022a746fa53cc",
+    "fixed_resources.txt": "55ef1c48e63df65e414bb78e1f0691dcbe1743ee68855f01c4beb3a65089a550",
+    "old_normal_resources.txt": "56762179367376668c528eda2397a4fa240760af930e024533eae288635f69f5",
+    "old_resources.txt": "177b4d2c2be7a0ba4e4a7698471c28edd6aa0fe738e713c35f65af608137d6b8",
+    "regressed_resources.txt": "bdba136604bef92e0300ca6982d126c73e19a8a823c7b6d92fab216d1ecdaf5d",
+    "specialized_resources.txt": "55ef1c48e63df65e414bb78e1f0691dcbe1743ee68855f01c4beb3a65089a550"
+  }
+}

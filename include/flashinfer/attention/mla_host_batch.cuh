@@ -232,17 +232,10 @@ __device__ __forceinline__ uint32_t* host_batch_row_completed(const Params& para
          params.partial_capacity + params.num_pools;
 }
 
-template <typename Params>
-__device__ __forceinline__ bool host_batch_row_merge(const Params& params) {
-  // At this size every CTA's merge pass covers heads of one row. Workers finish their entire
-  // attention-item walk before waiting, so no needed item is held behind a merge waiter.
-  return params.stage && host_batch_caching(params) && params.num_rows * params.num_head_tiles <= 32;
-}
-
-template <typename Params>
+template <bool ROW_MERGE, typename Params>
 __device__ __forceinline__ void wait_host_batch_row(const Params& params, uint32_t row,
                                                     uint32_t states) {
-  if (host_batch_row_merge(params)) {
+  if constexpr (ROW_MERGE) {
     const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
     if (tid == 0) {
       while (host_batch_ld_acquire(host_batch_row_completed(params) + row) <
@@ -633,15 +626,19 @@ __device__ __forceinline__ void compact_host_batch_rows(const Params& params) {
 // after one round. Small batches with more than eight fetch CTAs switch as soon as 16-row chunks
 // would take a second round: avoiding that extra dependent wait matters on high-latency links.
 // Larger batches keep the 64-row-per-CTA threshold to sustain transfer/attention overlap.
-template <typename Params>
+template <bool ROW_MERGE, typename Params>
 __device__ __forceinline__ uint32_t host_batch_fetch_rows(const Params& params, uint32_t unique) {
   const uint32_t count = params.stage ? min(unique, params.staging_capacity) : unique;
   const uint32_t rounds = params.fetch_ctas <= 8 ? 3 : 1;
-  const uint32_t threshold =
-      params.fetch_ctas <= 8 || params.num_rows * params.num_head_tiles > 32
-          ? rounds * params.fetch_ctas * kHostBatchFetchRows
-          : params.fetch_ctas * kHostBatchMinFetchRows + 1;
-  return count < threshold ? kHostBatchMinFetchRows : kHostBatchFetchRows;
+  if constexpr (ROW_MERGE) {
+    const uint32_t threshold = params.fetch_ctas <= 8
+                                   ? rounds * params.fetch_ctas * kHostBatchFetchRows
+                                   : params.fetch_ctas * kHostBatchMinFetchRows + 1;
+    return count < threshold ? kHostBatchMinFetchRows : kHostBatchFetchRows;
+  } else {
+    return count < rounds * params.fetch_ctas * kHostBatchFetchRows ? kHostBatchMinFetchRows
+                                                                 : kHostBatchFetchRows;
+  }
 }
 
 // Prepare has finished every resident lookup before the fetch starts. The staging path may
@@ -955,7 +952,7 @@ __device__ __forceinline__ void load_host_batch_kv(typename KTraits::SharedStora
 // A single query has too few merge heads to fill the grid at several heads per CTA. Give
 // each head one CTA, reduce disjoint state subsets in parallel, then combine those float states
 // in shared memory. Larger batches use the existing wider merge to avoid extra CTA rounds.
-template <typename KTraits, typename Params>
+template <typename KTraits, typename Params, bool ROW_MERGE>
 __device__ __forceinline__ void merge_host_batch_single_query(const Params& params,
                                                                 uint8_t* smem) {
   using DTypeO = typename KTraits::DTypeO;
@@ -984,7 +981,7 @@ __device__ __forceinline__ void merge_host_batch_single_query(const Params& para
     const uint32_t host_first = tail_tiles * params.num_chunks +
                                host_batch_host_items(params)[row] + head_tile * host_items;
     const uint32_t states = hbm_items + host_items;
-    wait_host_batch_row(params, row, states);
+    wait_host_batch_row<ROW_MERGE>(params, row, states);
     state_t<VEC> local;
 #pragma unroll 1
     for (uint32_t base = part; base < states; base += PARTS * BATCH) {
@@ -1037,7 +1034,7 @@ __device__ __forceinline__ void merge_host_batch_single_query(const Params& para
   }
 }
 
-template <typename KTraits, uint32_t VEC_SIZE, typename Params>
+template <typename KTraits, uint32_t VEC_SIZE, typename Params, bool ROW_MERGE>
 __device__ __forceinline__ void merge_host_batch_chunks(const Params& params) {
   using DTypeO = typename KTraits::DTypeO;
   // Features per thread (see the caller): every pass pays a chain of dependent metadata loads, so
@@ -1066,7 +1063,7 @@ __device__ __forceinline__ void merge_host_batch_chunks(const Params& params) {
     const uint32_t host_first = tail_tiles * params.num_chunks +
                                 host_batch_host_items(params)[row] + head_tile * host_items;
     const uint32_t states = hbm_items + host_items;
-    wait_host_batch_row(params, row, states);
+    wait_host_batch_row<ROW_MERGE>(params, row, states);
     state_t<VEC_SIZE> st;
 #pragma unroll 1
     for (uint32_t base = 0; base < states; base += BATCH) {
@@ -1505,7 +1502,7 @@ __device__ __forceinline__ bool claim_host_batch_item(const Params& params, uint
 
 // Items: [full rows: one per row tile | tail HBM chunks | tail Host chunks]. Full items cover a
 // whole row and wait only in their leading (Host) tiles.
-template <typename KTraits, typename Params>
+template <typename KTraits, typename Params, bool ROW_MERGE>
 __device__ __forceinline__ void run_host_batch_item(const Params& params,
                                                     typename KTraits::SharedStorage& storage,
                                                     uint8_t* smem, const uint32_t* scratch,
@@ -1588,12 +1585,14 @@ __device__ __forceinline__ void run_host_batch_item(const Params& params,
                      params.o_stride_h, 1, head_tile * CTA_TILE_Q, params.num_heads,
                      params.return_lse_base_on_e);
   }
-  if (host_batch_row_merge(params) && item >= full_items) {
-    // Publish every thread's partial writes before advancing this row's completed item count.
-    __threadfence();
-    __syncthreads();
-    const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
-    if (tid == 0) atomicAdd(host_batch_row_completed(params) + row, 1u);
+  if constexpr (ROW_MERGE) {
+    if (item >= full_items) {
+      // Publish every thread's partial writes before advancing this row's completed item count.
+      __threadfence();
+      __syncthreads();
+      const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+      if (tid == 0) atomicAdd(host_batch_row_completed(params) + row, 1u);
+    }
   }
 }
 
@@ -1607,7 +1606,7 @@ __device__ __forceinline__ void run_host_batch_item(const Params& params,
 // With the LRU cache, one item per pool precedes the attention items when any page is staged.
 // Each worker reaches its LRU items before any attention item and they never wait, so the fetch
 // loop, which waits on the pools' flags, cannot deadlock with them.
-template <typename KTraits, typename Params>
+template <typename KTraits, typename Params, bool ROW_MERGE>
 __device__ __forceinline__ void run_host_batch_items(const Params& params,
                                                      typename KTraits::SharedStorage& storage,
                                                      uint8_t* smem, uint32_t* scratch,
@@ -1642,12 +1641,12 @@ __device__ __forceinline__ void run_host_batch_items(const Params& params,
       __syncthreads();
       continue;
     }
-    run_host_batch_item<KTraits>(params, storage, smem, scratch, item - lru_items, s_frag, o_frag,
+    run_host_batch_item<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, item - lru_items, s_frag, o_frag,
                                  m, d);
   }
 }
 
-template <typename KTraits, typename Params>
+template <typename KTraits, typename Params, bool ROW_MERGE>
 __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
     const __grid_constant__ Params params) {
   // cp.async moves full 128-byte lines only when the shared destination is aligned like the
@@ -1708,7 +1707,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
     }
 
   }
-  const uint32_t fetch_rows = host_batch_fetch_rows(params, unique);
+  const uint32_t fetch_rows = host_batch_fetch_rows<ROW_MERGE>(params, unique);
   if (tid == 0) {
     scratch[kHostBatchScratchEpoch] = epoch;
     scratch[kHostBatchScratchFetchRows] = fetch_rows;
@@ -1717,22 +1716,22 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
   // Fetch CTAs take attention items once their copies are issued, so low Host shares and the end
   // of the PCIe stream keep every SM busy; with no Host page there is nothing to fetch.
   if (unique > 0 && from_back && !host_batch_writes_back(params)) fetch_host_batch_pages<KTraits>(params, smem, epoch, unique, fetch_rows);
-  run_host_batch_items<KTraits>(params, storage, smem, scratch, from_back, unique);
+  run_host_batch_items<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, from_back, unique);
   // Uniform over the grid, so every CTA takes the same branch.
   if (params.full_rows < params.num_rows) {
     // A small staged merge waits only for the row it reads, overlapping the remaining rows and
     // cache writeback. Every other path retains the full-grid merge barrier.
-    if (!host_batch_row_merge(params)) cg::this_grid().sync();
+    if constexpr (!ROW_MERGE) cg::this_grid().sync();
     // 32 features per thread fill the grid only with enough (row tile, head) units; a small batch
     // merged on 32 of 108 SMs at that width and took ~15 us for 8 rows, so it uses 8.
     const uint32_t units = (params.num_rows - params.full_rows) * params.num_head_tiles *
                            KTraits::CTA_TILE_Q;
     if (params.num_rows == 1) {
-      merge_host_batch_single_query<KTraits>(params, smem);
+      merge_host_batch_single_query<KTraits, Params, ROW_MERGE>(params, smem);
     } else if (units >= gridDim.y * (KTraits::NUM_THREADS / (KTraits::HEAD_DIM_CKV / 32))) {
-      merge_host_batch_chunks<KTraits, 32>(params);
+      merge_host_batch_chunks<KTraits, 32, Params, ROW_MERGE>(params);
     } else {
-      merge_host_batch_chunks<KTraits, 8>(params);
+      merge_host_batch_chunks<KTraits, 8, Params, ROW_MERGE>(params);
     }
   }
 
@@ -1753,7 +1752,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
       }
       if (tid == 0) params.state[kHostBatchGaps] = 0;
     }
-    if (host_batch_row_merge(params)) {
+    if constexpr (ROW_MERGE) {
       for (uint32_t row = tid; row < params.num_rows; row += KTraits::NUM_THREADS)
         host_batch_row_completed(params)[row] = 0;
     }
@@ -1787,7 +1786,12 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
     DISPATCH_SMEM_CONFIG(smem_limit_per_sm, NUM_STAGES, CTA_TILE_KV, QK_SHARD, {
       using KTraits = KernelTraits<false, NUM_STAGES, QK_SHARD, HEAD_DIM_CKV, HEAD_DIM_KPE,
                                    /*CTA_TILE_Q_=*/64, CTA_TILE_KV, DTypeQ, DTypeKV, DTypeO, IdType>;
-      auto kernel = BatchMLAHostBatchKernel<KTraits, Params>;
+      // Keep the original path free of the row-completion protocol, including its register and
+      // instruction-scheduling effects. Each launch still runs one cooperative kernel.
+      const bool row_merge = params.stage && params.pool_capacity > 0 &&
+                             params.num_rows * params.num_head_tiles <= 32;
+      auto kernel = row_merge ? BatchMLAHostBatchKernel<KTraits, Params, true>
+                              : BatchMLAHostBatchKernel<KTraits, Params, false>;
       const size_t smem_size = sizeof(typename KTraits::SharedStorage);
       FLASHINFER_CUDA_CALL(
           cudaFuncSetAttribute(kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, smem_size));

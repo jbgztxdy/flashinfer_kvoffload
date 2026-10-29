@@ -1,0 +1,90 @@
+--- a/include/flashinfer/attention/mla_host_batch.cuh
++++ b/include/flashinfer/attention/mla_host_batch.cuh
+@@ -235,8 +235 @@
+-template <typename Params>
+-__device__ __forceinline__ bool host_batch_row_merge(const Params& params) {
+-  // At this size every CTA's merge pass covers heads of one row. Workers finish their entire
+-  // attention-item walk before waiting, so no needed item is held behind a merge waiter.
+-  return params.stage && host_batch_caching(params) && params.num_rows * params.num_head_tiles <= 32;
+-}
+-
+-template <typename Params>
++template <bool ROW_MERGE, typename Params>
+@@ -245 +238 @@
+-  if (host_batch_row_merge(params)) {
++  if constexpr (ROW_MERGE) {
+@@ -636 +629 @@
+-template <typename Params>
++template <bool ROW_MERGE, typename Params>
+@@ -640,5 +633,9 @@
+-  const uint32_t threshold =
+-      params.fetch_ctas <= 8 || params.num_rows * params.num_head_tiles > 32
+-          ? rounds * params.fetch_ctas * kHostBatchFetchRows
+-          : params.fetch_ctas * kHostBatchMinFetchRows + 1;
+-  return count < threshold ? kHostBatchMinFetchRows : kHostBatchFetchRows;
++  if constexpr (ROW_MERGE) {
++    const uint32_t threshold = params.fetch_ctas <= 8
++                                   ? rounds * params.fetch_ctas * kHostBatchFetchRows
++                                   : params.fetch_ctas * kHostBatchMinFetchRows + 1;
++    return count < threshold ? kHostBatchMinFetchRows : kHostBatchFetchRows;
++  } else {
++    return count < rounds * params.fetch_ctas * kHostBatchFetchRows ? kHostBatchMinFetchRows
++                                                                 : kHostBatchFetchRows;
++  }
+@@ -958 +955 @@
+-template <typename KTraits, typename Params>
++template <typename KTraits, typename Params, bool ROW_MERGE>
+@@ -987 +984 @@
+-    wait_host_batch_row(params, row, states);
++    wait_host_batch_row<ROW_MERGE>(params, row, states);
+@@ -1040 +1037 @@
+-template <typename KTraits, uint32_t VEC_SIZE, typename Params>
++template <typename KTraits, uint32_t VEC_SIZE, typename Params, bool ROW_MERGE>
+@@ -1069 +1066 @@
+-    wait_host_batch_row(params, row, states);
++    wait_host_batch_row<ROW_MERGE>(params, row, states);
+@@ -1508 +1505 @@
+-template <typename KTraits, typename Params>
++template <typename KTraits, typename Params, bool ROW_MERGE>
+@@ -1591 +1588,2 @@
+-  if (host_batch_row_merge(params) && item >= full_items) {
++  if constexpr (ROW_MERGE) {
++    if (item >= full_items) {
+@@ -1596,0 +1595 @@
++    }
+@@ -1610 +1609 @@
+-template <typename KTraits, typename Params>
++template <typename KTraits, typename Params, bool ROW_MERGE>
+@@ -1645 +1644 @@
+-    run_host_batch_item<KTraits>(params, storage, smem, scratch, item - lru_items, s_frag, o_frag,
++    run_host_batch_item<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, item - lru_items, s_frag, o_frag,
+@@ -1650 +1649 @@
+-template <typename KTraits, typename Params>
++template <typename KTraits, typename Params, bool ROW_MERGE>
+@@ -1711 +1710 @@
+-  const uint32_t fetch_rows = host_batch_fetch_rows(params, unique);
++  const uint32_t fetch_rows = host_batch_fetch_rows<ROW_MERGE>(params, unique);
+@@ -1720 +1719 @@
+-  run_host_batch_items<KTraits>(params, storage, smem, scratch, from_back, unique);
++  run_host_batch_items<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, from_back, unique);
+@@ -1725 +1724 @@
+-    if (!host_batch_row_merge(params)) cg::this_grid().sync();
++    if constexpr (!ROW_MERGE) cg::this_grid().sync();
+@@ -1731 +1730 @@
+-      merge_host_batch_single_query<KTraits>(params, smem);
++      merge_host_batch_single_query<KTraits, Params, ROW_MERGE>(params, smem);
+@@ -1733 +1732 @@
+-      merge_host_batch_chunks<KTraits, 32>(params);
++      merge_host_batch_chunks<KTraits, 32, Params, ROW_MERGE>(params);
+@@ -1735 +1734 @@
+-      merge_host_batch_chunks<KTraits, 8>(params);
++      merge_host_batch_chunks<KTraits, 8, Params, ROW_MERGE>(params);
+@@ -1756 +1755 @@
+-    if (host_batch_row_merge(params)) {
++    if constexpr (ROW_MERGE) {
+@@ -1790 +1789,4 @@
+-      auto kernel = BatchMLAHostBatchKernel<KTraits, Params>;
++      const bool row_merge = params.stage && params.pool_capacity > 0 &&
++                             params.num_rows * params.num_head_tiles <= 32;
++      auto kernel = row_merge ? BatchMLAHostBatchKernel<KTraits, Params, true>
++                              : BatchMLAHostBatchKernel<KTraits, Params, false>;

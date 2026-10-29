@@ -2,6 +2,8 @@
 
 基线为 `109b1c76`，本轮继续保留单 cooperative kernel、4096 槽/请求、精确 LRU、相同 top-k 和 BF16 KV，没有修改带宽/延迟模拟器。重点是 50/100 GB/s、20 µs 条件下缩短小 batch 与纯 device attention 的差距。
 
+**后续修复**：下文记录的大 batch 回退已用编译期分派消除，保留小 batch 收益，见 [`mla_host_a100_regression_fix.md`](mla_host_a100_regression_fix.md)。本文保留第四轮原始结果，不能当成修复版的性能。
+
 ## 最终改动
 
 1. **小 batch 的每行结果完成后即可合并。** staged＋缓存、至多 32 个 `(query 行, 64-head tile)` 时，attention item 写完 partial 后先用每线程 fence 和 CTA barrier 发布数据，再增加该行完成计数；merge CTA 用 acquire 读取计数，只等待自己所读行的全部有效 partial。worker 先走完自己的全部 attention item 再进入 merge，因此等待者不会持有尚未发出的任务。大 batch、无缓存及原地读保持原 grid barrier。

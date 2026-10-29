@@ -1,0 +1,213 @@
+{
+  "old": [
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEEEEvT0_",
+      "stages": 1,
+      "kv_tile": 16,
+      "row_merge": null,
+      "instructions": 13136,
+      "resource": "REG:216 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "381137bd1a9f29283cc1232e872ca86a30b00c09d7afd4ec1869b5972a89db9f"
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEEEEvT0_",
+      "stages": 2,
+      "kv_tile": 32,
+      "row_merge": null,
+      "instructions": 13544,
+      "resource": "REG:246 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "0cc28394375a55a0b331572ac0ac58e729d92ed4d10a5fc4e036e6ef82785f9a"
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEEEEvT0_",
+      "stages": 2,
+      "kv_tile": 64,
+      "row_merge": null,
+      "instructions": 15480,
+      "resource": "REG:248 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "6d1f9a93b5f444ba92e49573c1491bd8c52799ab4227e0e819ba8ef5751eb470"
+    }
+  ],
+  "regressed": [
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEEEEvT0_",
+      "stages": 1,
+      "kv_tile": 16,
+      "row_merge": null,
+      "instructions": 13376,
+      "resource": "REG:220 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "beb905c296f6a99300b1662b37c7a3340ecf39fb9728b2ab93af0ee36f252912"
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEEEEvT0_",
+      "stages": 2,
+      "kv_tile": 32,
+      "row_merge": null,
+      "instructions": 13800,
+      "resource": "REG:246 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "cf8fdfc9f3dad37bf17ca95839358bcb0b541ea176a71681b17d13a4227a7d26"
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEEEEvT0_",
+      "stages": 2,
+      "kv_tile": 64,
+      "row_merge": null,
+      "instructions": 15704,
+      "resource": "REG:248 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "09d7f798956817832d8666e21dd75f286597b8c2abb3f232da1b25b6048b0de6"
+    }
+  ],
+  "fixed": [
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "stages": 1,
+      "kv_tile": 16,
+      "row_merge": false,
+      "instructions": 13136,
+      "resource": "REG:216 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "e5009013a782151fb601dd3711a2ccb3493fd4564e97767f77c2d2121876291f",
+      "instruction_count_equals_old": true,
+      "instruction_text_equals_old": false
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "stages": 1,
+      "kv_tile": 16,
+      "row_merge": true,
+      "instructions": 13272,
+      "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "cc078d50a9f4e69d239302c0e7aea9d0c1269c14be452bee38e46e596af88a4b"
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "stages": 2,
+      "kv_tile": 32,
+      "row_merge": false,
+      "instructions": 13544,
+      "resource": "REG:246 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "db97c2420f5f4c478dabc208289ce0c5d86e360da83680dd0f4ab9b87502eca0",
+      "instruction_count_equals_old": true,
+      "instruction_text_equals_old": false
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "stages": 2,
+      "kv_tile": 32,
+      "row_merge": true,
+      "instructions": 13688,
+      "resource": "REG:246 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "11407352b6e3abf0f14375b1db9f449c8c9701019f94887f6c5f14bf5c64fca0"
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "stages": 2,
+      "kv_tile": 64,
+      "row_merge": false,
+      "instructions": 15480,
+      "resource": "REG:248 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "6aee6cf45243f1319971b398ca0f88bcf5e4b26c088c5005b515a78d98825f1a",
+      "instruction_count_equals_old": true,
+      "instruction_text_equals_old": false
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "stages": 2,
+      "kv_tile": 64,
+      "row_merge": true,
+      "instructions": 15608,
+      "resource": "REG:246 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "3c0fa54df9d92a314e65c68d7d0efe585f8e2e91bed89480db79670261bdf392"
+    }
+  ],
+  "old_normal": [
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEEEEvT0_",
+      "stages": 1,
+      "kv_tile": 16,
+      "row_merge": null,
+      "instructions": 12320,
+      "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "bc96afd358239c1c9ad8a2bed84a4ce2c99803f9c57a2911c6312245ca966b72"
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEEEEvT0_",
+      "stages": 2,
+      "kv_tile": 32,
+      "row_merge": null,
+      "instructions": 12680,
+      "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "0fdfc68c8d84c2c785003319a4528e50a780d786b6052e0861b9ad89f93b6770"
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEEEEvT0_",
+      "stages": 2,
+      "kv_tile": 64,
+      "row_merge": null,
+      "instructions": 14344,
+      "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "4f2beddaa6682db98cf2c5f4061909045e0d9df14602393befdeed779407616c"
+    }
+  ],
+  "fixed_normal": [
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "stages": 1,
+      "kv_tile": 16,
+      "row_merge": false,
+      "instructions": 12320,
+      "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "9b243ed56cfd6c37137d1914dfa4dc41b8c9fe0647d7cbcbb4a1bab2b246f2c8",
+      "instruction_count_equals_old": true,
+      "instruction_text_equals_old": false
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "stages": 1,
+      "kv_tile": 16,
+      "row_merge": true,
+      "instructions": 12464,
+      "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "50791f851bce109d083adcfb6a69c8d1100483559ff23dd29de77c0b9cbb8ac7"
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "stages": 2,
+      "kv_tile": 32,
+      "row_merge": false,
+      "instructions": 12688,
+      "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "206644c6d03c94bb4b69f56d888dc47897fdb64d6deacf2e65e75771d5459e02",
+      "instruction_count_equals_old": false,
+      "instruction_text_equals_old": false
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "stages": 2,
+      "kv_tile": 32,
+      "row_merge": true,
+      "instructions": 12824,
+      "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "2c5eb961752643e984ee3d7d31726f5d966304b134e32d01ec4190e76c31a3df"
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "stages": 2,
+      "kv_tile": 64,
+      "row_merge": false,
+      "instructions": 14344,
+      "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "78bfc59cb188fea18ca1fe67920d8e9751a5dc0721ed8811981fcc62405cc66d",
+      "instruction_count_equals_old": true,
+      "instruction_text_equals_old": false
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "stages": 2,
+      "kv_tile": 64,
+      "row_merge": true,
+      "instructions": 14480,
+      "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "instruction_sha256": "d89167d89f98b124553c9a448e73bf5577a1683dc229612833a22c8e7ebc91d2"
+    }
+  ]
+}

@@ -476,12 +476,13 @@ def test_host_batch_lru_one_pool_hits_other_evicts(stage):
 
 
 @pytest.mark.parametrize("stage", [True, False])
-def test_host_batch_lru_persistent_pools(stage):
+@pytest.mark.parametrize("mtp", [4, 12])
+def test_host_batch_lru_persistent_pools(stage, mtp):
     """Pools follow request ids: reordering and shrinking the batch keeps each request's cache,
     a released pool is emptied, and a later batch with a new request reuses the slot."""
     _skip_if_unsupported()
     device = torch.device("cuda")
-    requests, mtp, kv_len, capacity, max_pools = 4, 4, 512, 384, 6
+    requests, kv_len, capacity, max_pools = 4, 512, 384, 6
     rounds_indices, num_pages, host_page_start, cache = _rows_setup(requests, mtp, kv_len)
     ckv, kpe = cache[..., :512], cache[..., 512:]
     per_request = [r.view(requests, mtp, kv_len) for r in rounds_indices]
@@ -535,6 +536,9 @@ def test_host_batch_lru_persistent_pools(stage):
     assert all(state4.get(p) == s for p, s in state3.items() if s // capacity != ids[0])
     # A new request takes slot ids[0] (same top-k as request 0 here) and runs correctly.
     run([0, 2], 3)
+    # At MTP12 this grows back across the row-merge dispatch boundary (24 -> 48 rows)
+    # while sharing the resident store filled by both compiled kernel variants.
+    run([0, 1, 2, 3], 3)
 
 
 @pytest.mark.parametrize("stage", [True, False])
