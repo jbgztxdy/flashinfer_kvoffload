@@ -1,5 +1,7 @@
 # A100 第三轮：单 query 的分块合并（2026-10-29）
 
+后续减少高延迟等待轮数的第四轮见 [`mla_host_a100_latency_tuning.md`](mla_host_a100_latency_tuning.md)，本文保留第三轮独立对照。
+
 本轮针对 MTP1 单请求的固定开销，基线为 `aeca4403`（kernel 与上一轮 `614655f1` 相同）。继续保留一个 cooperative kernel 和精确 LRU，缓存容量、top-k 和模拟器均未改变。新路径只在 **`num_rows == 1`** 时启用；MTP8 单请求有 8 行，使用原合并路径。
 
 ## 改动及筛选依据

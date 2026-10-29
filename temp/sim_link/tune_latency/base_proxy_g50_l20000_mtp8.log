@@ -1,0 +1,5 @@
+bandwidth {'dma_contiguous_GBps': 280.15150985017823, 'sm_gather_random_GBps': 49.7322092337081}
+tier=peer requests=1 mtp=8 rows=8 steady(mean of last half, us): ours_stage=113.2 ours_inplace=195.6 misses={'ours_stage': 1007, 'ours_inplace': 1007} unique_uncached=4062
+tier=peer requests=4 mtp=8 rows=32 steady(mean of last half, us): ours_stage=247.3 ours_inplace=541.7 misses={'ours_stage': 6016, 'ours_inplace': 6018} unique_uncached=17188
+tier=peer requests=16 mtp=8 rows=128 steady(mean of last half, us): ours_stage=1081.3 ours_inplace=2068.0 misses={'ours_stage': 36139, 'ours_inplace': 36292} unique_uncached=81267
+results=/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_latency/base_proxy_g50_l20000_mtp8.json

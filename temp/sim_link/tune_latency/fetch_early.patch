@@ -1,0 +1,14 @@
+--- a/include/flashinfer/attention/mla_host_batch.cuh
++++ b/include/flashinfer/attention/mla_host_batch.cuh
+@@ -608,8 +608,9 @@
+ __device__ __forceinline__ uint32_t host_batch_fetch_rows(const Params& params, uint32_t unique) {
+   const uint32_t count = params.stage ? min(unique, params.staging_capacity) : unique;
+   const uint32_t rounds = params.fetch_ctas <= 8 ? 3 : 1;
+-  return count < rounds * params.fetch_ctas * kHostBatchFetchRows ? kHostBatchMinFetchRows
+-                                                               : kHostBatchFetchRows;
++  const uint32_t threshold = params.fetch_ctas <= 8 ? rounds * params.fetch_ctas * kHostBatchFetchRows
++                                                  : 2 * params.fetch_ctas * kHostBatchMinFetchRows;
++  return count < threshold ? kHostBatchMinFetchRows : kHostBatchFetchRows;
+ }
+ 
+ // Prepare has finished every resident lookup before the fetch starts. The staging path may

@@ -274,7 +274,7 @@ void BatchMLAPagedAttentionRunHostBatch(
                                        (capacity + mla::kHostBatchMinFetchRows - 1) /
                                            mla::kHostBatchMinFetchRows +
                                        rows * head_tiles + partials +
-                                       (pool_capacity > 0 ? num_pools : 0));
+                                       (pool_capacity > 0 ? num_pools : 0) + rows);
   // host_slot packs (row, rank within the row's claims); see prepare_host_batch_rows.
   TVM_FFI_ICHECK(rows < (1 << (31 - mla::kHostBatchRankBits)) &&
                  max_kv_len < (1 << mla::kHostBatchRankBits))

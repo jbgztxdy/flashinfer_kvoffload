@@ -1,0 +1,1032 @@
+{
+ "configuration": {
+  "tier": "peer",
+  "emu": "100:20000",
+  "device": 0,
+  "peer": 1,
+  "requests": [
+   1,
+   4,
+   16
+  ],
+  "mtp": 8,
+  "steps": 4,
+  "fraction": 1.0,
+  "capacity": 4096,
+  "modes": [
+   "ours_stage",
+   "ours_inplace"
+  ],
+  "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+  "context": 65536,
+  "topk": 2048,
+  "near_requests": 128,
+  "passes": 7,
+  "fetch_ctas": 16,
+  "hisparse_block": 960,
+  "seed": 42,
+  "output": "/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_latency/row_fetch_proxy_g100_l20000_mtp8.json"
+ },
+ "timestamp": "2026-10-29T12:34:49+0800",
+ "device_name": "NVIDIA A100-SXM4-40GB",
+ "torch_version": "2.11.0+cu130",
+ "cuda_version": "13.0",
+ "git_commit": "109b1c766582cfed3184bfad0b0ce0444279fb9d",
+ "git_dirty": true,
+ "source_sha256": {
+  "temp/h800/bench_rounds.py": "f72f8002cb802a5a93f782cf2045a06f908588d47cde26c6b7db060b551f24f4",
+  "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+  "include/flashinfer/attention/mla_host_batch.cuh": "f321bf894b8a1d5c9608c3c8ebcaa019ea290386011802b5dfe223a51cf474bb",
+  "temp/sim_link/bench_tune.py": "4acfa4d9aa7c178d81550714b2ba0080d49cda10a25f4dfb437bc5db7af7d1a4",
+  "include/flashinfer/attention/far_link_emu.cuh": "5e409035aa4edc83f72135c09c453e825ce59e5dcc4bae63c04ff3909d024095"
+ },
+ "residency": [
+  {
+   "tier": "near_hbm",
+   "address": "0x402000000",
+   "bytes": 1207959552,
+   "location_type": 1,
+   "location_id": 0
+  },
+  {
+   "tier": "far_peer_hbm_gpu1",
+   "address": "0x44a000000",
+   "bytes": 1207959552,
+   "location_type": 1,
+   "location_id": 1
+  },
+  {
+   "tier": "near_hbm_alias",
+   "address": "0x492000000",
+   "bytes": 1207959552,
+   "location_type": 1,
+   "location_id": 0
+  },
+  {
+   "tier": "staging_hbm",
+   "address": "0x4da000000",
+   "bytes": 301989888,
+   "location_type": 1,
+   "location_id": 0
+  }
+ ],
+ "emulated_link": {
+  "gbps": 100.0,
+  "latency_ns": 20000
+ },
+ "bandwidth": {
+  "dma_contiguous_GBps": 280.20973634780023,
+  "sm_gather_random_GBps": 98.43524713993293
+ },
+ "methods": {
+  "ours_stage": "our kernel, LRU pool of `capacity` per request, misses staged (PCIe layout)",
+  "ours_inplace": "our kernel, LRU pool of `capacity` per request, misses read in place, fetch CTAs fill the cache",
+  "ours_nocache": "our kernel without cache (staged on host tier, in place on peer tier)",
+  "hisparse": "SGLang HiSparse: load_cache_to_device_buffer_mla (per-request LRU of `capacity` + newest slot, one block per request) then sgl_kernel FlashMLA sparse fwd; with MTP each draft token runs its own swap-in and attention in turn: the decode path takes one row per request, and the LRU only protects the current row's pages, so one attention over all rows after all swap-ins could read evicted slots",
+  "floor_fa2": "native FA2 MLA with every selected row near: compute floor of our kernel",
+  "floor_flashmla": "FlashMLA sparse fwd with every selected row in HBM, one call over all rows: compute floor of HiSparse",
+  "direct_lru": "Direct with the same LRU: native attention with hits near and misses read in place, then a GPU gather of the misses into the cache for the next step",
+  "memcpy_lru": "Memcpy with the same per-request step LRU: copy only each step's missed pages near (host: untimed CPU gather + H2D DMA; peer: GPU gather), then native attention"
+ },
+ "gpu_before": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 1997 MiB, 38445 MiB, 4 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 1577 MiB, 38865 MiB, 2 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 21323 MiB, 19119 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 0 MiB, 40442 MiB, 0 %, 1410 MHz, 1215 MHz",
+ "results": [
+  {
+   "requests": 1,
+   "mtp": 8,
+   "query_rows": 8,
+   "steps": 4,
+   "correctness_max_abs_error": {
+    "ours_stage": 0.0026468634605407715,
+    "ours_inplace": 0.0028217434883117676
+   },
+   "enqueue_guards": [
+    {
+     "pass_index": 0,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.5947309982730076,
+     "gpu_guard_ms": 4.982783794403076,
+     "valid": true
+    },
+    {
+     "pass_index": 0,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4719579956145026,
+     "gpu_guard_ms": 4.550655841827393,
+     "valid": true
+    },
+    {
+     "pass_index": 1,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.47916000039549544,
+     "gpu_guard_ms": 4.54860782623291,
+     "valid": true
+    },
+    {
+     "pass_index": 1,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4423000063979998,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 2,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4417119998834096,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 2,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4286659968784079,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 3,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4328180002630688,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 3,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4439190015546046,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 4,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4168480008956976,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 4,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.41945400153053924,
+     "gpu_guard_ms": 4.546559810638428,
+     "valid": true
+    },
+    {
+     "pass_index": 5,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4225689990562387,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 5,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.42695499723777175,
+     "gpu_guard_ms": 4.546559810638428,
+     "valid": true
+    },
+    {
+     "pass_index": 6,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4437829993548803,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 6,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4171920008957386,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    }
+   ],
+   "far_refs": [
+    16376,
+    16376,
+    16376,
+    16376
+   ],
+   "far_unique_uncached": [
+    3575,
+    3826,
+    3897,
+    4062
+   ],
+   "cached_misses": {
+    "ours_stage": [
+     3575,
+     1154,
+     1750,
+     1005
+    ],
+    "ours_inplace": [
+     3575,
+     1154,
+     1751,
+     1007
+    ]
+   },
+   "per_step": {
+    "ours_stage": [
+     {
+      "median_us": 202.7519941329956,
+      "p10_us": 198.65599274635315,
+      "p90_us": 203.77600193023682,
+      "samples_us": [
+       198.65599274635315,
+       200.70399343967438,
+       203.77600193023682,
+       211.96800470352173,
+       202.7519941329956,
+       199.68000054359436,
+       202.7519941329956
+      ]
+     },
+     {
+      "median_us": 95.23200243711472,
+      "p10_us": 94.2080020904541,
+      "p90_us": 96.25600278377533,
+      "samples_us": [
+       96.25600278377533,
+       95.23200243711472,
+       94.2080020904541,
+       95.23200243711472,
+       96.25600278377533,
+       94.2080020904541,
+       94.2080020904541
+      ]
+     },
+     {
+      "median_us": 100.35199671983719,
+      "p10_us": 97.28000313043594,
+      "p90_us": 101.3759970664978,
+      "samples_us": [
+       101.3759970664978,
+       99.32799637317657,
+       103.42399775981903,
+       99.32799637317657,
+       101.3759970664978,
+       100.35199671983719,
+       97.28000313043594
+      ]
+     },
+     {
+      "median_us": 82.94399827718735,
+      "p10_us": 82.94399827718735,
+      "p90_us": 83.96799862384796,
+      "samples_us": [
+       82.94399827718735,
+       83.96799862384796,
+       83.96799862384796,
+       82.94399827718735,
+       82.94399827718735,
+       86.01599931716919,
+       82.94399827718735
+      ]
+     }
+    ],
+    "ours_inplace": [
+     {
+      "median_us": 295.9359884262085,
+      "p10_us": 293.88800263404846,
+      "p90_us": 299.00801181793213,
+      "samples_us": [
+       299.00801181793213,
+       293.88800263404846,
+       295.9359884262085,
+       295.9359884262085,
+       295.9359884262085,
+       295.9359884262085,
+       299.00801181793213
+      ]
+     },
+     {
+      "median_us": 171.00800573825836,
+      "p10_us": 162.81600296497345,
+      "p90_us": 173.0560064315796,
+      "samples_us": [
+       173.0560064315796,
+       171.00800573825836,
+       171.00800573825836,
+       173.0560064315796,
+       169.98399794101715,
+       162.81600296497345,
+       174.0799993276596
+      ]
+     },
+     {
+      "median_us": 183.29599499702454,
+      "p10_us": 179.19999361038208,
+      "p90_us": 187.391996383667,
+      "samples_us": [
+       183.29599499702454,
+       187.391996383667,
+       186.36800348758698,
+       179.19999361038208,
+       188.4160041809082,
+       183.29599499702454,
+       183.29599499702454
+      ]
+     },
+     {
+      "median_us": 158.720001578331,
+      "p10_us": 157.69599378108978,
+      "p90_us": 159.743994474411,
+      "samples_us": [
+       158.720001578331,
+       157.69599378108978,
+       160.76800227165222,
+       158.720001578331,
+       159.743994474411,
+       158.720001578331,
+       158.720001578331
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "requests": 4,
+   "mtp": 8,
+   "query_rows": 32,
+   "steps": 4,
+   "correctness_max_abs_error": {
+    "ours_stage": 0.0029723048210144043,
+    "ours_inplace": 0.003978729248046875
+   },
+   "enqueue_guards": [
+    {
+     "pass_index": 0,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4922079970128834,
+     "gpu_guard_ms": 4.551680088043213,
+     "valid": true
+    },
+    {
+     "pass_index": 0,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.45316899922909215,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 1,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.43864599865628406,
+     "gpu_guard_ms": 4.54860782623291,
+     "valid": true
+    },
+    {
+     "pass_index": 1,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4244070005370304,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 2,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4340110026532784,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 2,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4383849955047481,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 3,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.42132600356126204,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 3,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4210860060993582,
+     "gpu_guard_ms": 4.546559810638428,
+     "valid": true
+    },
+    {
+     "pass_index": 4,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.44918999628862366,
+     "gpu_guard_ms": 4.546559810638428,
+     "valid": true
+    },
+    {
+     "pass_index": 4,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.41933400643756613,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 5,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4162780023762025,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 5,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4180940013611689,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 6,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4441249984665774,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 6,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4166209982940927,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    }
+   ],
+   "far_refs": [
+    65504,
+    65504,
+    65504,
+    65504
+   ],
+   "far_unique_uncached": [
+    17119,
+    18211,
+    17136,
+    17188
+   ],
+   "cached_misses": {
+    "ours_stage": [
+     17119,
+     6314,
+     5843,
+     6012
+    ],
+    "ours_inplace": [
+     17119,
+     6360,
+     5878,
+     6019
+    ]
+   },
+   "per_step": {
+    "ours_stage": [
+     {
+      "median_us": 442.3680007457733,
+      "p10_us": 436.2240135669708,
+      "p90_us": 443.3920085430145,
+      "samples_us": [
+       436.2240135669708,
+       444.41598653793335,
+       442.3680007457733,
+       442.3680007457733,
+       443.3920085430145,
+       436.2240135669708,
+       438.27199935913086
+      ]
+     },
+     {
+      "median_us": 235.52000522613525,
+      "p10_us": 232.44799673557281,
+      "p90_us": 239.6160066127777,
+      "samples_us": [
+       241.66400730609894,
+       232.44799673557281,
+       239.6160066127777,
+       236.54399812221527,
+       235.52000522613525,
+       234.49599742889404,
+       235.52000522613525
+      ]
+     },
+     {
+      "median_us": 228.35199534893036,
+      "p10_us": 225.2800017595291,
+      "p90_us": 231.4240038394928,
+      "samples_us": [
+       235.52000522613525,
+       227.32800245285034,
+       228.35199534893036,
+       231.4240038394928,
+       225.2800017595291,
+       228.35199534893036,
+       231.4240038394928
+      ]
+     },
+     {
+      "median_us": 231.4240038394928,
+      "p10_us": 231.4240038394928,
+      "p90_us": 237.56800591945648,
+      "samples_us": [
+       231.4240038394928,
+       239.6160066127777,
+       237.56800591945648,
+       231.4240038394928,
+       234.49599742889404,
+       231.4240038394928,
+       231.4240038394928
+      ]
+     }
+    ],
+    "ours_inplace": [
+     {
+      "median_us": 900.0959992408752,
+      "p10_us": 894.976019859314,
+      "p90_us": 902.1440148353577,
+      "samples_us": [
+       899.071991443634,
+       902.1440148353577,
+       894.976019859314,
+       902.1440148353577,
+       902.1440148353577,
+       900.0959992408752,
+       894.976019859314
+      ]
+     },
+     {
+      "median_us": 524.2879986763,
+      "p10_us": 508.92800092697144,
+      "p90_us": 527.3600220680237,
+      "samples_us": [
+       517.1200037002563,
+       526.3360142707825,
+       510.97601652145386,
+       508.92800092697144,
+       524.2879986763,
+       532.480001449585,
+       527.3600220680237
+      ]
+     },
+     {
+      "median_us": 506.879985332489,
+      "p10_us": 496.63999676704407,
+      "p90_us": 508.92800092697144,
+      "samples_us": [
+       521.2159752845764,
+       496.63999676704407,
+       498.6880123615265,
+       506.879985332489,
+       506.879985332489,
+       507.9039931297302,
+       508.92800092697144
+      ]
+     },
+     {
+      "median_us": 513.0239725112915,
+      "p10_us": 507.9039931297302,
+      "p90_us": 519.1680192947388,
+      "samples_us": [
+       512.0000243186951,
+       521.2159752845764,
+       519.1680192947388,
+       508.92800092697144,
+       507.9039931297302,
+       513.0239725112915,
+       514.0479803085327
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "requests": 16,
+   "mtp": 8,
+   "query_rows": 128,
+   "steps": 4,
+   "correctness_max_abs_error": {
+    "ours_stage": 0.002915620803833008,
+    "ours_inplace": 0.002915620803833008
+   },
+   "enqueue_guards": [
+    {
+     "pass_index": 0,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.49941500037675723,
+     "gpu_guard_ms": 4.551680088043213,
+     "valid": true
+    },
+    {
+     "pass_index": 0,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.45466000301530585,
+     "gpu_guard_ms": 4.54860782623291,
+     "valid": true
+    },
+    {
+     "pass_index": 1,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.45221000618766993,
+     "gpu_guard_ms": 4.54860782623291,
+     "valid": true
+    },
+    {
+     "pass_index": 1,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4241679998813197,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 2,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4481509968172759,
+     "gpu_guard_ms": 4.54860782623291,
+     "valid": true
+    },
+    {
+     "pass_index": 2,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4299810025258921,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 3,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4347790018073283,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 3,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4248309996910393,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 4,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.43494199780980125,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 4,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.429608000558801,
+     "gpu_guard_ms": 4.54860782623291,
+     "valid": true
+    },
+    {
+     "pass_index": 5,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4373940028017387,
+     "gpu_guard_ms": 4.54860782623291,
+     "valid": true
+    },
+    {
+     "pass_index": 5,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.43646199628710747,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 6,
+     "mode": "ours_stage",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.42957699770340696,
+     "gpu_guard_ms": 4.547584056854248,
+     "valid": true
+    },
+    {
+     "pass_index": 6,
+     "mode": "ours_inplace",
+     "attempt": 0,
+     "first_step": 0,
+     "last_step_exclusive": 4,
+     "cycles": 6399999,
+     "enqueue_ms": 0.4169249950791709,
+     "gpu_guard_ms": 4.546559810638428,
+     "valid": true
+    }
+   ],
+   "far_refs": [
+    262016,
+    262016,
+    262016,
+    262016
+   ],
+   "far_unique_uncached": [
+    81672,
+    82676,
+    81020,
+    81267
+   ],
+   "cached_misses": {
+    "ours_stage": [
+     81672,
+     41077,
+     36235,
+     36156
+    ],
+    "ours_inplace": [
+     81672,
+     41052,
+     36373,
+     36311
+    ]
+   },
+   "per_step": {
+    "ours_stage": [
+     {
+      "median_us": 1669.119954109192,
+      "p10_us": 1647.6160287857056,
+      "p90_us": 1686.527967453003,
+      "samples_us": [
+       1686.527967453003,
+       1679.360032081604,
+       1666.0480499267578,
+       1700.8639574050903,
+       1647.6160287857056,
+       1656.831979751587,
+       1669.119954109192
+      ]
+     },
+     {
+      "median_us": 908.2880020141602,
+      "p10_us": 901.1200070381165,
+      "p90_us": 917.5040125846863,
+      "samples_us": [
+       901.1200070381165,
+       914.4319891929626,
+       918.5280203819275,
+       907.263994216919,
+       917.5040125846863,
+       908.2880020141602,
+       902.1440148353577
+      ]
+     },
+     {
+      "median_us": 864.2560243606567,
+      "p10_us": 847.8720188140869,
+      "p90_us": 871.4240193367004,
+      "samples_us": [
+       861.1840009689331,
+       871.4240193367004,
+       847.8720188140869,
+       854.0160059928894,
+       884.7360014915466,
+       865.2799725532532,
+       864.2560243606567
+      ]
+     },
+     {
+      "median_us": 845.8240032196045,
+      "p10_us": 834.559977054596,
+      "p90_us": 846.8480110168457,
+      "samples_us": [
+       842.7519798278809,
+       838.6560082435608,
+       845.8240032196045,
+       834.559977054596,
+       845.8240032196045,
+       846.8480110168457,
+       846.8480110168457
+      ]
+     }
+    ],
+    "ours_inplace": [
+     {
+      "median_us": 3250.175952911377,
+      "p10_us": 3246.079921722412,
+      "p90_us": 3253.2479763031006,
+      "samples_us": [
+       3253.2479763031006,
+       3251.199960708618,
+       3250.175952911377,
+       3246.079921722412,
+       3248.1279373168945,
+       3246.079921722412,
+       3254.271984100342
+      ]
+     },
+     {
+      "median_us": 1847.2959995269775,
+      "p10_us": 1823.7440586090088,
+      "p90_us": 1857.5359582901,
+      "samples_us": [
+       1847.2959995269775,
+       1825.7919549942017,
+       1884.160041809082,
+       1833.9840173721313,
+       1857.5359582901,
+       1823.7440586090088,
+       1848.3200073242188
+      ]
+     },
+     {
+      "median_us": 1841.1519527435303,
+      "p10_us": 1828.8639783859253,
+      "p90_us": 1848.3200073242188,
+      "samples_us": [
+       1848.3200073242188,
+       1828.8639783859253,
+       1839.1040563583374,
+       1836.0320329666138,
+       1841.1519527435303,
+       1852.4160385131836,
+       1842.1759605407715
+      ]
+     },
+     {
+      "median_us": 1835.0080251693726,
+      "p10_us": 1816.5760040283203,
+      "p90_us": 1842.1759605407715,
+      "samples_us": [
+       1816.5760040283203,
+       1880.0640106201172,
+       1820.6720352172852,
+       1829.8879861831665,
+       1839.1040563583374,
+       1842.1759605407715,
+       1835.0080251693726
+      ]
+     }
+    ]
+   }
+  }
+ ],
+ "gpu_after": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 2391 MiB, 38051 MiB, 50 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 1575 MiB, 38867 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 21323 MiB, 19119 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 0 MiB, 40442 MiB, 0 %, 1410 MHz, 1215 MHz",
+ "planner_overrides": {
+  "host_item_entries": 64,
+  "host_split": null,
+  "grid_ctas": null,
+  "kv_chunks": null
+ },
+ "extra_cuda_flags": "-DFLASHINFER_FAR_EMU"
+}

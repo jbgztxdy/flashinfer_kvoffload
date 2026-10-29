@@ -987,7 +987,7 @@ class BatchMLAPagedAttentionWrapper:
                 torch.empty(max(1, nnz), **int32),
                 torch.zeros(
                     4 + 4 * rows + 1 + partials + (staging_rows + 15) // 16 + rows * (num_heads // 64) + partials
-                    + num_pools,
+                    + num_pools + rows,
                     **int32,
                 ),
                 torch.empty((partials * 64, 512), dtype=q_nope.dtype, device=self.device),

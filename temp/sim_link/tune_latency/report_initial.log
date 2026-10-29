@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_latency/report.py", line 80, in <module>
+    (dest / (args.label + "_results.md")).write_text("\n".join(report()).rstrip() + "\n")
+                                                     ~~~~~~~~~^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_latency/report.py", line 65, in report
+    b = floor(cfg, row["requests"])
+  File "/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_latency/report.py", line 32, in floor
+    return min(values)
+ValueError: min() iterable argument is empty

@@ -1,0 +1,8 @@
+--- a/include/flashinfer/attention/mla_host_batch.cuh
++++ b/include/flashinfer/attention/mla_host_batch.cuh
+@@ -611,2 +611,3 @@
+-  return count < rounds * params.fetch_ctas * kHostBatchFetchRows ? kHostBatchMinFetchRows
+-                                                               : kHostBatchFetchRows;
++  const uint32_t threshold = params.fetch_ctas <= 8 ? rounds * params.fetch_ctas * kHostBatchFetchRows
++                                                  : 2 * params.fetch_ctas * kHostBatchMinFetchRows;
++  return count < threshold ? kHostBatchMinFetchRows : kHostBatchFetchRows;

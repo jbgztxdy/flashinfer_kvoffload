@@ -171,6 +171,32 @@ def test_host_batch_many_fetch_ctas_small_transfer(fetch_ctas):
     _run(1, 8, 64, 2048, 0.9, shared=1.0, fetch_ctas=fetch_ctas, repeats=3)
 
 
+@pytest.mark.parametrize("requests,mtp,num_heads,staging_rows,host_split", [
+    (1, 1, 64, 64, True),
+    (2, 8, 128, 64, True),
+    (4, 8, 64, 1000, False),
+    (4, 8, 128, 64, True),
+])
+def test_host_batch_cached_row_completion(requests, mtp, num_heads, staging_rows, host_split):
+    _skip_if_unsupported()
+    w, values = _run(requests, mtp, num_heads, 1024, 0.7, 0.5,
+                     staging_rows=staging_rows, host_split=host_split)
+    q_nope, q_pe, ckv, kpe, host_page_start, indices, expected_o = values
+    indices = indices.clone()
+    w.set_host_cache(torch.arange(requests + 1, dtype=torch.int32) * mtp, 512)
+    for _ in range(3):
+        out = w.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+        torch.testing.assert_close(out.float(), expected_o, rtol=1e-2, atol=1e-2)
+    # An empty padded launch must complete without waiting for absent items; then reuse the
+    # same completion counters with the original row work and resident state.
+    w._kv_indices_buf.fill_(-1)
+    out = w.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+    assert torch.all(out == 0)
+    w._kv_indices_buf.copy_(indices.flatten())
+    out = w.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+    torch.testing.assert_close(out.float(), expected_o, rtol=1e-2, atol=1e-2)
+
+
 def test_host_batch_base_e_and_index_update():
     _skip_if_unsupported()
     wrapper, (q_nope, q_pe, ckv, kpe, host_page_start, indices, _) = _run(

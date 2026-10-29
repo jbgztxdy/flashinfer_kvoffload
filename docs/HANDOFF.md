@@ -2,6 +2,10 @@
 
 给下一个 agent：这份文档记录项目状态和文件指针，细节请读引用的文件。第 3 节（正在跑的作业）和第 4 节（下一步）最要紧。
 
+**10/29 第四轮已完成常规对照（新于以下第三轮）**：用户继续授权在50/100GB/s及高延迟条件逼近纯device。保留单kernel，新增小staged batch的逐行完成计数/提前merge，以及fetch>8时超过一轮16行块即切换64行块，规则限制在至多32 query/head tiles。内部workspace每行增加一int32，必须连同Python/csrc一起移植，不能只覆盖header。91项测试通过。100GB/s20µs代理反向复测：MTP1四请求94.14→77.38us（约18%）、MTP8单请求101.89→90.11us（约12%）；真实assistant MTP1单/四请求约快5%/8%，MTP8四请求约快3%。详见docs/mla_host_a100_latency_tuning.md和temp/sim_link/tune_latency。
+
+**第四轮未解决项**：较大batch不启用新规则，但100GB/s20µs代理MTP8 16/128请求仍约慢1.7%/2.9%，后续检查代码生成；50GB/s128请求近似不变。f32单请求约慢1%，不能把f16收益当相对旧版所有参数最优的改善。原H800独立快照2b782ed3与1089379/1089380仍为第三轮、没有覆盖，需先读原实验后再移植第四轮。所有回退与参数筛选保留。
+
 **10/29 最新状态优先于下文历史记录**：第三轮单 query 合并已通过87项测试；修正1024步一次入队的计时污染，最终旧新对照用分段入队。GLM四篇采集1079524完成（23分44秒），四篇数据/assistant loss gate通过、全位置block gate仍失败；四个完整assistant窗口loss0.123/0.300/0.190/0.269。正式A100 assistant回放已完成6份JSON/15配置/7pass，7980段入队检查全部通过，14592次launch逐步采样行max abs0.007131。100GB/s20µs MTP8 16请求staged667.10µs，Memcpy867.70µs，下限494.59µs（1.35倍）；真实NVLink原地读531.46µs（下限1.07倍）。小batch仍有输的格子，见docs/mla_host_glm53_trace.md。
 
 **接续入口**：本机 `temp/sim_link/tune_small/` 保存第三轮全部候选/失败/最终对照和manifest，最终仅单query启用新合并。旧 `temp/glm_trace/results/a100_64k_doc0/` 的混合角色长trace未验证入队条件，部分绝对计时污染，保留原件但不作为最终结论；正式结果在 `a100_64k_assistant_20261029/`。H800独立worktree `rtx/yjw/flashinfer_tuned_20261029` 从dbbc02c6仅移植三轮性能补丁，无模拟钩子，且独立移植/去钩子两条推导逐行一致，manifest在temp/h800/tuned_20261029_manifest.json。1089379（1卡/20分钟，87项测试+PCIe）依赖原三个作业afterany，1089380（2卡/20分钟，NVLink）依赖1089379成功，均回放assistant的MTP1/8、1/4/16请求，含HiSparse及两下限。原生产header未改变。先查队列/日志，不重复提交。
@@ -33,12 +37,13 @@
 | H800 结果（验证、HiSparse 对比、全量） | `docs/mla_host_h800_lru.md`，数据在 `temp/h800/results/`，汇总在 `temp/h800/results/summary.md` |
 | 链路带宽和延迟模拟（A100） | `docs/mla_host_link_emulation.md`，数据在 `temp/sim_link/`，模拟器在 `include/flashinfer/attention/far_link_emu.cuh`（只在 `-DFLASHINFER_FAR_EMU` 下编入） |
 | A100 100 GB/s 高延迟与小 batch 新调优（10/28） | `docs/mla_host_a100_100gb_tuning.md`；对照数据/源码哈希/未采用补丁在 `temp/sim_link/tune_100/`，75 项测试通过 |
+| A100 第四轮：高延迟等待轮数 | `docs/mla_host_a100_latency_tuning.md`；`temp/sim_link/tune_latency/` |
 | A100 第三轮：单 query 合并 | `docs/mla_host_a100_single_query_tuning.md`；`temp/sim_link/tune_small/results.md` |
 | A100 第二轮：LRU 更新重叠与小 batch 分块 | `docs/mla_host_a100_lru_tuning.md`；正向/反向和原推荐参数对照在 `temp/sim_link/tune_lru/` |
 | kernel | `include/flashinfer/attention/mla_host_batch.cuh`（约 1700 行；主体是 `BatchMLAHostBatchKernel`，在约 1505 行） |
 | launcher | `csrc/batch_mla_run.cu` |
 | Python 接口 | `flashinfer/mla/_core.py`（`host_stage`、`host_fetch_ctas`、`set_host_cache`、`_run_host_batch`） |
-| 测试 | `tests/attention/test_mla_host_batch.py`（87 项） |
+| 测试 | `tests/attention/test_mla_host_batch.py`（91 项） |
 | 跨 decode 测试脚本（含 HiSparse 和各下限） | `temp/h800/bench_rounds.py` |
 | GLM-5.3 新语料验证、真实 top-k 回放接入及未完成项 | `docs/mla_host_glm53_trace.md`；8K 接入结果 `temp/glm_trace/results/a100_8k_smoke.md`（尚非正式 64K/1024 结果） |
 | 单步测试脚本 | `temp/h800/bench_sweep.py` |

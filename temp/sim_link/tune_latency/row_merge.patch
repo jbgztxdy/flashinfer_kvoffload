@@ -1,0 +1,76 @@
+--- a/include/flashinfer/attention/mla_host_batch.cuh
++++ b/include/flashinfer/attention/mla_host_batch.cuh
+@@ -225,6 +225,24 @@
+   return value;
+ }
+ 
++template <typename Params>
++__device__ __forceinline__ bool host_batch_row_merge(const Params& params) {
++  return params.stage && host_batch_caching(params) && params.num_rows * params.num_head_tiles <= 32;
++}
++
++template <typename Params>
++__device__ __forceinline__ void wait_host_batch_row(const Params& params, uint32_t row,
++                                                    uint32_t states) {
++  if (host_batch_row_merge(params)) {
++    const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
++    if (tid == 0) {
++      while (host_batch_ld_acquire(host_batch_row_claims(params) + row) < states * params.num_head_tiles)
++        __nanosleep(64);
++    }
++    __syncthreads();
++  }
++}
++
+ // Tail rows (see BatchMLAHostBatchAttention) split their HBM entries into num_chunks items and
+ // their Host entries into Host items of at least `min_entries` (params.host_item_entries), at most
+ // `max_items` per head tile. HBM items come first in the item list and Host items follow in row
+@@ -952,6 +970,7 @@
+     const uint32_t host_first = tail_tiles * params.num_chunks +
+                                host_batch_host_items(params)[row] + head_tile * host_items;
+     const uint32_t states = hbm_items + host_items;
++    wait_host_batch_row(params, row, states);
+     state_t<VEC> local;
+ #pragma unroll 1
+     for (uint32_t base = part; base < states; base += PARTS * BATCH) {
+@@ -1033,6 +1052,7 @@
+     const uint32_t host_first = tail_tiles * params.num_chunks +
+                                 host_batch_host_items(params)[row] + head_tile * host_items;
+     const uint32_t states = hbm_items + host_items;
++    wait_host_batch_row(params, row, states);
+     state_t<VEC_SIZE> st;
+ #pragma unroll 1
+     for (uint32_t base = 0; base < states; base += BATCH) {
+@@ -1554,6 +1574,12 @@
+                      params.o_stride_h, 1, head_tile * CTA_TILE_Q, params.num_heads,
+                      params.return_lse_base_on_e);
+   }
++  if (host_batch_row_merge(params) && item >= full_items) {
++    __threadfence();
++    __syncthreads();
++    const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
++    if (tid == 0) atomicAdd(host_batch_row_claims(params) + row, 1u);
++  }
+ }
+ 
+ // Worker CTAs walk the items in a static round robin from the front; fetch CTAs, once their
+@@ -1679,7 +1705,7 @@
+   run_host_batch_items<KTraits>(params, storage, smem, scratch, from_back, unique);
+   // Uniform over the grid, so every CTA takes the same branch.
+   if (params.full_rows < params.num_rows) {
+-    cg::this_grid().sync();
++    if (!host_batch_row_merge(params)) cg::this_grid().sync();
+     // 32 features per thread fill the grid only with enough (row tile, head) units; a small batch
+     // merged on 32 of 108 SMs at that width and took ~15 us for 8 rows, so it uses 8.
+     const uint32_t units = (params.num_rows - params.full_rows) * params.num_head_tiles *
+@@ -1710,6 +1736,10 @@
+       }
+       if (tid == 0) params.state[kHostBatchGaps] = 0;
+     }
++    if (host_batch_row_merge(params)) {
++      for (uint32_t row = tid; row < params.num_rows; row += KTraits::NUM_THREADS)
++        host_batch_row_claims(params)[row] = 0;
++    }
+     __threadfence();
+     __syncthreads();
+     if (tid == 0) {

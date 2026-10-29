@@ -1,0 +1,145 @@
+.......................................FFFF............................. [ 79%]
+...................                                                      [100%]
+=================================== FAILURES ===================================
+____________ test_host_batch_cached_row_completion[1-1-64-64-True] _____________
+
+requests = 1, mtp = 1, num_heads = 64, staging_rows = 64, host_split = True
+
+    @pytest.mark.parametrize("requests,mtp,num_heads,staging_rows,host_split", [
+        (1, 1, 64, 64, True),
+        (2, 8, 128, 64, True),
+        (4, 8, 64, 1000, False),
+        (4, 8, 128, 64, True),
+    ])
+    def test_host_batch_cached_row_completion(requests, mtp, num_heads, staging_rows, host_split):
+        _skip_if_unsupported()
+        w, values = _run(requests, mtp, num_heads, 1024, 0.7, 0.5,
+                         staging_rows=staging_rows, host_split=host_split)
+        q_nope, q_pe, ckv, kpe, host_page_start, indices, expected_o = values
+        indices = indices.clone()
+        w.set_host_cache(torch.arange(requests + 1, dtype=torch.int32) * mtp, 512)
+        for _ in range(3):
+            out = w.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+            torch.testing.assert_close(out.float(), expected_o, rtol=1e-2, atol=1e-2)
+        # An empty padded launch must complete without waiting for absent items; then reuse the
+        # same completion counters with the original row work and resident state.
+        w._kv_indices_buf.fill_(-1)
+        out = w.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+        assert torch.all(out == 0)
+        w._kv_indices_buf.copy_(indices.flatten())
+>       out = w.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+E       AssertionError: Tensor-likes are not close!
+E       
+E       Mismatched elements: 30278 / 32768 (92.4%)
+E       Greatest absolute difference: 0.5570465326309204 at index (0, 60, 435) (up to 0.01 allowed)
+E       Greatest relative difference: 1.0 at index (0, 0, 0) (up to 0.01 allowed)
+
+tests/attention/test_mla_host_batch.py:196: AssertionError
+____________ test_host_batch_cached_row_completion[2-8-128-64-True] ____________
+
+requests = 2, mtp = 8, num_heads = 128, staging_rows = 64, host_split = True
+
+    @pytest.mark.parametrize("requests,mtp,num_heads,staging_rows,host_split", [
+        (1, 1, 64, 64, True),
+        (2, 8, 128, 64, True),
+        (4, 8, 64, 1000, False),
+        (4, 8, 128, 64, True),
+    ])
+    def test_host_batch_cached_row_completion(requests, mtp, num_heads, staging_rows, host_split):
+        _skip_if_unsupported()
+        w, values = _run(requests, mtp, num_heads, 1024, 0.7, 0.5,
+                         staging_rows=staging_rows, host_split=host_split)
+        q_nope, q_pe, ckv, kpe, host_page_start, indices, expected_o = values
+        indices = indices.clone()
+        w.set_host_cache(torch.arange(requests + 1, dtype=torch.int32) * mtp, 512)
+        for _ in range(3):
+            out = w.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+            torch.testing.assert_close(out.float(), expected_o, rtol=1e-2, atol=1e-2)
+        # An empty padded launch must complete without waiting for absent items; then reuse the
+        # same completion counters with the original row work and resident state.
+        w._kv_indices_buf.fill_(-1)
+        out = w.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+        assert torch.all(out == 0)
+        w._kv_indices_buf.copy_(indices.flatten())
+>       out = w.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+E       AssertionError: Tensor-likes are not close!
+E       
+E       Mismatched elements: 967545 / 1048576 (92.3%)
+E       Greatest absolute difference: 1.0147311687469482 at index (6, 90, 39) (up to 0.01 allowed)
+E       Greatest relative difference: 1.0 at index (0, 0, 0) (up to 0.01 allowed)
+
+tests/attention/test_mla_host_batch.py:196: AssertionError
+___________ test_host_batch_cached_row_completion[4-8-64-1000-False] ___________
+
+requests = 4, mtp = 8, num_heads = 64, staging_rows = 1000, host_split = False
+
+    @pytest.mark.parametrize("requests,mtp,num_heads,staging_rows,host_split", [
+        (1, 1, 64, 64, True),
+        (2, 8, 128, 64, True),
+        (4, 8, 64, 1000, False),
+        (4, 8, 128, 64, True),
+    ])
+    def test_host_batch_cached_row_completion(requests, mtp, num_heads, staging_rows, host_split):
+        _skip_if_unsupported()
+        w, values = _run(requests, mtp, num_heads, 1024, 0.7, 0.5,
+                         staging_rows=staging_rows, host_split=host_split)
+        q_nope, q_pe, ckv, kpe, host_page_start, indices, expected_o = values
+        indices = indices.clone()
+        w.set_host_cache(torch.arange(requests + 1, dtype=torch.int32) * mtp, 512)
+        for _ in range(3):
+            out = w.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+            torch.testing.assert_close(out.float(), expected_o, rtol=1e-2, atol=1e-2)
+        # An empty padded launch must complete without waiting for absent items; then reuse the
+        # same completion counters with the original row work and resident state.
+        w._kv_indices_buf.fill_(-1)
+        out = w.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+        assert torch.all(out == 0)
+        w._kv_indices_buf.copy_(indices.flatten())
+>       out = w.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+E       AssertionError: Tensor-likes are not close!
+E       
+E       Mismatched elements: 968674 / 1048576 (92.4%)
+E       Greatest absolute difference: 1.0393050909042358 at index (26, 10, 510) (up to 0.01 allowed)
+E       Greatest relative difference: 1.0 at index (0, 0, 0) (up to 0.01 allowed)
+
+tests/attention/test_mla_host_batch.py:196: AssertionError
+____________ test_host_batch_cached_row_completion[4-8-128-64-True] ____________
+
+requests = 4, mtp = 8, num_heads = 128, staging_rows = 64, host_split = True
+
+    @pytest.mark.parametrize("requests,mtp,num_heads,staging_rows,host_split", [
+        (1, 1, 64, 64, True),
+        (2, 8, 128, 64, True),
+        (4, 8, 64, 1000, False),
+        (4, 8, 128, 64, True),
+    ])
+    def test_host_batch_cached_row_completion(requests, mtp, num_heads, staging_rows, host_split):
+        _skip_if_unsupported()
+        w, values = _run(requests, mtp, num_heads, 1024, 0.7, 0.5,
+                         staging_rows=staging_rows, host_split=host_split)
+        q_nope, q_pe, ckv, kpe, host_page_start, indices, expected_o = values
+        indices = indices.clone()
+        w.set_host_cache(torch.arange(requests + 1, dtype=torch.int32) * mtp, 512)
+        for _ in range(3):
+            out = w.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+            torch.testing.assert_close(out.float(), expected_o, rtol=1e-2, atol=1e-2)
+        # An empty padded launch must complete without waiting for absent items; then reuse the
+        # same completion counters with the original row work and resident state.
+        w._kv_indices_buf.fill_(-1)
+        out = w.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+        assert torch.all(out == 0)
+        w._kv_indices_buf.copy_(indices.flatten())
+>       out = w.run(q_nope, q_pe, ckv, kpe, host_page_start=host_page_start)
+E       AssertionError: Tensor-likes are not close!
+E       
+E       Mismatched elements: 1937266 / 2097152 (92.4%)
+E       Greatest absolute difference: 1.3184384107589722 at index (5, 11, 305) (up to 0.01 allowed)
+E       Greatest relative difference: 1.0 at index (0, 0, 0) (up to 0.01 allowed)
+
+tests/attention/test_mla_host_batch.py:196: AssertionError
+=========================== short test summary info ============================
+FAILED tests/attention/test_mla_host_batch.py::test_host_batch_cached_row_completion[1-1-64-64-True]
+FAILED tests/attention/test_mla_host_batch.py::test_host_batch_cached_row_completion[2-8-128-64-True]
+FAILED tests/attention/test_mla_host_batch.py::test_host_batch_cached_row_completion[4-8-64-1000-False]
+FAILED tests/attention/test_mla_host_batch.py::test_host_batch_cached_row_completion[4-8-128-64-True]
+4 failed, 87 passed in 144.87s (0:02:24)

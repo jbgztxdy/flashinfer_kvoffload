@@ -1,0 +1,5 @@
+bandwidth {'dma_contiguous_GBps': 280.33460667897555, 'sm_gather_random_GBps': 98.53391335867985}
+tier=peer requests=1 mtp=8 rows=8 steady(mean of last half, us): ours_stage=101.9 misses={'ours_stage': 1008} unique_uncached=4062
+tier=peer requests=4 mtp=8 rows=32 steady(mean of last half, us): ours_stage=230.4 misses={'ours_stage': 6011} unique_uncached=17188
+tier=peer requests=16 mtp=8 rows=128 steady(mean of last half, us): ours_stage=822.3 misses={'ours_stage': 36081} unique_uncached=81267
+results=temp/sim_link/tune_latency/row_merge_proxy_mtp8.json

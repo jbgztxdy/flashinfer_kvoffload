@@ -1,0 +1,5 @@
+bandwidth {'dma_contiguous_GBps': 263.5495926031749, 'sm_gather_random_GBps': 91.7014913684304}
+tier=peer requests=1 mtp=1 rows=1 steady(mean of last half, us): ours_stage=43.8 ours_inplace=58.0 misses={'ours_stage': 151, 'ours_inplace': 152} unique_uncached=2047
+tier=peer requests=4 mtp=1 rows=4 steady(mean of last half, us): ours_stage=58.0 ours_inplace=73.5 misses={'ours_stage': 580, 'ours_inplace': 579} unique_uncached=8188
+tier=peer requests=16 mtp=1 rows=16 steady(mean of last half, us): ours_stage=139.3 ours_inplace=148.4 misses={'ours_stage': 4895, 'ours_inplace': 4866} unique_uncached=32752
+results=/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_latency/candidate_proxy_g100_l0_mtp1.json

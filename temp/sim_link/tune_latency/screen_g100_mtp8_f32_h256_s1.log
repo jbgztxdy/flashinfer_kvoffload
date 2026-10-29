@@ -1,0 +1,5 @@
+bandwidth {'dma_contiguous_GBps': 280.0683799504184, 'sm_gather_random_GBps': 98.27124181575873}
+tier=peer requests=1 mtp=8 rows=8 steady(mean of last half, us): ours_stage=137.2 misses={'ours_stage': 1726} unique_uncached=5241
+tier=peer requests=4 mtp=8 rows=32 steady(mean of last half, us): ours_stage=239.2 misses={'ours_stage': 4175} unique_uncached=15462
+tier=peer requests=16 mtp=8 rows=128 steady(mean of last half, us): ours_stage=654.0 misses={'ours_stage': 16484} unique_uncached=62581
+results=/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_latency/screen_g100_mtp8_f32_h256_s1.json

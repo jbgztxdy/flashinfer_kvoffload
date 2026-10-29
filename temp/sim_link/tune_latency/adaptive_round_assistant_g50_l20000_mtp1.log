@@ -1,0 +1,5 @@
+bandwidth {'dma_contiguous_GBps': 263.7263679642412, 'sm_gather_random_GBps': 46.96051063164627}
+tier=peer requests=1 mtp=1 rows=1 steady(mean of last half, us): ours_stage=68.9 ours_inplace=83.7 misses={'ours_stage': 75, 'ours_inplace': 75} unique_uncached=2047
+tier=peer requests=4 mtp=1 rows=4 steady(mean of last half, us): ours_stage=96.0 ours_inplace=127.6 misses={'ours_stage': 2411, 'ours_inplace': 2410} unique_uncached=8189
+tier=peer requests=16 mtp=1 rows=16 steady(mean of last half, us): ours_stage=164.7 ours_inplace=300.5 misses={'ours_stage': 4311, 'ours_inplace': 4323} unique_uncached=32754
+results=/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_latency/adaptive_round_assistant_g50_l20000_mtp1.json

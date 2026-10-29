@@ -1,0 +1,5 @@
+bandwidth {'dma_contiguous_GBps': 25.255260723218488, 'sm_gather_random_GBps': 24.268597101870757}
+tier=host requests=1 mtp=1 rows=1 steady(mean of last half, us): ours_stage=59.2 ours_inplace=72.6 misses={'ours_stage': 75, 'ours_inplace': 75} unique_uncached=2047
+tier=host requests=4 mtp=1 rows=4 steady(mean of last half, us): ours_stage=103.9 ours_inplace=116.7 misses={'ours_stage': 2422, 'ours_inplace': 2417} unique_uncached=8189
+tier=host requests=16 mtp=1 rows=16 steady(mean of last half, us): ours_stage=226.3 ours_inplace=237.1 misses={'ours_stage': 4304, 'ours_inplace': 4309} unique_uncached=32754
+results=/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_latency/base_assistant_host_mtp1.json
