@@ -1,0 +1,4 @@
+bandwidth {'dma_contiguous_GBps': 259.2632860473151, 'sm_gather_random_GBps': 196.08510071209207}
+tier=peer requests=1 mtp=1 rows=1 steady(mean of last half, us): ours_stage=54.7 ours_inplace=65.9 misses={'ours_stage': 1073, 'ours_inplace': 1080} unique_uncached=2047
+tier=peer requests=4 mtp=1 rows=4 steady(mean of last half, us): ours_stage=57.7 ours_inplace=67.4 misses={'ours_stage': 639, 'ours_inplace': 640} unique_uncached=8188
+results=/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_small/guarded_base_glm64k_peer_mtp1.json

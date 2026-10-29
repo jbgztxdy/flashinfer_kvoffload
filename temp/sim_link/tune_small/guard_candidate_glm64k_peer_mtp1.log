@@ -1,0 +1,10 @@
+bandwidth {'dma_contiguous_GBps': 253.1433425722034, 'sm_gather_random_GBps': 184.32000465631498}
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/sim_link/bench_tune.py", line 49, in <module>
+    bench_rounds.main()
+  File "/mnt/data/rtx/projects/flashinfer/temp/h800/bench_rounds.py", line 148, in main
+    result["results"].append(run_requests(args, requests, steps, kv, main_kv, alias, captures, device))
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/h800/bench_rounds.py", line 351, in run_requests
+    raise RuntimeError(f"Could not enqueue {mode} before the GPU guard ended: {enqueue_guards[-1]}")
+RuntimeError: Could not enqueue ours_stage before the GPU guard ended: {'pass_index': 0, 'mode': 'ours_stage', 'attempt': 4, 'cycles': 9894400000, 'enqueue_ms': 7064.612686999681, 'gpu_guard_ms': 7017.318359375, 'valid': False}

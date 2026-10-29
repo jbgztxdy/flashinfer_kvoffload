@@ -1,0 +1,5 @@
+bandwidth {'dma_contiguous_GBps': 279.96036005604606, 'sm_gather_random_GBps': 98.43524713993293}
+tier=peer requests=1 mtp=8 rows=8 steady(mean of last half, us): ours_stage=101.4 ours_inplace=173.1 misses={'ours_stage': 1009, 'ours_inplace': 1005} unique_uncached=4062
+tier=peer requests=4 mtp=8 rows=32 steady(mean of last half, us): ours_stage=246.3 ours_inplace=510.0 misses={'ours_stage': 6035, 'ours_inplace': 6018} unique_uncached=17188
+tier=peer requests=16 mtp=8 rows=128 steady(mean of last half, us): ours_stage=826.9 ours_inplace=1834.5 misses={'ours_stage': 36149, 'ours_inplace': 36284} unique_uncached=81267
+results=/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_small/single_query_g100_l20000_mtp8.json

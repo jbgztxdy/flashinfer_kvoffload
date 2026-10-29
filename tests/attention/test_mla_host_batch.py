@@ -126,6 +126,25 @@ def test_host_batch_heads_and_dtypes(dtype, num_heads):
     _run(4, 8, num_heads, 2048, 0.3, shared=0.5, dtype=dtype)
 
 
+@pytest.mark.parametrize("kv_len", [1, 2048])
+@pytest.mark.parametrize("dtype,num_heads,stage,host_split", [
+    (torch.bfloat16, 64, True, True),
+    (torch.float16, 128, True, False),
+    (torch.bfloat16, 128, False, True),
+    (torch.float16, 64, True, True),
+])
+def test_host_batch_single_query_merge(kv_len, dtype, num_heads, stage, host_split):
+    _skip_if_unsupported()
+    wrapper, values = _run(1, 1, num_heads, kv_len, 0.3, shared=0.0, dtype=dtype,
+                           stage=stage, host_split=host_split)
+    q_nope, q_pe, ckv, kpe, host_page_start, indices, expected_o = values
+    _, expected_lse = _reference(q_nope, q_pe, ckv, kpe, indices, 1 / 16)
+    out, lse = wrapper.run(q_nope, q_pe, ckv, kpe, return_lse=True,
+                           return_lse_base_on_e=True, host_page_start=host_page_start)
+    torch.testing.assert_close(out.float(), expected_o, rtol=1e-2, atol=1e-2)
+    torch.testing.assert_close(lse, expected_lse, rtol=1e-3, atol=1e-3)
+
+
 @pytest.mark.parametrize("kv_len", [1, 31, 100, 513])
 def test_host_batch_short_rows(kv_len):
     _skip_if_unsupported()

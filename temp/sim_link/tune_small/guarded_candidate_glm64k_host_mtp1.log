@@ -1,0 +1,4 @@
+bandwidth {'dma_contiguous_GBps': 26.71425306103805, 'sm_gather_random_GBps': 25.96056363704162}
+tier=host requests=1 mtp=1 rows=1 steady(mean of last half, us): ours_stage=74.5 ours_inplace=90.7 misses={'ours_stage': 1077, 'ours_inplace': 1080} unique_uncached=2047
+tier=host requests=4 mtp=1 rows=4 steady(mean of last half, us): ours_stage=76.1 ours_inplace=88.3 misses={'ours_stage': 638, 'ours_inplace': 638} unique_uncached=8188
+results=/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_small/guarded_candidate_glm64k_host_mtp1.json

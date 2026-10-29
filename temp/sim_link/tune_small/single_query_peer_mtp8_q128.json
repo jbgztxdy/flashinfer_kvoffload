@@ -1,0 +1,251 @@
+{
+ "configuration": {
+  "tier": "peer",
+  "emu": null,
+  "device": 0,
+  "peer": 1,
+  "requests": [
+   128
+  ],
+  "mtp": 8,
+  "steps": 4,
+  "fraction": 1.0,
+  "capacity": 4096,
+  "modes": [
+   "ours_stage",
+   "ours_inplace"
+  ],
+  "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+  "context": 65536,
+  "topk": 2048,
+  "near_requests": 128,
+  "passes": 7,
+  "fetch_ctas": 16,
+  "hisparse_block": 960,
+  "seed": 42,
+  "output": "/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_small/single_query_peer_mtp8_q128.json"
+ },
+ "timestamp": "2026-10-28T20:26:15+0800",
+ "device_name": "NVIDIA A100-SXM4-40GB",
+ "torch_version": "2.11.0+cu130",
+ "cuda_version": "13.0",
+ "git_commit": "aeca4403112e64745e276a5ecbff14edbca4add0",
+ "git_dirty": true,
+ "source_sha256": {
+  "temp/h800/bench_rounds.py": "df8f7be1ad18829ff2925e595bb756efa157cd33a80403257d19170a2ad6af6a",
+  "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+  "include/flashinfer/attention/mla_host_batch.cuh": "6929f6f953be0d0353c0fc17c936a77062c6e9b65bc9a99e6ff838d9dc169d7a",
+  "temp/sim_link/bench_tune.py": "4acfa4d9aa7c178d81550714b2ba0080d49cda10a25f4dfb437bc5db7af7d1a4",
+  "include/flashinfer/attention/far_link_emu.cuh": "5e409035aa4edc83f72135c09c453e825ce59e5dcc4bae63c04ff3909d024095"
+ },
+ "residency": [
+  {
+   "tier": "near_hbm",
+   "address": "0x420000000",
+   "bytes": 9663676416,
+   "location_type": 1,
+   "location_id": 0
+  },
+  {
+   "tier": "far_peer_hbm_gpu1",
+   "address": "0x660000000",
+   "bytes": 9663676416,
+   "location_type": 1,
+   "location_id": 1
+  },
+  {
+   "tier": "near_hbm_alias",
+   "address": "0x8a0000000",
+   "bytes": 9663676416,
+   "location_type": 1,
+   "location_id": 0
+  },
+  {
+   "tier": "staging_hbm",
+   "address": "0xae0000000",
+   "bytes": 2415919104,
+   "location_type": 1,
+   "location_id": 0
+  }
+ ],
+ "emulated_link": null,
+ "bandwidth": {
+  "dma_contiguous_GBps": 281.66687053584263,
+  "sm_gather_random_GBps": 262.0783264763963
+ },
+ "methods": {
+  "ours_stage": "our kernel, LRU pool of `capacity` per request, misses staged (PCIe layout)",
+  "ours_inplace": "our kernel, LRU pool of `capacity` per request, misses read in place, fetch CTAs fill the cache",
+  "ours_nocache": "our kernel without cache (staged on host tier, in place on peer tier)",
+  "hisparse": "SGLang HiSparse: load_cache_to_device_buffer_mla (per-request LRU of `capacity` + newest slot, one block per request) then sgl_kernel FlashMLA sparse fwd; with MTP each draft token runs its own swap-in and attention in turn: the decode path takes one row per request, and the LRU only protects the current row's pages, so one attention over all rows after all swap-ins could read evicted slots",
+  "floor_fa2": "native FA2 MLA with every selected row near: compute floor of our kernel",
+  "floor_flashmla": "FlashMLA sparse fwd with every selected row in HBM, one call over all rows: compute floor of HiSparse",
+  "direct_lru": "Direct with the same LRU: native attention with hits near and misses read in place, then a GPU gather of the misses into the cache for the next step",
+  "memcpy_lru": "Memcpy with the same per-request step LRU: copy only each step's missed pages near (host: untimed CPU gather + H2D DMA; peer: GPU gather), then native attention"
+ },
+ "gpu_before": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 12407 MiB, 28035 MiB, 41 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 9641 MiB, 30801 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 21323 MiB, 19119 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 0 MiB, 40442 MiB, 0 %, 1410 MHz, 1215 MHz",
+ "results": [
+  {
+   "requests": 128,
+   "mtp": 8,
+   "query_rows": 1024,
+   "steps": 4,
+   "correctness_max_abs_error": {
+    "ours_stage": 0.002042829990386963,
+    "ours_inplace": 0.0019431114196777344
+   },
+   "far_refs": [
+    2096128,
+    2096128,
+    2096128,
+    2096128
+   ],
+   "far_unique_uncached": [
+    667851,
+    686157,
+    668881,
+    668922
+   ],
+   "cached_misses": {
+    "ours_stage": [
+     667851,
+     344204,
+     313827,
+     307959
+    ],
+    "ours_inplace": [
+     667851,
+     345021,
+     314483,
+     308192
+    ]
+   },
+   "per_step": {
+    "ours_stage": [
+     {
+      "median_us": 8642.560005187988,
+      "p10_us": 8593.40763092041,
+      "p90_us": 8648.703575134277,
+      "samples_us": [
+       8649.727821350098,
+       8643.584251403809,
+       8632.320404052734,
+       8635.392189025879,
+       8642.560005187988,
+       8648.703575134277,
+       8593.40763092041
+      ]
+     },
+     {
+      "median_us": 4502.528190612793,
+      "p10_us": 4455.423831939697,
+      "p90_us": 4518.911838531494,
+      "samples_us": [
+       4455.423831939697,
+       4483.071804046631,
+       4510.719776153564,
+       4502.528190612793,
+       4473.855972290039,
+       4518.911838531494,
+       4518.911838531494
+      ]
+     },
+     {
+      "median_us": 4123.648166656494,
+      "p10_us": 4110.335826873779,
+      "p90_us": 4147.200107574463,
+      "samples_us": [
+       4147.200107574463,
+       4110.335826873779,
+       4120.575904846191,
+       4147.200107574463,
+       4124.671936035156,
+       4123.648166656494,
+       4120.575904846191
+      ]
+     },
+     {
+      "median_us": 4036.6082191467285,
+      "p10_us": 4011.007785797119,
+      "p90_us": 4067.3279762268066,
+      "samples_us": [
+       4069.375991821289,
+       4011.007785797119,
+       4064.256191253662,
+       4023.2958793640137,
+       4036.6082191467285,
+       4067.3279762268066,
+       4023.2958793640137
+      ]
+     }
+    ],
+    "ours_inplace": [
+     {
+      "median_us": 9886.719703674316,
+      "p10_us": 9858.048439025879,
+      "p90_us": 9908.224105834961,
+      "samples_us": [
+       9858.048439025879,
+       9916.41616821289,
+       9908.224105834961,
+       9886.719703674316,
+       9883.647918701172,
+       9890.815734863281,
+       9876.480102539062
+      ]
+     },
+     {
+      "median_us": 3804.1601181030273,
+      "p10_us": 3781.6319465637207,
+      "p90_us": 3815.4239654541016,
+      "samples_us": [
+       3793.9200401306152,
+       3781.6319465637207,
+       3802.112102508545,
+       3804.1601181030273,
+       3815.4239654541016,
+       3827.712059020996,
+       3815.4239654541016
+      ]
+     },
+     {
+      "median_us": 3378.175973892212,
+      "p10_us": 3356.6720485687256,
+      "p90_us": 3385.3440284729004,
+      "samples_us": [
+       3385.3440284729004,
+       3379.199981689453,
+       3373.055934906006,
+       3378.175973892212,
+       3356.6720485687256,
+       3386.3680362701416,
+       3364.8641109466553
+      ]
+     },
+     {
+      "median_us": 3270.656108856201,
+      "p10_us": 3254.271984100342,
+      "p90_us": 3278.8479328155518,
+      "samples_us": [
+       3286.0159873962402,
+       3270.656108856201,
+       3262.4640464782715,
+       3278.8479328155518,
+       3254.271984100342,
+       3270.656108856201,
+       3255.295991897583
+      ]
+     }
+    ]
+   }
+  }
+ ],
+ "gpu_after": "index, name, memory.used [MiB], memory.free [MiB], utilization.gpu [%], clocks.current.sm [MHz], clocks.current.memory [MHz]\n0, NVIDIA A100-SXM4-40GB, 13305 MiB, 27137 MiB, 29 %, 1410 MHz, 1215 MHz\n1, NVIDIA A100-SXM4-40GB, 9639 MiB, 30803 MiB, 0 %, 1410 MHz, 1215 MHz\n2, NVIDIA A100-SXM4-40GB, 21323 MiB, 19119 MiB, 0 %, 1410 MHz, 1215 MHz\n3, NVIDIA A100-PCIE-40GB, 0 MiB, 40442 MiB, 0 %, 1410 MHz, 1215 MHz",
+ "planner_overrides": {
+  "host_item_entries": 64,
+  "host_split": null,
+  "grid_ctas": null,
+  "kv_chunks": null
+ },
+ "extra_cuda_flags": ""
+}

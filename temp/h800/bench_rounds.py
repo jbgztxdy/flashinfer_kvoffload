@@ -306,27 +306,58 @@ def run_requests(args, requests, steps, kv, main_kv, alias, captures, device):
 
     samples = {m: [[] for _ in range(steps)] for m in args.modes}
     misses = {m: [[] for _ in range(steps)] for m in ("ours_stage", "ours_inplace") if m in args.modes}
-    sleep_cycles = int(2e9 * (2e-3 + steps * 3e-4 * (mtp if "hisparse" in args.modes else 1)))
-    for _ in range(args.passes):
+    # Bounded chunks avoid CUDA launch-queue backpressure while retaining LRU state
+    # across all steps; 1024 steps queued behind one guard can exhaust that queue.
+    chunk_steps = min(32, max(1, 128 // mtp)) if "hisparse" in args.modes else 32
+    sleep_cycles = int(2e9 * (2e-3 + min(steps, chunk_steps) * 3e-4 *
+                              (mtp if "hisparse" in args.modes else 1)))
+    enqueue_guards = []
+    for pass_index in range(args.passes):
         for mode in args.modes:
-            reset(mode)
-            torch.cuda.synchronize(device)
-            events = [(torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)) for _ in range(steps)]
-            uniq = torch.zeros(steps, dtype=torch.int32, device=device)
-            torch.cuda._sleep(sleep_cycles)  # keeps the GPU busy while the steps are enqueued
-            for step in range(steps):
-                if mode == "hisparse":
-                    events[step][0].record()
-                    hisparse_step(step)
-                    events[step][1].record()
-                else:
-                    load(mode, step)
-                    events[step][0].record()
-                    run(mode, step)
-                    events[step][1].record()
-                    if mode in misses:
-                        uniq[step] = ours[mode][0]._host_batch_buffers[5][1]
-            torch.cuda.synchronize(device)
+            attempt = 0
+            while True:
+                reset(mode)
+                torch.cuda.synchronize(device)
+                events = [(torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)) for _ in range(steps)]
+                uniq = torch.zeros(steps, dtype=torch.int32, device=device)
+                valid = True
+                for first in range(0, steps, chunk_steps):
+                    last = min(first + chunk_steps, steps)
+                    guard_start, guard_end = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
+                    guard_start.record()
+                    torch.cuda._sleep(sleep_cycles)
+                    guard_end.record()
+                    enqueue_start = time.perf_counter()
+                    for step in range(first, last):
+                        if mode == "hisparse":
+                            events[step][0].record()
+                            hisparse_step(step)
+                            events[step][1].record()
+                        else:
+                            load(mode, step)
+                            events[step][0].record()
+                            run(mode, step)
+                            events[step][1].record()
+                            if mode in misses:
+                                uniq[step] = ours[mode][0]._host_batch_buffers[5][1]
+                    enqueue_ms = (time.perf_counter() - enqueue_start) * 1000
+                    torch.cuda.synchronize(device)
+                    guard_ms = guard_start.elapsed_time(guard_end)
+                    required_ms = enqueue_ms + max(1.0, enqueue_ms * .05)
+                    valid = guard_ms >= required_ms
+                    enqueue_guards.append(dict(pass_index=pass_index, mode=mode, attempt=attempt,
+                                               first_step=first, last_step_exclusive=last,
+                                               cycles=sleep_cycles, enqueue_ms=enqueue_ms,
+                                               gpu_guard_ms=guard_ms, valid=valid))
+                    if not valid:
+                        # Retake this whole pass from cold; no failed samples are kept.
+                        sleep_cycles = max(sleep_cycles * 2, int(sleep_cycles * required_ms / guard_ms * 1.5))
+                        break
+                if valid:
+                    break
+                attempt += 1
+                if attempt >= 5:
+                    raise RuntimeError(f"Could not enqueue {mode} before the GPU guard ended: {enqueue_guards[-1]}")
             for step in range(steps):
                 samples[mode][step].append(events[step][0].elapsed_time(events[step][1]) * 1000)
             if mode in misses:
@@ -334,6 +365,7 @@ def run_requests(args, requests, steps, kv, main_kv, alias, captures, device):
                     misses[mode][step].append(u)
 
     out = dict(requests=requests, mtp=mtp, query_rows=rows, steps=steps, correctness_max_abs_error=errors,
+               enqueue_guards=enqueue_guards,
                far_refs=[p["far_refs"] for p in plan], far_unique_uncached=[p["far_unique_step"] for p in plan],
                cached_misses={m: [max(v) for v in vs] for m, vs in misses.items()},
                per_step={m: [summarize(v) for v in vs] for m, vs in samples.items()})

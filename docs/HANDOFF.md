@@ -1,6 +1,10 @@
-# 交接：远端 KV 稀疏 MLA 算子项目（2026-10-28）
+# 交接：远端 KV 稀疏 MLA 算子项目（2026-10-29）
 
 给下一个 agent：这份文档记录项目状态和文件指针，细节请读引用的文件。第 3 节（正在跑的作业）和第 4 节（下一步）最要紧。
+
+**10/29 最新状态优先于下文历史记录**：第三轮单 query 合并已通过87项测试；修正1024步一次入队的计时污染，最终旧新对照用分段入队。GLM四篇采集1079524完成（23分44秒），四篇数据/assistant loss gate通过、全位置block gate仍失败；四个完整assistant窗口loss0.123/0.300/0.190/0.269。正式A100 assistant回放已完成6份JSON/15配置/7pass，7980段入队检查全部通过，14592次launch逐步采样行max abs0.007131。100GB/s20µs MTP8 16请求staged667.10µs，Memcpy867.70µs，下限494.59µs（1.35倍）；真实NVLink原地读531.46µs（下限1.07倍）。小batch仍有输的格子，见docs/mla_host_glm53_trace.md。
+
+**接续入口**：本机 `temp/sim_link/tune_small/` 保存第三轮全部候选/失败/最终对照和manifest，最终仅单query启用新合并。旧 `temp/glm_trace/results/a100_64k_doc0/` 的混合角色长trace未验证入队条件，部分绝对计时污染，保留原件但不作为最终结论；正式结果在 `a100_64k_assistant_20261029/`。H800独立worktree `rtx/yjw/flashinfer_tuned_20261029` 从dbbc02c6仅移植三轮性能补丁，无模拟钩子，且独立移植/去钩子两条推导逐行一致，manifest在temp/h800/tuned_20261029_manifest.json。1089379（1卡/20分钟，87项测试+PCIe）依赖原三个作业afterany，1089380（2卡/20分钟，NVLink）依赖1089379成功，均回放assistant的MTP1/8、1/4/16请求，含HiSparse及两下限。原生产header未改变。先查队列/日志，不重复提交。
 
 ## 1. 项目目标
 
@@ -29,11 +33,12 @@
 | H800 结果（验证、HiSparse 对比、全量） | `docs/mla_host_h800_lru.md`，数据在 `temp/h800/results/`，汇总在 `temp/h800/results/summary.md` |
 | 链路带宽和延迟模拟（A100） | `docs/mla_host_link_emulation.md`，数据在 `temp/sim_link/`，模拟器在 `include/flashinfer/attention/far_link_emu.cuh`（只在 `-DFLASHINFER_FAR_EMU` 下编入） |
 | A100 100 GB/s 高延迟与小 batch 新调优（10/28） | `docs/mla_host_a100_100gb_tuning.md`；对照数据/源码哈希/未采用补丁在 `temp/sim_link/tune_100/`，75 项测试通过 |
+| A100 第三轮：单 query 合并 | `docs/mla_host_a100_single_query_tuning.md`；`temp/sim_link/tune_small/results.md` |
 | A100 第二轮：LRU 更新重叠与小 batch 分块 | `docs/mla_host_a100_lru_tuning.md`；正向/反向和原推荐参数对照在 `temp/sim_link/tune_lru/` |
 | kernel | `include/flashinfer/attention/mla_host_batch.cuh`（约 1700 行；主体是 `BatchMLAHostBatchKernel`，在约 1505 行） |
 | launcher | `csrc/batch_mla_run.cu` |
 | Python 接口 | `flashinfer/mla/_core.py`（`host_stage`、`host_fetch_ctas`、`set_host_cache`、`_run_host_batch`） |
-| 测试 | `tests/attention/test_mla_host_batch.py`（79 项） |
+| 测试 | `tests/attention/test_mla_host_batch.py`（87 项） |
 | 跨 decode 测试脚本（含 HiSparse 和各下限） | `temp/h800/bench_rounds.py` |
 | GLM-5.3 新语料验证、真实 top-k 回放接入及未完成项 | `docs/mla_host_glm53_trace.md`；8K 接入结果 `temp/glm_trace/results/a100_8k_smoke.md`（尚非正式 64K/1024 结果） |
 | 单步测试脚本 | `temp/h800/bench_sweep.py` |
@@ -64,15 +69,15 @@
 | **1040875** `glm-swe-64k1` | a01，8 张 A800，2 小时 | 第 1 篇 64K，16×1024 记录窗口，保留完整 loss | **COMPLETED，0:0，17 分 59 秒，g08** | 集群 `rtx/yjw/test/glm_trace/traces/swe64k_doc0_20261028/` |
 | **1079470** `glm-swe64k-inspect` | a01，CPU 4 核 / 16G | 全行数据和角色 loss 检查 | **FAILED，1:0，49 秒**；数据/assistant gate 通过，全位置 block gate 失败，见 §4.2 | `results/swe64k_doc0_inspection_20261028.json` |
 | **1079523** `glm-swe64k-export` | a01，只用 CPU | 导出全部未改动 top-k，scores 保留原始 trace | **COMPLETED，0:0，13 秒** | `replay/swe64k_doc0_20261028.pt`；本机 `temp/glm_trace/replay64k/doc0.pt`，未纳入 git |
-| **1079524** `glm-swe64k-full` | a01，8 张 A800，90 分钟 | 全 4 篇 64K，带窗口计划，16×1024，完整 loss | **PENDING，Priority** | `traces/swe64k_full_20261028/` |
-| **1079527** `glm-swe64k-fullcheck` | a01，只用 CPU，16G / 15 分钟 | 完成后逐篇严格检查；某篇失败仍继续检查其他篇 | **PENDING，afterok:1079524** | `results/swe64k_full_inspection_20261028_doc{0..3}.json` |
+| **1079524** `glm-swe64k-full` | a01，8 张 A800，90 分钟 | 全 4 篇 64K，带窗口计划，16×1024，完整 loss | **COMPLETED，0:0，23:44，g03** | `traces/swe64k_full_20261028/` |
+| **1079527** `glm-swe64k-fullcheck` | a01，只用 CPU，16G / 15 分钟 | 逐篇严格检查 | **FAILED，1:0，2:38；四篇数据/assistant通过，block gate失败** | `results/swe64k_full_inspection_20261028_doc{0..3}.json` |
 
 - 1040816 已完成全部 78 层；第 0 层 top-k 重合率 mean/min 均 1.0000，记录分数最大相对误差 5.21e-07，排序/有效数/补位检查均通过；absorbed vs expanded attention 最大相对误差 4.27e-03。最终数据和角色 loss 见 §4.2。H800 新调优顺序仍待用户确认。
 - h01 的两个节点 g40、g44，16 张 H800 一直被别人占满，作业只能排队，没有办法加速。重新提交也一样，不要重复提交。
 - 上一次语料作业 1040688 立即失败，退出码 127。原因是用 `--wrap` 时节点上的 sh 没有执行 `source`。已改为用 bash 写的 `04_corpus.sbatch` 重新提交。
 - 10/28 11:07 再查：三个 H800 作业仍为 Priority 排队，预计 11/02 02:34:29，无结果目录；没有重复提交。
 - 静默轮询脚本：`temp/glm_trace/watch_jobs.sh`，每 600 秒查一次，查询失败继续重试。10/28 11:19 已在集群 nohup 启动，PID `4160646`，观察三个 H800 作业和 `1040816`；日志和 PID 文件在 `rtx/yjw/test/glm_trace/logs/watch_20261028.{log,pid}`。继续工作前先用 `ps -p 4160646 -o pid,etime,args` 核查进程，避免重复启动。
-- 旧 trace 轮询 PID `65160` 已随两项完成而退出。新全量链的轮询 PID 文件为 `logs/watch_full_20261028.pid`、日志 `watch_full_20261028.log`，每 600 秒检查；先核实进程再续接。
+- 旧trace轮询65160及full轮询1788755已退出；H800原轮询4160646仍存活。新H8001089379/1089380的静默轮询日志/PID为 `logs/watch_tuned_20261029.{log,pid}`，每600秒检查，续接先核实进程。
 - 两地 `mla_host_batch.cuh` 的哈希不同：本机除 `FAR_EMU_*` 钩子外已有两轮性能改动；集群 H800 排队作业保留原基线。后续以已存补丁移植并实测，不能直接覆盖。
 
 ## 4. 未完成的任务和下一步

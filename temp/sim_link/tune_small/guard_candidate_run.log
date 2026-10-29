@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_small/run.py", line 50, in <module>
+    subprocess.run(command, env=run_env, stdout=log, stderr=subprocess.STDOUT, check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rtx/miniconda3/lib/python3.13/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['numactl', '-N0', '-m0', '/mnt/data/mhy-vllm-venv/bin/python', 'temp/sim_link/bench_tune.py', '--tier', 'peer', '--mtp', '1', '--requests', '1', '4', '--passes', '7', '--fetch-ctas', '16', '--host-item-entries', '64', '--modes', 'ours_stage', 'ours_inplace', '--output', '/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_small/guard_candidate_glm64k_peer_mtp1.json', '--captures', 'temp/glm_trace/replay64k/doc0.pt', '--steps', '1024']' returned non-zero exit status 1.

@@ -1,0 +1,20 @@
+--- a/include/flashinfer/attention/mla_host_batch.cuh
++++ b/include/flashinfer/attention/mla_host_batch.cuh
+@@ -955 +955 @@
+-      constexpr uint32_t VECS = VEC_SIZE * sizeof(DTypeO) / 16;
++      constexpr uint32_t VECS = (VEC_SIZE * sizeof(DTypeO) >= 16 ? VEC_SIZE * sizeof(DTypeO) / 16 : 1);
+@@ -965,0 +966 @@
++        if constexpr (VEC_SIZE * sizeof(DTypeO) >= 16) {
+@@ -967 +968,6 @@
+-        for (uint32_t v = 0; v < VECS; ++v) raw[i][v] = __ldcg(source + v);
++          for (uint32_t v = 0; v < VECS; ++v) raw[i][v] = __ldcg(source + v);
++        } else if constexpr (VEC_SIZE * sizeof(DTypeO) == 8) {
++          *reinterpret_cast<uint2*>(raw[i]) = __ldcg(reinterpret_cast<const uint2*>(source));
++        } else {
++          *reinterpret_cast<uint32_t*>(raw[i]) = __ldcg(reinterpret_cast<const uint32_t*>(source));
++        }
+@@ -1604,0 +1611,4 @@
++    } else if (units < gridDim.y) {
++      merge_host_batch_chunks<KTraits, 2>(params);
++    } else if (units < gridDim.y * 2) {
++      merge_host_batch_chunks<KTraits, 4>(params);

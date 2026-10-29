@@ -1,0 +1,21 @@
+{
+  "cluster_base": "dbbc02c6",
+  "local_commit": "aeca4403112e64745e276a5ecbff14edbca4add0",
+  "local_kernel_sha256": "6929f6f953be0d0353c0fc17c936a77062c6e9b65bc9a99e6ff838d9dc169d7a",
+  "emulator_hooks": false,
+  "independent_derivations_match": true,
+  "patches": {
+    "temp/h800/tuned_fetch.patch": "6b2d5343d82235d7c553c2aeb5ee16e8e08621ae80749edace008dd49b330eb3",
+    "temp/h800/tuned_lru.patch": "d8e199e629295e34acce1d03d722cde4a10781a3757b568c56372b844fd2e30a",
+    "temp/h800/tuned_single_query.patch": "cf4823325dde4bea29559e16f431e7ca27667a7e358e059d12d2ff05797eb1b9"
+  },
+  "files": {
+    "include/flashinfer/attention/mla_host_batch.cuh": "c82ecaa7ce1b97e26d699c521f3f6d65186ddf0a962bd5fbaf467b84c952cf02",
+    "tests/attention/test_mla_host_batch.py": "48bdc858ca8aa7321facfe54f016d48a11ba1ac943aaaaac5b3d92435a2edbdb",
+    "temp/h800/bench_rounds.py": "f72f8002cb802a5a93f782cf2045a06f908588d47cde26c6b7db060b551f24f4",
+    "temp/h800/bench_sweep.py": "9d783bb46caf982a1e8f3ccfbcb7df6e50b0d09869682a65b5c9031cacd50cd3",
+    "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+    "temp/h800/tuned_assistant.sbatch": "931cbcc0b9fdcaff8500d587b3321a79b43df5ea47712f6432ae6b2a24d42747",
+    "temp/h800/tuned_jitpaths.py": "c2bf990a6a6415849256d73a3e228626dc6fc2166bca911917425d6762797982"
+  }
+}

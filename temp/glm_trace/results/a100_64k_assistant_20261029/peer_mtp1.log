@@ -1,0 +1,4 @@
+bandwidth {'dma_contiguous_GBps': 246.99497253474996, 'sm_gather_random_GBps': 177.23077122814206}
+tier=peer requests=1 mtp=1 rows=1 steady(mean of last half, us): ours_stage=47.9 ours_inplace=57.1 memcpy_lru=40.9 direct_lru=43.5 floor_fa2=32.1 misses={'ours_stage': 75, 'ours_inplace': 75} unique_uncached=2047
+tier=peer requests=4 mtp=1 rows=4 steady(mean of last half, us): ours_stage=63.4 ours_inplace=71.9 memcpy_lru=60.2 direct_lru=63.7 floor_fa2=46.9 misses={'ours_stage': 2391, 'ours_inplace': 2416} unique_uncached=8189
+results=temp/glm_trace/results/a100_64k_assistant_20261029/peer_mtp1.json

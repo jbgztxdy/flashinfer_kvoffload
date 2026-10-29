@@ -16,6 +16,8 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--captures", default="temp/glm_trace/replay64k/doc0.pt")
 parser.add_argument("--out", type=Path, default=Path("temp/glm_trace/results/a100_64k_doc0"))
 parser.add_argument("--passes", type=int, default=7)
+parser.add_argument("--case", nargs="+", default=None)
+parser.add_argument("--assistant-only", action="store_true")
 args = parser.parse_args()
 args.out.mkdir(parents=True, exist_ok=True)
 
@@ -32,6 +34,9 @@ traces = []
 for path in sorted(map(Path, glob.glob(args.captures))):
     data = torch.load(path, map_location="cpu")
     assert data["tokens"] == 65536 and data["selections"].shape[2:] == (1024, 2048)
+    if args.assistant_only:
+        assert data["replay_provenance"]["assistant_only"]
+        assert bool((data["role"][data["positions"]] == data["role_names"].index("assistant")).all())
     traces.append(dict(path=str(path), sha256=digest(path), layers=data["layers"],
                        group_starts=data["group_starts"].tolist(),
                        group_role_counts=[{name: int((data["role"][pos] == i).sum())
@@ -50,6 +55,9 @@ cases = [("peer_mtp1", "peer", 1, [1, 4], None),
          ("g100_l20_mtp1", "peer", 1, [1, 4], "100:20000"),
          ("g100_l20_mtp8", "peer", 8, [1, 4, 16], "100:20000"),
          ("g50_l20_mtp8", "peer", 8, [1, 4, 16], "50:20000")]
+if args.case:
+    assert set(args.case) <= {case[0] for case in cases}
+    cases = [case for case in cases if case[0] in args.case]
 outputs = []
 for name, tier, mtp, requests, emu in cases:
     out = args.out / f"{name}.json"
@@ -72,6 +80,13 @@ for name, tier, mtp, requests, emu in cases:
     measured = json.loads(out.read_text())
     assert len(measured["results"]) == len(requests)
     for result in measured["results"]:
+        guards = result["enqueue_guards"]
+        for mode in measured["configuration"]["modes"]:
+            for pass_index in range(args.passes):
+                attempts = [g for g in guards if g["mode"] == mode and g["pass_index"] == pass_index]
+                accepted = [g for g in attempts if g["attempt"] == max(v["attempt"] for v in attempts)]
+                assert all(g["valid"] for g in accepted)
+                assert sum(g["last_step_exclusive"] - g["first_step"] for g in accepted) == result["steps"]
         assert all(error < .01 for error in result["correctness_max_abs_error"].values())
         # Same ordering and random seed as tiers.Requests; record the actual source windows.
         combos = [(c, l, g) for c, trace in enumerate(traces)

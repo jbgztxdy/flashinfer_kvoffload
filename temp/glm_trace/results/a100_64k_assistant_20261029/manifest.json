@@ -1,0 +1,155 @@
+{
+  "captures": [
+    {
+      "path": "temp/glm_trace/assistant64k/doc1.pt",
+      "sha256": "588580773e0aac47c0a84fd99f826205de8a7158633617d8a9bf8360b10a3714",
+      "layers": [
+        0,
+        1,
+        2,
+        6,
+        10,
+        14,
+        18,
+        22,
+        26,
+        30,
+        34,
+        38,
+        42,
+        46,
+        50,
+        54,
+        58,
+        62,
+        66,
+        70,
+        74
+      ],
+      "group_starts": [
+        35184,
+        41887,
+        48296
+      ],
+      "group_role_counts": [
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 1024,
+          "tool": 0
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 1024,
+          "tool": 0
+        },
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 1024,
+          "tool": 0
+        }
+      ],
+      "provenance": {
+        "source_trace": "traces/swe64k_full_20261028/doc1.pt",
+        "source_trace_sha256": "5ed5f266712eb230c2bba5fbfa80b06da872ef688e9806e5b354b98da8c2a79a",
+        "source_groups": [
+          1,
+          4,
+          7
+        ],
+        "assistant_only": true,
+        "scores_preserved_in_source": true,
+        "topk_values_unchanged": true,
+        "selections_shape": [
+          21,
+          3,
+          1024,
+          2048
+        ],
+        "group_starts": [
+          35184,
+          41887,
+          48296
+        ],
+        "export_script_sha256": "addb79d174495fcbe7502807bfb202e0634618520e92b39e5e3abafcbe611bea"
+      }
+    },
+    {
+      "path": "temp/glm_trace/assistant64k/doc3.pt",
+      "sha256": "91b10832e3aa6e7d9dd2e46f0509bacce45f2f7bcc3e4ae903f0f85bce0a5b41",
+      "layers": [
+        0,
+        1,
+        2,
+        6,
+        10,
+        14,
+        18,
+        22,
+        26,
+        30,
+        34,
+        38,
+        42,
+        46,
+        50,
+        54,
+        58,
+        62,
+        66,
+        70,
+        74
+      ],
+      "group_starts": [
+        50621
+      ],
+      "group_role_counts": [
+        {
+          "system": 0,
+          "user": 0,
+          "assistant": 1024,
+          "tool": 0
+        }
+      ],
+      "provenance": {
+        "source_trace": "traces/swe64k_full_20261028/doc3.pt",
+        "source_trace_sha256": "967d001551b2c928cd6c632890b3d7dff3cc780f6aee4b1dd0d472c57953a63a",
+        "source_groups": [
+          8
+        ],
+        "assistant_only": true,
+        "scores_preserved_in_source": true,
+        "topk_values_unchanged": true,
+        "selections_shape": [
+          21,
+          1,
+          1024,
+          2048
+        ],
+        "group_starts": [
+          50621
+        ],
+        "export_script_sha256": "addb79d174495fcbe7502807bfb202e0634618520e92b39e5e3abafcbe611bea"
+      }
+    }
+  ],
+  "outputs": {
+    "temp/glm_trace/results/a100_64k_assistant_20261029/peer_mtp1.json": "86a5b83c3c5076cddd300a2c69d819aa6f45023e92ae6f7e0d663fd5f682c206",
+    "temp/glm_trace/results/a100_64k_assistant_20261029/peer_mtp8.json": "f5d37d2270e4d022394deaa2d85c077baf47f362aa7e0becabc53ad8a2adf58a",
+    "temp/glm_trace/results/a100_64k_assistant_20261029/host_mtp1.json": "7da31acd42974cbd57f4872eb656566b48e85d7e79e1ebb3e3a6983e058e5ffc",
+    "temp/glm_trace/results/a100_64k_assistant_20261029/g100_l20_mtp1.json": "5fdb7f3a3943dfdbeb086894d12c1129c641f09b0bd3df19996ab8e089e275f1",
+    "temp/glm_trace/results/a100_64k_assistant_20261029/g100_l20_mtp8.json": "da3a475f60c9cf4f2591ee1db7cb88d5d0ce5af88f83e82e1d5b51ade5babcd6",
+    "temp/glm_trace/results/a100_64k_assistant_20261029/g50_l20_mtp8.json": "0a2aca2e296f774c9338df9b8cb2b8d613bca619a9a44b2da6027824c43e2316"
+  },
+  "source_sha256": {
+    "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/run_64k_replay.py": "9869b43b6b3ffe9a45ef964ce72ad2547dd4fa23a7c5fba1b71be31b28195b05",
+    "temp/glm_trace/06_report_replay.py": "f562f673fa72ac49b7badf63dfbf297e2387b5e9fe9a76c937ec1c840072f4e8",
+    "temp/sim_link/bench_tune.py": "4acfa4d9aa7c178d81550714b2ba0080d49cda10a25f4dfb437bc5db7af7d1a4",
+    "temp/h800/bench_rounds.py": "f72f8002cb802a5a93f782cf2045a06f908588d47cde26c6b7db060b551f24f4",
+    "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+    "include/flashinfer/attention/mla_host_batch.cuh": "6929f6f953be0d0353c0fc17c936a77062c6e9b65bc9a99e6ff838d9dc169d7a",
+    "include/flashinfer/attention/far_link_emu.cuh": "5e409035aa4edc83f72135c09c453e825ce59e5dcc4bae63c04ff3909d024095"
+  }
+}

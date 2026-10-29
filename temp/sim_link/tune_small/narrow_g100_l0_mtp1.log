@@ -1,0 +1,208 @@
+bandwidth {'dma_contiguous_GBps': 266.6473683607906, 'sm_gather_random_GBps': 89.04347628501506}
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/flashinfer/jit/cpp_ext.py", line 332, in run_ninja
+    subprocess.run(
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['ninja', '-v', '-C', '/mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False', '-f', '/mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/build.ninja']' returned non-zero exit status 1.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/sim_link/bench_tune.py", line 49, in <module>
+    bench_rounds.main()
+  File "/mnt/data/rtx/projects/flashinfer/temp/h800/bench_rounds.py", line 148, in main
+    result["results"].append(run_requests(args, requests, steps, kv, main_kv, alias, captures, device))
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/h800/bench_rounds.py", line 230, in run_requests
+    w = make_wrapper(rows, indices, torch.empty(256 * 2**20, dtype=torch.uint8, device=device), topk)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/sim_link/bench_tune.py", line 39, in tuned_wrapper
+    wrapper = make_wrapper(*args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/bench_glm52_host_batch.py", line 58, in make_wrapper
+    wrapper.plan(
+  File "/mnt/data/rtx/projects/flashinfer/flashinfer/mla/_core.py", line 428, in plan
+    self._cached_module = get_batch_mla_module(self._backend, *self._module_args)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/flashinfer/mla/_core.py", line 211, in get_batch_mla_module
+    ).build_and_load()
+      ^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/flashinfer/jit/core.py", line 318, in build_and_load
+    self.build(verbose, need_lock=False)
+  File "/mnt/data/rtx/projects/flashinfer/flashinfer/jit/core.py", line 304, in build
+    run_ninja(self.build_dir, self.ninja_path, verbose)
+  File "/mnt/data/rtx/projects/flashinfer/flashinfer/jit/cpp_ext.py", line 344, in run_ninja
+    raise RuntimeError(msg) from e
+RuntimeError: Ninja build failed. Ninja output:
+ninja: Entering directory `/mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False'
+[1/2] /usr/local/cuda/bin/nvcc --generate-dependencies-with-compile --dependency-output /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_batch_mla_run.cuda.o.d -DPy_LIMITED_API=0x03090000 -D_GLIBCXX_USE_CXX11_ABI=1 -isystem /usr/include/python3.12 -isystem /usr/local/cuda/include -isystem /usr/local/cuda/include/cccl -isystem /mnt/data/mhy-vllm-venv/lib/python3.12/site-packages/tvm_ffi/include -isystem /mnt/data/mhy-vllm-venv/lib/python3.12/site-packages/tvm_ffi/include -isystem /mnt/data/rtx/projects/flashinfer/include -isystem /mnt/data/rtx/projects/flashinfer/csrc -isystem /mnt/data/rtx/projects/flashinfer/3rdparty/cutlass/include -isystem /mnt/data/rtx/projects/flashinfer/3rdparty/cutlass/tools/util/include -isystem /mnt/data/rtx/projects/flashinfer/3rdparty/spdlog/include --compiler-options=-fPIC --expt-relaxed-constexpr -static-global-template-stub=false -gencode=arch=compute_80,code=sm_80 -DFLASHINFER_ENABLE_FP8_E8M0 -DFLASHINFER_ENABLE_FP4_E2M1 -std=c++17 --threads=1 -use_fast_math -DFLASHINFER_ENABLE_F16 -DFLASHINFER_ENABLE_BF16 -DFLASHINFER_ENABLE_FP8_E4M3 -DFLASHINFER_ENABLE_FP8_E5M2 -DNDEBUG -O3 -DFLASHINFER_FAR_EMU -c /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu -o /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_batch_mla_run.cuda.o 
+FAILED: /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_batch_mla_run.cuda.o 
+/usr/local/cuda/bin/nvcc --generate-dependencies-with-compile --dependency-output /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_batch_mla_run.cuda.o.d -DPy_LIMITED_API=0x03090000 -D_GLIBCXX_USE_CXX11_ABI=1 -isystem /usr/include/python3.12 -isystem /usr/local/cuda/include -isystem /usr/local/cuda/include/cccl -isystem /mnt/data/mhy-vllm-venv/lib/python3.12/site-packages/tvm_ffi/include -isystem /mnt/data/mhy-vllm-venv/lib/python3.12/site-packages/tvm_ffi/include -isystem /mnt/data/rtx/projects/flashinfer/include -isystem /mnt/data/rtx/projects/flashinfer/csrc -isystem /mnt/data/rtx/projects/flashinfer/3rdparty/cutlass/include -isystem /mnt/data/rtx/projects/flashinfer/3rdparty/cutlass/tools/util/include -isystem /mnt/data/rtx/projects/flashinfer/3rdparty/spdlog/include --compiler-options=-fPIC --expt-relaxed-constexpr -static-global-template-stub=false -gencode=arch=compute_80,code=sm_80 -DFLASHINFER_ENABLE_FP8_E8M0 -DFLASHINFER_ENABLE_FP4_E2M1 -std=c++17 --threads=1 -use_fast_math -DFLASHINFER_ENABLE_F16 -DFLASHINFER_ENABLE_BF16 -DFLASHINFER_ENABLE_FP8_E4M3 -DFLASHINFER_ENABLE_FP8_E5M2 -DNDEBUG -O3 -DFLASHINFER_FAR_EMU -c /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu -o /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_batch_mla_run.cuda.o 
+In file included from /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu:22:
+/mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_config.inc:29:111: warning: backslash-newline at end of file
+   29 | #define DISPATCH_context(DTypeQ, DTypeKV, DTypeO, IdType, MASK_MODE, HEAD_DIM_CKV, HEAD_DIM_KPE, Params, ...) \
+      |                                                                                                                
+In file included from /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu:22:
+/mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_config.inc:29:111: warning: backslash-newline at end of file
+   29 | #define DISPATCH_context(DTypeQ, DTypeKV, DTypeO, IdType, MASK_MODE, HEAD_DIM_CKV, HEAD_DIM_KPE, Params, ...) \
+      |                                                                                                                
+/mnt/data/rtx/projects/flashinfer/include/flashinfer/attention/mla_host_batch.cuh(955): error: more than one instance of overloaded function "max" matches the argument list:
+            function "max(unsigned int, unsigned int)" (declared at line 1023 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned int, int)" (declared at line 1033 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned long, unsigned long)" (declared at line 1057 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(long, unsigned long)" (declared at line 1075 of /usr/local/cuda/include/crt/math_functions.hpp)
+            argument types are: (unsigned int, unsigned long)
+        constexpr uint32_t VECS = max(1u, VEC_SIZE * sizeof(DTypeO) / 16);
+                                  ^
+          detected during:
+            instantiation of "void flashinfer::mla::merge_host_batch_chunks<KTraits,VEC_SIZE,Params>(const Params &) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 64U, DTypeQ, DTypeKV, DTypeO, IdType>, VEC_SIZE=32U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1610
+            instantiation of "void flashinfer::mla::BatchMLAHostBatchKernel<KTraits,Params>(Params) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 64U, DTypeQ, DTypeKV, DTypeO, IdType>, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1664
+            instantiation of "cudaError_t flashinfer::mla::BatchMLAHostBatchAttention<HEAD_DIM_CKV,HEAD_DIM_KPE,Params>(Params, uint32_t, uint32_t, cudaStream_t) [with HEAD_DIM_CKV=512U, HEAD_DIM_KPE=64U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 367 of /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu
+
+/mnt/data/rtx/projects/flashinfer/include/flashinfer/attention/mla_host_batch.cuh(955): error: more than one instance of overloaded function "max" matches the argument list:
+            function "max(unsigned int, unsigned int)" (declared at line 1023 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned int, int)" (declared at line 1033 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned long, unsigned long)" (declared at line 1057 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(long, unsigned long)" (declared at line 1075 of /usr/local/cuda/include/crt/math_functions.hpp)
+            argument types are: (unsigned int, unsigned long)
+        constexpr uint32_t VECS = max(1u, VEC_SIZE * sizeof(DTypeO) / 16);
+                                  ^
+          detected during:
+            instantiation of "void flashinfer::mla::merge_host_batch_chunks<KTraits,VEC_SIZE,Params>(const Params &) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 64U, DTypeQ, DTypeKV, DTypeO, IdType>, VEC_SIZE=2U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1612
+            instantiation of "void flashinfer::mla::BatchMLAHostBatchKernel<KTraits,Params>(Params) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 64U, DTypeQ, DTypeKV, DTypeO, IdType>, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1664
+            instantiation of "cudaError_t flashinfer::mla::BatchMLAHostBatchAttention<HEAD_DIM_CKV,HEAD_DIM_KPE,Params>(Params, uint32_t, uint32_t, cudaStream_t) [with HEAD_DIM_CKV=512U, HEAD_DIM_KPE=64U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 367 of /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu
+
+/mnt/data/rtx/projects/flashinfer/include/flashinfer/attention/mla_host_batch.cuh(955): error: more than one instance of overloaded function "max" matches the argument list:
+            function "max(unsigned int, unsigned int)" (declared at line 1023 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned int, int)" (declared at line 1033 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned long, unsigned long)" (declared at line 1057 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(long, unsigned long)" (declared at line 1075 of /usr/local/cuda/include/crt/math_functions.hpp)
+            argument types are: (unsigned int, unsigned long)
+        constexpr uint32_t VECS = max(1u, VEC_SIZE * sizeof(DTypeO) / 16);
+                                  ^
+          detected during:
+            instantiation of "void flashinfer::mla::merge_host_batch_chunks<KTraits,VEC_SIZE,Params>(const Params &) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 64U, DTypeQ, DTypeKV, DTypeO, IdType>, VEC_SIZE=4U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1614
+            instantiation of "void flashinfer::mla::BatchMLAHostBatchKernel<KTraits,Params>(Params) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 64U, DTypeQ, DTypeKV, DTypeO, IdType>, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1664
+            instantiation of "cudaError_t flashinfer::mla::BatchMLAHostBatchAttention<HEAD_DIM_CKV,HEAD_DIM_KPE,Params>(Params, uint32_t, uint32_t, cudaStream_t) [with HEAD_DIM_CKV=512U, HEAD_DIM_KPE=64U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 367 of /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu
+
+/mnt/data/rtx/projects/flashinfer/include/flashinfer/attention/mla_host_batch.cuh(955): error: more than one instance of overloaded function "max" matches the argument list:
+            function "max(unsigned int, unsigned int)" (declared at line 1023 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned int, int)" (declared at line 1033 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned long, unsigned long)" (declared at line 1057 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(long, unsigned long)" (declared at line 1075 of /usr/local/cuda/include/crt/math_functions.hpp)
+            argument types are: (unsigned int, unsigned long)
+        constexpr uint32_t VECS = max(1u, VEC_SIZE * sizeof(DTypeO) / 16);
+                                  ^
+          detected during:
+            instantiation of "void flashinfer::mla::merge_host_batch_chunks<KTraits,VEC_SIZE,Params>(const Params &) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 64U, DTypeQ, DTypeKV, DTypeO, IdType>, VEC_SIZE=8U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1616
+            instantiation of "void flashinfer::mla::BatchMLAHostBatchKernel<KTraits,Params>(Params) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 64U, DTypeQ, DTypeKV, DTypeO, IdType>, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1664
+            instantiation of "cudaError_t flashinfer::mla::BatchMLAHostBatchAttention<HEAD_DIM_CKV,HEAD_DIM_KPE,Params>(Params, uint32_t, uint32_t, cudaStream_t) [with HEAD_DIM_CKV=512U, HEAD_DIM_KPE=64U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 367 of /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu
+
+/mnt/data/rtx/projects/flashinfer/include/flashinfer/attention/mla_host_batch.cuh(955): error: more than one instance of overloaded function "max" matches the argument list:
+            function "max(unsigned int, unsigned int)" (declared at line 1023 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned int, int)" (declared at line 1033 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned long, unsigned long)" (declared at line 1057 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(long, unsigned long)" (declared at line 1075 of /usr/local/cuda/include/crt/math_functions.hpp)
+            argument types are: (unsigned int, unsigned long)
+        constexpr uint32_t VECS = max(1u, VEC_SIZE * sizeof(DTypeO) / 16);
+                                  ^
+          detected during:
+            instantiation of "void flashinfer::mla::merge_host_batch_chunks<KTraits,VEC_SIZE,Params>(const Params &) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 32U, DTypeQ, DTypeKV, DTypeO, IdType>, VEC_SIZE=32U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1610
+            instantiation of "void flashinfer::mla::BatchMLAHostBatchKernel<KTraits,Params>(Params) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 32U, DTypeQ, DTypeKV, DTypeO, IdType>, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1664
+            instantiation of "cudaError_t flashinfer::mla::BatchMLAHostBatchAttention<HEAD_DIM_CKV,HEAD_DIM_KPE,Params>(Params, uint32_t, uint32_t, cudaStream_t) [with HEAD_DIM_CKV=512U, HEAD_DIM_KPE=64U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 367 of /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu
+
+/mnt/data/rtx/projects/flashinfer/include/flashinfer/attention/mla_host_batch.cuh(955): error: more than one instance of overloaded function "max" matches the argument list:
+            function "max(unsigned int, unsigned int)" (declared at line 1023 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned int, int)" (declared at line 1033 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned long, unsigned long)" (declared at line 1057 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(long, unsigned long)" (declared at line 1075 of /usr/local/cuda/include/crt/math_functions.hpp)
+            argument types are: (unsigned int, unsigned long)
+        constexpr uint32_t VECS = max(1u, VEC_SIZE * sizeof(DTypeO) / 16);
+                                  ^
+          detected during:
+            instantiation of "void flashinfer::mla::merge_host_batch_chunks<KTraits,VEC_SIZE,Params>(const Params &) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 32U, DTypeQ, DTypeKV, DTypeO, IdType>, VEC_SIZE=2U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1612
+            instantiation of "void flashinfer::mla::BatchMLAHostBatchKernel<KTraits,Params>(Params) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 32U, DTypeQ, DTypeKV, DTypeO, IdType>, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1664
+            instantiation of "cudaError_t flashinfer::mla::BatchMLAHostBatchAttention<HEAD_DIM_CKV,HEAD_DIM_KPE,Params>(Params, uint32_t, uint32_t, cudaStream_t) [with HEAD_DIM_CKV=512U, HEAD_DIM_KPE=64U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 367 of /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu
+
+/mnt/data/rtx/projects/flashinfer/include/flashinfer/attention/mla_host_batch.cuh(955): error: more than one instance of overloaded function "max" matches the argument list:
+            function "max(unsigned int, unsigned int)" (declared at line 1023 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned int, int)" (declared at line 1033 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned long, unsigned long)" (declared at line 1057 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(long, unsigned long)" (declared at line 1075 of /usr/local/cuda/include/crt/math_functions.hpp)
+            argument types are: (unsigned int, unsigned long)
+        constexpr uint32_t VECS = max(1u, VEC_SIZE * sizeof(DTypeO) / 16);
+                                  ^
+          detected during:
+            instantiation of "void flashinfer::mla::merge_host_batch_chunks<KTraits,VEC_SIZE,Params>(const Params &) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 32U, DTypeQ, DTypeKV, DTypeO, IdType>, VEC_SIZE=4U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1614
+            instantiation of "void flashinfer::mla::BatchMLAHostBatchKernel<KTraits,Params>(Params) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 32U, DTypeQ, DTypeKV, DTypeO, IdType>, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1664
+            instantiation of "cudaError_t flashinfer::mla::BatchMLAHostBatchAttention<HEAD_DIM_CKV,HEAD_DIM_KPE,Params>(Params, uint32_t, uint32_t, cudaStream_t) [with HEAD_DIM_CKV=512U, HEAD_DIM_KPE=64U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 367 of /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu
+
+/mnt/data/rtx/projects/flashinfer/include/flashinfer/attention/mla_host_batch.cuh(955): error: more than one instance of overloaded function "max" matches the argument list:
+            function "max(unsigned int, unsigned int)" (declared at line 1023 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned int, int)" (declared at line 1033 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned long, unsigned long)" (declared at line 1057 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(long, unsigned long)" (declared at line 1075 of /usr/local/cuda/include/crt/math_functions.hpp)
+            argument types are: (unsigned int, unsigned long)
+        constexpr uint32_t VECS = max(1u, VEC_SIZE * sizeof(DTypeO) / 16);
+                                  ^
+          detected during:
+            instantiation of "void flashinfer::mla::merge_host_batch_chunks<KTraits,VEC_SIZE,Params>(const Params &) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 32U, DTypeQ, DTypeKV, DTypeO, IdType>, VEC_SIZE=8U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1616
+            instantiation of "void flashinfer::mla::BatchMLAHostBatchKernel<KTraits,Params>(Params) [with KTraits=flashinfer::mla::KernelTraits<false, 2U, true, 512U, 64U, 64U, 32U, DTypeQ, DTypeKV, DTypeO, IdType>, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1664
+            instantiation of "cudaError_t flashinfer::mla::BatchMLAHostBatchAttention<HEAD_DIM_CKV,HEAD_DIM_KPE,Params>(Params, uint32_t, uint32_t, cudaStream_t) [with HEAD_DIM_CKV=512U, HEAD_DIM_KPE=64U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 367 of /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu
+
+/mnt/data/rtx/projects/flashinfer/include/flashinfer/attention/mla_host_batch.cuh(955): error: more than one instance of overloaded function "max" matches the argument list:
+            function "max(unsigned int, unsigned int)" (declared at line 1023 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned int, int)" (declared at line 1033 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned long, unsigned long)" (declared at line 1057 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(long, unsigned long)" (declared at line 1075 of /usr/local/cuda/include/crt/math_functions.hpp)
+            argument types are: (unsigned int, unsigned long)
+        constexpr uint32_t VECS = max(1u, VEC_SIZE * sizeof(DTypeO) / 16);
+                                  ^
+          detected during:
+            instantiation of "void flashinfer::mla::merge_host_batch_chunks<KTraits,VEC_SIZE,Params>(const Params &) [with KTraits=flashinfer::mla::KernelTraits<false, 1U, false, 512U, 64U, 64U, 16U, DTypeQ, DTypeKV, DTypeO, IdType>, VEC_SIZE=32U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1610
+            instantiation of "void flashinfer::mla::BatchMLAHostBatchKernel<KTraits,Params>(Params) [with KTraits=flashinfer::mla::KernelTraits<false, 1U, false, 512U, 64U, 64U, 16U, DTypeQ, DTypeKV, DTypeO, IdType>, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1664
+            instantiation of "cudaError_t flashinfer::mla::BatchMLAHostBatchAttention<HEAD_DIM_CKV,HEAD_DIM_KPE,Params>(Params, uint32_t, uint32_t, cudaStream_t) [with HEAD_DIM_CKV=512U, HEAD_DIM_KPE=64U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 367 of /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu
+
+/mnt/data/rtx/projects/flashinfer/include/flashinfer/attention/mla_host_batch.cuh(955): error: more than one instance of overloaded function "max" matches the argument list:
+            function "max(unsigned int, unsigned int)" (declared at line 1023 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned int, int)" (declared at line 1033 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned long, unsigned long)" (declared at line 1057 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(long, unsigned long)" (declared at line 1075 of /usr/local/cuda/include/crt/math_functions.hpp)
+            argument types are: (unsigned int, unsigned long)
+        constexpr uint32_t VECS = max(1u, VEC_SIZE * sizeof(DTypeO) / 16);
+                                  ^
+          detected during:
+            instantiation of "void flashinfer::mla::merge_host_batch_chunks<KTraits,VEC_SIZE,Params>(const Params &) [with KTraits=flashinfer::mla::KernelTraits<false, 1U, false, 512U, 64U, 64U, 16U, DTypeQ, DTypeKV, DTypeO, IdType>, VEC_SIZE=2U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1612
+            instantiation of "void flashinfer::mla::BatchMLAHostBatchKernel<KTraits,Params>(Params) [with KTraits=flashinfer::mla::KernelTraits<false, 1U, false, 512U, 64U, 64U, 16U, DTypeQ, DTypeKV, DTypeO, IdType>, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1664
+            instantiation of "cudaError_t flashinfer::mla::BatchMLAHostBatchAttention<HEAD_DIM_CKV,HEAD_DIM_KPE,Params>(Params, uint32_t, uint32_t, cudaStream_t) [with HEAD_DIM_CKV=512U, HEAD_DIM_KPE=64U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 367 of /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu
+
+/mnt/data/rtx/projects/flashinfer/include/flashinfer/attention/mla_host_batch.cuh(955): error: more than one instance of overloaded function "max" matches the argument list:
+            function "max(unsigned int, unsigned int)" (declared at line 1023 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned int, int)" (declared at line 1033 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned long, unsigned long)" (declared at line 1057 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(long, unsigned long)" (declared at line 1075 of /usr/local/cuda/include/crt/math_functions.hpp)
+            argument types are: (unsigned int, unsigned long)
+        constexpr uint32_t VECS = max(1u, VEC_SIZE * sizeof(DTypeO) / 16);
+                                  ^
+          detected during:
+            instantiation of "void flashinfer::mla::merge_host_batch_chunks<KTraits,VEC_SIZE,Params>(const Params &) [with KTraits=flashinfer::mla::KernelTraits<false, 1U, false, 512U, 64U, 64U, 16U, DTypeQ, DTypeKV, DTypeO, IdType>, VEC_SIZE=4U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1614
+            instantiation of "void flashinfer::mla::BatchMLAHostBatchKernel<KTraits,Params>(Params) [with KTraits=flashinfer::mla::KernelTraits<false, 1U, false, 512U, 64U, 64U, 16U, DTypeQ, DTypeKV, DTypeO, IdType>, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1664
+            instantiation of "cudaError_t flashinfer::mla::BatchMLAHostBatchAttention<HEAD_DIM_CKV,HEAD_DIM_KPE,Params>(Params, uint32_t, uint32_t, cudaStream_t) [with HEAD_DIM_CKV=512U, HEAD_DIM_KPE=64U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 367 of /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu
+
+/mnt/data/rtx/projects/flashinfer/include/flashinfer/attention/mla_host_batch.cuh(955): error: more than one instance of overloaded function "max" matches the argument list:
+            function "max(unsigned int, unsigned int)" (declared at line 1023 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned int, int)" (declared at line 1033 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(unsigned long, unsigned long)" (declared at line 1057 of /usr/local/cuda/include/crt/math_functions.hpp)
+            function "max(long, unsigned long)" (declared at line 1075 of /usr/local/cuda/include/crt/math_functions.hpp)
+            argument types are: (unsigned int, unsigned long)
+        constexpr uint32_t VECS = max(1u, VEC_SIZE * sizeof(DTypeO) / 16);
+                                  ^
+          detected during:
+            instantiation of "void flashinfer::mla::merge_host_batch_chunks<KTraits,VEC_SIZE,Params>(const Params &) [with KTraits=flashinfer::mla::KernelTraits<false, 1U, false, 512U, 64U, 64U, 16U, DTypeQ, DTypeKV, DTypeO, IdType>, VEC_SIZE=8U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1616
+            instantiation of "void flashinfer::mla::BatchMLAHostBatchKernel<KTraits,Params>(Params) [with KTraits=flashinfer::mla::KernelTraits<false, 1U, false, 512U, 64U, 64U, 16U, DTypeQ, DTypeKV, DTypeO, IdType>, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 1664
+            instantiation of "cudaError_t flashinfer::mla::BatchMLAHostBatchAttention<HEAD_DIM_CKV,HEAD_DIM_KPE,Params>(Params, uint32_t, uint32_t, cudaStream_t) [with HEAD_DIM_CKV=512U, HEAD_DIM_KPE=64U, Params=flashinfer::MLAHostBatchParams<DTypeQ, DTypeKV, DTypeO, IdType>]" at line 367 of /mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu
+
+12 errors detected in the compilation of "/mnt/data/rtx/projects/flashinfer/temp/jit_emu/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu".
+ninja: build stopped: subcommand failed.
+

@@ -1,0 +1,4 @@
+bandwidth {'dma_contiguous_GBps': 250.45605051168405, 'sm_gather_random_GBps': 71.71984241340462}
+tier=peer requests=1 mtp=1 rows=1 steady(mean of last half, us): ours_stage=68.1 ours_inplace=81.0 misses={'ours_stage': 151, 'ours_inplace': 152} unique_uncached=2047
+tier=peer requests=4 mtp=1 rows=4 steady(mean of last half, us): ours_stage=93.3 ours_inplace=111.6 misses={'ours_stage': 580, 'ours_inplace': 580} unique_uncached=8188
+results=/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_small/guarded_base_g100_l20000_mtp1.json

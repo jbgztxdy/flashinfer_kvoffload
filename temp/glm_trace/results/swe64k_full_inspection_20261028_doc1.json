@@ -1,0 +1,4049 @@
+{
+  "trace": "traces/swe64k_full_20261028/doc1.pt",
+  "loss": "traces/swe64k_full_20261028/loss.pt",
+  "trace_sha256": "5ed5f266712eb230c2bba5fbfa80b06da872ef688e9806e5b354b98da8c2a79a",
+  "loss_sha256": "7c8d8117c074190d269022188850986cb6645a1995a31094d30d3d0b7b7c1536",
+  "tokens": 65536,
+  "selections_shape": [
+    21,
+    16,
+    1024,
+    2048
+  ],
+  "layers": [
+    0,
+    1,
+    2,
+    6,
+    10,
+    14,
+    18,
+    22,
+    26,
+    30,
+    34,
+    38,
+    42,
+    46,
+    50,
+    54,
+    58,
+    62,
+    66,
+    70,
+    74
+  ],
+  "members": [
+    "chatcmpl-19926efb003d74d35cc187c3b01edb15"
+  ],
+  "meta": {
+    "instance_id": "django-json-api__django-rest-framework-json-api-1220",
+    "repo": "django-json-api/django-rest-framework-json-api",
+    "full_tokens": 121172
+  },
+  "recorded_window_loss": 5.970832347869873,
+  "all_position_loss": {
+    "count": 65535,
+    "mean": 5.747539402316144,
+    "p50": 3.736640453338623,
+    "p90": 14.754433631896973,
+    "p99": 20.09756088256836,
+    "max": 31.687618255615234
+  },
+  "loss_by_target_role": {
+    "system": {
+      "count": 5674,
+      "mean": 4.1775653261139905,
+      "p50": 3.172842502593994,
+      "p90": 9.972212791442871,
+      "p99": 14.625008583068848,
+      "max": 23.531278610229492
+    },
+    "user": {
+      "count": 1564,
+      "mean": 2.782843931442199,
+      "p50": 1.2305318117141724,
+      "p90": 8.132352828979492,
+      "p99": 13.392138481140137,
+      "max": 18.870220184326172
+    },
+    "assistant": {
+      "count": 12863,
+      "mean": 0.422088782794338,
+      "p50": 6.568216485902667e-05,
+      "p90": 0.88185054063797,
+      "p99": 9.688133239746094,
+      "max": 19.89205551147461
+    },
+    "tool": {
+      "count": 45434,
+      "mean": 7.553369572314972,
+      "p50": 7.624472618103027,
+      "p90": 15.830689430236816,
+      "p99": 20.73563003540039,
+      "max": 31.687618255615234
+    }
+  },
+  "blocks_256": [
+    {
+      "start": 0,
+      "end": 256,
+      "mean": 3.6098363399505615,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 256,
+      "end": 512,
+      "mean": 4.434213161468506,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 512,
+      "end": 768,
+      "mean": 3.9815056324005127,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 768,
+      "end": 1024,
+      "mean": 3.8554582595825195,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 1024,
+      "end": 1280,
+      "mean": 5.089231491088867,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 1280,
+      "end": 1536,
+      "mean": 5.594608306884766,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 1536,
+      "end": 1792,
+      "mean": 6.194738864898682,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 1792,
+      "end": 2048,
+      "mean": 5.818294525146484,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 2048,
+      "end": 2304,
+      "mean": 5.358396530151367,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 2304,
+      "end": 2560,
+      "mean": 5.111114501953125,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 2560,
+      "end": 2816,
+      "mean": 3.5188052654266357,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 2816,
+      "end": 3072,
+      "mean": 4.890239238739014,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 3072,
+      "end": 3328,
+      "mean": 5.2622504234313965,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 3328,
+      "end": 3584,
+      "mean": 3.241565465927124,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 3584,
+      "end": 3840,
+      "mean": 3.3796472549438477,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 3840,
+      "end": 4096,
+      "mean": 3.419877529144287,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 4096,
+      "end": 4352,
+      "mean": 2.9938485622406006,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 4352,
+      "end": 4608,
+      "mean": 3.125983238220215,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 4608,
+      "end": 4864,
+      "mean": 3.032703399658203,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 4864,
+      "end": 5120,
+      "mean": 2.6909468173980713,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 5120,
+      "end": 5376,
+      "mean": 3.9311563968658447,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 5376,
+      "end": 5632,
+      "mean": 3.3724093437194824,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 5632,
+      "end": 5888,
+      "mean": 2.7947211265563965,
+      "target_role_counts": {
+        "system": 42,
+        "user": 214,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 5888,
+      "end": 6144,
+      "mean": 1.7944369316101074,
+      "target_role_counts": {
+        "system": 0,
+        "user": 256,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 6144,
+      "end": 6400,
+      "mean": 3.1388492584228516,
+      "target_role_counts": {
+        "system": 0,
+        "user": 256,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 6400,
+      "end": 6656,
+      "mean": 3.056735038757324,
+      "target_role_counts": {
+        "system": 0,
+        "user": 256,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 6656,
+      "end": 6912,
+      "mean": 2.8462636470794678,
+      "target_role_counts": {
+        "system": 0,
+        "user": 256,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 6912,
+      "end": 7168,
+      "mean": 2.8819613456726074,
+      "target_role_counts": {
+        "system": 0,
+        "user": 256,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 7168,
+      "end": 7424,
+      "mean": 1.8771889209747314,
+      "target_role_counts": {
+        "system": 0,
+        "user": 70,
+        "assistant": 186,
+        "tool": 0
+      }
+    },
+    {
+      "start": 7424,
+      "end": 7680,
+      "mean": 1.1864821910858154,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 247,
+        "tool": 9
+      }
+    },
+    {
+      "start": 7680,
+      "end": 7936,
+      "mean": 0.7914343476295471,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 7936,
+      "end": 8192,
+      "mean": 2.856973648071289,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 104,
+        "tool": 152
+      }
+    },
+    {
+      "start": 8192,
+      "end": 8448,
+      "mean": 5.703071594238281,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 34,
+        "tool": 222
+      }
+    },
+    {
+      "start": 8448,
+      "end": 8704,
+      "mean": 8.80923080444336,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 8704,
+      "end": 8960,
+      "mean": 9.891824722290039,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 8960,
+      "end": 9216,
+      "mean": 9.631629943847656,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 9216,
+      "end": 9472,
+      "mean": 8.709613800048828,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 9472,
+      "end": 9728,
+      "mean": 8.569725036621094,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 9728,
+      "end": 9984,
+      "mean": 8.458478927612305,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 9984,
+      "end": 10240,
+      "mean": 6.2413153648376465,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 38,
+        "tool": 218
+      }
+    },
+    {
+      "start": 10240,
+      "end": 10496,
+      "mean": 5.541707992553711,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 10496,
+      "end": 10752,
+      "mean": 5.362925052642822,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 10752,
+      "end": 11008,
+      "mean": 7.181948661804199,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 11008,
+      "end": 11264,
+      "mean": 4.516815662384033,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 11264,
+      "end": 11520,
+      "mean": 5.404849529266357,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 11520,
+      "end": 11776,
+      "mean": 6.46337890625,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 11776,
+      "end": 12032,
+      "mean": 5.473952770233154,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 12032,
+      "end": 12288,
+      "mean": 4.739565372467041,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 12288,
+      "end": 12544,
+      "mean": 4.3344011306762695,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 52,
+        "tool": 204
+      }
+    },
+    {
+      "start": 12544,
+      "end": 12800,
+      "mean": 2.7019636631011963,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 43,
+        "tool": 213
+      }
+    },
+    {
+      "start": 12800,
+      "end": 13056,
+      "mean": 6.643185615539551,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 13056,
+      "end": 13312,
+      "mean": 7.590237140655518,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 50,
+        "tool": 206
+      }
+    },
+    {
+      "start": 13312,
+      "end": 13568,
+      "mean": 3.0957818031311035,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 13568,
+      "end": 13824,
+      "mean": 5.264132976531982,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 62,
+        "tool": 194
+      }
+    },
+    {
+      "start": 13824,
+      "end": 14080,
+      "mean": 6.557662010192871,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 55,
+        "tool": 201
+      }
+    },
+    {
+      "start": 14080,
+      "end": 14336,
+      "mean": 5.188065052032471,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 117,
+        "tool": 139
+      }
+    },
+    {
+      "start": 14336,
+      "end": 14592,
+      "mean": 10.063605308532715,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 14592,
+      "end": 14848,
+      "mean": 10.795242309570312,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 14848,
+      "end": 15104,
+      "mean": 9.527799606323242,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 39,
+        "tool": 217
+      }
+    },
+    {
+      "start": 15104,
+      "end": 15360,
+      "mean": 3.1186766624450684,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 15,
+        "tool": 241
+      }
+    },
+    {
+      "start": 15360,
+      "end": 15616,
+      "mean": 3.947868585586548,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 15616,
+      "end": 15872,
+      "mean": 4.02213191986084,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 15872,
+      "end": 16128,
+      "mean": 4.421897888183594,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 16128,
+      "end": 16384,
+      "mean": 4.1566996574401855,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 16384,
+      "end": 16640,
+      "mean": 3.466470956802368,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 16640,
+      "end": 16896,
+      "mean": 4.648367881774902,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 16896,
+      "end": 17152,
+      "mean": 5.924263954162598,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 17152,
+      "end": 17408,
+      "mean": 5.782479286193848,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 17408,
+      "end": 17664,
+      "mean": 5.966005802154541,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 17664,
+      "end": 17920,
+      "mean": 6.448013782501221,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 17920,
+      "end": 18176,
+      "mean": 7.2249321937561035,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 18176,
+      "end": 18432,
+      "mean": 6.258702278137207,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 18432,
+      "end": 18688,
+      "mean": 5.325738906860352,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 18688,
+      "end": 18944,
+      "mean": 5.675538063049316,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 18944,
+      "end": 19200,
+      "mean": 6.331838130950928,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 19200,
+      "end": 19456,
+      "mean": 6.014300346374512,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 19456,
+      "end": 19712,
+      "mean": 8.3307466506958,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 19712,
+      "end": 19968,
+      "mean": 5.1083149909973145,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 60,
+        "tool": 196
+      }
+    },
+    {
+      "start": 19968,
+      "end": 20224,
+      "mean": 5.2850847244262695,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 75,
+        "tool": 181
+      }
+    },
+    {
+      "start": 20224,
+      "end": 20480,
+      "mean": 3.68800950050354,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 20480,
+      "end": 20736,
+      "mean": 4.624265193939209,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 65,
+        "tool": 191
+      }
+    },
+    {
+      "start": 20736,
+      "end": 20992,
+      "mean": 4.696658134460449,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 52,
+        "tool": 204
+      }
+    },
+    {
+      "start": 20992,
+      "end": 21248,
+      "mean": 4.369673728942871,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 60,
+        "tool": 196
+      }
+    },
+    {
+      "start": 21248,
+      "end": 21504,
+      "mean": 4.420472621917725,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 21504,
+      "end": 21760,
+      "mean": 4.158328056335449,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 16,
+        "tool": 240
+      }
+    },
+    {
+      "start": 21760,
+      "end": 22016,
+      "mean": 1.4042121171951294,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 48,
+        "tool": 208
+      }
+    },
+    {
+      "start": 22016,
+      "end": 22272,
+      "mean": 4.796708583831787,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 22272,
+      "end": 22528,
+      "mean": 5.3389081954956055,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 22528,
+      "end": 22784,
+      "mean": 5.115931510925293,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 22784,
+      "end": 23040,
+      "mean": 4.590874671936035,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 78,
+        "tool": 178
+      }
+    },
+    {
+      "start": 23040,
+      "end": 23296,
+      "mean": 5.930734634399414,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 88,
+        "tool": 168
+      }
+    },
+    {
+      "start": 23296,
+      "end": 23552,
+      "mean": 4.318721771240234,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 24,
+        "tool": 232
+      }
+    },
+    {
+      "start": 23552,
+      "end": 23808,
+      "mean": 3.6680636405944824,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 45,
+        "tool": 211
+      }
+    },
+    {
+      "start": 23808,
+      "end": 24064,
+      "mean": 4.230636119842529,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 61,
+        "tool": 195
+      }
+    },
+    {
+      "start": 24064,
+      "end": 24320,
+      "mean": 1.3540759086608887,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 229,
+        "tool": 27
+      }
+    },
+    {
+      "start": 24320,
+      "end": 24576,
+      "mean": 1.3819568157196045,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 247,
+        "tool": 9
+      }
+    },
+    {
+      "start": 24576,
+      "end": 24832,
+      "mean": 0.65296471118927,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 24832,
+      "end": 25088,
+      "mean": 0.4700954556465149,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 25088,
+      "end": 25344,
+      "mean": 1.1023489236831665,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 227,
+        "tool": 29
+      }
+    },
+    {
+      "start": 25344,
+      "end": 25600,
+      "mean": 5.283925533294678,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 17,
+        "tool": 239
+      }
+    },
+    {
+      "start": 25600,
+      "end": 25856,
+      "mean": 4.316807270050049,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 25856,
+      "end": 26112,
+      "mean": 6.314007759094238,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 26112,
+      "end": 26368,
+      "mean": 10.131129264831543,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 26368,
+      "end": 26624,
+      "mean": 12.084394454956055,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 26624,
+      "end": 26880,
+      "mean": 11.690108299255371,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 26880,
+      "end": 27136,
+      "mean": 12.770639419555664,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 27136,
+      "end": 27392,
+      "mean": 11.73678207397461,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 27392,
+      "end": 27648,
+      "mean": 8.411224365234375,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 27648,
+      "end": 27904,
+      "mean": 6.213506698608398,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 27904,
+      "end": 28160,
+      "mean": 8.47156810760498,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 28160,
+      "end": 28416,
+      "mean": 9.493165016174316,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 28416,
+      "end": 28672,
+      "mean": 8.341458320617676,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 28672,
+      "end": 28928,
+      "mean": 9.544322967529297,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 28928,
+      "end": 29184,
+      "mean": 9.276298522949219,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 29184,
+      "end": 29440,
+      "mean": 11.660786628723145,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 29440,
+      "end": 29696,
+      "mean": 13.195915222167969,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 29696,
+      "end": 29952,
+      "mean": 13.46223258972168,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 29952,
+      "end": 30208,
+      "mean": 13.327582359313965,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 30208,
+      "end": 30464,
+      "mean": 14.04037094116211,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 30464,
+      "end": 30720,
+      "mean": 13.51913833618164,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 30720,
+      "end": 30976,
+      "mean": 12.205428123474121,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 30976,
+      "end": 31232,
+      "mean": 10.30511474609375,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 31232,
+      "end": 31488,
+      "mean": 11.162190437316895,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 31488,
+      "end": 31744,
+      "mean": 11.605401992797852,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 31744,
+      "end": 32000,
+      "mean": 10.530038833618164,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 32000,
+      "end": 32256,
+      "mean": 6.735030651092529,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 73,
+        "tool": 183
+      }
+    },
+    {
+      "start": 32256,
+      "end": 32512,
+      "mean": 8.232551574707031,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 32512,
+      "end": 32768,
+      "mean": 7.663135528564453,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 45,
+        "tool": 211
+      }
+    },
+    {
+      "start": 32768,
+      "end": 33024,
+      "mean": 10.995820999145508,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 33024,
+      "end": 33280,
+      "mean": 4.9015326499938965,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 133,
+        "tool": 123
+      }
+    },
+    {
+      "start": 33280,
+      "end": 33536,
+      "mean": 7.442697048187256,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 52,
+        "tool": 204
+      }
+    },
+    {
+      "start": 33536,
+      "end": 33792,
+      "mean": 6.081668853759766,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 38,
+        "tool": 218
+      }
+    },
+    {
+      "start": 33792,
+      "end": 34048,
+      "mean": 4.280089378356934,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 50,
+        "tool": 206
+      }
+    },
+    {
+      "start": 34048,
+      "end": 34304,
+      "mean": 5.632638454437256,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 34304,
+      "end": 34560,
+      "mean": 6.513115882873535,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 78,
+        "tool": 178
+      }
+    },
+    {
+      "start": 34560,
+      "end": 34816,
+      "mean": 4.91425895690918,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 35,
+        "tool": 221
+      }
+    },
+    {
+      "start": 34816,
+      "end": 35072,
+      "mean": 3.8954148292541504,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 35072,
+      "end": 35328,
+      "mean": 2.303943157196045,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 145,
+        "tool": 111
+      }
+    },
+    {
+      "start": 35328,
+      "end": 35584,
+      "mean": 0.00021939381258562207,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 35584,
+      "end": 35840,
+      "mean": 0.00016192060138564557,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 35840,
+      "end": 36096,
+      "mean": 0.05996658280491829,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 36096,
+      "end": 36352,
+      "mean": 0.3269212245941162,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 36352,
+      "end": 36608,
+      "mean": 0.11987530440092087,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 36608,
+      "end": 36864,
+      "mean": 0.11613363027572632,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 36864,
+      "end": 37120,
+      "mean": 2.3395142555236816,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 198,
+        "tool": 58
+      }
+    },
+    {
+      "start": 37120,
+      "end": 37376,
+      "mean": 5.726247787475586,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 37376,
+      "end": 37632,
+      "mean": 7.924071311950684,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 37632,
+      "end": 37888,
+      "mean": 6.398746490478516,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 37888,
+      "end": 38144,
+      "mean": 4.823100566864014,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 38144,
+      "end": 38400,
+      "mean": 6.376580238342285,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 38400,
+      "end": 38656,
+      "mean": 5.913123607635498,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 38656,
+      "end": 38912,
+      "mean": 5.710829734802246,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 37,
+        "tool": 219
+      }
+    },
+    {
+      "start": 38912,
+      "end": 39168,
+      "mean": 4.514640808105469,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 115,
+        "tool": 141
+      }
+    },
+    {
+      "start": 39168,
+      "end": 39424,
+      "mean": 4.130725383758545,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 37,
+        "tool": 219
+      }
+    },
+    {
+      "start": 39424,
+      "end": 39680,
+      "mean": 8.531472206115723,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 64,
+        "tool": 192
+      }
+    },
+    {
+      "start": 39680,
+      "end": 39936,
+      "mean": 9.670743942260742,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 39936,
+      "end": 40192,
+      "mean": 5.567546844482422,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 63,
+        "tool": 193
+      }
+    },
+    {
+      "start": 40192,
+      "end": 40448,
+      "mean": 4.639151573181152,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 40448,
+      "end": 40704,
+      "mean": 4.147072792053223,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 68,
+        "tool": 188
+      }
+    },
+    {
+      "start": 40704,
+      "end": 40960,
+      "mean": 11.563295364379883,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 40960,
+      "end": 41216,
+      "mean": 6.8621015548706055,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 65,
+        "tool": 191
+      }
+    },
+    {
+      "start": 41216,
+      "end": 41472,
+      "mean": 4.033556938171387,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 55,
+        "tool": 201
+      }
+    },
+    {
+      "start": 41472,
+      "end": 41728,
+      "mean": 2.9843099117279053,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 22,
+        "tool": 234
+      }
+    },
+    {
+      "start": 41728,
+      "end": 41984,
+      "mean": 3.9586167335510254,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 98,
+        "tool": 158
+      }
+    },
+    {
+      "start": 41984,
+      "end": 42240,
+      "mean": 0.47976604104042053,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 42240,
+      "end": 42496,
+      "mean": 0.27577319741249084,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 42496,
+      "end": 42752,
+      "mean": 0.18919578194618225,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 42752,
+      "end": 43008,
+      "mean": 1.704617534414865e-05,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 43008,
+      "end": 43264,
+      "mean": 0.00034242813126184046,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 43264,
+      "end": 43520,
+      "mean": 8.038587111514062e-06,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 43520,
+      "end": 43776,
+      "mean": 2.6809208393096924,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 189,
+        "tool": 67
+      }
+    },
+    {
+      "start": 43776,
+      "end": 44032,
+      "mean": 5.038570404052734,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 44032,
+      "end": 44288,
+      "mean": 4.059885501861572,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 44288,
+      "end": 44544,
+      "mean": 3.9772348403930664,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 44544,
+      "end": 44800,
+      "mean": 4.012833118438721,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 37,
+        "tool": 219
+      }
+    },
+    {
+      "start": 44800,
+      "end": 45056,
+      "mean": 6.211301326751709,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 45056,
+      "end": 45312,
+      "mean": 9.232410430908203,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 45312,
+      "end": 45568,
+      "mean": 9.9054594039917,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 45568,
+      "end": 45824,
+      "mean": 11.919313430786133,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 45824,
+      "end": 46080,
+      "mean": 13.072652816772461,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 46080,
+      "end": 46336,
+      "mean": 13.208206176757812,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 46336,
+      "end": 46592,
+      "mean": 12.72822380065918,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 46592,
+      "end": 46848,
+      "mean": 13.592467308044434,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 46848,
+      "end": 47104,
+      "mean": 12.125160217285156,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 47104,
+      "end": 47360,
+      "mean": 8.289828300476074,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 47360,
+      "end": 47616,
+      "mean": 10.225231170654297,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 47616,
+      "end": 47872,
+      "mean": 11.55316162109375,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 47872,
+      "end": 48128,
+      "mean": 11.380694389343262,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 48128,
+      "end": 48384,
+      "mean": 6.144244194030762,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 89,
+        "tool": 167
+      }
+    },
+    {
+      "start": 48384,
+      "end": 48640,
+      "mean": 0.28692442178726196,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 48640,
+      "end": 48896,
+      "mean": 0.11376593261957169,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 48896,
+      "end": 49152,
+      "mean": 0.020214814692735672,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 49152,
+      "end": 49408,
+      "mean": 2.152275783373625e-06,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 49408,
+      "end": 49664,
+      "mean": 1.6943116861511953e-05,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 49664,
+      "end": 49920,
+      "mean": 6.507945537567139,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 3,
+        "tool": 253
+      }
+    },
+    {
+      "start": 49920,
+      "end": 50176,
+      "mean": 4.576381683349609,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 50176,
+      "end": 50432,
+      "mean": 4.647115230560303,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 50432,
+      "end": 50688,
+      "mean": 4.704606056213379,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 84,
+        "tool": 172
+      }
+    },
+    {
+      "start": 50688,
+      "end": 50944,
+      "mean": 0.3570369482040405,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 50944,
+      "end": 51200,
+      "mean": 3.7349302768707275,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 161,
+        "tool": 95
+      }
+    },
+    {
+      "start": 51200,
+      "end": 51456,
+      "mean": 9.94597053527832,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 51456,
+      "end": 51712,
+      "mean": 3.931483268737793,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 51712,
+      "end": 51968,
+      "mean": 12.23483657836914,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 51968,
+      "end": 52224,
+      "mean": 9.934638023376465,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 52224,
+      "end": 52480,
+      "mean": 7.0993266105651855,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 52480,
+      "end": 52736,
+      "mean": 5.333758354187012,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 52736,
+      "end": 52992,
+      "mean": 7.396275043487549,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 52992,
+      "end": 53248,
+      "mean": 7.595478057861328,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 53248,
+      "end": 53504,
+      "mean": 11.098275184631348,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 53504,
+      "end": 53760,
+      "mean": 7.537913799285889,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 53760,
+      "end": 54016,
+      "mean": 8.068198204040527,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 54016,
+      "end": 54272,
+      "mean": 10.410176277160645,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 54272,
+      "end": 54528,
+      "mean": 11.152400970458984,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 54528,
+      "end": 54784,
+      "mean": 11.306280136108398,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 54784,
+      "end": 55040,
+      "mean": 7.066979885101318,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 55040,
+      "end": 55296,
+      "mean": 3.5434961318969727,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 90,
+        "tool": 166
+      }
+    },
+    {
+      "start": 55296,
+      "end": 55552,
+      "mean": 5.661026477813721,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 78,
+        "tool": 178
+      }
+    },
+    {
+      "start": 55552,
+      "end": 55808,
+      "mean": 4.760721206665039,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 55808,
+      "end": 56064,
+      "mean": 4.78654670715332,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 75,
+        "tool": 181
+      }
+    },
+    {
+      "start": 56064,
+      "end": 56320,
+      "mean": 10.005741119384766,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 56320,
+      "end": 56576,
+      "mean": 5.793694496154785,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 102,
+        "tool": 154
+      }
+    },
+    {
+      "start": 56576,
+      "end": 56832,
+      "mean": 0.19999314844608307,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 56832,
+      "end": 57088,
+      "mean": 0.21060743927955627,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 57088,
+      "end": 57344,
+      "mean": 1.0906199216842651,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 230,
+        "tool": 26
+      }
+    },
+    {
+      "start": 57344,
+      "end": 57600,
+      "mean": 5.726357460021973,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 57600,
+      "end": 57856,
+      "mean": 4.547766208648682,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 57856,
+      "end": 58112,
+      "mean": 6.707239151000977,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 55,
+        "tool": 201
+      }
+    },
+    {
+      "start": 58112,
+      "end": 58368,
+      "mean": 9.930206298828125,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 58368,
+      "end": 58624,
+      "mean": 2.551945209503174,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 58624,
+      "end": 58880,
+      "mean": 5.653162002563477,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 58880,
+      "end": 59136,
+      "mean": 6.555195331573486,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 88,
+        "tool": 168
+      }
+    },
+    {
+      "start": 59136,
+      "end": 59392,
+      "mean": 3.5762252807617188,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 59392,
+      "end": 59648,
+      "mean": 4.290482521057129,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 109,
+        "tool": 147
+      }
+    },
+    {
+      "start": 59648,
+      "end": 59904,
+      "mean": 2.434600353240967,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 125,
+        "tool": 131
+      }
+    },
+    {
+      "start": 59904,
+      "end": 60160,
+      "mean": 0.21147552132606506,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 60160,
+      "end": 60416,
+      "mean": 1.8993473052978516,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 151,
+        "tool": 105
+      }
+    },
+    {
+      "start": 60416,
+      "end": 60672,
+      "mean": 5.403049468994141,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 9,
+        "tool": 247
+      }
+    },
+    {
+      "start": 60672,
+      "end": 60928,
+      "mean": 0.3333563208580017,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 245,
+        "tool": 11
+      }
+    },
+    {
+      "start": 60928,
+      "end": 61184,
+      "mean": 0.002352193696424365,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 256,
+        "tool": 0
+      }
+    },
+    {
+      "start": 61184,
+      "end": 61440,
+      "mean": 3.3356122970581055,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 104,
+        "tool": 152
+      }
+    },
+    {
+      "start": 61440,
+      "end": 61696,
+      "mean": 1.1432939767837524,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 234,
+        "tool": 22
+      }
+    },
+    {
+      "start": 61696,
+      "end": 61952,
+      "mean": 0.9373237490653992,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 229,
+        "tool": 27
+      }
+    },
+    {
+      "start": 61952,
+      "end": 62208,
+      "mean": 5.716548919677734,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 62208,
+      "end": 62464,
+      "mean": 5.4210638999938965,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 62464,
+      "end": 62720,
+      "mean": 6.198051452636719,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 71,
+        "tool": 185
+      }
+    },
+    {
+      "start": 62720,
+      "end": 62976,
+      "mean": 10.14670181274414,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 62976,
+      "end": 63232,
+      "mean": 2.289746046066284,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 63232,
+      "end": 63488,
+      "mean": 7.9867377281188965,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 63488,
+      "end": 63744,
+      "mean": 11.799596786499023,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 63744,
+      "end": 64000,
+      "mean": 6.372695446014404,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 64000,
+      "end": 64256,
+      "mean": 10.474674224853516,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 64256,
+      "end": 64512,
+      "mean": 8.727763175964355,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 64512,
+      "end": 64768,
+      "mean": 1.1801421642303467,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 64768,
+      "end": 65024,
+      "mean": 9.159955024719238,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 65024,
+      "end": 65280,
+      "mean": 11.40887451171875,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 65280,
+      "end": 65536,
+      "mean": 7.3486552238464355,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 255
+      }
+    }
+  ],
+  "high_blocks_after_first": [
+    {
+      "start": 1536,
+      "end": 1792,
+      "mean": 6.194738864898682,
+      "target_role_counts": {
+        "system": 256,
+        "user": 0,
+        "assistant": 0,
+        "tool": 0
+      }
+    },
+    {
+      "start": 8448,
+      "end": 8704,
+      "mean": 8.80923080444336,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 8704,
+      "end": 8960,
+      "mean": 9.891824722290039,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 8960,
+      "end": 9216,
+      "mean": 9.631629943847656,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 9216,
+      "end": 9472,
+      "mean": 8.709613800048828,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 9472,
+      "end": 9728,
+      "mean": 8.569725036621094,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 9728,
+      "end": 9984,
+      "mean": 8.458478927612305,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 9984,
+      "end": 10240,
+      "mean": 6.2413153648376465,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 38,
+        "tool": 218
+      }
+    },
+    {
+      "start": 10752,
+      "end": 11008,
+      "mean": 7.181948661804199,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 11520,
+      "end": 11776,
+      "mean": 6.46337890625,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 12800,
+      "end": 13056,
+      "mean": 6.643185615539551,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 13056,
+      "end": 13312,
+      "mean": 7.590237140655518,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 50,
+        "tool": 206
+      }
+    },
+    {
+      "start": 13824,
+      "end": 14080,
+      "mean": 6.557662010192871,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 55,
+        "tool": 201
+      }
+    },
+    {
+      "start": 14336,
+      "end": 14592,
+      "mean": 10.063605308532715,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 14592,
+      "end": 14848,
+      "mean": 10.795242309570312,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 14848,
+      "end": 15104,
+      "mean": 9.527799606323242,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 39,
+        "tool": 217
+      }
+    },
+    {
+      "start": 17664,
+      "end": 17920,
+      "mean": 6.448013782501221,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 17920,
+      "end": 18176,
+      "mean": 7.2249321937561035,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 18176,
+      "end": 18432,
+      "mean": 6.258702278137207,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 18944,
+      "end": 19200,
+      "mean": 6.331838130950928,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 19200,
+      "end": 19456,
+      "mean": 6.014300346374512,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 19456,
+      "end": 19712,
+      "mean": 8.3307466506958,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 25856,
+      "end": 26112,
+      "mean": 6.314007759094238,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 26112,
+      "end": 26368,
+      "mean": 10.131129264831543,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 26368,
+      "end": 26624,
+      "mean": 12.084394454956055,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 26624,
+      "end": 26880,
+      "mean": 11.690108299255371,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 26880,
+      "end": 27136,
+      "mean": 12.770639419555664,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 27136,
+      "end": 27392,
+      "mean": 11.73678207397461,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 27392,
+      "end": 27648,
+      "mean": 8.411224365234375,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 27648,
+      "end": 27904,
+      "mean": 6.213506698608398,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 27904,
+      "end": 28160,
+      "mean": 8.47156810760498,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 28160,
+      "end": 28416,
+      "mean": 9.493165016174316,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 28416,
+      "end": 28672,
+      "mean": 8.341458320617676,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 28672,
+      "end": 28928,
+      "mean": 9.544322967529297,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 28928,
+      "end": 29184,
+      "mean": 9.276298522949219,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 29184,
+      "end": 29440,
+      "mean": 11.660786628723145,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 29440,
+      "end": 29696,
+      "mean": 13.195915222167969,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 29696,
+      "end": 29952,
+      "mean": 13.46223258972168,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 29952,
+      "end": 30208,
+      "mean": 13.327582359313965,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 30208,
+      "end": 30464,
+      "mean": 14.04037094116211,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 30464,
+      "end": 30720,
+      "mean": 13.51913833618164,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 30720,
+      "end": 30976,
+      "mean": 12.205428123474121,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 30976,
+      "end": 31232,
+      "mean": 10.30511474609375,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 31232,
+      "end": 31488,
+      "mean": 11.162190437316895,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 31488,
+      "end": 31744,
+      "mean": 11.605401992797852,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 31744,
+      "end": 32000,
+      "mean": 10.530038833618164,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 32000,
+      "end": 32256,
+      "mean": 6.735030651092529,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 73,
+        "tool": 183
+      }
+    },
+    {
+      "start": 32256,
+      "end": 32512,
+      "mean": 8.232551574707031,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 32512,
+      "end": 32768,
+      "mean": 7.663135528564453,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 45,
+        "tool": 211
+      }
+    },
+    {
+      "start": 32768,
+      "end": 33024,
+      "mean": 10.995820999145508,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 33280,
+      "end": 33536,
+      "mean": 7.442697048187256,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 52,
+        "tool": 204
+      }
+    },
+    {
+      "start": 33536,
+      "end": 33792,
+      "mean": 6.081668853759766,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 38,
+        "tool": 218
+      }
+    },
+    {
+      "start": 34304,
+      "end": 34560,
+      "mean": 6.513115882873535,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 78,
+        "tool": 178
+      }
+    },
+    {
+      "start": 37376,
+      "end": 37632,
+      "mean": 7.924071311950684,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 37632,
+      "end": 37888,
+      "mean": 6.398746490478516,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 38144,
+      "end": 38400,
+      "mean": 6.376580238342285,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 39424,
+      "end": 39680,
+      "mean": 8.531472206115723,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 64,
+        "tool": 192
+      }
+    },
+    {
+      "start": 39680,
+      "end": 39936,
+      "mean": 9.670743942260742,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 40704,
+      "end": 40960,
+      "mean": 11.563295364379883,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 40960,
+      "end": 41216,
+      "mean": 6.8621015548706055,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 65,
+        "tool": 191
+      }
+    },
+    {
+      "start": 44800,
+      "end": 45056,
+      "mean": 6.211301326751709,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 45056,
+      "end": 45312,
+      "mean": 9.232410430908203,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 45312,
+      "end": 45568,
+      "mean": 9.9054594039917,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 45568,
+      "end": 45824,
+      "mean": 11.919313430786133,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 45824,
+      "end": 46080,
+      "mean": 13.072652816772461,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 46080,
+      "end": 46336,
+      "mean": 13.208206176757812,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 46336,
+      "end": 46592,
+      "mean": 12.72822380065918,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 46592,
+      "end": 46848,
+      "mean": 13.592467308044434,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 46848,
+      "end": 47104,
+      "mean": 12.125160217285156,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 47104,
+      "end": 47360,
+      "mean": 8.289828300476074,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 47360,
+      "end": 47616,
+      "mean": 10.225231170654297,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 47616,
+      "end": 47872,
+      "mean": 11.55316162109375,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 47872,
+      "end": 48128,
+      "mean": 11.380694389343262,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 48128,
+      "end": 48384,
+      "mean": 6.144244194030762,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 89,
+        "tool": 167
+      }
+    },
+    {
+      "start": 49664,
+      "end": 49920,
+      "mean": 6.507945537567139,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 3,
+        "tool": 253
+      }
+    },
+    {
+      "start": 51200,
+      "end": 51456,
+      "mean": 9.94597053527832,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 51712,
+      "end": 51968,
+      "mean": 12.23483657836914,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 51968,
+      "end": 52224,
+      "mean": 9.934638023376465,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 52224,
+      "end": 52480,
+      "mean": 7.0993266105651855,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 52736,
+      "end": 52992,
+      "mean": 7.396275043487549,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 52992,
+      "end": 53248,
+      "mean": 7.595478057861328,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 53248,
+      "end": 53504,
+      "mean": 11.098275184631348,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 53504,
+      "end": 53760,
+      "mean": 7.537913799285889,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 53760,
+      "end": 54016,
+      "mean": 8.068198204040527,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 54016,
+      "end": 54272,
+      "mean": 10.410176277160645,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 54272,
+      "end": 54528,
+      "mean": 11.152400970458984,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 54528,
+      "end": 54784,
+      "mean": 11.306280136108398,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 54784,
+      "end": 55040,
+      "mean": 7.066979885101318,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 56064,
+      "end": 56320,
+      "mean": 10.005741119384766,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 57856,
+      "end": 58112,
+      "mean": 6.707239151000977,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 55,
+        "tool": 201
+      }
+    },
+    {
+      "start": 58112,
+      "end": 58368,
+      "mean": 9.930206298828125,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 58880,
+      "end": 59136,
+      "mean": 6.555195331573486,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 88,
+        "tool": 168
+      }
+    },
+    {
+      "start": 62464,
+      "end": 62720,
+      "mean": 6.198051452636719,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 71,
+        "tool": 185
+      }
+    },
+    {
+      "start": 62720,
+      "end": 62976,
+      "mean": 10.14670181274414,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 63232,
+      "end": 63488,
+      "mean": 7.9867377281188965,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 63488,
+      "end": 63744,
+      "mean": 11.799596786499023,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 63744,
+      "end": 64000,
+      "mean": 6.372695446014404,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 64000,
+      "end": 64256,
+      "mean": 10.474674224853516,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 64256,
+      "end": 64512,
+      "mean": 8.727763175964355,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 64768,
+      "end": 65024,
+      "mean": 9.159955024719238,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 65024,
+      "end": 65280,
+      "mean": 11.40887451171875,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 256
+      }
+    },
+    {
+      "start": 65280,
+      "end": 65536,
+      "mean": 7.3486552238464355,
+      "target_role_counts": {
+        "system": 0,
+        "user": 0,
+        "assistant": 0,
+        "tool": 255
+      }
+    }
+  ],
+  "thresholds": {
+    "assistant_mean": 1.5,
+    "block_mean": 6.0
+  },
+  "checks": {
+    "shape": true,
+    "all_21_indexer_layers": true,
+    "all_78_layers": true,
+    "positions": true,
+    "consecutive_windows": true,
+    "dtypes": true,
+    "score_rows": true,
+    "loss_finite": true
+  },
+  "gates": {
+    "data": true,
+    "assistant_loss": true,
+    "blocks_after_first": false
+  },
+  "ready_for_formal_capture": false
+}

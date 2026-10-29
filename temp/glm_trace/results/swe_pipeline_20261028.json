@@ -102,7 +102,7 @@
     {
       "job_id": 1079524,
       "name": "glm-swe64k-full",
-      "current_state": "PENDING (Priority)",
+      "current_state": "COMPLETED",
       "gpus": 8,
       "partition": "a01",
       "time_limit": "01:30:00",
@@ -111,24 +111,68 @@
       "groups": 16,
       "span": 1024,
       "window_plan": "results/swe_windows_64k.json",
-      "output": "traces/swe64k_full_20261028"
+      "output": "traces/swe64k_full_20261028",
+      "exit_code": "0:0",
+      "elapsed": "00:23:44",
+      "node": "g03"
     },
     {
       "job_id": 1079527,
       "name": "glm-swe64k-fullcheck",
-      "current_state": "PENDING (Dependency)",
+      "current_state": "FAILED",
       "gpus": 0,
       "dependency": "afterok:1079524",
       "script": "09_inspect_full.sbatch",
-      "output": "results/swe64k_full_inspection_20261028_doc{0..3}.json"
+      "output": "results/swe64k_full_inspection_20261028_doc{0..3}.json",
+      "exit_code": "1:0",
+      "elapsed": "00:02:38",
+      "node": "g59",
+      "reason": "All four saved-data/assistant-loss gates pass; all four block-loss gates fail."
+    },
+    {
+      "job_id": 1089312,
+      "name": "glm-assistant-export",
+      "current_state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:00:11",
+      "gpus": 0,
+      "doc": 1
+    },
+    {
+      "job_id": 1089313,
+      "name": "glm-assistant-export",
+      "current_state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:00:10",
+      "gpus": 0,
+      "doc": 3
+    },
+    {
+      "job_id": 1089379,
+      "name": "fi-tuned-assist-host",
+      "current_state": "PENDING (Dependency)",
+      "dependency": "afterany:1004362:1004363:1040680",
+      "gpus": 1,
+      "partition": "h01",
+      "time_limit": "00:20:00",
+      "source_tree": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer_tuned_20261029"
+    },
+    {
+      "job_id": 1089380,
+      "name": "fi-tuned-assist-peer",
+      "current_state": "PENDING (Dependency)",
+      "dependency": "afterok:1089379",
+      "gpus": 2,
+      "partition": "h01",
+      "time_limit": "00:20:00",
+      "source_tree": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer_tuned_20261029"
     }
   ],
   "remaining": [
-    "Inspect full four-document capture including complete assistant windows",
-    "A100 assistant-window and H800 replay with per-step hit rates, comparisons and both floors",
-    "H800 performance tuning awaits hardware jobs; conventional A100 tuning has continuing user authorization, single fused kernel retained"
+    "H800 hardware experiment results, then validate tuned kernel and full assistant replay with HiSparse, naive baselines and both floors",
+    "Continue kernel optimization, especially small batches and high latency; preserve one fused cooperative kernel"
   ],
-  "updated_at": "2026-10-28T18:37:08+08:00",
+  "updated_at": "2026-10-29T11:18:00+08:00",
   "initial_inspection_source_sha256": "cd87205b9df025b18555ea42eef55e311c8e850e6fce7440d64613f014ddc20e",
   "initial_collector_source_sha256": "a4c1e440e8dd16c3788e5e6b2458417a023cfac79e53949fb76da7a0766128ce",
   "future_full_capture_windows": {
@@ -153,7 +197,7 @@
       ]
     },
     "cpu_validated": true,
-    "gpu_validated": false,
+    "gpu_validated": true,
     "capture_args": "--window-plan results/swe_windows_64k.json",
     "job_1040875_uses_plan": false,
     "all_four_document_job_submitted": true,
@@ -175,7 +219,16 @@
         1079523,
         1079524
       ],
-      "log": "logs/watch_full_20261028.log"
+      "log": "logs/watch_full_20261028.log",
+      "state": "exited"
+    },
+    "tuned_h800": {
+      "pid": 1174145,
+      "jobs": [
+        1089379,
+        1089380
+      ],
+      "log": "logs/watch_tuned_20261029.log"
     }
   },
   "a100_64k_mixed_role_replay": {
@@ -188,6 +241,47 @@
     "max_abs": 0.004351377487182617,
     "assistant_only": false,
     "kernel_commit": "614655f1",
-    "h800_validated": false
+    "h800_validated": false,
+    "timing_limitation": "Original long enqueues did not verify the guard and can include CPU launch gaps. Superseded by guarded assistant replay and guarded old/new comparisons; raw data retained."
+  },
+  "assistant_exports": {
+    "jobs": [
+      1089312,
+      1089313
+    ],
+    "state": "COMPLETED",
+    "docs": [
+      1,
+      3
+    ],
+    "group_starts": [
+      [
+        35184,
+        41887,
+        48296
+      ],
+      [
+        50621
+      ]
+    ],
+    "source_data_checks": true,
+    "all_query_and_target_assistant": true,
+    "window_loss": [
+      0.12300314009189606,
+      0.2999023497104645,
+      0.18981535732746124,
+      0.26942890882492065
+    ]
+  },
+  "a100_assistant_replay": {
+    "state": "complete",
+    "outputs": "results/a100_64k_assistant_20261029",
+    "timing_files": 6,
+    "configuration_count": 15,
+    "passes": 7,
+    "correctness_checked_launches": 14592,
+    "max_abs": 0.0071305036544799805,
+    "enqueue_guard_segments": 7980,
+    "failed_guard_attempts": 0
   }
 }
