@@ -1,6 +1,8 @@
 # 远端 KV 稀疏 MLA 算子：H800 实测（PCIe / NVLink，含与 SGLang HiSparse 的单层对比）
 
-状态（2026-10-26）：全部作业已完成；调优作业在排队。
+状态（2026-10-29）：下表五个历史作业已完成；后续调优/验证仍在排队。
+
+**10/29 比较口径核查**：Memcpy＋LRU 是预先算好命中/淘汰、未实现完整正确缓存输出的 GPU 计时参考，不能从表格直接推断完整 HiSparse 方案不如完整 Memcpy 方案。NVLink 的 GPU gather 确实计时、远端位置也已核对。HiSparse 按默认单步路径测量，不替它增加跨 MTP 去重；原生 LRU 命中仍会复用。多步独立 API 不代表默认部署路径已经接入。完整核查与计时局限见 [benchmark audit](mla_host_h800_benchmark_audit.md)。
 
 | 作业 | 内容 | 状态 |
 |---|---|---|
@@ -49,7 +51,7 @@
 | 1 | 4 | 8 | 87.8 | **78.5** | 305.0 | 142.7 | 29.5 | 63.1 |
 | 8 | 2 | 4 | **205.6** | 325.4 | 392.3 | 1124.6 | 34.8 | 524.3* |
 
-\* 当时的 FlashMLA 下限是按 MTP 行逐个调用的，已改为对所有行一次调用（`67d13373`），正式作业用新版本。HiSparse 本身的测法不变：每个 draft token 依次做一次 swap-in 和一次 FlashMLA，这就是它实际的运行方式（不支持多行 verify，也不做跨行去重）。
+\* 当时的 FlashMLA 下限是按 MTP 行逐个调用的，已改为对所有行一次调用（`67d13373`），正式作业用新版本。HiSparse 的 MTP8 测法是每个 draft token 依次做一次默认单步 swap-in 和一次 FlashMLA，不增加批量去重。当前源码另有 2–4 步的独立接口，但生产路径未接入，不能笼统说所有 HiSparse kernel 都不支持多步。LRU 命中会跨调用复用，不能说重复引用必定重读。
 
 这组小规模数据里，ours 比 HiSparse 快 1.6～5.5 倍。拆开看有三部分来源，等正式数据出来后分别量化：
 1. **MTP 跨行去重、一次 launch 处理所有行**：HiSparse 每个 token 单独 swap-in。
@@ -89,7 +91,7 @@
 | NVLink | 1 | 256 | 794 | 908 | 938 | 1280 | **1.14** | **0.85** | |
 
 **与 A100 的结论不同，H800 上默认配置没有达到目标：**
-- **对 HiSparse**：MTP8 全部 batch 和 MTP1 小 batch 更快（1.13～10×），但 PCIe MTP1 ≥ 64 请求慢 9%～11%，NVLink MTP8 128 请求慢 5%。
+- **对所测 HiSparse 单步接口适配**：多数 MTP8 batch 和 MTP1 小 batch 更快（1.13～10×），但 PCIe MTP1 ≥ 64 请求慢 9%～11%，NVLink MTP8 128 请求慢 5%。
 - **对 Memcpy+LRU**：除 NVLink MTP1 ≥ 64 请求外都更慢（1.19～1.81×）。注意 PCIe 的 Memcpy 其 CPU gather 不计时，只计 55 GB/s 的连续 DMA，这个基线偏宽松；但 NVLink 的 Memcpy 是 GPU gather 并计时的，在这里输是真实的。
 - **单步不开缓存**（706158、706159）：PCIe MTP8 远端 > 0 的 120 格中输 101 格（本文 ÷ 朴素较快者 0.74～1.44）；NVLink MTP8 输 104 格（0.84～2.32）。
 

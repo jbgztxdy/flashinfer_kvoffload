@@ -2,6 +2,8 @@
 
 给下一个 agent：这份文档记录项目状态和文件指针，细节请读引用的文件。第 3 节（正在跑的作业）和第 4 节（下一步）最要紧。
 
+**10/29 H800 比较口径审计**：用户再次明确不优化HiSparse，按简单打开开关的默认原生路径比较。已核对当前SGLang faafa9810：生产coordinator仍调用单步load_cache_to_device_buffer_mla，srt没有独立spec API引用；该独立2–4步接口存在但不能当默认已接入。默认没有显式跨MTP批量去重，但有LRU，重复引用命中后不会重读。不要替它接多步接口。旧MTP8是8次单步swap-in/attention串行适配。Memcpy/Direct是CPU oracle LRU＋不检查完整输出的计时替身；PCIe CPU gather不计时，NVLink GPU gather计时但CPU/缓存维护仍缺项，不能直接称完整方案胜负。HiSparse适配器元数据/最新token搬运在计时内，我们索引copy在外；旧guard未记录acceptance，不能保证无CPU间隙，也未证实受污染。NVLink已核对NV8和远端GPU1物理分配。19配置证据temp/h800/audit_20261029，详见docs/mla_host_h800_benchmark_audit.md；没有新H800计时、未改排队源码。后续先补公平口径和完整正确Memcpy，再解读性能差距。
+
 **10/29 第五轮：大 batch 回退已修复（优先于下文第四轮）**：用户要求解决第四轮约3%回退。将ROW_MERGE变为编译期参数，launcher按形状选择一个cooperative kernel；大batch完全去除逐行计数/fence/等待和小batch取数阈值，仍单kernel。模拟构建2-stage/32-KV指令数13800→13544，与109b1c76相同，REG246且无spill；不宣称SASS逐字节一致。93项测试通过，新增持久缓存48→24→48行跨实例切换。100GB/s20us MTP8 128请求同参：优化前5543.94/回退5690.88/修复5541.38us；再次测修复5529.60/回退5688.83us。单/四请求相对优化前仍快11%/6%；真实assistant MTP1单/四请求快5.1%/7.4%。完整旧新55配置/110模式格，>32行的30格最慢约+0.47%（PCIe原地读），原3%回退消除。44份JSON/152配置，13552段guard、411712次计时launch，采样行max abs0.006596。见docs/mla_host_a100_regression_fix.md和temp/sim_link/fix_large（含audit/源码恢复补丁/压缩SASS/完整两下限）。H800生产header和第三轮快照2b782ed3保持，五个作业仍排队；移植时先应用第四轮workspace/csrc/Python完整补丁，再应用fix_large/fixed.patch，不能只覆盖header。后续继续压低小batch准备/等待成本，仍有距纯device约1.8–2倍的格子。
 
 **10/29 第四轮已完成常规对照（新于以下第三轮）**：用户继续授权在50/100GB/s及高延迟条件逼近纯device。保留单kernel，新增小staged batch的逐行完成计数/提前merge，以及fetch>8时超过一轮16行块即切换64行块，规则限制在至多32 query/head tiles。内部workspace每行增加一int32，必须连同Python/csrc一起移植，不能只覆盖header。91项测试通过。100GB/s20µs代理反向复测：MTP1四请求94.14→77.38us（约18%）、MTP8单请求101.89→90.11us（约12%）；真实assistant MTP1单/四请求约快5%/8%，MTP8四请求约快3%。详见docs/mla_host_a100_latency_tuning.md和temp/sim_link/tune_latency。

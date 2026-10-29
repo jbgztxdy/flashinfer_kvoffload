@@ -1,0 +1,417 @@
+{
+  "measured_benchmark_ref": "67d1337314df411579c5efb990b5d570f5bd7dcb",
+  "measured_benchmark_sha256": "2f347ac7f60c0494c9be738f3538260cba22500138c8c02eaa4fa00faa57fbfd",
+  "files": {
+    "temp/h800/results/fi-rounds-host-700539/rounds_mtp1.json": "8bd185b6b4a56711a7cee8e0f5c3dfb9661b6496ff4cfc126d20950a72b1b420",
+    "temp/h800/results/fi-rounds-host-700539/rounds_mtp8.json": "9df40479684693d121e1a768c3bd97d47d64437ca6a75d22315aaa1cc8b7a528",
+    "temp/h800/results/fi-rounds-peer-700540/rounds_mtp1.json": "9a1ccec1380286b3f80d352fad708b5765797a41e6203f7d8adcf0ab9acacf18",
+    "temp/h800/results/fi-rounds-peer-700540/rounds_mtp8.json": "f703c6300addd832cf7975cab8009736fce230fc42112c480632264c24bb33e9"
+  },
+  "results": [
+    {
+      "tier": "host",
+      "mtp": 1,
+      "requests": 1,
+      "steps": 32,
+      "passes": 5,
+      "steady_us": {
+        "ours_stage": 43.30599959939718,
+        "memcpy_lru": 36.05200001038611,
+        "direct_lru": 37.08600054960698,
+        "hisparse": 111.28800036385655,
+        "floor_fa2": 21.815999993123114,
+        "floor_flashmla": 62.11999990046024
+      },
+      "correctness_max_abs_error": {
+        "ours_stage": 0.0026875734329223633,
+        "hisparse": 0.0019811391830444336
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "host",
+      "mtp": 1,
+      "requests": 8,
+      "steps": 32,
+      "passes": 5,
+      "steady_us": {
+        "ours_stage": 139.62199771776795,
+        "memcpy_lru": 103.25799928978086,
+        "direct_lru": 194.9080005288124,
+        "hisparse": 191.7059998959303,
+        "floor_fa2": 33.29200018197298,
+        "floor_flashmla": 62.403999734669924
+      },
+      "correctness_max_abs_error": {
+        "ours_stage": 0.0033711791038513184,
+        "hisparse": 0.00189286470413208
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "host",
+      "mtp": 1,
+      "requests": 64,
+      "steps": 32,
+      "passes": 5,
+      "steady_us": {
+        "ours_stage": 1012.2239999473095,
+        "memcpy_lru": 655.9959948062897,
+        "direct_lru": 1565.4579922556877,
+        "hisparse": 903.6180004477501,
+        "floor_fa2": 95.50400031730533,
+        "floor_flashmla": 78.64399952813983
+      },
+      "correctness_max_abs_error": {
+        "ours_stage": 0.00299227237701416,
+        "hisparse": 0.002087831497192383
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "host",
+      "mtp": 1,
+      "requests": 256,
+      "steps": 32,
+      "passes": 5,
+      "steady_us": {
+        "ours_stage": 3506.5180212259293,
+        "memcpy_lru": 2595.0580090284348,
+        "direct_lru": 5818.272024393082,
+        "hisparse": 3188.9099776744843,
+        "floor_fa2": 319.0640024840832,
+        "floor_flashmla": 231.49000108242035
+      },
+      "correctness_max_abs_error": {
+        "ours_stage": 0.0034475326538085938,
+        "hisparse": 0.0019888877868652344
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "host",
+      "mtp": 1,
+      "requests": 512,
+      "steps": 32,
+      "passes": 5,
+      "steady_us": {
+        "ours_stage": 7104.452013969421,
+        "memcpy_lru": 4809.580028057098,
+        "direct_lru": 11812.705993652344,
+        "hisparse": 6395.431965589523,
+        "floor_fa2": 625.9379982948303,
+        "floor_flashmla": 445.82800194621086
+      },
+      "correctness_max_abs_error": {
+        "ours_stage": 0.005056023597717285,
+        "hisparse": 0.003907918930053711
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "host",
+      "mtp": 8,
+      "requests": 1,
+      "steps": 4,
+      "passes": 5,
+      "steady_us": {
+        "ours_stage": 134.272001683712,
+        "memcpy_lru": 113.15200105309486,
+        "direct_lru": 309.4079941511154,
+        "hisparse": 910.0639820098877,
+        "floor_fa2": 33.79200026392937,
+        "floor_flashmla": 63.74400109052658
+      },
+      "correctness_max_abs_error": {
+        "ours_stage": 0.0028048157691955566,
+        "hisparse": 0.0019669532775878906
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "host",
+      "mtp": 8,
+      "requests": 4,
+      "steps": 4,
+      "passes": 5,
+      "steady_us": {
+        "ours_stage": 443.5519874095917,
+        "memcpy_lru": 352.01600193977356,
+        "direct_lru": 1048.2720136642456,
+        "hisparse": 1248.6560344696045,
+        "floor_fa2": 54.32000011205673,
+        "floor_flashmla": 64.4799992442131
+      },
+      "correctness_max_abs_error": {
+        "ours_stage": 0.0024031996726989746,
+        "hisparse": 0.0018010139465332031
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "host",
+      "mtp": 8,
+      "requests": 16,
+      "steps": 4,
+      "passes": 5,
+      "steady_us": {
+        "ours_stage": 1458.6719870567322,
+        "memcpy_lru": 960.7039988040924,
+        "direct_lru": 3807.6159954071045,
+        "hisparse": 2438.175916671753,
+        "floor_fa2": 162.30399906635284,
+        "floor_flashmla": 83.6159996688366
+      },
+      "correctness_max_abs_error": {
+        "ours_stage": 0.0029175281524658203,
+        "hisparse": 0.0018830299377441406
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "host",
+      "mtp": 8,
+      "requests": 64,
+      "steps": 4,
+      "passes": 5,
+      "steady_us": {
+        "ours_stage": 5837.568044662476,
+        "memcpy_lru": 4247.328042984009,
+        "direct_lru": 16622.78461456299,
+        "hisparse": 7373.327970504761,
+        "floor_fa2": 612.2879981994629,
+        "floor_flashmla": 293.40800642967224
+      },
+      "correctness_max_abs_error": {
+        "ours_stage": 0.00296860933303833,
+        "hisparse": 0.001350700855255127
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "host",
+      "mtp": 8,
+      "requests": 128,
+      "steps": 4,
+      "passes": 5,
+      "steady_us": {
+        "ours_stage": 11848.735809326172,
+        "memcpy_lru": 8495.455741882324,
+        "direct_lru": 34541.11862182617,
+        "hisparse": 14552.84833908081,
+        "floor_fa2": 1208.5760235786438,
+        "floor_flashmla": 573.2479989528656
+      },
+      "correctness_max_abs_error": {
+        "ours_stage": 0.003227412700653076,
+        "hisparse": 0.0020012855529785156
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "peer",
+      "mtp": 1,
+      "requests": 1,
+      "steps": 32,
+      "passes": 5,
+      "steady_us": {
+        "ours_inplace": 44.595999643206596,
+        "memcpy_lru": 26.53199981432408,
+        "direct_lru": 27.873999904841185,
+        "hisparse": 105.76600022614002,
+        "floor_fa2": 21.689999848604202,
+        "floor_flashmla": 61.20599992573261
+      },
+      "correctness_max_abs_error": {
+        "ours_inplace": 0.0036574602127075195,
+        "hisparse": 0.0036574602127075195
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "peer",
+      "mtp": 1,
+      "requests": 8,
+      "steps": 32,
+      "passes": 5,
+      "steady_us": {
+        "ours_inplace": 77.44199968874454,
+        "memcpy_lru": 56.81000021286309,
+        "direct_lru": 66.7560005094856,
+        "hisparse": 150.86999908089638,
+        "floor_fa2": 33.502000384032726,
+        "floor_flashmla": 62.065999722108245
+      },
+      "correctness_max_abs_error": {
+        "ours_inplace": 0.0032377243041992188,
+        "hisparse": 0.001991748809814453
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "peer",
+      "mtp": 1,
+      "requests": 64,
+      "steps": 32,
+      "passes": 5,
+      "steady_us": {
+        "ours_inplace": 249.14999771863222,
+        "memcpy_lru": 266.2699967622757,
+        "direct_lru": 361.41400039196014,
+        "hisparse": 314.0779994428158,
+        "floor_fa2": 95.68199887871742,
+        "floor_flashmla": 78.29600060358644
+      },
+      "correctness_max_abs_error": {
+        "ours_inplace": 0.0036894679069519043,
+        "hisparse": 0.002112150192260742
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "peer",
+      "mtp": 1,
+      "requests": 256,
+      "steps": 32,
+      "passes": 5,
+      "steady_us": {
+        "ours_inplace": 793.8519977033138,
+        "memcpy_lru": 938.3160024881363,
+        "direct_lru": 1279.5999944210052,
+        "hisparse": 907.5719974935055,
+        "floor_fa2": 320.6679970026016,
+        "floor_flashmla": 231.75200074911118
+      },
+      "correctness_max_abs_error": {
+        "ours_inplace": 0.0020885467529296875,
+        "hisparse": 0.002090752124786377
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "peer",
+      "mtp": 8,
+      "requests": 1,
+      "steps": 4,
+      "passes": 5,
+      "steady_us": {
+        "ours_inplace": 83.16799998283386,
+        "memcpy_lru": 45.88800109922886,
+        "direct_lru": 60.67200005054474,
+        "hisparse": 828.9919793605804,
+        "floor_fa2": 32.92800113558769,
+        "floor_flashmla": 62.28800117969513
+      },
+      "correctness_max_abs_error": {
+        "ours_inplace": 0.0034009218215942383,
+        "hisparse": 0.0019669532775878906
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "peer",
+      "mtp": 8,
+      "requests": 4,
+      "steps": 4,
+      "passes": 5,
+      "steady_us": {
+        "ours_inplace": 156.95999562740326,
+        "memcpy_lru": 97.45600074529648,
+        "direct_lru": 141.4880007505417,
+        "hisparse": 968.7519967556,
+        "floor_fa2": 53.23199927806854,
+        "floor_flashmla": 63.32799792289734
+      },
+      "correctness_max_abs_error": {
+        "ours_inplace": 0.002552211284637451,
+        "hisparse": 0.0018010139465332031
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "peer",
+      "mtp": 8,
+      "requests": 16,
+      "steps": 4,
+      "passes": 5,
+      "steady_us": {
+        "ours_inplace": 610.0000143051147,
+        "memcpy_lru": 430.4960072040558,
+        "direct_lru": 861.2799942493439,
+        "hisparse": 1436.6559982299805,
+        "floor_fa2": 162.4480038881302,
+        "floor_flashmla": 83.10399949550629
+      },
+      "correctness_max_abs_error": {
+        "ours_inplace": 0.0018830299377441406,
+        "hisparse": 0.0018830299377441406
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "peer",
+      "mtp": 8,
+      "requests": 64,
+      "steps": 4,
+      "passes": 5,
+      "steady_us": {
+        "ours_inplace": 2304.527997970581,
+        "memcpy_lru": 1702.992022037506,
+        "direct_lru": 3592.128038406372,
+        "hisparse": 2596.575975418091,
+        "floor_fa2": 611.9680106639862,
+        "floor_flashmla": 291.29599034786224
+      },
+      "correctness_max_abs_error": {
+        "ours_inplace": 0.001350700855255127,
+        "hisparse": 0.001350700855255127
+      },
+      "enqueue_guards_recorded": false
+    },
+    {
+      "tier": "peer",
+      "mtp": 8,
+      "requests": 128,
+      "steps": 4,
+      "passes": 5,
+      "steady_us": {
+        "ours_inplace": 4581.632137298584,
+        "memcpy_lru": 3450.2720832824707,
+        "direct_lru": 7408.4320068359375,
+        "hisparse": 4367.055892944336,
+        "floor_fa2": 1201.5519738197327,
+        "floor_flashmla": 568.4960186481476
+      },
+      "correctness_max_abs_error": {
+        "ours_inplace": 0.002010554075241089,
+        "hisparse": 0.0020012855529785156
+      },
+      "enqueue_guards_recorded": false
+    }
+  ],
+  "conclusions": {
+    "memcpy_complete_cache_implementation": false,
+    "memcpy_attention_checked": false,
+    "memcpy_cpu_lru_timed": false,
+    "pci_memcpy_cpu_gather_timed": false,
+    "peer_memcpy_gpu_gather_timed": true,
+    "hisparse_single_token_swap_calls_per_mtp8_step": 8,
+    "hisparse_attention_calls_per_mtp8_step": 8,
+    "memcpy_attention_calls_per_mtp8_step": 1,
+    "hisparse_metadata_copies_inside_timed_region": true,
+    "ours_metadata_copy_inside_timed_region": false,
+    "hisparse_newest_token_gather_inside_timed_region": true,
+    "old_guard_has_acceptance_measurement": false,
+    "mtp8_has_only_four_steps": true,
+    "nvlink_topology": "NV8",
+    "peer_far_physical_location_id": 1
+  },
+  "caveats": [
+    "Numerical reference checks cover sampled rows of ours and HiSparse, not Memcpy/Direct.",
+    "Single-step HiSparse is called repeatedly for MTP8; this is not evidence about native speculative swap.",
+    "Current cluster SGLang has a separate speculative swap for 2-4 steps with at most 8192 occurrences. It cannot directly handle MTP8/topk2048. Current production coordinator still calls the single-token API; kernel availability is not proof of end-to-end integration.",
+    "Historical runs did not record SGLang/sgl_kernel source hashes; current external source is not proof of the exact historical bytes.",
+    "Old sleep guard has no enqueue-duration acceptance evidence. CPU gaps are unexcluded, not demonstrated.",
+    "No new H800 timings were produced by this audit."
+  ]
+}
