@@ -1,0 +1,222 @@
+--- a/include/flashinfer/attention/mla_host_batch.cuh
++++ b/include/flashinfer/attention/mla_host_batch.cuh
+@@ -1648,0 +1649,205 @@
++// Optional short-segment prepare and single-warp scans for high-latency tuning.
++// Keep the default translation unit identical to the measured baseline.
++#ifdef FLASHINFER_HOST_BATCH_SMALL_PREPARE
++template <typename KTraits, typename Params>
++__device__ __forceinline__ void prepare_host_batch_small_rows(const Params& params, uint32_t stamp) {
++  using IdType = typename Params::IdType;
++  constexpr uint32_t THREADS = KTraits::NUM_THREADS;
++  // Small launches already split each row into short segments. Avoid expanding seven padded
++  // entries per thread when a segment fits in one CTA; the original path keeps wider loads.
++  constexpr uint32_t PER_THREAD = 1;
++  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
++  const uint32_t lane = tid % 32;
++  const uint32_t lower = (1u << lane) - 1;
++  const uint32_t units = params.num_rows * params.prepare_parts;
++  uint32_t* host_cursors = params.state + kHostBatchHostCounts;
++  uint32_t* local_cursors = host_batch_local_cursors(params);
++#pragma unroll 1
++  for (uint32_t unit = blockIdx.y; unit < units; unit += gridDim.y) {
++    const uint32_t row = unit / params.prepare_parts;
++    const IdType begin = params.kv_indptr[row];
++    const uint32_t length = params.kv_indptr[row + 1] - begin;
++    const uint32_t part_begin = unit % params.prepare_parts * params.prepare_segment;
++    const uint32_t part_end = min(part_begin + params.prepare_segment, length);
++#pragma unroll 1
++    for (uint32_t offset = part_begin; offset < part_end; offset += PER_THREAD * THREADS) {
++      IdType pages[PER_THREAD];
++      uint32_t claimed[PER_THREAD];
++#pragma unroll
++      for (uint32_t i = 0; i < PER_THREAD; ++i) {
++        const uint32_t j = offset + i * THREADS + tid;
++        pages[i] = j < part_end ? params.kv_indices[begin + j] : kHostBatchNoEntry;
++      }
++      // Negative entries (padding) are dropped; their positions leave a gap between the Host
++      // part and the HBM part that resolve_host_batch_slots closes.
++      bool dropped = false;
++#pragma unroll
++      for (uint32_t i = 0; i < PER_THREAD; ++i) {
++        if (pages[i] < 0 && pages[i] != kHostBatchNoEntry) {
++          pages[i] = kHostBatchNoEntry;
++          dropped = true;
++        }
++      }
++      if (__any_sync(0xffffffff, dropped) && lane == 0) params.state[kHostBatchGaps] = 1;
++      if (host_batch_caching(params)) {
++#pragma unroll
++        for (uint32_t i = 0; i < PER_THREAD; ++i) {
++          if (pages[i] >= params.host_page_start) {
++            const int32_t slot = params.resident[pages[i] - params.host_page_start];
++            if (slot >= 0) {
++              params.slot_stamp[slot] = stamp;
++              pages[i] = host_batch_cached_entry(params, slot);
++            }
++          }
++        }
++      }
++      // host_slot: 0 free, 1 claiming, (row << kHostBatchRankBits | rank) + 2 claimed.
++#pragma unroll
++      for (uint32_t i = 0; i < PER_THREAD; ++i) {
++        claimed[i] = pages[i] >= params.host_page_start
++                         ? atomicCAS(params.host_slot + (pages[i] - params.host_page_start), 0u, 1u)
++                         : 2u;
++      }
++      uint32_t fresh_masks[PER_THREAD], host_masks[PER_THREAD], local_masks[PER_THREAD];
++      uint32_t fresh_total = 0, host_total = 0, local_total = 0;
++#pragma unroll
++      for (uint32_t i = 0; i < PER_THREAD; ++i) {
++        fresh_masks[i] =
++            __ballot_sync(0xffffffff, pages[i] >= params.host_page_start && claimed[i] == 0);
++        host_masks[i] = __ballot_sync(0xffffffff, pages[i] >= params.host_page_start);
++        // Cached entries are negative; kHostBatchNoEntry pads short passes.
++        local_masks[i] = __ballot_sync(
++            0xffffffff, pages[i] != kHostBatchNoEntry && pages[i] < params.host_page_start);
++        fresh_total += __popc(fresh_masks[i]);
++        host_total += __popc(host_masks[i]);
++        local_total += __popc(local_masks[i]);
++      }
++      uint32_t first = 0, host_first = 0, local_first = 0;
++      if (lane == 0) {
++        if (fresh_total) first = atomicAdd(host_batch_row_claims(params) + row, fresh_total);
++        if (host_total) host_first = atomicAdd(host_cursors + row, host_total);
++        if (local_total) local_first = atomicAdd(local_cursors + row, local_total);
++      }
++      first = __shfl_sync(0xffffffff, first, 0);
++      host_first = __shfl_sync(0xffffffff, host_first, 0);
++      local_first = __shfl_sync(0xffffffff, local_first, 0);
++#pragma unroll
++      for (uint32_t i = 0; i < PER_THREAD; ++i) {
++        if (fresh_masks[i] >> lane & 1) {
++          const uint32_t rank = first + __popc(fresh_masks[i] & lower);
++          atomicExch(params.host_slot + (pages[i] - params.host_page_start),
++                     (row << kHostBatchRankBits | rank) + 2);
++        }
++        if (pages[i] >= params.host_page_start) {
++          params.remap[begin + host_first + __popc(host_masks[i] & lower)] = pages[i];
++        } else if (pages[i] != kHostBatchNoEntry) {
++          params.remap[begin + length - 1 - local_first - __popc(local_masks[i] & lower)] = pages[i];
++        }
++        first += __popc(fresh_masks[i]);
++        host_first += __popc(host_masks[i]);
++        local_first += __popc(local_masks[i]);
++      }
++    }
++  }
++}
++
++template <uint32_t THREADS, typename Value>
++__device__ __forceinline__ uint32_t host_batch_small_scan(uint32_t n, Value value, uint32_t* out) {
++  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
++  __shared__ uint32_t warp_sums[THREADS / 32], carry;
++    // The launch dispatch guarantees at most 32 rows. One warp publishes every prefix and
++    // the total before the CTA reads them, without the multi-warp carry barriers.
++    if (tid < 32) {
++      const uint32_t count = tid < n ? value(tid) : 0;
++      uint32_t sum = count;
++#pragma unroll
++      for (uint32_t offset = 1; offset < 32; offset *= 2) {
++        const uint32_t other = __shfl_up_sync(0xffffffff, sum, offset);
++        if (tid >= offset) sum += other;
++      }
++      if (tid < n) out[tid] = sum - count;
++      if (tid == 31) carry = sum;
++    }
++    __syncthreads();
++    return carry;
++}
++
++template <typename KTraits, typename Params>
++__device__ __forceinline__ uint32_t resolve_host_batch_small_slots(const Params& params, uint8_t* smem) {
++  using IdType = typename Params::IdType;
++  constexpr uint32_t THREADS = KTraits::NUM_THREADS;
++  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
++  uint32_t* row_base = reinterpret_cast<uint32_t*>(smem);
++  const uint32_t* row_claims = host_batch_row_claims(params);
++  const uint32_t unique = host_batch_small_scan<THREADS>(
++      params.num_rows, [&](uint32_t row) { return row_claims[row]; }, row_base);
++  // No Host page anywhere: nothing to rewrite, and no Host items to list. The caller then skips
++  // the second grid barrier and the fetch entirely.
++  if (unique == 0) return 0;
++  // Same (row, segment) units as the prepare step, so a few rows still spread over the grid. In
++  // place with the cache, prepare already marked the claiming entries (no page ids to resolve).
++  const uint32_t units = host_batch_writes_back(params) ? 0 : params.num_rows * params.prepare_parts;
++#pragma unroll 1
++  for (uint32_t unit = blockIdx.y; unit < units; unit += gridDim.y) {
++    const uint32_t row = unit / params.prepare_parts;
++    const IdType begin = params.kv_indptr[row];
++    // Host entries fill each row's leading positions, or anywhere when not staging.
++    const uint32_t host = params.stage ? params.state[kHostBatchHostCounts + row]
++                                       : host_batch_row_len(params, row);
++    const uint32_t part_begin = unit % params.prepare_parts * params.prepare_segment;
++    const uint32_t part_end = min(part_begin + params.prepare_segment, host);
++#pragma unroll 1
++    for (uint32_t j = part_begin + tid; j < part_end; j += THREADS) {
++      const IdType page = params.remap[begin + j];
++      if (!params.stage && page < params.host_page_start) continue;
++      const uint32_t claim = params.host_slot[page - params.host_page_start] - 2;
++      const uint32_t owner = claim >> kHostBatchRankBits;
++      const uint32_t slot = row_base[owner] + (claim & ((1u << kHostBatchRankBits) - 1));
++      if (owner == row) {
++        params.unique_pages[slot] = page;
++        // (In place with the cache prepare already marked the claims; this loop does not run.)
++        if (host_batch_caching(params) && slot < params.staging_capacity) {
++          params.slot_pool[slot] = params.row_pool[row];
++        }
++      }
++      if (params.stage && slot < params.staging_capacity) {
++        params.remap[begin + j] = host_batch_staged_entry(params, slot);
++      }
++    }
++  }
++  // CTA 0 lists the Host items of the tail rows, and publishes the row bases that delimit each
++  // LRU pool's staged pages.
++  if (blockIdx.y == 0) {
++    if (host_batch_caching(params)) {
++      for (uint32_t row = tid; row < params.num_rows; row += THREADS) {
++        params.row_slot_base[row] = row_base[row];
++      }
++      if (tid == 0) params.row_slot_base[params.num_rows] = unique;
++    }
++    const uint32_t max_items = host_batch_max_host_items(params);
++    const uint32_t tail_rows = params.num_rows - params.full_rows;
++    uint32_t* host_items = host_batch_host_items(params) + params.full_rows;
++    const auto items = [&](uint32_t t) {
++      return host_batch_host_chunks<KTraits::CTA_TILE_KV>(
++                 host_batch_split_host(params, params.full_rows + t), max_items,
++                 params.host_item_entries)
++                 .x *
++             params.num_head_tiles;
++    };
++    const uint32_t total = host_batch_small_scan<THREADS>(tail_rows, items, host_items);
++    if (tid == 0) host_batch_host_items(params)[params.num_rows] = total;
++    __threadfence_block();
++    __syncthreads();
++    uint32_t* item_rows = host_batch_host_item_rows(params);
++    // A warp per tail row.
++#pragma unroll 1
++    for (uint32_t t = tid / 32; t < tail_rows; t += THREADS / 32) {
++      const uint32_t first = host_items[t], count = items(t);
++      for (uint32_t k = tid % 32; k < count; k += 32) item_rows[first + k] = params.full_rows + t;
++    }
++  }
++  return unique;
++}
++
++#endif
++
+@@ -1673,0 +1879,4 @@
++#ifdef FLASHINFER_HOST_BATCH_SMALL_PREPARE
++      if constexpr (ROW_MERGE) prepare_host_batch_small_rows<KTraits>(params, epoch + 1);
++      else prepare_host_batch_rows<KTraits>(params, epoch + 1);
++#else
+@@ -1674,0 +1884 @@
++#endif
+@@ -1679,0 +1890,4 @@
++#ifdef FLASHINFER_HOST_BATCH_SMALL_PREPARE
++    if constexpr (ROW_MERGE) unique = resolve_host_batch_small_slots<KTraits>(params, smem);
++    else unique = resolve_host_batch_slots<KTraits>(params, smem);
++#else
+@@ -1680,0 +1895 @@
++#endif

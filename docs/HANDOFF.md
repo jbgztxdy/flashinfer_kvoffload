@@ -2,6 +2,12 @@
 
 给下一个 agent：这份文档记录项目状态和文件指针，细节请读引用的文件。第 3 节（正在跑的作业）和第 4 节（下一步）最要紧。
 
+**10/29 第六轮最终方案：显式小batch准备优化**：用户“请做吧”批准继续我们kernel优化；此前“不用”表示暂不补Memcpy基线，HiSparse仍原生。GPU0/1被其他服务占用，未干预，本轮仅GPU3 A100-PCIE；far是同卡独立HBM，经未改模拟器限制50/100GB/s＋20us，另测零延迟和物理Host。不是物理NVLink，不与SXM绝对时间拼接。最终增加FLASHINFER_HOST_BATCH_SMALL_PREPARE编译选项，默认关闭、默认调用原函数；开启后小staged实例prepare每线程1条＋单warp scan。开启选项101项测试通过，175.76秒。单kernel/LRU/容量/top-k/workspace/API保持。
+
+**第六轮重要取舍**：32行四缓冲在高延迟快2%–6%，但零延迟慢15.4%，只留实验补丁、不在最终kernel中。中间版Host MTP1 16请求原地读多次慢约6%，一次恢复324.74us后完整矩阵又345us；隔离前后SASS指令文本相同，不能声称隔离修复。因此准备优化显式启用，默认保持原实现，并最终同源码开/关对照。enabled_*/default_*才是最终版本；retained_*/accepted_*是中间候选，final_*是流水候选。结果/两下限/源码恢复patch/压缩SASS/guard见temp/sim_link/tune_prepare及docs/mla_host_a100_prepare_tuning.md。当前header SHA354f0204195a4a6b8d2a4b7c954cc8fcccd0f65baf0213eac4f9fcb582d1c13c。H800排队树不覆盖，尚未实测该选项。
+
+**第六轮最终证据**：同源码开/关44配置/88模式格，100GB/s20us真实assistant MTP1单/四请求61.89→60.15、82.34→80.55us（2.8%/2.2%）；MTP8单/四请求100.51→98.03、249.58→246.10us（2.5%/1.4%），16请求约+0.2%。默认模拟/正常构建六个主kernel的反汇编指令文本均与f78基线一致。大batch28格最大+0.55%；全部最慢格原地读+1.85%，不称全面加速。107份timing JSON/372配置/34146段guard/1009764次计时launch，采样行max abs0.006855。默认关闭，需显式宏与独立JIT目录；最新完整迁移补丁tune_prepare/guarded_full.patch基于ac507996（kernel与f78相同），仍需先移植第四轮workspace＋第五轮。
+
 **10/29 H800 比较口径审计**：用户再次明确不优化HiSparse，按简单打开开关的默认原生路径比较。已核对当前SGLang faafa9810：生产coordinator仍调用单步load_cache_to_device_buffer_mla，srt没有独立spec API引用；该独立2–4步接口存在但不能当默认已接入。默认没有显式跨MTP批量去重，但有LRU，重复引用命中后不会重读。不要替它接多步接口。旧MTP8是8次单步swap-in/attention串行适配。Memcpy/Direct是CPU oracle LRU＋不检查完整输出的计时替身；PCIe CPU gather不计时，NVLink GPU gather计时但CPU/缓存维护仍缺项，不能直接称完整方案胜负。HiSparse适配器元数据/最新token搬运在计时内，我们索引copy在外；旧guard未记录acceptance，不能保证无CPU间隙，也未证实受污染。NVLink已核对NV8和远端GPU1物理分配。19配置证据temp/h800/audit_20261029，详见docs/mla_host_h800_benchmark_audit.md；没有新H800计时、未改排队源码。后续先补公平口径和完整正确Memcpy，再解读性能差距。
 
 **10/29 第五轮：大 batch 回退已修复（优先于下文第四轮）**：用户要求解决第四轮约3%回退。将ROW_MERGE变为编译期参数，launcher按形状选择一个cooperative kernel；大batch完全去除逐行计数/fence/等待和小batch取数阈值，仍单kernel。模拟构建2-stage/32-KV指令数13800→13544，与109b1c76相同，REG246且无spill；不宣称SASS逐字节一致。93项测试通过，新增持久缓存48→24→48行跨实例切换。100GB/s20us MTP8 128请求同参：优化前5543.94/回退5690.88/修复5541.38us；再次测修复5529.60/回退5688.83us。单/四请求相对优化前仍快11%/6%；真实assistant MTP1单/四请求快5.1%/7.4%。完整旧新55配置/110模式格，>32行的30格最慢约+0.47%（PCIe原地读），原3%回退消除。44份JSON/152配置，13552段guard、411712次计时launch，采样行max abs0.006596。见docs/mla_host_a100_regression_fix.md和temp/sim_link/fix_large（含audit/源码恢复补丁/压缩SASS/完整两下限）。H800生产header和第三轮快照2b782ed3保持，五个作业仍排队；移植时先应用第四轮workspace/csrc/Python完整补丁，再应用fix_large/fixed.patch，不能只覆盖header。后续继续压低小batch准备/等待成本，仍有距纯device约1.8–2倍的格子。
@@ -47,7 +53,7 @@
 | kernel | `include/flashinfer/attention/mla_host_batch.cuh`（约 1700 行；主体是 `BatchMLAHostBatchKernel`，在约 1505 行） |
 | launcher | `csrc/batch_mla_run.cu` |
 | Python 接口 | `flashinfer/mla/_core.py`（`host_stage`、`host_fetch_ctas`、`set_host_cache`、`_run_host_batch`） |
-| 测试 | `tests/attention/test_mla_host_batch.py`（91 项） |
+| 测试 | `tests/attention/test_mla_host_batch.py`（101 项） |
 | 跨 decode 测试脚本（含 HiSparse 和各下限） | `temp/h800/bench_rounds.py` |
 | GLM-5.3 新语料验证、真实 top-k 回放接入及未完成项 | `docs/mla_host_glm53_trace.md`；8K 接入结果 `temp/glm_trace/results/a100_8k_smoke.md`（尚非正式 64K/1024 结果） |
 | 单步测试脚本 | `temp/h800/bench_sweep.py` |

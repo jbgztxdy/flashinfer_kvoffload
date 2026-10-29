@@ -1,0 +1,139 @@
+--- a/include/flashinfer/attention/mla_host_batch.cuh
++++ b/include/flashinfer/attention/mla_host_batch.cuh
+@@ -300 +300 @@
+-template <typename KTraits, typename Params>
++template <typename KTraits, bool SMALL, typename Params>
+@@ -304 +304,3 @@
+-  constexpr uint32_t PER_THREAD = 8;
++  // Small launches already split each row into short segments. Avoid expanding seven padded
++  // entries per thread when a segment fits in one CTA; the original path keeps wider loads.
++  constexpr uint32_t PER_THREAD = SMALL ? 1 : 8;
+@@ -490 +492 @@
+-template <uint32_t THREADS, typename Value>
++template <uint32_t THREADS, bool SMALL, typename Value>
+@@ -493,0 +496,17 @@
++  if constexpr (SMALL) {
++    // The launch dispatch guarantees at most 32 rows. One warp publishes every prefix and
++    // the total before the CTA reads them, without the multi-warp carry barriers.
++    if (tid < 32) {
++      const uint32_t count = tid < n ? value(tid) : 0;
++      uint32_t sum = count;
++#pragma unroll
++      for (uint32_t offset = 1; offset < 32; offset *= 2) {
++        const uint32_t other = __shfl_up_sync(0xffffffff, sum, offset);
++        if (tid >= offset) sum += other;
++      }
++      if (tid < n) out[tid] = sum - count;
++      if (tid == 31) carry = sum;
++    }
++    __syncthreads();
++    return carry;
++  }
+@@ -520 +539 @@
+-template <typename KTraits, typename Params>
++template <typename KTraits, bool SMALL, typename Params>
+@@ -527 +546 @@
+-  const uint32_t unique = host_batch_block_scan<THREADS>(
++  const uint32_t unique = host_batch_block_scan<THREADS, SMALL>(
+@@ -582 +601 @@
+-    const uint32_t total = host_batch_block_scan<THREADS>(tail_rows, items, host_items);
++    const uint32_t total = host_batch_block_scan<THREADS, SMALL>(tail_rows, items, host_items);
+@@ -626,2 +645,2 @@
+-// after one round. Small batches with more than eight fetch CTAs switch as soon as 16-row chunks
+-// would take a second round: avoiding that extra dependent wait matters on high-latency links.
++// after one round. Small batches switch to 32-row chunks with a deeper ring as soon as 16-row
++// chunks would take a second round with more than eight fetch CTAs.
+@@ -629 +648 @@
+-template <bool ROW_MERGE, typename Params>
++template <bool ROW_MERGE, bool COMPACT, typename Params>
+@@ -637 +656 @@
+-    return count < threshold ? kHostBatchMinFetchRows : kHostBatchFetchRows;
++    return count < threshold ? kHostBatchMinFetchRows : (COMPACT ? 32u : kHostBatchFetchRows);
+@@ -661,3 +680,4 @@
+-// (ld.global.cg) reached only ~15 GB/s on sparse 1152-byte rows, cp.async ~26 GB/s. Two buffers
+-// overlap the next chunk's reads with the copy-out of the current one when shared memory allows.
+-template <typename KTraits, typename Params>
++// (ld.global.cg) reached only ~15 GB/s on sparse 1152-byte rows, cp.async ~26 GB/s. Small staged
++// launches fit four 32-row buffers where the original path fits two 64-row buffers: the same
++// in-flight bytes with earlier chunk completion. Empty groups drain the compact ring's tail.
++template <typename KTraits, typename Params, bool COMPACT>
+@@ -670 +690 @@
+-  constexpr uint32_t CHUNK_VECS = kHostBatchFetchRows * VECS_PER_ROW;
++  constexpr uint32_t CHUNK_VECS = (COMPACT ? 32u : kHostBatchFetchRows) * VECS_PER_ROW;
+@@ -672 +692,3 @@
+-      sizeof(typename KTraits::SharedStorage) >= 2 * CHUNK_VECS * 16 ? 2 : 1;
++      COMPACT && sizeof(typename KTraits::SharedStorage) >= 4 * CHUNK_VECS * 16
++          ? 4
++          : (sizeof(typename KTraits::SharedStorage) >= 2 * CHUNK_VECS * 16 ? 2 : 1);
+@@ -685 +707,2 @@
+-  FAR_EMU_INIT(2);
++  constexpr uint32_t EMU_STAGES = COMPACT ? BUFFERS : 2;
++  FAR_EMU_INIT(EMU_STAGES);
+@@ -699 +722,9 @@
+-    FAR_EMU_TILE(2, buf, tid == 0 ? min(rows, count - chunk * rows) : 0, ROW * sizeof(DTypeKV));
++    if constexpr (COMPACT) {
++      if (chunk * rows < count) {
++        FAR_EMU_TILE(EMU_STAGES, buf, tid == 0 ? min(rows, count - chunk * rows) : 0,
++                     ROW * sizeof(DTypeKV));
++      }
++    } else {
++      FAR_EMU_TILE(EMU_STAGES, buf, tid == 0 ? min(rows, count - chunk * rows) : 0,
++                   ROW * sizeof(DTypeKV));
++    }
+@@ -704 +735,6 @@
+-  if (chunk * rows < count) issue(chunk, 0);
++  if constexpr (COMPACT) {
++#pragma unroll
++    for (uint32_t k = 0; k < BUFFERS - 1; ++k) issue(chunk + k * params.fetch_ctas, k);
++  } else {
++    if (chunk * rows < count) issue(chunk, 0);
++  }
+@@ -708,3 +744,3 @@
+-    if (BUFFERS == 2 && next * rows < count) {
+-      issue(next, (k + 1) % 2);
+-      cp_async::wait_group<1>();
++    if constexpr (COMPACT) {
++      issue(chunk + (BUFFERS - 1) * params.fetch_ctas, (k + BUFFERS - 1) % BUFFERS);
++      cp_async::wait_group<BUFFERS - 1>();
+@@ -712,3 +748,8 @@
+-      cp_async::wait_group<0>();
+-    }
+-    FAR_EMU_WAIT(2, BUFFERS == 2 ? k % 2 : 0);
++      if (BUFFERS == 2 && next * rows < count) {
++        issue(next, (k + 1) % 2);
++        cp_async::wait_group<1>();
++      } else {
++        cp_async::wait_group<0>();
++      }
++    }
++    FAR_EMU_WAIT(EMU_STAGES, COMPACT ? k % BUFFERS : (BUFFERS == 2 ? k % 2 : 0));
+@@ -716 +757 @@
+-    const uint32_t buf = BUFFERS == 2 ? k % 2 : 0;
++    const uint32_t buf = COMPACT ? k % BUFFERS : (BUFFERS == 2 ? k % 2 : 0);
+@@ -786,2 +827,5 @@
+-    if (BUFFERS == 1 && next * rows < count) issue(next, 0);
+-  }
++    if constexpr (!COMPACT) {
++      if (BUFFERS == 1 && next * rows < count) issue(next, 0);
++    }
++  }
++  if constexpr (COMPACT) cp_async::wait_group<0>();
+@@ -1674 +1718 @@
+-      prepare_host_batch_rows<KTraits>(params, epoch + 1);
++      prepare_host_batch_rows<KTraits, ROW_MERGE>(params, epoch + 1);
+@@ -1680 +1724 @@
+-    unique = resolve_host_batch_slots<KTraits>(params, smem);
++    unique = resolve_host_batch_slots<KTraits, ROW_MERGE>(params, smem);
+@@ -1710 +1754,8 @@
+-  const uint32_t fetch_rows = host_batch_fetch_rows<ROW_MERGE>(params, unique);
++  // Compact chunks help the high-latency experiments but regress some low-latency links.
++  // Keep the measured original fetch path as the default until that tradeoff is resolved.
++#ifdef FLASHINFER_HOST_BATCH_COMPACT_FETCH
++  constexpr bool COMPACT_FETCH = ROW_MERGE;
++#else
++  constexpr bool COMPACT_FETCH = false;
++#endif
++  const uint32_t fetch_rows = host_batch_fetch_rows<ROW_MERGE, COMPACT_FETCH>(params, unique);
+@@ -1718 +1769 @@
+-  if (unique > 0 && from_back && !host_batch_writes_back(params)) fetch_host_batch_pages<KTraits>(params, smem, epoch, unique, fetch_rows);
++  if (unique > 0 && from_back && !host_batch_writes_back(params)) fetch_host_batch_pages<KTraits, Params, COMPACT_FETCH>(params, smem, epoch, unique, fetch_rows);

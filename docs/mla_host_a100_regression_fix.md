@@ -2,6 +2,8 @@
 
 第四轮 `5c44fd70` 的按行提前合并和取数阈值只在小 batch 启用，但大 batch 的 kernel 中仍保留判断这些条件的代码。100 GB/s＋20 µs、MTP8 128 请求的同参数复测可重复约 3% 的回退。本轮把这些条件改为编译期参数，在 launcher 按形状选择实例；**每次调用仍只启动一个 cooperative kernel**，LRU、缓存容量、top-k、带宽/延迟模拟器及 workspace 布局保持。
 
+后续第六轮的小 batch 准备/流水优化及其物理 PCIe 取舍见 [`mla_host_a100_prepare_tuning.md`](mla_host_a100_prepare_tuning.md)；本文保留第五轮原始结果。
+
 ## 改动与证据
 
 `ROW_MERGE` 模板参数沿 kernel、attention item、merge 和取数块选择传递。只有 staged＋缓存、query/head tile 数至多 32 的 launch 选择 `true`；其他 launch 选择 `false`。`false` 用 `if constexpr` 完全删去按行完成计数、fence、等待和小 batch 取数阈值，保留原 grid barrier 和取数规则。这样不再让大 batch 支付小 batch 逻辑对控制流和代码生成的影响。

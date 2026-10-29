@@ -1,0 +1,765 @@
+{
+  "base_commit": "ac507996",
+  "source_sha256": {
+    "base": "71901e72e6ddbe7a9955afab3c805bb0f4b744a8437d3376356f32106c1e4ff2",
+    "accepted": "ca54a842552346754c402e5326f4fa999641867cd9cdca62feadb9e44f4d9abb",
+    "accepted_header": "ca54a842552346754c402e5326f4fa999641867cd9cdca62feadb9e44f4d9abb",
+    "combined": "92f88f20a53bdb133bcbe72a5bb29305f04a044ea75d3c3957e98fd52b279b66",
+    "compact": "c74f20443898688f72eab702f4c6548f96aa31675c1a2dbd377dfabef68600d1",
+    "final": "69a84231854afb5fc7060ddfeba6bb0c5b8d51f0a5a66fa2a78233e3b0987e83",
+    "guarded": "354f0204195a4a6b8d2a4b7c954cc8fcccd0f65baf0213eac4f9fcb582d1c13c",
+    "guarded_full": "354f0204195a4a6b8d2a4b7c954cc8fcccd0f65baf0213eac4f9fcb582d1c13c",
+    "isolated": "62331ecf6d006f61feddf0994461247d2dab842b1848c136443f777c612d3d97",
+    "prepare1": "5a2efa823f56e1977d8a614c21a0c618380376578c8c7e0daa203d5751be71a0",
+    "prepare2": "c6af9b6e6f0fc6f279b042a9972f85199dab2336b5645a7ab33cd1bd79f18c5c",
+    "prepare4": "fe76f06ea693c50b44eec1bb59f5e9215186e944ba621108eeb4b5333e85a9c7",
+    "profile": "3bcef9104230affa5efb24b5e920db00e3085a80531c231222c064dd6f073358",
+    "retained": "62331ecf6d006f61feddf0994461247d2dab842b1848c136443f777c612d3d97",
+    "ring16": "a3d0b89418534b1b386c5b2ee7602e1e62f96c771853989c594961d6dfe33c63",
+    "ring32": "bde05d081baa6c66f28c54c33a0f483419000b86e9465b29951892d49fd03b4c",
+    "warp_scan": "3d76f822d28a2343b0e7b8580b8c40dcb10d76e64722f3218c656e351d6e1ff5"
+  },
+  "coverage": {
+    "timing_files": 107,
+    "configurations": 372,
+    "accepted_enqueue_segments": 34146,
+    "timed_launches": 1009764,
+    "sampled_row_max_abs_error": 0.006855010986328125,
+    "final_paired_configurations": 44,
+    "final_paired_mode_cells": 88
+  },
+  "timings": [
+    {
+      "file": "accepted_assistant_g100_mtp1.json",
+      "sha256": "5226a8b8e6659e97b0146a220e6ac19fff37ac124480a1b1304f2fa047b0a902",
+      "version": "accepted_header",
+      "configurations": 3
+    },
+    {
+      "file": "accepted_assistant_g100_mtp8.json",
+      "sha256": "9f5d912ec745331baa135702cd51500c0cc311bdf0ec76fc1d7f081a2b6d9667",
+      "version": "accepted_header",
+      "configurations": 3
+    },
+    {
+      "file": "accepted_assistant_g50_mtp1.json",
+      "sha256": "e64deb3fd2bfc5fb70118cf9bb6fa762811cd08a8bb41d7d6904af7047a04ba9",
+      "version": "accepted_header",
+      "configurations": 3
+    },
+    {
+      "file": "accepted_assistant_g50_mtp8.json",
+      "sha256": "6b5f0aaf18ba9562382fcda484a3c3355f9ee11941b41e3e68f8e901edeff4a4",
+      "version": "accepted_header",
+      "configurations": 3
+    },
+    {
+      "file": "accepted_base_repeat_proxy_g100_mtp1.json",
+      "sha256": "c3f7801be6d704e3c2fc81e83c056714582118efc8abba660e0966851dcc0bcc",
+      "version": "base",
+      "configurations": 3
+    },
+    {
+      "file": "accepted_base_repeat_proxy_g100_mtp8.json",
+      "sha256": "a766a835e031be05ffed3855bf639e27920b5dffe9acdadf9d3b34d4a3b3f965",
+      "version": "base",
+      "configurations": 3
+    },
+    {
+      "file": "accepted_host_recheck_proxy_host_mtp1.json",
+      "sha256": "ba3eb737c823248f9573407ee777e84ba2b08fcfe20f844d5e6bad0fb37767d1",
+      "version": "accepted_header",
+      "configurations": 4
+    },
+    {
+      "file": "accepted_proxy_g100_l0_mtp1.json",
+      "sha256": "6f9567d104959876df39c81158315b619264a92e4d81511614cfd10b714bd161",
+      "version": "accepted_header",
+      "configurations": 4
+    },
+    {
+      "file": "accepted_proxy_g100_l0_mtp8.json",
+      "sha256": "c1ca72e8780673c9fb3cce157e40a6b3d49c50c95970ae4f025483d531d4717b",
+      "version": "accepted_header",
+      "configurations": 4
+    },
+    {
+      "file": "accepted_proxy_g100_mtp1.json",
+      "sha256": "0e7ae72e0ff69227a7b68573d1a7aae68be9cd55bcfde93eb091344d581ad089",
+      "version": "accepted_header",
+      "configurations": 4
+    },
+    {
+      "file": "accepted_proxy_g100_mtp8.json",
+      "sha256": "2c8b3e56afe7d6d4a3507277050f1495b05936527fa3d73f0876893e9df56b95",
+      "version": "accepted_header",
+      "configurations": 4
+    },
+    {
+      "file": "accepted_proxy_g50_mtp1.json",
+      "sha256": "8208cddf2ed247d8bb7d87a79c20455ba227c17501d81b6acd0da191886f4c08",
+      "version": "accepted_header",
+      "configurations": 4
+    },
+    {
+      "file": "accepted_proxy_g50_mtp8.json",
+      "sha256": "46e7a9837b5ebafeb2d3eb98c267546d26e561f30a9171af986e726d95127466",
+      "version": "accepted_header",
+      "configurations": 4
+    },
+    {
+      "file": "accepted_proxy_host_mtp1.json",
+      "sha256": "cff149408d00fe12f2d73f3619dafbad965f26959c38e39deade85acf4740386",
+      "version": "accepted_header",
+      "configurations": 4
+    },
+    {
+      "file": "accepted_proxy_host_mtp8.json",
+      "sha256": "5560fc0aa5e7b312a93688a121e0904df6851c69f2e818b2b418f468fd2c8eb8",
+      "version": "accepted_header",
+      "configurations": 4
+    },
+    {
+      "file": "accepted_repeat_proxy_g100_mtp1.json",
+      "sha256": "238409c50404a286b86b1ce1b1639ade89f510e88f58b8c0bd034347d01ed821",
+      "version": "accepted_header",
+      "configurations": 3
+    },
+    {
+      "file": "accepted_repeat_proxy_g100_mtp8.json",
+      "sha256": "8ba95029edf11b2c321b2a07fa0e3e2e737c835a5452e488fe8e3aabb16e92d4",
+      "version": "accepted_header",
+      "configurations": 3
+    },
+    {
+      "file": "base_full_assistant_g100_mtp1.json",
+      "sha256": "ca82487a1301f9d1f37277ea8eb9d6f229626dcae2885036f69513c8f04fadb5",
+      "version": "base",
+      "configurations": 3
+    },
+    {
+      "file": "base_full_assistant_g100_mtp8.json",
+      "sha256": "c956045dbc6a878ea3321ed72aa9b8f9ddf2420cf985a065b524375a7c392bd2",
+      "version": "base",
+      "configurations": 3
+    },
+    {
+      "file": "base_full_assistant_g50_mtp1.json",
+      "sha256": "d0d0bbc63a2bfc57f9970acfcae3b214af462cb8a1e9608a1220341259ff2d36",
+      "version": "base",
+      "configurations": 3
+    },
+    {
+      "file": "base_full_assistant_g50_mtp8.json",
+      "sha256": "e79b574fc6aab6ef802ab65aee96de2cc057de46ff979647b65c8dfb1a66b11b",
+      "version": "base",
+      "configurations": 3
+    },
+    {
+      "file": "base_full_proxy_g100_l0_mtp1.json",
+      "sha256": "e98fe0e9d2e8e00f8dc94a15ffac6da2eb78d7c5ce6d3820c25016cc7977d9c5",
+      "version": "base",
+      "configurations": 4
+    },
+    {
+      "file": "base_full_proxy_g100_l0_mtp8.json",
+      "sha256": "daade2bde8ee049d3ffb7ca0f3d8d275af44055451889ceb57f2ae6f5aea58d7",
+      "version": "base",
+      "configurations": 4
+    },
+    {
+      "file": "base_full_proxy_g100_mtp1.json",
+      "sha256": "a7e36285aa4be34e56e82e4b2d59a1b6b450a2652e06f3b5225cd2ab394bccc5",
+      "version": "base",
+      "configurations": 4
+    },
+    {
+      "file": "base_full_proxy_g100_mtp8.json",
+      "sha256": "efedfcc3b2b0d007c1983f6e7920ac58d92b273f67beb3d7b4280da021a863fd",
+      "version": "base",
+      "configurations": 4
+    },
+    {
+      "file": "base_full_proxy_g50_mtp1.json",
+      "sha256": "feb1d98a31f53cc196334b74d904ce4892a3d8598d6b72c928ccd103ff426728",
+      "version": "base",
+      "configurations": 4
+    },
+    {
+      "file": "base_full_proxy_g50_mtp8.json",
+      "sha256": "12c2142e5e6245c2da172ee5fe3c3a9c93d9a567869123b8db301bd07f174f5e",
+      "version": "base",
+      "configurations": 4
+    },
+    {
+      "file": "base_full_proxy_host_mtp1.json",
+      "sha256": "1d5ea0b451a20602764302d81367eb3fe2d0f5869f1e020a4f32a07d645c0b6b",
+      "version": "base",
+      "configurations": 4
+    },
+    {
+      "file": "base_full_proxy_host_mtp8.json",
+      "sha256": "22e1fd347c69605c0402be2980bb4fa0e0a24cf9672f15dcda68c23ef54d8747",
+      "version": "base",
+      "configurations": 4
+    },
+    {
+      "file": "base_host_recheck_proxy_host_mtp1.json",
+      "sha256": "1957aa979f833a4ed7d62b46d377cfbfc39b51f5d7d6648df71ab428c607f892",
+      "version": "base",
+      "configurations": 4
+    },
+    {
+      "file": "base_proxy_g100_mtp1.json",
+      "sha256": "3d15b66ced6ccffb88ee84bd102e64933fb2851c35ed373173b59bc49a736018",
+      "version": "base",
+      "configurations": 3
+    },
+    {
+      "file": "base_proxy_g100_mtp8.json",
+      "sha256": "bd1cfc365397329d690ff21469e64c908ae694915c2c6e446353d48c93bd6904",
+      "version": "base",
+      "configurations": 3
+    },
+    {
+      "file": "combined_proxy_g100_mtp1.json",
+      "sha256": "e8991d03ce6256c04d6acad237ac975d11fcca5b31ac754103d7c8fe3983e224",
+      "version": "combined",
+      "configurations": 3
+    },
+    {
+      "file": "combined_proxy_g100_mtp8.json",
+      "sha256": "73d8c32990d3e822272f90f076640771d17d287558deafc1644ef4dfc8b18c63",
+      "version": "combined",
+      "configurations": 3
+    },
+    {
+      "file": "compact_proxy_g100_mtp1.json",
+      "sha256": "87f4056821cb333d45d358fccd2394e0f560cff4a6bb29dd3f3eb7c91f802fbd",
+      "version": "compact",
+      "configurations": 3
+    },
+    {
+      "file": "compact_proxy_g100_mtp8.json",
+      "sha256": "b8ed041363f4ebc77baae7f4ef13520971b5f022cc2ac6ed1759fe7aed92b30e",
+      "version": "compact",
+      "configurations": 3
+    },
+    {
+      "file": "default_assistant_g100_mtp1.json",
+      "sha256": "5d0009d863c8b1d54fbadbd245f1965d4cc0153b901faf2dc06c8e0a7043dfdd",
+      "version": "guarded",
+      "configurations": 3
+    },
+    {
+      "file": "default_assistant_g100_mtp8.json",
+      "sha256": "0676cda46e113334eb39bb27d869900adab4675fd8906c71dbcfbd20df796cb0",
+      "version": "guarded",
+      "configurations": 3
+    },
+    {
+      "file": "default_assistant_g50_mtp1.json",
+      "sha256": "8a92dd42268a894e0468b449175f40b40bf47ae7900869519f116c4f931b40d1",
+      "version": "guarded",
+      "configurations": 3
+    },
+    {
+      "file": "default_assistant_g50_mtp8.json",
+      "sha256": "8ca17ac8fc79dc8a7600f8b6a229ece096abc7cb2afe4fcbd2b471ec8c8c6d51",
+      "version": "guarded",
+      "configurations": 3
+    },
+    {
+      "file": "default_proxy_g100_l0_mtp1.json",
+      "sha256": "b0be89cda1479097d77cc9e1efa73ef3257dd26fd315ab83ceb8f649388f389b",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "default_proxy_g100_l0_mtp8.json",
+      "sha256": "5e067d4fb2addbf49855b2d012efd3ab51aa1ff728ccd401024b8312e046edb4",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "default_proxy_g100_mtp1.json",
+      "sha256": "dcd267b304596d30ecf8fd62ca1fbf78635194466e84e9dfb922c5310f15b958",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "default_proxy_g100_mtp8.json",
+      "sha256": "f432936bac2fb46189541a79818caaca82ed7c4e98b5bf6a470c3181e88ed239",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "default_proxy_g50_mtp1.json",
+      "sha256": "c34d158b1b74aeb39137f23fb90dd5c038ff5584d6e9a005b5afd9120f4cc6a2",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "default_proxy_g50_mtp8.json",
+      "sha256": "cb50e6cd313ce9dae2c0e4ff4adfb2adea7a80ced2496ca6ccf79ab6694e65d0",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "default_proxy_host_mtp1.json",
+      "sha256": "8767505ad5bef2ded2bc689c411ffd0964147ba6f5de510be44b5d5b939c679c",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "default_proxy_host_mtp8.json",
+      "sha256": "6056126002cabdf32ec4a9614184366a0baeae1ffbb219086bd9c56c76b660d6",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "enabled_assistant_g100_mtp1.json",
+      "sha256": "7c7236a5b5b19c3adb14663fabee8efadd1e7a3b7c52bab622c406552cefd21c",
+      "version": "guarded",
+      "configurations": 3
+    },
+    {
+      "file": "enabled_assistant_g100_mtp8.json",
+      "sha256": "6fe279d99a6447028ff8018b8ad248edd079a677bec59064dfcaabbd5c04d077",
+      "version": "guarded",
+      "configurations": 3
+    },
+    {
+      "file": "enabled_assistant_g50_mtp1.json",
+      "sha256": "e8888091796fad1d3a3309d9149cbc025433adde433ceb70a70ce36c6fe2196b",
+      "version": "guarded",
+      "configurations": 3
+    },
+    {
+      "file": "enabled_assistant_g50_mtp8.json",
+      "sha256": "64a379773173414b529f114b543f26984a5d6cfc6e28f035dba5d4ab263e841d",
+      "version": "guarded",
+      "configurations": 3
+    },
+    {
+      "file": "enabled_proxy_g100_l0_mtp1.json",
+      "sha256": "b8de578862131b2f998f05c5ef3de76cfb3b03fa46f64d3a558e811bf767b8b3",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "enabled_proxy_g100_l0_mtp8.json",
+      "sha256": "e9eacf012df27ff3ff0ec9d6308369e672e1c1b8a438954265a3fb68e745154e",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "enabled_proxy_g100_mtp1.json",
+      "sha256": "a061a3a9496bca7fc8d1a2c0e5295d949d04eb1a6e4f0fed5c950f834964df20",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "enabled_proxy_g100_mtp8.json",
+      "sha256": "ccc65ec349acd26018a2a631853695409a057b6aba9b04ebee8d647c1ba54b04",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "enabled_proxy_g50_mtp1.json",
+      "sha256": "d33a2b97ae154dd5e2ac9ebddad790932d8d5b98d395630b27cdd9467a4155bd",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "enabled_proxy_g50_mtp8.json",
+      "sha256": "49e23ad59662fe032b006c981b9ed1e8d68105c8fb9e298d674636089b34206c",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "enabled_proxy_host_mtp1.json",
+      "sha256": "b9a0360e3a8da3fb82b299c1172e9531da39e9948d96c1b1f5d6e060ad231fcb",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "enabled_proxy_host_mtp8.json",
+      "sha256": "d0f9774254e98420ff024d0f5a1fda590687eaa0e35421395b2dc87651165b2d",
+      "version": "guarded",
+      "configurations": 4
+    },
+    {
+      "file": "enabled_repeat_proxy_g100_mtp1.json",
+      "sha256": "2e3e8f285007fbb967a7f6e46546dfbd898d61f4c2652f8ed076f74067d80d06",
+      "version": "guarded",
+      "configurations": 3
+    },
+    {
+      "file": "enabled_repeat_proxy_g100_mtp8.json",
+      "sha256": "d3c77bf2ee37c62e321b40b40b58bdfcdde472164d6cecc7c10829a9a80b75d6",
+      "version": "guarded",
+      "configurations": 3
+    },
+    {
+      "file": "final_assistant_g100_mtp1.json",
+      "sha256": "e0248171a35f2701af0f30a20b1404e7271d3a64cce7a7e141f5ee67296ca314",
+      "version": "final",
+      "configurations": 3
+    },
+    {
+      "file": "final_assistant_g100_mtp8.json",
+      "sha256": "5e98d4669de7eb238f92cb5c7a7927384351e16d9710b0f90ce7cbabb0a98f7c",
+      "version": "final",
+      "configurations": 3
+    },
+    {
+      "file": "final_assistant_g50_mtp1.json",
+      "sha256": "c4dfec09b3cbdc3e97ace7e8d2fa5aaedb0ea8ca6bce559579f1111873bee47d",
+      "version": "final",
+      "configurations": 3
+    },
+    {
+      "file": "final_assistant_g50_mtp8.json",
+      "sha256": "dc03f052b04cef5bde2c734fe5016091f656c5f877e68e21e9763ad20266258b",
+      "version": "final",
+      "configurations": 3
+    },
+    {
+      "file": "final_proxy_g100_l0_mtp1.json",
+      "sha256": "ff296f89f5a0640b5411a9e9896d147500298206ba95e1395213fe3df47f660a",
+      "version": "final",
+      "configurations": 4
+    },
+    {
+      "file": "final_proxy_g100_l0_mtp8.json",
+      "sha256": "204649f58958643b03589b4af9dcf1d954f00c253abcb605c92ad67ea1532a2c",
+      "version": "final",
+      "configurations": 4
+    },
+    {
+      "file": "final_proxy_g100_mtp1.json",
+      "sha256": "87ed4017e3b639595bb8414cdb4b3de31b7b642c20ad2b7c9838c1c9b6645f5c",
+      "version": "final",
+      "configurations": 4
+    },
+    {
+      "file": "final_proxy_g100_mtp8.json",
+      "sha256": "cd15c9589ec5029bc8865eefc931e55af89f2312dcb3627be183fe1f41af810d",
+      "version": "final",
+      "configurations": 4
+    },
+    {
+      "file": "final_proxy_g50_mtp1.json",
+      "sha256": "4627372c179e7fe78954acc33b7f045198031a7c9e1b20aca8b15ccdaf1376a0",
+      "version": "final",
+      "configurations": 4
+    },
+    {
+      "file": "final_proxy_g50_mtp8.json",
+      "sha256": "7ba6e8c6503f92a3d476da839baf807b33db188e7a60469b90f1b68299fa8488",
+      "version": "final",
+      "configurations": 4
+    },
+    {
+      "file": "final_proxy_host_mtp1.json",
+      "sha256": "4c291766ece4aa3851277c953d3e10eda3a49ed6496a144f88e3350265be779b",
+      "version": "final",
+      "configurations": 4
+    },
+    {
+      "file": "final_proxy_host_mtp8.json",
+      "sha256": "f9f1baebb4709cf20a74abad872a10e50d01682053ac8a6548c7cc54e873b497",
+      "version": "final",
+      "configurations": 4
+    },
+    {
+      "file": "final_repeat_proxy_g100_mtp1.json",
+      "sha256": "f2fb3abbb90c035df694be6999de7821d824f4568f0dc591c3bcdaec1d9d8ed1",
+      "version": "final",
+      "configurations": 3
+    },
+    {
+      "file": "final_repeat_proxy_g100_mtp8.json",
+      "sha256": "86fee642e634c3fcde837303f4f79151755dca38e29ff6281f3558ac5d10b273",
+      "version": "final",
+      "configurations": 3
+    },
+    {
+      "file": "floor_assistant_mtp1.json",
+      "sha256": "94ec68bb7dc1046f59188dc858834ed8fe809c2ded520e61e66aa314e59c43d4",
+      "version": "final",
+      "configurations": 3
+    },
+    {
+      "file": "floor_assistant_mtp8.json",
+      "sha256": "43de8cd0eaa75d7c5de1028823776e7d3f9854b04c4a57a362adeeab7a023452",
+      "version": "final",
+      "configurations": 3
+    },
+    {
+      "file": "isolated_host_proxy_host_mtp1.json",
+      "sha256": "8e2430b51eefab66ab549728a5d963466b11499f6f0a7c4fcdef44f3d664cd8c",
+      "version": "isolated",
+      "configurations": 4
+    },
+    {
+      "file": "optin_proxy_g100_mtp1.json",
+      "sha256": "65c8a001e678de4ae9de93286a70cde4e221da62b53f6102dfc5350cc7e6652f",
+      "version": "accepted_header",
+      "configurations": 3
+    },
+    {
+      "file": "optin_proxy_g100_mtp8.json",
+      "sha256": "36e57a0eee54653b1a0731493c32468a74b30879af8eae914003c0fac2d91f7f",
+      "version": "accepted_header",
+      "configurations": 3
+    },
+    {
+      "file": "prepare1_proxy_g100_mtp1.json",
+      "sha256": "938350ef490b10a31f0336512a74d9393b899c8cb46d25db4908d64ef3b957c9",
+      "version": "prepare1",
+      "configurations": 3
+    },
+    {
+      "file": "prepare1_proxy_g100_mtp8.json",
+      "sha256": "2da8d2b9f29c933b846f15878221a32d4dad936a28a960df546336db39d63d84",
+      "version": "prepare1",
+      "configurations": 3
+    },
+    {
+      "file": "prepare2_proxy_g100_mtp1.json",
+      "sha256": "0835c6622292768c3c3659e8561baccf63539a631a578f08a059617b7d1a8c3a",
+      "version": "prepare2",
+      "configurations": 3
+    },
+    {
+      "file": "prepare2_proxy_g100_mtp8.json",
+      "sha256": "8a3eca68ff5c7b065920fd3c068f72037a56bf15a32645cb24253c3b0f92efee",
+      "version": "prepare2",
+      "configurations": 3
+    },
+    {
+      "file": "prepare4_proxy_g100_mtp1.json",
+      "sha256": "5cd2a80f14c6cdfffdc452c9f86b3c33b65d01ad6dfc4f0a0c2588e053de0de6",
+      "version": "prepare4",
+      "configurations": 3
+    },
+    {
+      "file": "prepare4_proxy_g100_mtp8.json",
+      "sha256": "75cc802658f86ec5b89506c22467112fbeba8e9e277acfbe62dfae7ebcc7afd6",
+      "version": "prepare4",
+      "configurations": 3
+    },
+    {
+      "file": "retained_assistant_g100_mtp1.json",
+      "sha256": "a1d329cb501d46b9cac01bc6f99719ea2c444812ff2624767f4e9944a92cf4cb",
+      "version": "retained",
+      "configurations": 3
+    },
+    {
+      "file": "retained_assistant_g100_mtp8.json",
+      "sha256": "5aed516ce20e2baba0aa057a2c8a643113cab05f94ce5314bcc9b74c5bcc4019",
+      "version": "retained",
+      "configurations": 3
+    },
+    {
+      "file": "retained_assistant_g50_mtp1.json",
+      "sha256": "06ed686867366141b8894132e22571e91c2dc8dc13f8f91e74901dd668fb3ec7",
+      "version": "retained",
+      "configurations": 3
+    },
+    {
+      "file": "retained_assistant_g50_mtp8.json",
+      "sha256": "abc0b8619719d955a5bfcb2f664443cdfe10dfcb7753902efadd92802ff6b689",
+      "version": "retained",
+      "configurations": 3
+    },
+    {
+      "file": "retained_proxy_g100_l0_mtp1.json",
+      "sha256": "52e9f5692b2cc2fd92599ad3d5ab042e9ed4c144d93538c7a5fe04de5a6ff51d",
+      "version": "retained",
+      "configurations": 4
+    },
+    {
+      "file": "retained_proxy_g100_l0_mtp8.json",
+      "sha256": "e2d11fa2b79cc19de0a4e60f425338270fb467641e2f6486dde238cc4da3c1ae",
+      "version": "retained",
+      "configurations": 4
+    },
+    {
+      "file": "retained_proxy_g100_mtp1.json",
+      "sha256": "ffcacaa4a25de6d1b2db3354e651f51ea4475ea5dbb78ee9e3a9d68c767190b1",
+      "version": "retained",
+      "configurations": 4
+    },
+    {
+      "file": "retained_proxy_g100_mtp8.json",
+      "sha256": "582b549b030a4e3bcf2e923552f531d8c629d784c2f4ca6a67367dcb4e9888a2",
+      "version": "retained",
+      "configurations": 4
+    },
+    {
+      "file": "retained_proxy_g50_mtp1.json",
+      "sha256": "f205590db4761828d08d8c4c7a4a4a4d6aaf145e781fdb6af582ecf9805aa8d9",
+      "version": "retained",
+      "configurations": 4
+    },
+    {
+      "file": "retained_proxy_g50_mtp8.json",
+      "sha256": "622fd1719d5be245f36ee202c429f3f29b4d4c052b4c3ccecd51b7b7098bab66",
+      "version": "retained",
+      "configurations": 4
+    },
+    {
+      "file": "retained_proxy_host_mtp1.json",
+      "sha256": "3dd0dc9b01d59a158bd301de7d5045ac433dc1b91b87e75138a7b129790e5fba",
+      "version": "retained",
+      "configurations": 4
+    },
+    {
+      "file": "retained_proxy_host_mtp8.json",
+      "sha256": "9b2eab5dae321d81839b60d0bc572e72f1c83bcd0fb69ff6cb7dae0f38b3b174",
+      "version": "retained",
+      "configurations": 4
+    },
+    {
+      "file": "retained_repeat_proxy_g100_mtp1.json",
+      "sha256": "868da6ca3a94266f35ad44e1d040448ea282f128996f9e953cf749a20cb01dba",
+      "version": "retained",
+      "configurations": 3
+    },
+    {
+      "file": "retained_repeat_proxy_g100_mtp8.json",
+      "sha256": "b45c048f84b75c4a05f0cfb1aa1a874a08b4beeea4d8378a419c4aaac4d13f3c",
+      "version": "retained",
+      "configurations": 3
+    },
+    {
+      "file": "ring16_proxy_g100_mtp1.json",
+      "sha256": "faf6faac5cac3b4aeeb5d5849d751de1df4158c208576e0bc51a3e4f7a143917",
+      "version": "ring16",
+      "configurations": 3
+    },
+    {
+      "file": "ring16_proxy_g100_mtp8.json",
+      "sha256": "f86a9cdc8495cb4c9031b2f93ca01659080715eb14defbe69455ec81eff07346",
+      "version": "ring16",
+      "configurations": 3
+    },
+    {
+      "file": "ring32_proxy_g100_mtp1.json",
+      "sha256": "18edfe3e96ba8f957ca3ee965b36f31b7632c30f796dc7030a25dc02dc2a054d",
+      "version": "ring32",
+      "configurations": 3
+    },
+    {
+      "file": "ring32_proxy_g100_mtp8.json",
+      "sha256": "e94308bd93243aa534c0ef8feadbe18088461046e27d8cc3b9a0b6fac1d141ec",
+      "version": "ring32",
+      "configurations": 3
+    },
+    {
+      "file": "warp_scan_proxy_g100_mtp1.json",
+      "sha256": "81ac870bb3b68abb85f23684a10018bb44ea077440e2d8644b0a8847e4f3f788",
+      "version": "warp_scan",
+      "configurations": 3
+    },
+    {
+      "file": "warp_scan_proxy_g100_mtp8.json",
+      "sha256": "b7b47261accd5595002d697e8a9371438a4c4e115a959217832178dd4c45bbec",
+      "version": "warp_scan",
+      "configurations": 3
+    }
+  ],
+  "default_source_tokens_equal_baseline": true,
+  "captures": {
+    "temp/mtp_overlap/rounds_ctx65536_code_flashinfer_attention.pt": "16e738eeedfe801f0a22ffaa3dd6aa9defaffaf2b1a77505b756d007ebf56e1b",
+    "temp/mtp_overlap/rounds_ctx65536_novel_victorian.pt": "affed701716a3cd248b057c0b085995e8fc004de8dcface9cbd5ac4b0ef792d6",
+    "temp/glm_trace/assistant64k/doc1.pt": "588580773e0aac47c0a84fd99f826205de8a7158633617d8a9bf8360b10a3714",
+    "temp/glm_trace/assistant64k/doc3.pt": "91b10832e3aa6e7d9dd2e46f0509bacce45f2f7bcc3e4ae903f0f85bce0a5b41"
+  },
+  "tests": {
+    "passed": 101,
+    "seconds": 175.76,
+    "log": "pytest_guarded.log",
+    "retained_log": "pytest_retained.log",
+    "pre_isolation_log": "pytest_accepted.log",
+    "pipeline_experiment_log": "pytest_final.log"
+  },
+  "compiler_artifacts": {
+    "accepted_normal_sass.txt.gz": {
+      "sha256": "19a4a8f8456108a65e77fd20342c8764534b6fbaa58d2e315c64939875ef1c4a",
+      "raw_sha256": "a2d62c2e6da80da63c25a62a333f6de5cefc6c44d62ca698c1a568d98ce34e47"
+    },
+    "accepted_sass.txt.gz": {
+      "sha256": "feb21490f8b082b2ab5331ad08fa53ff51a4038db0a67f334e0f210b56149fc8",
+      "raw_sha256": "273fe44f80ced753e294e1414e44fc2d1c51983b97e03f11942411369a55bd42"
+    },
+    "base_sass.txt.gz": {
+      "sha256": "53ec94dc562d75b7e6bb1f7118183013749adcafb030a3f2d23b869e4364b00e",
+      "raw_sha256": "bd8ef51ef2c09e334101a05d403614b01347626f0a0d4a36613ab9db3ad38f2b"
+    },
+    "combined_sass.txt.gz": {
+      "sha256": "1c995326fe03d88526b80769a604f26c6f90227103fcfda58f03f37953dd4fb8",
+      "raw_sha256": "31ef9cee4fc3c35305d8757d4236bbd16ad8a63e058406a92139d56d359f9dc1"
+    },
+    "default_normal_sass.txt.gz": {
+      "sha256": "e2d77b56dc970d5059f499b33bf1de86616bf36b76984e5aba5cec267cff5f80",
+      "raw_sha256": "c8998d2de5cbeffe7b6c8531f631f8c8c305ec1c56831eb0330d00a9e66e1dd3"
+    },
+    "default_sass.txt.gz": {
+      "sha256": "66972812a78bc01117e1a952c146ddff458f2d860c4b563a1c4566d70c4d5604",
+      "raw_sha256": "bd8ef51ef2c09e334101a05d403614b01347626f0a0d4a36613ab9db3ad38f2b"
+    },
+    "enabled_normal_sass.txt.gz": {
+      "sha256": "6752dc51200c929826f573c229314eb5f14930c3f77e2bcb16d6d05568d416f7",
+      "raw_sha256": "a2d62c2e6da80da63c25a62a333f6de5cefc6c44d62ca698c1a568d98ce34e47"
+    },
+    "enabled_sass.txt.gz": {
+      "sha256": "8058e29e4cf8b804745b27e85467e63c10709e71fd3a0c027dccf1080fc90d65",
+      "raw_sha256": "273fe44f80ced753e294e1414e44fc2d1c51983b97e03f11942411369a55bd42"
+    },
+    "final_normal_sass.txt.gz": {
+      "sha256": "fcbe21748c01bff02dd2a6a4b40759b3c0214d69f018110ec079f38bb0d4e19c",
+      "raw_sha256": "d789360d6bbaa1db5c7a85b33446892f84f83728e9883a212c05c3b933f36667"
+    },
+    "final_sass.txt.gz": {
+      "sha256": "ed55628f9cd2b8d806094c7f91283edd918ef1a0b5f8d6e868638605843b0d20",
+      "raw_sha256": "31ef9cee4fc3c35305d8757d4236bbd16ad8a63e058406a92139d56d359f9dc1"
+    },
+    "retained_normal_sass.txt.gz": {
+      "sha256": "5d115a8d5539eb8c48ef5a1fb34a2e821d8d395a6a0d17706158ce92c17a7606",
+      "raw_sha256": "a2d62c2e6da80da63c25a62a333f6de5cefc6c44d62ca698c1a568d98ce34e47"
+    },
+    "retained_sass.txt.gz": {
+      "sha256": "b16a95bd086f6addb3cc81ec444bde26b8ff32b1ea95026949104502af0d3a4b",
+      "raw_sha256": "273fe44f80ced753e294e1414e44fc2d1c51983b97e03f11942411369a55bd42"
+    }
+  },
+  "resource_artifacts": {
+    "accepted_normal_resources.txt": "c776e0d0a64a41c3975a4f3b8c4fc5e5a42afb6b449609471d5a64d8836142e1",
+    "accepted_resources.txt": "5af35d4d90142dac9c2d1b9b21f5f687084cf5ba461a9a110df0d2ed6996f4be",
+    "base_resources.txt": "55ef1c48e63df65e414bb78e1f0691dcbe1743ee68855f01c4beb3a65089a550",
+    "combined_resources.txt": "6949e320dfb1ff59bc93a2eef37beb3ca4a113ef44f819298b104435ff42cf3f",
+    "default_normal_resources.txt": "969033a784076056fdc6ab9a58e327d5b07982f09d2d9a3423e022a746fa53cc",
+    "default_resources.txt": "55ef1c48e63df65e414bb78e1f0691dcbe1743ee68855f01c4beb3a65089a550",
+    "enabled_normal_resources.txt": "c776e0d0a64a41c3975a4f3b8c4fc5e5a42afb6b449609471d5a64d8836142e1",
+    "enabled_resources.txt": "5af35d4d90142dac9c2d1b9b21f5f687084cf5ba461a9a110df0d2ed6996f4be",
+    "final_normal_resources.txt": "c776e0d0a64a41c3975a4f3b8c4fc5e5a42afb6b449609471d5a64d8836142e1",
+    "final_resources.txt": "6949e320dfb1ff59bc93a2eef37beb3ca4a113ef44f819298b104435ff42cf3f",
+    "retained_normal_resources.txt": "c776e0d0a64a41c3975a4f3b8c4fc5e5a42afb6b449609471d5a64d8836142e1",
+    "retained_resources.txt": "5af35d4d90142dac9c2d1b9b21f5f687084cf5ba461a9a110df0d2ed6996f4be"
+  },
+  "notes": [
+    "GPU0/1 occupied by unrelated services. Only free GPU3 A100-PCIE used.",
+    "Simulated far and near are separate same-GPU HBM allocations, not physical NVLink. Unchanged emulator charges the same bytes and latency. Physical Host cases use normal builds.",
+    "The two-version controlled baseline uses the same tiers.py same-device access-list fix.",
+    "Profile patches and timestamp traces are diagnostic, never final timing evidence.",
+    "16-row fetch ring regressed. The 32-row compact fetch ring regressed 15% on one zero-latency case. It is only in saved experimental patches, absent from the retained kernel.",
+    "final_* files measure the pipeline candidate; accepted_* and retained_* measure intermediate candidates. An apparent recovery after isolating helpers did not persist; accepted/retained kernel instruction text was identical. No claim that isolation fixed the Host regression is supported.",
+    "enabled_* and default_* compare the final explicit SMALL_PREPARE option with the original default. The option is disabled by default after a 6% Host timing regression in intermediate candidates.",
+    "LRU ties within a launch may pick different victims, so reports preserve miss counts.",
+    "All lower bounds use normal-build same-GPU pure-HBM samples; emulator floors are ignored."
+  ]
+}

@@ -1,0 +1,11 @@
+--- a/include/flashinfer/attention/mla_host_batch.cuh
++++ b/include/flashinfer/attention/mla_host_batch.cuh
+@@ -300 +300 @@
+-template <typename KTraits, typename Params>
++template <typename KTraits, bool SMALL, typename Params>
+@@ -304 +304 @@
+-  constexpr uint32_t PER_THREAD = 8;
++  constexpr uint32_t PER_THREAD = SMALL ? 4 : 8;
+@@ -1674 +1674 @@
+-      prepare_host_batch_rows<KTraits>(params, epoch + 1);
++      prepare_host_batch_rows<KTraits, ROW_MERGE>(params, epoch + 1);

@@ -177,10 +177,11 @@ def test_host_batch_many_fetch_ctas_small_transfer(fetch_ctas):
     (4, 8, 64, 1000, False),
     (4, 8, 128, 64, True),
 ])
-def test_host_batch_cached_row_completion(requests, mtp, num_heads, staging_rows, host_split):
+@pytest.mark.parametrize("fetch_ctas", [1, 4, 16])
+def test_host_batch_cached_row_completion(requests, mtp, num_heads, staging_rows, host_split, fetch_ctas):
     _skip_if_unsupported()
     w, values = _run(requests, mtp, num_heads, 1024, 0.7, 0.5,
-                     staging_rows=staging_rows, host_split=host_split)
+                     staging_rows=staging_rows, host_split=host_split, fetch_ctas=fetch_ctas)
     q_nope, q_pe, ckv, kpe, host_page_start, indices, expected_o = values
     indices = indices.clone()
     w.set_host_cache(torch.arange(requests + 1, dtype=torch.int32) * mtp, 512)

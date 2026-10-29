@@ -1,0 +1,238 @@
+{
+  "enabled": {
+    "library_sha256": "f7f07747199d2c0a03f3a15bedcea41820ebbec42b85e2ea5aa3310be901b3d0",
+    "kernels": [
+      {
+        "stages": "1",
+        "kv_tile": "16",
+        "small": false,
+        "instructions": 13136,
+        "baseline_instructions": 13136,
+        "instruction_text_equals_baseline": false,
+        "instruction_sha256": "684f2f3448ebd8f2048a89d7778f7f492cb224f195fa6750d69ca57dacf99e44"
+      },
+      {
+        "stages": "1",
+        "kv_tile": "16",
+        "small": true,
+        "instructions": 12488,
+        "baseline_instructions": 13272,
+        "instruction_text_equals_baseline": false,
+        "instruction_sha256": "523a8ddd5e8ad607ae1f40892d72927f323579a2b63b3c70886ebf8daa6ab138"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "32",
+        "small": false,
+        "instructions": 13544,
+        "baseline_instructions": 13544,
+        "instruction_text_equals_baseline": false,
+        "instruction_sha256": "7332ad1073538c56d83d1e67cb75e7f6d31c23a752f4439485386f5e09627641"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "32",
+        "small": true,
+        "instructions": 12872,
+        "baseline_instructions": 13688,
+        "instruction_text_equals_baseline": false,
+        "instruction_sha256": "07409858f4bd3c8310e7c82402555f0205ae1d4f61214308d8df877ac1b2d654"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "64",
+        "small": false,
+        "instructions": 15480,
+        "baseline_instructions": 15480,
+        "instruction_text_equals_baseline": false,
+        "instruction_sha256": "2f9abee4cf28ece32da9bf0ee6984de38b496faa20eb7946dd416ad30815675a"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "64",
+        "small": true,
+        "instructions": 14784,
+        "baseline_instructions": 15608,
+        "instruction_text_equals_baseline": false,
+        "instruction_sha256": "d079995c9c319d24b7aad5e7ba29d678c6f1dca92cc1c2aa250763b0e6f4c7ba"
+      }
+    ]
+  },
+  "enabled_normal": {
+    "library_sha256": "4bcb2b1844c206ebf695b69e050b81aca0b70545bc66df87601899edf7b4408a",
+    "kernels": [
+      {
+        "stages": "1",
+        "kv_tile": "16",
+        "small": false,
+        "instructions": 12320,
+        "baseline_instructions": 12320,
+        "instruction_text_equals_baseline": false,
+        "instruction_sha256": "52b97ba1fdf0e7fe2fdadf1d1f22e9945061e1f8a9f4395e187a9c2df1cabb04"
+      },
+      {
+        "stages": "1",
+        "kv_tile": "16",
+        "small": true,
+        "instructions": 11648,
+        "baseline_instructions": 12464,
+        "instruction_text_equals_baseline": false,
+        "instruction_sha256": "c629a0bcbb3a7c18d6472d4c90eef4ffa9362740aece8bc6e88f4507ca3b9311"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "32",
+        "small": false,
+        "instructions": 12680,
+        "baseline_instructions": 12688,
+        "instruction_text_equals_baseline": false,
+        "instruction_sha256": "fbd6b0640e905d930d269600e3cca3b78cdae92d3f9370f5b7efa4b82005c845"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "32",
+        "small": true,
+        "instructions": 12032,
+        "baseline_instructions": 12824,
+        "instruction_text_equals_baseline": false,
+        "instruction_sha256": "5bc3b1f21360d620e47b0da4f45361f07bec87b282b6abc1bc2839a4052d4966"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "64",
+        "small": false,
+        "instructions": 14344,
+        "baseline_instructions": 14344,
+        "instruction_text_equals_baseline": false,
+        "instruction_sha256": "47100396ff9cefd723f03293c2cc90818ad6b58635bd2a8cac257e1c17786ed7"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "64",
+        "small": true,
+        "instructions": 13704,
+        "baseline_instructions": 14480,
+        "instruction_text_equals_baseline": false,
+        "instruction_sha256": "726668caf372cd9ebe05640a2f17bd74d162ce072a6a43924fc41dc103de0e4e"
+      }
+    ]
+  },
+  "default": {
+    "library_sha256": "b4de408884c49618fb0b48186b1b87d411a30e177799be6881e92089373e09e7",
+    "kernels": [
+      {
+        "stages": "1",
+        "kv_tile": "16",
+        "small": false,
+        "instructions": 13136,
+        "baseline_instructions": 13136,
+        "instruction_text_equals_baseline": true,
+        "instruction_sha256": "e5009013a782151fb601dd3711a2ccb3493fd4564e97767f77c2d2121876291f"
+      },
+      {
+        "stages": "1",
+        "kv_tile": "16",
+        "small": true,
+        "instructions": 13272,
+        "baseline_instructions": 13272,
+        "instruction_text_equals_baseline": true,
+        "instruction_sha256": "cc078d50a9f4e69d239302c0e7aea9d0c1269c14be452bee38e46e596af88a4b"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "32",
+        "small": false,
+        "instructions": 13544,
+        "baseline_instructions": 13544,
+        "instruction_text_equals_baseline": true,
+        "instruction_sha256": "db97c2420f5f4c478dabc208289ce0c5d86e360da83680dd0f4ab9b87502eca0"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "32",
+        "small": true,
+        "instructions": 13688,
+        "baseline_instructions": 13688,
+        "instruction_text_equals_baseline": true,
+        "instruction_sha256": "11407352b6e3abf0f14375b1db9f449c8c9701019f94887f6c5f14bf5c64fca0"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "64",
+        "small": false,
+        "instructions": 15480,
+        "baseline_instructions": 15480,
+        "instruction_text_equals_baseline": true,
+        "instruction_sha256": "6aee6cf45243f1319971b398ca0f88bcf5e4b26c088c5005b515a78d98825f1a"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "64",
+        "small": true,
+        "instructions": 15608,
+        "baseline_instructions": 15608,
+        "instruction_text_equals_baseline": true,
+        "instruction_sha256": "3c0fa54df9d92a314e65c68d7d0efe585f8e2e91bed89480db79670261bdf392"
+      }
+    ]
+  },
+  "default_normal": {
+    "library_sha256": "31acc73287db75adf008db6262fd312c8cc6303db823fef14e7c178c0000fac8",
+    "kernels": [
+      {
+        "stages": "1",
+        "kv_tile": "16",
+        "small": false,
+        "instructions": 12320,
+        "baseline_instructions": 12320,
+        "instruction_text_equals_baseline": true,
+        "instruction_sha256": "9b243ed56cfd6c37137d1914dfa4dc41b8c9fe0647d7cbcbb4a1bab2b246f2c8"
+      },
+      {
+        "stages": "1",
+        "kv_tile": "16",
+        "small": true,
+        "instructions": 12464,
+        "baseline_instructions": 12464,
+        "instruction_text_equals_baseline": true,
+        "instruction_sha256": "50791f851bce109d083adcfb6a69c8d1100483559ff23dd29de77c0b9cbb8ac7"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "32",
+        "small": false,
+        "instructions": 12688,
+        "baseline_instructions": 12688,
+        "instruction_text_equals_baseline": true,
+        "instruction_sha256": "206644c6d03c94bb4b69f56d888dc47897fdb64d6deacf2e65e75771d5459e02"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "32",
+        "small": true,
+        "instructions": 12824,
+        "baseline_instructions": 12824,
+        "instruction_text_equals_baseline": true,
+        "instruction_sha256": "2c5eb961752643e984ee3d7d31726f5d966304b134e32d01ec4190e76c31a3df"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "64",
+        "small": false,
+        "instructions": 14344,
+        "baseline_instructions": 14344,
+        "instruction_text_equals_baseline": true,
+        "instruction_sha256": "78bfc59cb188fea18ca1fe67920d8e9751a5dc0721ed8811981fcc62405cc66d"
+      },
+      {
+        "stages": "2",
+        "kv_tile": "64",
+        "small": true,
+        "instructions": 14480,
+        "baseline_instructions": 14480,
+        "instruction_text_equals_baseline": true,
+        "instruction_sha256": "d89167d89f98b124553c9a448e73bf5577a1683dc229612833a22c8e7ebc91d2"
+      }
+    ]
+  }
+}

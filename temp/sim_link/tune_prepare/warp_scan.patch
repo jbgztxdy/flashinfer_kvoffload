@@ -1,0 +1,33 @@
+--- a/include/flashinfer/attention/mla_host_batch.cuh
++++ b/include/flashinfer/attention/mla_host_batch.cuh
+@@ -490 +490 @@
+-template <uint32_t THREADS, typename Value>
++template <uint32_t THREADS, bool SMALL, typename Value>
+@@ -493,0 +494,15 @@
++  if constexpr (SMALL) {
++    if (tid < 32) {
++      const uint32_t count = tid < n ? value(tid) : 0;
++      uint32_t sum = count;
++#pragma unroll
++      for (uint32_t offset = 1; offset < 32; offset *= 2) {
++        const uint32_t other = __shfl_up_sync(0xffffffff, sum, offset);
++        if (tid >= offset) sum += other;
++      }
++      if (tid < n) out[tid] = sum - count;
++      if (tid == 31) carry = sum;
++    }
++    __syncthreads();
++    return carry;
++  }
+@@ -520 +535 @@
+-template <typename KTraits, typename Params>
++template <typename KTraits, bool SMALL, typename Params>
+@@ -527 +542 @@
+-  const uint32_t unique = host_batch_block_scan<THREADS>(
++  const uint32_t unique = host_batch_block_scan<THREADS, SMALL>(
+@@ -582 +597 @@
+-    const uint32_t total = host_batch_block_scan<THREADS>(tail_rows, items, host_items);
++    const uint32_t total = host_batch_block_scan<THREADS, SMALL>(tail_rows, items, host_items);
+@@ -1680 +1695 @@
+-    unique = resolve_host_batch_slots<KTraits>(params, smem);
++    unique = resolve_host_batch_slots<KTraits, ROW_MERGE>(params, smem);

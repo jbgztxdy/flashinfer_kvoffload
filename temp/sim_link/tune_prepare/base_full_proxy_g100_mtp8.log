@@ -1,0 +1,6 @@
+bandwidth {'dma_contiguous_GBps': 687.1398361665542, 'sm_gather_random_GBps': 99.82629342069748}
+tier=peer requests=1 mtp=8 rows=8 steady(mean of last half, us): ours_stage=87.0 ours_inplace=169.5 floor_fa2=52.7 misses={'ours_stage': 1008, 'ours_inplace': 1007} unique_uncached=4062
+tier=peer requests=4 mtp=8 rows=32 steady(mean of last half, us): ours_stage=228.9 ours_inplace=503.8 floor_fa2=123.4 misses={'ours_stage': 6011, 'ours_inplace': 5990} unique_uncached=17188
+tier=peer requests=16 mtp=8 rows=128 steady(mean of last half, us): ours_stage=834.0 ours_inplace=1827.3 floor_fa2=562.2 misses={'ours_stage': 36138, 'ours_inplace': 36323} unique_uncached=81267
+tier=peer requests=128 mtp=8 rows=1024 steady(mean of last half, us): ours_stage=5420.5 ours_inplace=12530.2 floor_fa2=2749.4 misses={'ours_stage': 307677, 'ours_inplace': 308003} unique_uncached=668922
+results=/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_prepare/base_full_proxy_g100_mtp8.json

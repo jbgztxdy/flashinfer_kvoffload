@@ -64,7 +64,7 @@ class TieredKV:
             far_access = [AccessDescriptor(local, 3)]
             if far_kind == "host":
                 far_access.append(AccessDescriptor(MemoryLocation(3, self.host_numa), 3))
-            else:
+            elif peer != device:
                 far_access.append(AccessDescriptor(MemoryLocation(1, peer), 3))
             self._map(self.main_address, 0, self.near, near_handle, [AccessDescriptor(local, 3)], "near_hbm")
             self._map(self.main_address, self.near, self.far, far_handle, far_access,

@@ -1,0 +1,174 @@
+--- a/include/flashinfer/attention/mla_host_batch.cuh
++++ b/include/flashinfer/attention/mla_host_batch.cuh
+@@ -637 +637 @@
+-    return count < threshold ? kHostBatchMinFetchRows : kHostBatchFetchRows;
++    return count < threshold ? kHostBatchMinFetchRows : 16u;
+@@ -662,0 +663,162 @@
++template <typename KTraits, typename Params>
++__device__ __forceinline__ void fetch_host_batch_small_pages(const Params& params, uint8_t* smem,
++                                                       uint32_t epoch, uint32_t unique,
++                                                       uint32_t rows) {
++  using DTypeKV = typename Params::DTypeKV;
++  constexpr uint32_t ROW = KTraits::HEAD_DIM_CKV + KTraits::HEAD_DIM_KPE;
++  constexpr uint32_t VECS_PER_ROW = ROW * sizeof(DTypeKV) / 16;
++  constexpr uint32_t CHUNK_VECS = 16 * VECS_PER_ROW;
++  constexpr uint32_t BUFFERS =
++      sizeof(typename KTraits::SharedStorage) >= 4 * CHUNK_VECS * 16 ? 4 :
++      sizeof(typename KTraits::SharedStorage) >= 2 * CHUNK_VECS * 16 ? 2 : 1;
++  static_assert(sizeof(typename KTraits::SharedStorage) >= CHUNK_VECS * 16);
++  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
++  const uint32_t fetch_id = blockIdx.y - (gridDim.y - params.fetch_ctas);
++  const uint32_t count = params.stage ? min(unique, params.staging_capacity) : unique;
++  uint32_t* flags = host_batch_flags(params);
++  uint4* buffer = reinterpret_cast<uint4*>(smem);
++
++  const uint32_t chunk_vecs = rows * VECS_PER_ROW;
++  __shared__ int32_t cache_rows[kHostBatchFetchRows];
++  __shared__ uint32_t deferred[kHostBatchMaxDeferred], deferred_count;
++  if (tid == 0) deferred_count = 0;
++  FAR_EMU_INIT(BUFFERS);
++  FAR_EMU_SYNC();
++  auto issue = [&](uint32_t chunk, uint32_t buf) {
++#pragma unroll
++    for (uint32_t i = 0; i < ceil_div(CHUNK_VECS, KTraits::NUM_THREADS); ++i) {
++      const uint32_t v = i * KTraits::NUM_THREADS + tid;
++      const uint32_t slot = chunk * rows + v / VECS_PER_ROW;
++      if (v < chunk_vecs && slot < count) {
++        const auto* source = reinterpret_cast<const uint4*>(
++            params.ckv + static_cast<int64_t>(params.unique_pages[slot]) * ROW);
++        cp_async::load_128b<PrefetchMode::kNoPrefetch>(buffer + buf * CHUNK_VECS + v,
++                                                       source + v % VECS_PER_ROW);
++      }
++    }
++    if (chunk * rows < count) {
++      FAR_EMU_TILE(BUFFERS, buf, tid == 0 ? min(rows, count - chunk * rows) : 0, ROW * sizeof(DTypeKV));
++    }
++    cp_async::commit_group();
++  };
++
++  uint32_t chunk = fetch_id;
++#pragma unroll
++  for (uint32_t k = 0; k < BUFFERS - 1; ++k) issue(chunk + k * params.fetch_ctas, k);
++#pragma unroll 1
++  for (uint32_t k = 0; chunk * rows < count; ++k, chunk += params.fetch_ctas) {
++    issue(chunk + (BUFFERS - 1) * params.fetch_ctas, (k + BUFFERS - 1) % BUFFERS);
++    cp_async::wait_group<BUFFERS - 1>();
++    FAR_EMU_WAIT(BUFFERS, k % BUFFERS);
++    __syncthreads();
++    const uint32_t buf = k % BUFFERS;
++    auto* destination = reinterpret_cast<uint4*>(
++        params.staging +
++        (params.cache_slots + static_cast<int64_t>(chunk) * rows) * ROW);
++#pragma unroll
++    for (uint32_t i = 0; i < ceil_div(CHUNK_VECS, KTraits::NUM_THREADS); ++i) {
++      const uint32_t v = i * KTraits::NUM_THREADS + tid;
++      if (params.stage && v < chunk_vecs && chunk * rows + v / VECS_PER_ROW < count) {
++        destination[v] = buffer[buf * CHUNK_VECS + v];
++      }
++    }
++    // The resolve step is done, so the dedup entries can be cleared for the next launch.
++    if (tid < rows && chunk * rows + tid < count) {
++      params.host_slot[params.unique_pages[chunk * rows + tid] -
++                       params.host_page_start] = 0;
++    }
++    if (params.stage) {
++      __threadfence();
++      __syncthreads();
++      if (tid == 0) {
++        asm volatile("st.release.gpu.global.u32 [%0], %1;" ::"l"(flags + chunk), "r"(epoch + 1)
++                     : "memory");
++      }
++    }
++    // Fill the LRU cache from the same shared-memory copy, after the attention items waiting on
++    // this chunk were released: one more HBM write per page, and no reread. The victims come from
++    // the pools' LRU items, which workers run first (see run_host_batch_items). A staged chunk
++    // that lands before its victims are chosen is not waited for: blocking here put the LRU
++    // selection (~20 us at 4096 slots) on the PCIe stream's critical path at small batch. Its
++    // index is kept and it is copied from staging after the loop. In place there is no staged
++    // copy, so the loop waits (nothing in this launch waits on these copies).
++    if (host_batch_caching(params)) {
++      bool ready = true;
++      if (tid < rows && chunk * rows + tid < count) {
++        const uint32_t* pool_flag = params.pool_flags + params.slot_pool[chunk * rows + tid];
++        ready = host_batch_ld_acquire(pool_flag) == epoch + 1;
++      }
++      const bool defer = params.stage && !__syncthreads_and(ready) &&
++                         deferred_count < kHostBatchMaxDeferred;
++      if (defer) {
++        __syncthreads();
++        if (tid == 0) deferred[deferred_count++] = chunk;
++      } else {
++        if (tid < rows) {
++          const uint32_t slot = chunk * rows + tid;
++          int32_t victim = -1;
++          if (slot < count) {
++            const uint32_t* pool_flag = params.pool_flags + params.slot_pool[slot];
++            while (host_batch_ld_acquire(pool_flag) != epoch + 1) __nanosleep(64);
++            victim = params.victim_of[slot];
++          }
++          cache_rows[tid] = victim;
++          bind_host_batch_staged_slot(params, slot, victim);
++        }
++        __syncthreads();
++#pragma unroll
++        for (uint32_t i = 0; i < ceil_div(CHUNK_VECS, KTraits::NUM_THREADS); ++i) {
++          const uint32_t v = i * KTraits::NUM_THREADS + tid;
++          const int32_t victim = v < chunk_vecs ? cache_rows[v / VECS_PER_ROW] : -1;
++          if (victim >= 0) {
++            reinterpret_cast<uint4*>(
++                params.staging +
++                static_cast<int64_t>(victim) * ROW)[v % VECS_PER_ROW] =
++                buffer[buf * CHUNK_VECS + v];
++          }
++        }
++      }
++      // The buffer is refilled next.
++      __syncthreads();
++    }
++
++  }
++  cp_async::wait_group<0>();
++  // Deferred staged chunks: their victims are chosen by now; copy staging -> cache, HBM to HBM,
++  // the whole CTA over each chunk.
++  __syncthreads();
++#pragma unroll 1
++  for (uint32_t d = 0; d < deferred_count; ++d) {
++    const uint32_t chunk = deferred[d];
++    if (tid < rows) {
++      const uint32_t slot = chunk * rows + tid;
++      int32_t victim = -1;
++      if (slot < count) {
++        const uint32_t* pool_flag = params.pool_flags + params.slot_pool[slot];
++        while (host_batch_ld_acquire(pool_flag) != epoch + 1) __nanosleep(64);
++        victim = params.victim_of[slot];
++      }
++      cache_rows[tid] = victim;
++      bind_host_batch_staged_slot(params, slot, victim);
++    }
++    __syncthreads();
++    const auto* source = reinterpret_cast<const uint4*>(
++        params.staging + (params.cache_slots + static_cast<int64_t>(chunk) * rows) * ROW);
++#pragma unroll 4
++    for (uint32_t v = tid; v < chunk_vecs; v += KTraits::NUM_THREADS) {
++      const int32_t victim = cache_rows[v / VECS_PER_ROW];
++      if (victim >= 0) {
++        reinterpret_cast<uint4*>(params.staging + static_cast<int64_t>(victim) * ROW)[v % VECS_PER_ROW] =
++            source[v];
++      }
++    }
++    __syncthreads();
++  }
++  // Overflow pages were never staged; clear their dedup entries too.
++#pragma unroll 1
++  for (uint32_t slot = count + fetch_id * KTraits::NUM_THREADS + tid; slot < unique;
++       slot += params.fetch_ctas * KTraits::NUM_THREADS) {
++    params.host_slot[params.unique_pages[slot] - params.host_page_start] = 0;
++  }
++}
++
+@@ -1718 +1880,4 @@
+-  if (unique > 0 && from_back && !host_batch_writes_back(params)) fetch_host_batch_pages<KTraits>(params, smem, epoch, unique, fetch_rows);
++  if (unique > 0 && from_back && !host_batch_writes_back(params)) {
++    if constexpr (ROW_MERGE) fetch_host_batch_small_pages<KTraits>(params, smem, epoch, unique, fetch_rows);
++    else fetch_host_batch_pages<KTraits>(params, smem, epoch, unique, fetch_rows);
++  }

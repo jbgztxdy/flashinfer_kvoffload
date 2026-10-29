@@ -1,0 +1,5 @@
+bandwidth {'dma_contiguous_GBps': 676.4036664941096, 'sm_gather_random_GBps': 98.86423406621928}
+tier=peer requests=1 mtp=8 rows=8 steady(mean of last half, us): ours_stage=100.6 ours_inplace=166.7 floor_fa2=52.2 misses={'ours_stage': 1417, 'ours_inplace': 1447} unique_uncached=4625
+tier=peer requests=4 mtp=8 rows=32 steady(mean of last half, us): ours_stage=250.2 ours_inplace=519.6 floor_fa2=123.4 misses={'ours_stage': 12576, 'ours_inplace': 12655} unique_uncached=24092
+tier=peer requests=16 mtp=8 rows=128 steady(mean of last half, us): ours_stage=662.2 ours_inplace=1645.0 floor_fa2=561.8 misses={'ours_stage': 31677, 'ours_inplace': 31749} unique_uncached=77820
+results=/mnt/data/rtx/projects/flashinfer/temp/sim_link/tune_prepare/base_full_assistant_g100_mtp8.json

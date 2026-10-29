@@ -1,0 +1,35 @@
+--- a/include/flashinfer/attention/mla_host_batch.cuh
++++ b/include/flashinfer/attention/mla_host_batch.cuh
+@@ -117,0 +118,8 @@
++
++__device__ __forceinline__ unsigned long long hb_now() {
++  unsigned long long t;
++  asm volatile("mov.u64 %0, %%globaltimer;" : "=l"(t));
++  return t;
++}
++#define HB_MARK(k) do { if (threadIdx.x == 0 && threadIdx.y == 0 && threadIdx.z == 0) { \
++  (reinterpret_cast<unsigned long long*>(params.partial_o + static_cast<int64_t>(params.partial_capacity) * 64 * 512) - 4096)[blockIdx.y * 16 + (k)] = hb_now(); } } while (0)
+@@ -1638,0 +1647 @@
++      HB_MARK(10);
+@@ -1639,0 +1649 @@
++      HB_MARK(11);
+@@ -1663,0 +1674 @@
++  HB_MARK(0);
+@@ -1677,0 +1689 @@
++    HB_MARK(1);
+@@ -1678,0 +1691 @@
++    HB_MARK(2);
+@@ -1680,0 +1694 @@
++    HB_MARK(3);
+@@ -1701,0 +1716 @@
++    HB_MARK(4);
+@@ -1717,0 +1733 @@
++  HB_MARK(5);
+@@ -1718,0 +1735 @@
++  HB_MARK(6);
+@@ -1719,0 +1737 @@
++  HB_MARK(7);
+@@ -1724,0 +1743 @@
++    HB_MARK(8);
+@@ -1737,0 +1757 @@
++  HB_MARK(9);

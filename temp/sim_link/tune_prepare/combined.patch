@@ -1,0 +1,107 @@
+--- a/include/flashinfer/attention/mla_host_batch.cuh
++++ b/include/flashinfer/attention/mla_host_batch.cuh
+@@ -300 +300 @@
+-template <typename KTraits, typename Params>
++template <typename KTraits, bool SMALL, typename Params>
+@@ -304 +304 @@
+-  constexpr uint32_t PER_THREAD = 8;
++  constexpr uint32_t PER_THREAD = SMALL ? 1 : 8;
+@@ -490 +490 @@
+-template <uint32_t THREADS, typename Value>
++template <uint32_t THREADS, bool SMALL, typename Value>
+@@ -493,0 +494,15 @@
++  if constexpr (SMALL) {
++    if (tid < 32) {
++      const uint32_t count = tid < n ? value(tid) : 0;
++      uint32_t sum = count;
++#pragma unroll
++      for (uint32_t offset = 1; offset < 32; offset *= 2) {
++        const uint32_t other = __shfl_up_sync(0xffffffff, sum, offset);
++        if (tid >= offset) sum += other;
++      }
++      if (tid < n) out[tid] = sum - count;
++      if (tid == 31) carry = sum;
++    }
++    __syncthreads();
++    return carry;
++  }
+@@ -520 +535 @@
+-template <typename KTraits, typename Params>
++template <typename KTraits, bool SMALL, typename Params>
+@@ -527 +542 @@
+-  const uint32_t unique = host_batch_block_scan<THREADS>(
++  const uint32_t unique = host_batch_block_scan<THREADS, SMALL>(
+@@ -582 +597 @@
+-    const uint32_t total = host_batch_block_scan<THREADS>(tail_rows, items, host_items);
++    const uint32_t total = host_batch_block_scan<THREADS, SMALL>(tail_rows, items, host_items);
+@@ -637 +652 @@
+-    return count < threshold ? kHostBatchMinFetchRows : kHostBatchFetchRows;
++    return count < threshold ? kHostBatchMinFetchRows : 32u;
+@@ -663 +678 @@
+-template <typename KTraits, typename Params>
++template <typename KTraits, typename Params, bool COMPACT>
+@@ -670 +685 @@
+-  constexpr uint32_t CHUNK_VECS = kHostBatchFetchRows * VECS_PER_ROW;
++  constexpr uint32_t CHUNK_VECS = (COMPACT ? 32 : kHostBatchFetchRows) * VECS_PER_ROW;
+@@ -671,0 +687 @@
++      COMPACT && sizeof(typename KTraits::SharedStorage) >= 4 * CHUNK_VECS * 16 ? 4 :
+@@ -685 +701,2 @@
+-  FAR_EMU_INIT(2);
++  constexpr uint32_t EMU_STAGES = COMPACT ? BUFFERS : 2;
++  FAR_EMU_INIT(EMU_STAGES);
+@@ -699 +716,7 @@
+-    FAR_EMU_TILE(2, buf, tid == 0 ? min(rows, count - chunk * rows) : 0, ROW * sizeof(DTypeKV));
++    if constexpr (COMPACT) {
++      if (chunk * rows < count) {
++        FAR_EMU_TILE(EMU_STAGES, buf, tid == 0 ? min(rows, count - chunk * rows) : 0, ROW * sizeof(DTypeKV));
++      }
++    } else {
++      FAR_EMU_TILE(EMU_STAGES, buf, tid == 0 ? min(rows, count - chunk * rows) : 0, ROW * sizeof(DTypeKV));
++    }
+@@ -704 +727,6 @@
+-  if (chunk * rows < count) issue(chunk, 0);
++  if constexpr (COMPACT) {
++#pragma unroll
++    for (uint32_t k = 0; k < BUFFERS - 1; ++k) issue(chunk + k * params.fetch_ctas, k);
++  } else {
++    if (chunk * rows < count) issue(chunk, 0);
++  }
+@@ -708,3 +736,3 @@
+-    if (BUFFERS == 2 && next * rows < count) {
+-      issue(next, (k + 1) % 2);
+-      cp_async::wait_group<1>();
++    if constexpr (COMPACT) {
++      issue(chunk + (BUFFERS - 1) * params.fetch_ctas, (k + BUFFERS - 1) % BUFFERS);
++      cp_async::wait_group<BUFFERS - 1>();
+@@ -712,3 +740,8 @@
+-      cp_async::wait_group<0>();
+-    }
+-    FAR_EMU_WAIT(2, BUFFERS == 2 ? k % 2 : 0);
++      if (BUFFERS == 2 && next * rows < count) {
++        issue(next, (k + 1) % 2);
++        cp_async::wait_group<1>();
++      } else {
++        cp_async::wait_group<0>();
++      }
++    }
++    FAR_EMU_WAIT(EMU_STAGES, COMPACT ? k % BUFFERS : (BUFFERS == 2 ? k % 2 : 0));
+@@ -716 +749 @@
+-    const uint32_t buf = BUFFERS == 2 ? k % 2 : 0;
++    const uint32_t buf = COMPACT ? k % BUFFERS : (BUFFERS == 2 ? k % 2 : 0);
+@@ -786,2 +819,5 @@
+-    if (BUFFERS == 1 && next * rows < count) issue(next, 0);
+-  }
++    if constexpr (!COMPACT) {
++      if (BUFFERS == 1 && next * rows < count) issue(next, 0);
++    }
++  }
++  if constexpr (COMPACT) cp_async::wait_group<0>();
+@@ -1674 +1710 @@
+-      prepare_host_batch_rows<KTraits>(params, epoch + 1);
++      prepare_host_batch_rows<KTraits, ROW_MERGE>(params, epoch + 1);
+@@ -1680 +1716 @@
+-    unique = resolve_host_batch_slots<KTraits>(params, smem);
++    unique = resolve_host_batch_slots<KTraits, ROW_MERGE>(params, smem);
+@@ -1718 +1754 @@
+-  if (unique > 0 && from_back && !host_batch_writes_back(params)) fetch_host_batch_pages<KTraits>(params, smem, epoch, unique, fetch_rows);
++  if (unique > 0 && from_back && !host_batch_writes_back(params)) fetch_host_batch_pages<KTraits, Params, ROW_MERGE>(params, smem, epoch, unique, fetch_rows);
