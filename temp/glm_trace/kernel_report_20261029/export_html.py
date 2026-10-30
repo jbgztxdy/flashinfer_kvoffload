@@ -60,5 +60,5 @@ document.getElementById('download').addEventListener('click',()=>{const data=fil
 </script></html>'''
 page=page.replace("BODY",body).replace("PAYLOAD",payload)
 target=doc.with_suffix(".html")
-target.write_text(page)
+temporary=target.with_suffix(".html.new");temporary.write_text(page);temporary.replace(target)
 print(json.dumps(dict(file=str(target),measured_cells=len(rows),bytes=target.stat().st_size)))

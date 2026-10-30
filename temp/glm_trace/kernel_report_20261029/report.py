@@ -22,6 +22,11 @@ def setting_label(setting):
 def read(path):return json.loads(path.read_text())
 
 
+def atomic_write(path,text):
+    temp=path.with_suffix(path.suffix+".new")
+    temp.write_text(text);temp.replace(path)
+
+
 def floor(mtp,batch,ticks,fraction=None):
     kind="floor" if fraction is None else "snapshots"
     path=DEST/"raw"/f"{kind}_floor_mtp{mtp}_b{batch}.json"
@@ -107,6 +112,8 @@ def document(rows,files):
     resume=read(DEST/"resume_state.json") if (DEST/"resume_state.json").exists() else {}
     if resume.get("state")=="waiting_for_gpu":
         yield f"续跑状态（{resume['timestamp']}）：等待原A100 GPU0/1空闲；现有样本已保留。\n"
+    elif resume.get("state")=="interrupted_sigterm":
+        yield f"续跑状态（{resume['timestamp']}）：测试进程收到SIGTERM，退出码143；当前未运行GPU实验，等待确认GPU使用安排。剩余组合仍保留，不能将本报告作为全组合最终版。\n"
     if rows:
         yield "## 实测摘要\n"
         for kind,title in (("nocache","不开LRU"),("lru","真实trace＋LRU")):
@@ -121,7 +128,7 @@ def document(rows,files):
                        f"本文÷本地平均范围{min(r['ours_to_local_mean'] for r in values):.3f}–{max(r['ours_to_local_mean'] for r in values):.3f}。")
         yield ""
         yield "### 典型参数摘录\n"
-        yield "这里只摘录预先选定的1/4/16/128请求及四类链路；无LRU取目标Host 30%。所有其他比例和batch仍见后面的完整逐格表，不按赢家挑选配置。时间单位µs。\n"
+        yield "这里固定摘录1/4/16/128请求及四类链路；无LRU取目标Host 30%。所有其他比例和batch仍见后面的完整逐格表，不按赢家挑选配置。时间单位µs。\n"
         yield "| 场景 | 链路 | MTP | 请求 | 本文 | Memcpy | 纯本地 | 本文÷Memcpy | 本文÷本地 |"
         yield "|---|---|---:|---:|---:|---:|---:|---:|---:|"
         selected=[r for r in rows if r["requests"] in (1,4,16,128) and r["setting"] in ("g100_l20000","g50_l20000","nvlink","pcie")
@@ -270,10 +277,12 @@ def document(rows,files):
 
 
 rows,files=gather()
-DEST.joinpath("matrix.json").write_text(json.dumps(rows,separators=(",",":"))+"\n")
+atomic_write(DEST/"matrix.json",json.dumps(rows,separators=(",",":"))+"\n")
 if rows:
-    with (DEST/"matrix.csv").open("w",newline="") as f:
+    temp=DEST/"matrix.csv.new"
+    with temp.open("w",newline="") as f:
         writer=csv.DictWriter(f,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
-DOC.write_text("\n".join(document(rows,files))+"\n")
-DEST.joinpath("files.json").write_text(json.dumps(files,indent=2)+"\n")
+    temp.replace(DEST/"matrix.csv")
+atomic_write(DOC,"\n".join(document(rows,files))+"\n")
+atomic_write(DEST/"files.json",json.dumps(files,indent=2)+"\n")
 print(json.dumps(dict(completed_cells=len(rows),document=str(DOC),measured_files=len(files))))

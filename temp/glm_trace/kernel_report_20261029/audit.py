@@ -106,6 +106,6 @@ summary=dict(expected_cells=len(expected),completed_cells=len(seen),missing_cell
              stability_repeats_complete=stability.get("complete",False),
              sampled_max_abs_error=errors,calibration_passed=bool(calibration and calibration["complete"]),
              complete=complete,files=files)
-(DEST/"audit.json").write_text(json.dumps(summary,indent=2)+"\n")
+temp=DEST/"audit.json.new";temp.write_text(json.dumps(summary,indent=2)+"\n");temp.replace(DEST/"audit.json")
 print(json.dumps({k:v for k,v in summary.items() if k!="files"},indent=2))
 if not complete:raise SystemExit(2)

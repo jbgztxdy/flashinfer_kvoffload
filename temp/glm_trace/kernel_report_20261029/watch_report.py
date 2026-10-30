@@ -7,6 +7,7 @@ DEST=Path(__file__).resolve().parent
 while True:
     subprocess.run(["python3",str(DEST/"report.py")],check=True)
     subprocess.run(["python3",str(DEST/"plot.py")],check=True)
+    subprocess.run(["python3",str(DEST/"export_html.py")],check=True)
     logs=[p.read_text() for p in DEST.glob("run*.log")]
     if any("ALL_MATRIX_COMPLETE" in s for s in logs):
         audit=subprocess.run(["python3",str(DEST/"audit.py")])

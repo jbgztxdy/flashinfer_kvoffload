@@ -1,5 +1,9 @@
 # 交接：远端 KV 稀疏 MLA 算子项目（2026-10-29）
 
+**10/30 11:15 最新状态，取代下方活进程说明**：本轮11组无LRU稳定性复测全部完成（最大pass均值极差/均值2.18%），LRU从225推进到428/663，尚缺235格。前台监督session23217的runner PID1179609及其bench在MTP8 20请求模拟组再次终止，工具返回明确exit143（SIGTERM）；祖先OOM计数仍1，没有增加。已收到完整退出状态，确认不是观察超时；未把失败样本算入结果。现无本实验GPU进程，不再反复自动重启，已异步询问用户是否另一任务/清理脚本在终止GPU0/1进程及能否保留独占时段，等答复后从断点继续。resume_state.json为interrupted_sigterm；旧resume/watch PID均不可凭文件认定存活。报告MD和自包含HTML已更新5069个比较格，均明确未完成。
+
+**续接命令**：确认GPU0/1使用安排后，前台运行python3 temp/glm_trace/kernel_report_20261029/run.py并保存新的run_resume*.log；它先测剩余MTP8，再补MTP1 512的16格，跳过完成数据，不缩减范围。Host整窗口预打包上限已设8GiB，大场景按16步独立源buffer搬运，避免155GiB整包；CPU packing在计时外，H2D/scatter/attention在计时内。最后需audit.py complete=true，再report.py/plot.py/export_html.py并检查完整5304比较格＋312本地格。生产kernel未改，其他GPU进程未动。SIGTERM证据interruption_20261030_1113.json；不得称其OOM。当前数据已做源码/参数/均值/命中率/稳定性复测hash审计，完整目标仍未达成。
+
 **10/30 11:12 最新续跑状态**：GPU0/1于10:35释放。11组无LRU稳定性复测全部完成，最大pass均值极差/均值2.18%，旧波动样本保留failures/stability_before_repeat。完整LRU已完成428/663并继续，最新日志run_resume10.log；当前前台监督runner PID1179609、unified exec session23217（后续必须ps/工具核实，状态会变化）。旧后台resume PID1114088及1171607均已终止，不可当作活进程。report watcher PID见report_watch.pid，仍运行。
 
 **512 Host中断诊断与措施**：原512 Host全窗口预打包约155.37GiB。第一次控制器/runner/bench全部退出，祖先memory.events有oom_kill=1，无法单凭计数确认归因；将预打包上限改8GiB、较大场景按16步分段（CPU packing在计时外，独立缓冲同步后释放）。第二次仍全部退出，但OOM计数未增加，且观察到另一项目在GPU0/1运行，原因仍未确定，两次均无完成JSON、未混入数据。改用前台工具session监督，并先测较短MTP8全矩阵，MTP1 512的全部剩余16格仍保留为要求。此后进程稳定推进。两次中断证据interruption_20261030_1048.json/1055.json。不得写成已证明OOM或已彻底解决大batch中断。
