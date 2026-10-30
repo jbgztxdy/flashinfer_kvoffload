@@ -31,7 +31,9 @@ def label(s):
 
 settings={label(s):s["name"] for s in meta["settings"]}
 text=DOC.read_text();lines=text.splitlines()
-mode=None;checked=0;summaries=0;bounds=0;near_rows=0;repeat_rows=0;physical_rows=0
+mode=None;checked=0;summaries=0;bounds=0;near_rows=0;repeat_rows=0;physical_rows=0;route_rows=0
+routes=load(ROOT/"temp/glm_trace/route_compare_20261030/summary.json")
+assert routes["complete"] and len(routes["pairs"])==12
 for line in lines:
     if not line.startswith("|"):
         mode=None;continue
@@ -50,6 +52,8 @@ for line in lines:
         mode=("repeat",False,False,len(fields));continue
     if fields[0]=="物理链路补测":
         mode=("physical",False,False,len(fields));continue
+    if fields[:4]==["链路","请求","staged µs","原地读 µs"]:
+        mode=("route",False,False,len(fields));continue
     if not mode or all(re.fullmatch(r"[:\-]+",f) for f in fields):continue
     assert len(fields)==mode[3],fields
     if mode[0]=="samples":
@@ -104,14 +108,20 @@ for line in lines:
             f"{(ours/original['ours_mean_us']-1)*100:+.2f}%",f"{original['memcpy_mean_us']:.2f}",f"{memcpy:.2f}"]
         assert fields==expected,(fields,expected)
         repeat_rows+=1
-    else:
+    elif mode[0]=="physical":
         probe=load(DEST/"physical_bandwidth.json")
         r=next(s for s in probe["settings"] if s["name"]==settings[fields[0]])
         expected=[fields[0],f"{r['measurements']['dma_contiguous']['median_GBps']:.2f}",
                   f"{r['measurements']['sm_gather_random']['median_GBps']:.2f}",f"{r['reference_GBps']:.2f}"]
         assert fields==expected
         physical_rows+=1
-assert (checked,summaries,bounds,near_rows,repeat_rows,physical_rows)==(26,17,6,4,2,2)
+    else:
+        p=next(p for p in routes["pairs"] if p["setting"]==settings[fields[0]] and p["requests"]==int(fields[1]))
+        expected=[fields[0],fields[1],f"{p['staged']['mean_us']:.2f}",f"{p['inplace']['mean_us']:.2f}",
+                  f"{p['inplace_to_staged']:.3f}","原地读" if p["faster_route"]=="inplace" else "staged"]
+        assert fields==expected,(fields,expected)
+        route_rows+=1
+assert (checked,summaries,bounds,near_rows,repeat_rows,physical_rows,route_rows)==(26,17,6,4,2,2,12)
 
 figures=load(DEST/"figure_data.json")
 assert len(figures)==6
@@ -154,6 +164,7 @@ assert f"{r['ours_mean_us']/r['local_mean_us']:.2f}"=="2.30"
 assert manifest["physical_bandwidth_sha256"]==digest(DEST/"physical_bandwidth.json")
 assert manifest["verification_sha256"]==digest(DEST/"verification.json")
 assert manifest["verification_notes_sha256"]==digest(DEST/"verification_notes.md")
+assert manifest["route_comparison_sha256"]==digest(ROOT/"temp/glm_trace/route_compare_20261030/summary.json")
 for name,sha in manifest["analysis_source_sha256"].items():assert digest(DEST/name)==sha
 verification=load(DEST/"verification.json")
 assert verification["matrix_unchanged_sha256"]==digest(SOURCE/"matrix.json")
@@ -164,6 +175,7 @@ for batch,expected in ((32,"8.8%"),(64,"8.4%"),(128,"4.8%")):
 summary=dict(complete=True,source_matrix_sha256=digest(SOURCE/"matrix.json"),sample_table_rows=checked,
     full_link_summaries=summaries,ideal_bound_rows=bounds,near_fraction_rows=near_rows,
     independently_repeated_cases=3,repeat_comparison_rows=repeat_rows,physical_bandwidth_rows=physical_rows,
+    supplemental_route_comparison_rows=route_rows,
     reference_definition=manifest["reference_definition"],
     figures=len(figures),figure_source_cells=fig_count,per_step_reference_cells_verified=fig_count,
     artifact_sha256=manifest["artifact_sha256"])

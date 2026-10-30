@@ -1,0 +1,853 @@
+{
+  "complete": true,
+  "completed_route_cases": 24,
+  "expected_route_cases": 24,
+  "pairs": [
+    {
+      "setting": "g100_l0",
+      "requests": 16,
+      "staged": {
+        "setting": "g100_l0",
+        "route": "staged",
+        "mtp": 8,
+        "requests": 16,
+        "effective_kernel_staging_rows": 262144,
+        "mean_us": 679.5733333565295,
+        "pass_means_us": [
+          678.7919998168945,
+          680.1040004938841,
+          679.8239997588098
+        ],
+        "pass_range_over_mean": 0.001930624132217429,
+        "memcpy_mean_us": 1020.1626654403905,
+        "local_mean_us": 502.99468000109,
+        "ours_to_local": 1.3510547136503648,
+        "reference_cache_hit_rate": 0.7847946507401584,
+        "unique_miss_bytes_per_step": 32442678.0,
+        "miss_reference_bytes_per_step": 64958106.0,
+        "estimated_route_read_bytes_per_step": 32442678.0,
+        "duplicate_reference_factor": 2.002242416609381,
+        "route_transfer_budget_us": 324.42678,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g100_l0_mtp8_b16.json",
+        "max_abs_error": {
+          "ours": 0.0024943947792053223,
+          "memcpy": 0.001545250415802002
+        }
+      },
+      "inplace": {
+        "setting": "g100_l0",
+        "route": "inplace",
+        "mtp": 8,
+        "requests": 16,
+        "effective_kernel_staging_rows": 0,
+        "mean_us": 865.5306636355817,
+        "pass_means_us": [
+          865.7119944691658,
+          866.0399992950261,
+          864.8399971425533
+        ],
+        "pass_range_over_mean": 0.001386435169647527,
+        "memcpy_mean_us": 1020.7013340356449,
+        "local_mean_us": 502.99468000109,
+        "ours_to_local": 1.720755105468921,
+        "reference_cache_hit_rate": 0.7825473921439912,
+        "unique_miss_bytes_per_step": 32577696.0,
+        "miss_reference_bytes_per_step": 65636424.0,
+        "estimated_route_read_bytes_per_step": 65636424.0,
+        "duplicate_reference_factor": 2.0147656850871223,
+        "route_transfer_budget_us": 656.36424,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g100_l0_mtp8_b16.json",
+        "max_abs_error": {
+          "ours": 0.0024943947792053223,
+          "memcpy": 0.001545250415802002
+        }
+      },
+      "inplace_to_staged": 1.2736383568210028,
+      "faster_route": "staged"
+    },
+    {
+      "setting": "g100_l20000",
+      "requests": 16,
+      "staged": {
+        "setting": "g100_l20000",
+        "route": "staged",
+        "mtp": 8,
+        "requests": 16,
+        "effective_kernel_staging_rows": 262144,
+        "mean_us": 709.6853332283596,
+        "pass_means_us": [
+          708.0879998393357,
+          709.8959977738559,
+          711.0720020718873
+        ],
+        "pass_range_over_mean": 0.0042046835306252485,
+        "memcpy_mean_us": 1041.6640019975603,
+        "local_mean_us": 502.99468000109,
+        "ours_to_local": 1.4109201576979338,
+        "reference_cache_hit_rate": 0.7849485456040852,
+        "unique_miss_bytes_per_step": 32432568.0,
+        "miss_reference_bytes_per_step": 64911654.0,
+        "estimated_route_read_bytes_per_step": 32432568.0,
+        "duplicate_reference_factor": 2.00143429900463,
+        "route_transfer_budget_us": 324.32568,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g100_l20000_mtp8_b16.json",
+        "max_abs_error": {
+          "ours": 0.0020594894886016846,
+          "memcpy": 0.001545250415802002
+        }
+      },
+      "inplace": {
+        "setting": "g100_l20000",
+        "route": "inplace",
+        "mtp": 8,
+        "requests": 16,
+        "effective_kernel_staging_rows": 0,
+        "mean_us": 1755.0613321363926,
+        "pass_means_us": [
+          1755.8159986510873,
+          1755.6239971891046,
+          1753.744000568986
+        ],
+        "pass_range_over_mean": 0.0011805844298211237,
+        "memcpy_mean_us": 1042.3493332539995,
+        "local_mean_us": 502.99468000109,
+        "ours_to_local": 3.4892244429555186,
+        "reference_cache_hit_rate": 0.7826568101598121,
+        "unique_miss_bytes_per_step": 32568015.0,
+        "miss_reference_bytes_per_step": 65603397.0,
+        "estimated_route_read_bytes_per_step": 65603397.0,
+        "duplicate_reference_factor": 2.0143504908113066,
+        "route_transfer_budget_us": 656.03397,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g100_l20000_mtp8_b16.json",
+        "max_abs_error": {
+          "ours": 0.0024943947792053223,
+          "memcpy": 0.001545250415802002
+        }
+      },
+      "inplace_to_staged": 2.473013390529879,
+      "faster_route": "staged"
+    },
+    {
+      "setting": "g50_l20000",
+      "requests": 16,
+      "staged": {
+        "setting": "g50_l20000",
+        "route": "staged",
+        "mtp": 8,
+        "requests": 16,
+        "effective_kernel_staging_rows": 262144,
+        "mean_us": 888.130665756762,
+        "pass_means_us": [
+          887.8479986451566,
+          888.1680001504719,
+          888.3759984746575
+        ],
+        "pass_range_over_mean": 0.0005945069232025823,
+        "memcpy_mean_us": 1374.6293333048623,
+        "local_mean_us": 502.99468000109,
+        "ours_to_local": 1.7656860023943741,
+        "reference_cache_hit_rate": 0.784620788504646,
+        "unique_miss_bytes_per_step": 32455074.0,
+        "miss_reference_bytes_per_step": 65010585.0,
+        "estimated_route_read_bytes_per_step": 32455074.0,
+        "duplicate_reference_factor": 2.0030946470804536,
+        "route_transfer_budget_us": 649.10148,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g50_l20000_mtp8_b16.json",
+        "max_abs_error": {
+          "ours": 0.0028558969497680664,
+          "memcpy": 0.001545250415802002
+        }
+      },
+      "inplace": {
+        "setting": "g50_l20000",
+        "route": "inplace",
+        "mtp": 8,
+        "requests": 16,
+        "effective_kernel_staging_rows": 0,
+        "mean_us": 1968.4746668984492,
+        "pass_means_us": [
+          1967.9920012131333,
+          1968.847998417914,
+          1968.5840010643005
+        ],
+        "pass_range_over_mean": 0.0004348530459522232,
+        "memcpy_mean_us": 1373.9599998419483,
+        "local_mean_us": 502.99468000109,
+        "ours_to_local": 3.913509914049555,
+        "reference_cache_hit_rate": 0.7824776107025271,
+        "unique_miss_bytes_per_step": 32583456.0,
+        "miss_reference_bytes_per_step": 65657487.0,
+        "estimated_route_read_bytes_per_step": 65657487.0,
+        "duplicate_reference_factor": 2.0150559535489423,
+        "route_transfer_budget_us": 1313.14974,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g50_l20000_mtp8_b16.json",
+        "max_abs_error": {
+          "ours": 0.0024943947792053223,
+          "memcpy": 0.001545250415802002
+        }
+      },
+      "inplace_to_staged": 2.216424612724236,
+      "faster_route": "staged"
+    },
+    {
+      "setting": "nvlink",
+      "requests": 16,
+      "staged": {
+        "setting": "nvlink",
+        "route": "staged",
+        "mtp": 8,
+        "requests": 16,
+        "effective_kernel_staging_rows": 262144,
+        "mean_us": 620.8960004150867,
+        "pass_means_us": [
+          620.536002330482,
+          619.6559998206794,
+          622.4959990940988
+        ],
+        "pass_range_over_mean": 0.004574033769779093,
+        "memcpy_mean_us": 741.1600009848675,
+        "local_mean_us": 502.99468000109,
+        "ours_to_local": 1.2343987423758462,
+        "reference_cache_hit_rate": 0.7848471682072851,
+        "unique_miss_bytes_per_step": 32441394.0,
+        "miss_reference_bytes_per_step": 64942254.0,
+        "estimated_route_read_bytes_per_step": 32441394.0,
+        "duplicate_reference_factor": 2.001833028506728,
+        "route_transfer_budget_us": null,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_staged_nvlink_mtp8_b16.json",
+        "max_abs_error": {
+          "ours": 0.002369821071624756,
+          "memcpy": 0.001545250415802002
+        }
+      },
+      "inplace": {
+        "setting": "nvlink",
+        "route": "inplace",
+        "mtp": 8,
+        "requests": 16,
+        "effective_kernel_staging_rows": 0,
+        "mean_us": 557.7439999518296,
+        "pass_means_us": [
+          558.2400006242096,
+          558.9520004577935,
+          556.0399987734854
+        ],
+        "pass_range_over_mean": 0.00522103632591216,
+        "memcpy_mean_us": 740.1440016304454,
+        "local_mean_us": 502.99468000109,
+        "ours_to_local": 1.1088467177239745,
+        "reference_cache_hit_rate": 0.7826507275160042,
+        "unique_miss_bytes_per_step": 32572209.0,
+        "miss_reference_bytes_per_step": 65605233.0,
+        "estimated_route_read_bytes_per_step": 65605233.0,
+        "duplicate_reference_factor": 2.0141474899660627,
+        "route_transfer_budget_us": null,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_nvlink_mtp8_b16.json",
+        "max_abs_error": {
+          "ours": 0.0024943947792053223,
+          "memcpy": 0.001545250415802002
+        }
+      },
+      "inplace_to_staged": 0.8982889237150211,
+      "faster_route": "inplace"
+    },
+    {
+      "setting": "g100_l0",
+      "requests": 64,
+      "staged": {
+        "setting": "g100_l0",
+        "route": "staged",
+        "mtp": 8,
+        "requests": 64,
+        "effective_kernel_staging_rows": 1048576,
+        "mean_us": 2188.1226670617857,
+        "pass_means_us": [
+          2168.295989744365,
+          2190.472005866468,
+          2205.6000055745244
+        ],
+        "pass_range_over_mean": 0.017048411586655272,
+        "memcpy_mean_us": 3185.226665188869,
+        "local_mean_us": 1236.7706665148337,
+        "ours_to_local": 1.7692226427295699,
+        "reference_cache_hit_rate": 0.7857089842622715,
+        "unique_miss_bytes_per_step": 132456021.0,
+        "miss_reference_bytes_per_step": 258733170.0,
+        "estimated_route_read_bytes_per_step": 132456021.0,
+        "duplicate_reference_factor": 1.9533515203510454,
+        "route_transfer_budget_us": 1324.56021,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g100_l0_mtp8_b64.json",
+        "max_abs_error": {
+          "ours": 0.002335846424102783,
+          "memcpy": 0.0019361376762390137
+        }
+      },
+      "inplace": {
+        "setting": "g100_l0",
+        "route": "inplace",
+        "mtp": 8,
+        "requests": 64,
+        "effective_kernel_staging_rows": 0,
+        "mean_us": 3000.397337600589,
+        "pass_means_us": [
+          2999.712001532316,
+          3001.096012070775,
+          3000.383999198675
+        ],
+        "pass_range_over_mean": 0.00046127575208609347,
+        "memcpy_mean_us": 3183.866672217846,
+        "local_mean_us": 1236.7706665148337,
+        "ours_to_local": 2.4259932894880007,
+        "reference_cache_hit_rate": 0.7849070538787727,
+        "unique_miss_bytes_per_step": 132651957.0,
+        "miss_reference_bytes_per_step": 259701414.0,
+        "estimated_route_read_bytes_per_step": 259701414.0,
+        "duplicate_reference_factor": 1.9577654176636083,
+        "route_transfer_budget_us": 2597.01414,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g100_l0_mtp8_b64.json",
+        "max_abs_error": {
+          "ours": 0.003729522228240967,
+          "memcpy": 0.0019361376762390137
+        }
+      },
+      "inplace_to_staged": 1.371219896748077,
+      "faster_route": "staged"
+    },
+    {
+      "setting": "g100_l20000",
+      "requests": 64,
+      "staged": {
+        "setting": "g100_l20000",
+        "route": "staged",
+        "mtp": 8,
+        "requests": 64,
+        "effective_kernel_staging_rows": 1048576,
+        "mean_us": 2428.218667705854,
+        "pass_means_us": [
+          2418.2559978216887,
+          2432.672002352774,
+          2433.7280029430985
+        ],
+        "pass_range_over_mean": 0.006371751163591712,
+        "memcpy_mean_us": 3207.722660774986,
+        "local_mean_us": 1236.7706665148337,
+        "ours_to_local": 1.963354026295327,
+        "reference_cache_hit_rate": 0.7858178163936174,
+        "unique_miss_bytes_per_step": 132437478.0,
+        "miss_reference_bytes_per_step": 258601767.0,
+        "estimated_route_read_bytes_per_step": 132437478.0,
+        "duplicate_reference_factor": 1.9526328264873785,
+        "route_transfer_budget_us": 1324.37478,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g100_l20000_mtp8_b64.json",
+        "max_abs_error": {
+          "ours": 0.002335846424102783,
+          "memcpy": 0.0019361376762390137
+        }
+      },
+      "inplace": {
+        "setting": "g100_l20000",
+        "route": "inplace",
+        "mtp": 8,
+        "requests": 64,
+        "effective_kernel_staging_rows": 0,
+        "mean_us": 6120.618658761184,
+        "pass_means_us": [
+          6119.336005300283,
+          6123.319987207651,
+          6119.199983775616
+        ],
+        "pass_range_over_mean": 0.0006731351292631156,
+        "memcpy_mean_us": 3206.7573238164186,
+        "local_mean_us": 1236.7706665148337,
+        "ours_to_local": 4.948871140361716,
+        "reference_cache_hit_rate": 0.7849271003990737,
+        "unique_miss_bytes_per_step": 132649491.0,
+        "miss_reference_bytes_per_step": 259677210.0,
+        "estimated_route_read_bytes_per_step": 259677210.0,
+        "duplicate_reference_factor": 1.957619347367115,
+        "route_transfer_budget_us": 2596.7721,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g100_l20000_mtp8_b64.json",
+        "max_abs_error": {
+          "ours": 0.002794921398162842,
+          "memcpy": 0.0019361376762390137
+        }
+      },
+      "inplace_to_staged": 2.520620873302097,
+      "faster_route": "staged"
+    },
+    {
+      "setting": "g50_l20000",
+      "requests": 64,
+      "staged": {
+        "setting": "g50_l20000",
+        "route": "staged",
+        "mtp": 8,
+        "requests": 64,
+        "effective_kernel_staging_rows": 1048576,
+        "mean_us": 3081.773333872358,
+        "pass_means_us": [
+          3081.5679989755154,
+          3080.967999994755,
+          3082.784002646804
+        ],
+        "pass_range_over_mean": 0.0005892719727596554,
+        "memcpy_mean_us": 4590.058670068781,
+        "local_mean_us": 1236.7706665148337,
+        "ours_to_local": 2.4917904485531355,
+        "reference_cache_hit_rate": 0.7856775951087067,
+        "unique_miss_bytes_per_step": 132466305.0,
+        "miss_reference_bytes_per_step": 258771069.0,
+        "estimated_route_read_bytes_per_step": 132466305.0,
+        "duplicate_reference_factor": 1.953485975169308,
+        "route_transfer_budget_us": 2649.3261,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g50_l20000_mtp8_b64.json",
+        "max_abs_error": {
+          "ours": 0.002335846424102783,
+          "memcpy": 0.0019361376762390137
+        }
+      },
+      "inplace": {
+        "setting": "g50_l20000",
+        "route": "inplace",
+        "mtp": 8,
+        "requests": 64,
+        "effective_kernel_staging_rows": 0,
+        "mean_us": 6838.773339986801,
+        "pass_means_us": [
+          6839.320007711649,
+          6842.040006071329,
+          6834.960006177425
+        ],
+        "pass_range_over_mean": 0.0010352733658398154,
+        "memcpy_mean_us": 4586.768002559741,
+        "local_mean_us": 1236.7706665148337,
+        "ours_to_local": 5.529540378943631,
+        "reference_cache_hit_rate": 0.784911682865798,
+        "unique_miss_bytes_per_step": 132645969.0,
+        "miss_reference_bytes_per_step": 259695825.0,
+        "estimated_route_read_bytes_per_step": 259695825.0,
+        "duplicate_reference_factor": 1.9578116618078307,
+        "route_transfer_budget_us": 5193.9165,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g50_l20000_mtp8_b64.json",
+        "max_abs_error": {
+          "ours": 0.003979504108428955,
+          "memcpy": 0.0019361376762390137
+        }
+      },
+      "inplace_to_staged": 2.2191032886229953,
+      "faster_route": "staged"
+    },
+    {
+      "setting": "nvlink",
+      "requests": 64,
+      "staged": {
+        "setting": "nvlink",
+        "route": "staged",
+        "mtp": 8,
+        "requests": 64,
+        "effective_kernel_staging_rows": 1048576,
+        "mean_us": 2032.8720019509394,
+        "pass_means_us": [
+          1987.1999993920326,
+          2059.3840004876256,
+          2052.0320059731603
+        ],
+        "pass_range_over_mean": 0.035508384702193876,
+        "memcpy_mean_us": 2225.1146643732986,
+        "local_mean_us": 1236.7706665148337,
+        "ours_to_local": 1.6436935779528834,
+        "reference_cache_hit_rate": 0.7856996020534643,
+        "unique_miss_bytes_per_step": 132456963.0,
+        "miss_reference_bytes_per_step": 258744498.0,
+        "estimated_route_read_bytes_per_step": 132456963.0,
+        "duplicate_reference_factor": 1.9534231507331177,
+        "route_transfer_budget_us": null,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_staged_nvlink_mtp8_b64.json",
+        "max_abs_error": {
+          "ours": 0.002335846424102783,
+          "memcpy": 0.0019361376762390137
+        }
+      },
+      "inplace": {
+        "setting": "nvlink",
+        "route": "inplace",
+        "mtp": 8,
+        "requests": 64,
+        "effective_kernel_staging_rows": 0,
+        "mean_us": 1707.8106661016743,
+        "pass_means_us": [
+          1660.4480016976595,
+          1729.5519970357418,
+          1733.4319995716214
+        ],
+        "pass_range_over_mean": 0.04273541518543065,
+        "memcpy_mean_us": 2227.517339711388,
+        "local_mean_us": 1236.7706665148337,
+        "ours_to_local": 1.3808628489825125,
+        "reference_cache_hit_rate": 0.7849183020936218,
+        "unique_miss_bytes_per_step": 132652038.0,
+        "miss_reference_bytes_per_step": 259687833.0,
+        "estimated_route_read_bytes_per_step": 259687833.0,
+        "duplicate_reference_factor": 1.9576618415768328,
+        "route_transfer_budget_us": null,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_nvlink_mtp8_b64.json",
+        "max_abs_error": {
+          "ours": 0.003536522388458252,
+          "memcpy": 0.0019361376762390137
+        }
+      },
+      "inplace_to_staged": 0.8400974898875556,
+      "faster_route": "inplace"
+    },
+    {
+      "setting": "g100_l0",
+      "requests": 128,
+      "staged": {
+        "setting": "g100_l0",
+        "route": "staged",
+        "mtp": 8,
+        "requests": 128,
+        "effective_kernel_staging_rows": 2097152,
+        "mean_us": 4058.9680038392544,
+        "pass_means_us": [
+          4022.4000085145235,
+          4075.664008036256,
+          4078.839994966984
+        ],
+        "pass_range_over_mean": 0.013905008957714233,
+        "memcpy_mean_us": 6238.31199730436,
+        "local_mean_us": 2467.1786644806466,
+        "ours_to_local": 1.6451860833085177,
+        "reference_cache_hit_rate": 0.7894241879369955,
+        "unique_miss_bytes_per_step": 259596747.0,
+        "miss_reference_bytes_per_step": 508492554.0,
+        "estimated_route_read_bytes_per_step": 259596747.0,
+        "duplicate_reference_factor": 1.9587786051879919,
+        "route_transfer_budget_us": 2595.96747,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g100_l0_mtp8_b128.json",
+        "max_abs_error": {
+          "ours": 0.002272963523864746,
+          "memcpy": 0.0019550323486328125
+        }
+      },
+      "inplace": {
+        "setting": "g100_l0",
+        "route": "inplace",
+        "mtp": 8,
+        "requests": 128,
+        "effective_kernel_staging_rows": 0,
+        "mean_us": 5763.205328335364,
+        "pass_means_us": [
+          5763.575989753008,
+          5763.848003000021,
+          5762.191992253065
+        ],
+        "pass_range_over_mean": 0.0002873419655575921,
+        "memcpy_mean_us": 6232.359992961089,
+        "local_mean_us": 2467.1786644806466,
+        "ours_to_local": 2.335949727235724,
+        "reference_cache_hit_rate": 0.7890499550748251,
+        "unique_miss_bytes_per_step": 259779744.0,
+        "miss_reference_bytes_per_step": 509396241.0,
+        "estimated_route_read_bytes_per_step": 509396241.0,
+        "duplicate_reference_factor": 1.9608774462415361,
+        "route_transfer_budget_us": 5093.96241,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g100_l0_mtp8_b128.json",
+        "max_abs_error": {
+          "ours": 0.0019550323486328125,
+          "memcpy": 0.0019550323486328125
+        }
+      },
+      "inplace_to_staged": 1.4198696128878385,
+      "faster_route": "staged"
+    },
+    {
+      "setting": "g100_l20000",
+      "requests": 128,
+      "staged": {
+        "setting": "g100_l20000",
+        "route": "staged",
+        "mtp": 8,
+        "requests": 128,
+        "effective_kernel_staging_rows": 2097152,
+        "mean_us": 4361.088005204995,
+        "pass_means_us": [
+          4334.120003506541,
+          4371.168008074164,
+          4377.976004034281
+        ],
+        "pass_range_over_mean": 0.010056206266738258,
+        "memcpy_mean_us": 6261.978668471177,
+        "local_mean_us": 2467.1786644806466,
+        "ours_to_local": 1.767641747227506,
+        "reference_cache_hit_rate": 0.7894103978146298,
+        "unique_miss_bytes_per_step": 259585074.0,
+        "miss_reference_bytes_per_step": 508525854.0,
+        "estimated_route_read_bytes_per_step": 259585074.0,
+        "duplicate_reference_factor": 1.958994969025068,
+        "route_transfer_budget_us": 2595.85074,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g100_l20000_mtp8_b128.json",
+        "max_abs_error": {
+          "ours": 0.0033152103424072266,
+          "memcpy": 0.0019550323486328125
+        }
+      },
+      "inplace": {
+        "setting": "g100_l20000",
+        "route": "inplace",
+        "mtp": 8,
+        "requests": 128,
+        "effective_kernel_staging_rows": 0,
+        "mean_us": 11956.274680793285,
+        "pass_means_us": [
+          11955.256029963493,
+          11956.583999097347,
+          11956.984013319016
+        ],
+        "pass_range_over_mean": 0.00014452523061368025,
+        "memcpy_mean_us": 6259.130676587422,
+        "local_mean_us": 2467.1786644806466,
+        "ours_to_local": 4.846132488467405,
+        "reference_cache_hit_rate": 0.7890340206505493,
+        "unique_miss_bytes_per_step": 259786209.0,
+        "miss_reference_bytes_per_step": 509434719.0,
+        "estimated_route_read_bytes_per_step": 509434719.0,
+        "duplicate_reference_factor": 1.9609767622422174,
+        "route_transfer_budget_us": 5094.34719,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g100_l20000_mtp8_b128.json",
+        "max_abs_error": {
+          "ours": 0.0019550323486328125,
+          "memcpy": 0.0019550323486328125
+        }
+      },
+      "inplace_to_staged": 2.7415806942036873,
+      "faster_route": "staged"
+    },
+    {
+      "setting": "g50_l20000",
+      "requests": 128,
+      "staged": {
+        "setting": "g50_l20000",
+        "route": "staged",
+        "mtp": 8,
+        "requests": 128,
+        "effective_kernel_staging_rows": 2097152,
+        "mean_us": 5661.498664567868,
+        "pass_means_us": [
+          5661.631999537349,
+          5661.4239905029535,
+          5661.4400036633015
+        ],
+        "pass_range_over_mean": 3.6740984449405476e-05,
+        "memcpy_mean_us": 8975.037323931852,
+        "local_mean_us": 2467.1786644806466,
+        "ours_to_local": 2.2947258526814642,
+        "reference_cache_hit_rate": 0.7894584632240178,
+        "unique_miss_bytes_per_step": 259565727.0,
+        "miss_reference_bytes_per_step": 508409787.0,
+        "estimated_route_read_bytes_per_step": 259565727.0,
+        "duplicate_reference_factor": 1.9586938263232263,
+        "route_transfer_budget_us": 5191.31454,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g50_l20000_mtp8_b128.json",
+        "max_abs_error": {
+          "ours": 0.002272963523864746,
+          "memcpy": 0.0019550323486328125
+        }
+      },
+      "inplace": {
+        "setting": "g50_l20000",
+        "route": "inplace",
+        "mtp": 8,
+        "requests": 128,
+        "effective_kernel_staging_rows": 0,
+        "mean_us": 13248.882653812567,
+        "pass_means_us": [
+          13247.432045638561,
+          13252.103932201862,
+          13247.111983597279
+        ],
+        "pass_range_over_mean": 0.0003767826114111767,
+        "memcpy_mean_us": 8974.511983493963,
+        "local_mean_us": 2467.1786644806466,
+        "ours_to_local": 5.370053999150289,
+        "reference_cache_hit_rate": 0.7889928676952913,
+        "unique_miss_bytes_per_step": 259810245.0,
+        "miss_reference_bytes_per_step": 509534094.0,
+        "estimated_route_read_bytes_per_step": 509534094.0,
+        "duplicate_reference_factor": 1.9611778357701022,
+        "route_transfer_budget_us": 10190.68188,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g50_l20000_mtp8_b128.json",
+        "max_abs_error": {
+          "ours": 0.0019512176513671875,
+          "memcpy": 0.0019550323486328125
+        }
+      },
+      "inplace_to_staged": 2.340172353431762,
+      "faster_route": "staged"
+    },
+    {
+      "setting": "nvlink",
+      "requests": 128,
+      "staged": {
+        "setting": "nvlink",
+        "route": "staged",
+        "mtp": 8,
+        "requests": 128,
+        "effective_kernel_staging_rows": 2097152,
+        "mean_us": 3744.733339175582,
+        "pass_means_us": [
+          3703.072002157569,
+          3758.0800149589777,
+          3773.048000410199
+        ],
+        "pass_range_over_mean": 0.018686510337218225,
+        "memcpy_mean_us": 4402.138667181134,
+        "local_mean_us": 2467.1786644806466,
+        "ours_to_local": 1.5178200886249424,
+        "reference_cache_hit_rate": 0.7894070248252404,
+        "unique_miss_bytes_per_step": 259594671.0,
+        "miss_reference_bytes_per_step": 508533999.0,
+        "estimated_route_read_bytes_per_step": 259594671.0,
+        "duplicate_reference_factor": 1.9589539224401105,
+        "route_transfer_budget_us": null,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_staged_nvlink_mtp8_b128.json",
+        "max_abs_error": {
+          "ours": 0.0026288628578186035,
+          "memcpy": 0.0019550323486328125
+        }
+      },
+      "inplace": {
+        "setting": "nvlink",
+        "route": "inplace",
+        "mtp": 8,
+        "requests": 128,
+        "effective_kernel_staging_rows": 0,
+        "mean_us": 3290.9546699374914,
+        "pass_means_us": [
+          3266.951994970441,
+          3300.8720111101866,
+          3305.040003731847
+        ],
+        "pass_range_over_mean": 0.011573544026399303,
+        "memcpy_mean_us": 4399.768011644483,
+        "local_mean_us": 2467.1786644806466,
+        "ours_to_local": 1.33389394019839,
+        "reference_cache_hit_rate": 0.7890731324192264,
+        "unique_miss_bytes_per_step": 259776843.0,
+        "miss_reference_bytes_per_step": 509340273.0,
+        "estimated_route_read_bytes_per_step": 509340273.0,
+        "duplicate_reference_factor": 1.9606838974480878,
+        "route_transfer_budget_us": null,
+        "raw": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_nvlink_mtp8_b128.json",
+        "max_abs_error": {
+          "ours": 0.0020709633827209473,
+          "memcpy": 0.0019550323486328125
+        }
+      },
+      "inplace_to_staged": 0.8788221675250202,
+      "faster_route": "inplace"
+    }
+  ],
+  "smoke_files": [
+    "temp/glm_trace/route_compare_20261030/raw/smoke_lru_inplace_g100_l20000_mtp8_b16.json",
+    "temp/glm_trace/route_compare_20261030/raw/smoke_lru_staged_g100_l20000_mtp8_b16.json"
+  ],
+  "files": [
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g100_l0_mtp8_b128.json",
+      "sha256": "b408df5612b415c1800015a7fc73bd65227989f6a0ed6760ec211653dc818db3"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g100_l0_mtp8_b16.json",
+      "sha256": "0c1d7fbd1ed442ece38d8b967b72436666dd6e4127ccd783667fb6d746520569"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g100_l0_mtp8_b64.json",
+      "sha256": "592999ae1f7342e3fc8e5381b04fffa2a07fa028da48c9bf829bf1bfbb973206"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g100_l20000_mtp8_b128.json",
+      "sha256": "0ca9b881608308d29a3b3070c924288815555fa2bdda9f82ad40026cbaef44e0"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g100_l20000_mtp8_b16.json",
+      "sha256": "b796d9cbfb6944429cb4a91a75aed894b5aeee4d19db7f1e67c7f837073d758f"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g100_l20000_mtp8_b64.json",
+      "sha256": "af90298d91285567d9f4951e656c69b9fe8c120a2bf33b38d85daa4a7713e197"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g50_l20000_mtp8_b128.json",
+      "sha256": "2f8e629f7f5f1dde308ce0a086d3e23067db7e964c5c6cf9d1cf9e92e65bd090"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g50_l20000_mtp8_b16.json",
+      "sha256": "f59e28c06f46159f4559207bac4b114bc01b068a6b51a7432b9f8ea2089d7e4c"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_g50_l20000_mtp8_b64.json",
+      "sha256": "e97f65533e247a37392c536132ccdb3e56a39c882aad4e8824c9d90a10d4b914"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_nvlink_mtp8_b128.json",
+      "sha256": "232ac395123beeff48d9b894e5d1a4a3fa2ad4cf09128376c1c06feb9f6904f6"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_nvlink_mtp8_b16.json",
+      "sha256": "82ef7d87b1c00f88d2a215f6c583dfcb96a497442b58821257d7ec4024a11c98"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_inplace_nvlink_mtp8_b64.json",
+      "sha256": "ac248f63a704379bdbf0adcf6eaf59837685641629c1012fd3e94a511d7bfa1a"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g100_l0_mtp8_b128.json",
+      "sha256": "71dee594b0299593379396b6192e113b37351211c72c876231381fb5b71e7e10"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g100_l0_mtp8_b16.json",
+      "sha256": "2608619060058eb195d3e6ada336b464ac9ff72c618d3b7ed1d13758f964f121"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g100_l0_mtp8_b64.json",
+      "sha256": "09992f19cc08c2a6d902d58fb3498380d45827396c2e134cf9f653d1c4a8ed06"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g100_l20000_mtp8_b128.json",
+      "sha256": "cd2c12f488d56a59d20f485726447d9ba738fb08d5edffd28891ccc92f8f1b15"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g100_l20000_mtp8_b16.json",
+      "sha256": "4e741c602ed2cb602e05c3b8484454a431f6e8de4b9d020387117a6595d6e3da"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g100_l20000_mtp8_b64.json",
+      "sha256": "15553cb479fe7553dca8c1164a2ff010b178b4881b33e9b01080a835066e0836"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g50_l20000_mtp8_b128.json",
+      "sha256": "8ffed35b3526b75efc09474c5b26b5bed9739ddff55fe4cc65b5ad8ce04c220d"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g50_l20000_mtp8_b16.json",
+      "sha256": "4c1ef03ec5bf33ec4cf19b8d97b31af73241fad9680a827fdcc6f46f2b92eb84"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_staged_g50_l20000_mtp8_b64.json",
+      "sha256": "ee9af124c5a74703f227d60548ce83356e7f28f67d0d5558723a6402c66b85ee"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_staged_nvlink_mtp8_b128.json",
+      "sha256": "9f4a5109680dc0c1c6c2aca84b250ec3c73269cdaf38f274bce724279afc781c"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_staged_nvlink_mtp8_b16.json",
+      "sha256": "04be789959eace3b5f91167d4c51ca9f195bd5267e53ae57762d6453a45417ba"
+    },
+    {
+      "path": "temp/glm_trace/route_compare_20261030/raw/lru_staged_nvlink_mtp8_b64.json",
+      "sha256": "a99a23592ebb61da5469eca4d851296d7e0d151c60b63740f9e34fa8b04a2462"
+    }
+  ]
+}

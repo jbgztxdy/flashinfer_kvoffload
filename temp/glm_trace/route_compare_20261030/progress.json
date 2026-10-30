@@ -1,0 +1,182 @@
+[
+  {
+    "task": {
+      "route": "staged",
+      "batch": 16,
+      "settings": [
+        "g100_l20000"
+      ],
+      "smoke": true
+    },
+    "exit_code": 0,
+    "seconds": 9.78579330444336
+  },
+  {
+    "task": {
+      "route": "inplace",
+      "batch": 16,
+      "settings": [
+        "g100_l20000"
+      ],
+      "smoke": true
+    },
+    "exit_code": 0,
+    "seconds": 9.391488313674927
+  },
+  {
+    "task": {
+      "route": "staged",
+      "batch": 128,
+      "settings": [
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ],
+      "smoke": false
+    },
+    "exit_code": 0,
+    "seconds": 48.68048357963562
+  },
+  {
+    "task": {
+      "route": "inplace",
+      "batch": 128,
+      "settings": [
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ],
+      "smoke": false
+    },
+    "exit_code": 0,
+    "seconds": 59.01114559173584
+  },
+  {
+    "task": {
+      "route": "staged",
+      "batch": 128,
+      "settings": [
+        "nvlink"
+      ],
+      "smoke": false
+    },
+    "exit_code": 0,
+    "seconds": 26.011483192443848
+  },
+  {
+    "task": {
+      "route": "inplace",
+      "batch": 128,
+      "settings": [
+        "nvlink"
+      ],
+      "smoke": false
+    },
+    "exit_code": 0,
+    "seconds": 26.226296186447144
+  },
+  {
+    "task": {
+      "route": "inplace",
+      "batch": 16,
+      "settings": [
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ],
+      "smoke": false
+    },
+    "exit_code": 0,
+    "seconds": 21.691076040267944
+  },
+  {
+    "task": {
+      "route": "staged",
+      "batch": 16,
+      "settings": [
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ],
+      "smoke": false
+    },
+    "exit_code": 0,
+    "seconds": 18.48473072052002
+  },
+  {
+    "task": {
+      "route": "inplace",
+      "batch": 16,
+      "settings": [
+        "nvlink"
+      ],
+      "smoke": false
+    },
+    "exit_code": 0,
+    "seconds": 11.539618730545044
+  },
+  {
+    "task": {
+      "route": "staged",
+      "batch": 16,
+      "settings": [
+        "nvlink"
+      ],
+      "smoke": false
+    },
+    "exit_code": 0,
+    "seconds": 12.123677492141724
+  },
+  {
+    "task": {
+      "route": "staged",
+      "batch": 64,
+      "settings": [
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ],
+      "smoke": false
+    },
+    "exit_code": 0,
+    "seconds": 33.14298343658447
+  },
+  {
+    "task": {
+      "route": "inplace",
+      "batch": 64,
+      "settings": [
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ],
+      "smoke": false
+    },
+    "exit_code": 0,
+    "seconds": 37.257296323776245
+  },
+  {
+    "task": {
+      "route": "staged",
+      "batch": 64,
+      "settings": [
+        "nvlink"
+      ],
+      "smoke": false
+    },
+    "exit_code": 0,
+    "seconds": 17.61385989189148
+  },
+  {
+    "task": {
+      "route": "inplace",
+      "batch": 64,
+      "settings": [
+        "nvlink"
+      ],
+      "smoke": false
+    },
+    "exit_code": 0,
+    "seconds": 18.022329807281494
+  }
+]

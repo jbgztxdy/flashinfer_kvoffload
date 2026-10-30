@@ -8,6 +8,12 @@
 
 **最新复核证据**：`temp/glm_trace/briefing_report_20261030/`含537个图源格及逐步参考、26对比/17链路/6参考/4本地占比/2复测/2物理带宽验证。GPU0/1当时空闲，独立复测同kernel SHA、绑定、完整1024位置3pass：100GB/s20us4450.15→4376.00us（−1.67%），50GB/s20us5679.23→5682.67（+0.06%），本地2467.18→2457.21（−0.40%），正确性/guard通过；recheck/raw和源码快照保留。物理带宽补测PCIe27.039965/NVLink281.123759GB/s，取9次中位数max(DMA,gather)，physical_bandwidth.json。当前trace PCIe MTP8的32/64/128请求距逐步重叠参考8.8%/8.4%/4.8%；50GB/s128请求9.4%。旧代理PCIe112请求/25%约1.01来自较大索引组bytes，均值预算重算1.036；旧100GB/s20us128请求也高55.8%，不能外推所有场景10%内。verification_notes.md/json与verify_sources.py记录全部依据。复测/探针已结束，无GPU任务；不自动重跑矩阵或改kernel。
 
+**10/30 路径对照完成（新于上段）**：用户问100GB/s换原地读是否更好，已独立测试同trace/seed/MTP8/4096槽、16/64/128请求、100GB/s0/20us＋50GB/s20us＋物理NVLink，24格＋2短校验，3pass完整1024位置。全部通过正确性/均值/队列/源码快照审计；原矩阵不改，kernel未改。报告`docs/mla_host_glm53_route_comparison.md`，数据`temp/glm_trace/route_compare_20261030/`；汇报版新增§7.4单独列表，不把可选路由混入原staged全矩阵。
+
+**路径结论**：100/50GB/s九个batch/链路对均staged更快；物理NVLink三对均原地读更快。128请求staged/原地读us：100GB0us4058.97/5763.21、100GB20us4361.09/11956.27、50GB20us5661.50/13248.88、NVLink3744.73/3290.95。原地读miss引用约509MB/步、staged unique约260MB，重复1.96倍；命中约78.9%接近，非未开LRU。原地读附加高延迟多轮等待的具体成本未消融，不精确归因。NVLink16请求原地读557.74us/本地502.99us（1.11），128为3290.95/2467.18（1.33），仍需按形状表述。
+
+**路径执行证据**：同GPU0/1串行；起初另一mozi profiler在占用，第一smoke因require_exclusive在分配数据前拒绝，失败归档，随后等其控制器和GPU空闲续跑。原地读post-event诊断遮掉ownerbit再数正远端page；raw staging_rows沿用公共VMM/基线缓冲计划，内部host_stage=False实际staging_capacity=0，派生列effective_kernel_staging_rows明确。supervise记录14:35:47 exit0、signals=[]，任务已结束；报告source/mean/guard/hash校验齐全。不要重复启动或杀其他GPU服务。
+
 **运行已结束，不要重复启动**：监督器`supervise.py`所记录的run.py PID1217424于12:17:11正常exit0，`signal_matrix_run11.json` signals为空；session26797已返回0。日志`run_resume11.log`含ALL_MATRIX_COMPLETE，report watcher已输出REPORT_AND_AUDIT_COMPLETE并退出。旧PID/锁文件不是活进程证据，后续仍先ps核实。GPU2其他VLLM始终未碰，GPU0/1各组均检查独占。
 
 **主要结果**：无LRU2643/4641格严格快于Memcpy；LRU538/663。按±3%阅读阈值，无LRU快2368/近535/慢1738，LRU快512/近45/慢106。LRU100GB/s＋20us快36/39、几何平均1.217倍，50GB/s＋20us快39/39、1.374倍。MTP8 128请求：100GB/s20us本文4450.15/Memcpy6287.30/纯本地2467.18us；50GB/s20us5679.23/8968.73/2467.18us，理想传输5191.78us，距理想重叠约9.4%。仍有小batch/NVLink输的场景，不宣称普遍胜出。本文统一staged，不逐格挑最优实现。

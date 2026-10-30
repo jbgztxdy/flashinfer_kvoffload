@@ -287,7 +287,7 @@ def document():
     yield "| Staged取数与计算重叠 | fetch CTA分块写本地staging和缓存；attention CTA处理本地/命中页，并在远端块就绪后继续，无需先完成整批搬运。 |"
     yield "| 批量处理与结果合并 | 一次启动处理全部请求及MTP行，分片softmax/输出在同一cooperative kernel内合并。 |"
     yield ""
-    yield "**本报告所有本文数据均为 staged 路径，包括物理 NVLink；没有逐格挑选原地读结果。**\n"
+    yield "**主矩阵与图1–6的本文数据均为 staged 路径，包括物理 NVLink；§7.4另外列出原地读路径对照。**\n"
     yield "| 测试部分 | 本文LRU | 本文取数路径 | 其他固定参数 |"
     yield "|---|---|---|---|"
     yield "| 单步、指定远端比例 | 关闭（容量0） | batched staged；MTP内去重仍开启 | fetch CTA=16，Host item=64条目 |"
@@ -296,8 +296,8 @@ def document():
     yield ""
     yield ("本报告的远端比例指top-k引用落到原始远端的比例，与LRU命中率不同；该定义同时适用于Host和peer存储。"
            "无LRU的0%–30%为目标值，固定页映射下实际比例略有波动，完整矩阵同时记录实际值。\n")
-    yield ("单query也固定使用batched staged实现；可选SMALL_PREPARE优化本轮关闭。本轮评估的是同一套固定配置，"
-           "并未按参数点重新调优。产品实现同时支持原地读，但本报告的比较和图表统一采用上述实测配置。\n")
+    yield ("主矩阵中单query也固定使用batched staged实现；可选SMALL_PREPARE优化本轮关闭。主矩阵评估同一套固定配置，"
+           "并未按参数点重新调优。产品实现同时支持原地读；§7.4补充两种路径的独立对照，不改变主矩阵汇总口径。\n")
     yield "## 3. GLM-5.3 trace 采集与回放方法\n"
     yield ("使用GLM-5.3权重对软件开发agent的多轮轨迹进行离线因果前向计算。原始语料来自"
            "`nebius/SWE-rebench-openhands-trajectories`，按模型原生聊天及工具调用模板构造4篇64K文档，"
@@ -474,6 +474,26 @@ def document():
            f"{stats(subset('lru','pcie'))['speedup']:.3f}倍；32/64/128请求同时距完美重叠参考"
            "8.8%/8.4%/4.8%，是本轮真实trace中接近链路极限的直接证据。物理NVLink下，固定staged方案对大部分中大MTP8 batch"
            "有收益，但小batch存在回退；全39形状平均接近持平，后续应针对准备/同步成本和取数路径继续优化。\n")
+    routes_file=ROOT/"temp/glm_trace/route_compare_20261030/summary.json"
+    if routes_file.exists() and load(routes_file).get("complete"):
+        routes=load(routes_file)
+        yield "### 7.4 补充对照：100 GB/s 是否改为原地读更好\n"
+        yield ("进一步在相同真实trace、MTP8、4096槽LRU和完整窗口3pass条件下，只切换现有staged/原地读选项，"
+               "补测16/64/128请求、四种链路，共24格。此处单独呈现路径对照，前述固定staged矩阵和全参数汇总保持原口径。\n")
+        yield "| 链路 | 请求 | staged µs | 原地读 µs | 原地读/staged | 较快路径 |"
+        yield "|---|---:|---:|---:|---:|---|"
+        for pair in routes["pairs"]:
+            s,i=pair["staged"],pair["inplace"]
+            yield (f"| {label(pair['setting'])} | {pair['requests']} | {s['mean_us']:.2f} | {i['mean_us']:.2f} | "
+                   f"{pair['inplace_to_staged']:.3f} | {'原地读' if pair['faster_route']=='inplace' else 'staged'} |")
+        yield ""
+        yield ("三个所测batch的物理NVLink均是原地读更快，100/50 GB/s的所测条件则均是staged更快。"
+               "128请求时，原地读未命中引用约509 MB/步，staged去重后约260 MB/步；100 GB/s下，"
+               "仅原地读的逻辑字节传输预算约5.09 ms，已经高于staged总耗时。"
+               "更快的物理NVLink较容易隐藏重复读取代价，因此省去staging中转能带来收益。\n")
+        yield ("路径应随链路及访问模式选择。100 GB/s下继续优化的方向是staged内部开销与并发取数，"
+               "本次切换原地读未带来提升；物理NVLink可采用原地读以获得额外收益。"
+               "[完整路径对照与流量记录](mla_host_glm53_route_comparison.md)。\n")
     yield "## 8. 全参数汇总、计时口径与结论边界\n"
     yield "### 8.1 全部17种链路汇总\n"
     yield ("无LRU列覆盖全部39形状×7远端比例＝273格，包含0%远端；trace列覆盖39形状。加速比为"
@@ -517,7 +537,8 @@ def document():
            "几何平均加速分别为1.369倍和1.541倍。\n")
     yield ("**接近极限已有明确实例，且不同极限的含义清晰。**低远端比例的单步场景可做到接近纯device计算；"
            "物理PCIe的32–128请求真实trace距离理想重叠参考约4.8%–8.8%，50 GB/s＋20 µs的128请求约9.4%。"
-           "后续主要空间集中在小batch固定成本、较快链路下的staging开销，以及继续减少必需远端字节数。\n")
+           "后续主要空间集中在小batch固定成本、staged内部调度和更充分的链路利用，以及继续减少必需远端字节数。"
+           "补充路径对照表明，所测100/50 GB/s条件保留staged，物理NVLink采用原地读更合适。\n")
     yield "---\n"
     yield ("数据来源：[完整5304格实验报告](mla_host_glm53_kernel_matrix_20261029.md)、"
            "[全量CSV](../temp/glm_trace/kernel_report_20261029/matrix.csv)、"
@@ -540,6 +561,7 @@ manifest=dict(timestamp=time.strftime("%FT%T%z"),source_commit="8c624445",
               verification_notes_sha256=digest(DEST/"verification_notes.md"),
               analysis_source_sha256={p.name:digest(p) for p in
                   (DEST/"build_report.py",DEST/"references.py",DEST/"verify_sources.py",DEST/"probe_physical.py")},
+              route_comparison_sha256=digest(ROOT/"temp/glm_trace/route_compare_20261030/summary.json"),
               figure_count=len(FIGURES),figure_cells={k:len(v["rows"]) for k,v in FIGURES.items()},
               artifact_sha256={str(p.relative_to(ROOT)):digest(p) for p in [DOC,*sorted(ASSETS.glob("*.png"))]})
 (DEST/"manifest.json").write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+"\n")
