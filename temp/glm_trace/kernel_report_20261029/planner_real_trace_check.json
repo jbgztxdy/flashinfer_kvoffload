@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "mtp": 1,
+      "requests": 4,
+      "trace_positions": 1024,
+      "steps": 1024,
+      "topk": 2048,
+      "all_arrays_equal": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "payload_all_steps_verified": true,
+      "copied_pages": 262715,
+      "serial_seconds": 1.8373972059926018,
+      "parallel_seconds": 0.35859802199411206
+    },
+    {
+      "mtp": 8,
+      "requests": 4,
+      "trace_positions": 1024,
+      "steps": 128,
+      "topk": 2048,
+      "all_arrays_equal": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "payload_all_steps_verified": true,
+      "copied_pages": 235321,
+      "serial_seconds": 1.4064032780006528,
+      "parallel_seconds": 0.37793413098552264
+    }
+  ],
+  "sources": {
+    "plans.cpp": "dee20354411d53a456b6f1664fa19b4d81006de2620c156a0e268556b54a3d75",
+    "plans_reference.cpp": "72435b5d7d14df5f2a6ace856aaaeae58171ede18655bd9204c041f9087355d8",
+    "check_real_plan.py": "6cad11d4412383c686b52fde1b0f236090e2c06ce1b7a280f109518090ed68c3"
+  }
+}

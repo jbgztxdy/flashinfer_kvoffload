@@ -1,5 +1,13 @@
 # 交接：远端 KV 稀疏 MLA 算子项目（2026-10-29）
 
+**10/30 10:27 续接状态（优先于下方进程状态）**：用户再次要求完成无LRU/真实trace＋LRU与Memcpy/纯本地两baseline全矩阵报告。旧runner已终止，无LRU4641格、完整LRU225/663格、本地312格保留；另11组波动待重测，不可称最终完成。GPU0/1现在各被VLLM占约34GB，无权自行停止；已向用户异步询问是否允许暂停，尚未收到答复。独立后台resume.py在等待原GPU0/1空闲，PID见temp/glm_trace/kernel_report_20261029/resume.pid，当前state见resume_state.json；必须先ps核实，不重复启动。它先重测stability_repeat.json中的11组，再运行run.py（日志run_resume9.log），最终audit/report/plot/export_html。原GPU测试进程已确认不存在，故本次重启是从已停状态续跑。每组启动前检查外部GPU进程，结束前再核查，避免与VLLM并发。GPU2服务未动。
+
+**本次CPU验证和文档**：check_real_plan.py在真实1024位置、topk2048、MTP1/8四请求上逐数组比较串行与并行CPU规划，并验证每一步真实payload，全通过。audit.py已补形状/参数/实际Host比/缓存计数/继承源码快照/复测hash检查，1533540次计时launch通过，438格LRU缺失，complete=false。新报告同名HTML自包含9MB，含4866个已测格筛选表/CSV导出/内嵌图，浏览器验证通过；未称全完成。新的resources.py/resume.py均只管理本实验，不操作其他GPU进程。工具问题修复/预实验均在独立目录留档，生产kernel保持SHA354f0204…未修改。
+
+**10/30 新用户请求：kernel-only全矩阵报告进行中**：新目录temp/glm_trace/kernel_report_20261029/，报告docs/mla_host_glm53_kernel_matrix_20261029.md。39个batch形状（MTP1 14/MTP8 25）×17链路（不限/100/50GB/s×0/2/5/10/20us＋NVLink/PCIe），无LRU再×7个Host比例，共4641无LRU＋663完整LRU＋39纯本地。3pass算术平均，LRU完整1024位置含冷启动。GPU0/1独占串行测，GPU2其他VLLM不碰。run_resume8.log最新、runner session60394，watch_report.py每60秒刷新。先运行status.py，不要重复启动；audit.json complete前不可声称完成。失败/预实验保留failures/。
+
+**本次计时修正**：Memcpy真实缓存payload＋精确离线LRU，独立Python oracle通过；各步独立pinned源buffer，搬运/scatter/attention都计时。CPU标量上传导致guard同步已修复。本文全部形状强制batched staged fetch16/item64，旧单query缺完整模拟钩子不纳入，SMALL_PREPARE关闭；生产源码未改。39份全本地已独占重测；另补273个逐Host比例精确匹配本地快照（snapshots kind）。4assistant窗口×21层84组，超过84重复capture、near超过128请求alias，远端/LRU独立，Q/KV seededBF16。LRU unique和引用miss取3pass均值，actual remap诊断在event外。每16步guard校验，不含CPU规划/packing/索引/参考检查；15链路校准全通过。raw/source_snapshots/matrix.csv/json/audit保留所有证据。noLRU Memcpy原先额外scatter已删（连续槽可直接写），path_version=2；保留旧ours样本，只重测Memcpy，旧版不入主表，status额外显示pending计数。当前所有本地参考312格完成，LRU5格已通过，完整矩阵仍在跑。后续LRU使用16步CUDA Graph（external events、每capture仅执行一次、保留LRU），已与guard完整交叉比对本文−0.16%、Memcpy−1.75%；独占gpu01.lock防止意外并发，早期重叠smoke和b96sim移入failures。
+
 给下一个 agent：这份文档记录项目状态和文件指针，细节请读引用的文件。第 3 节（正在跑的作业）和第 4 节（下一步）最要紧。
 
 **10/29 第六轮最终方案：显式小batch准备优化**：用户“请做吧”批准继续我们kernel优化；此前“不用”表示暂不补Memcpy基线，HiSparse仍原生。GPU0/1被其他服务占用，未干预，本轮仅GPU3 A100-PCIE；far是同卡独立HBM，经未改模拟器限制50/100GB/s＋20us，另测零延迟和物理Host。不是物理NVLink，不与SXM绝对时间拼接。最终增加FLASHINFER_HOST_BATCH_SMALL_PREPARE编译选项，默认关闭、默认调用原函数；开启后小staged实例prepare每线程1条＋单warp scan。开启选项101项测试通过，175.76秒。单kernel/LRU/容量/top-k/workspace/API保持。
