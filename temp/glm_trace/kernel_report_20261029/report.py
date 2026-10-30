@@ -12,6 +12,13 @@ DOC=ROOT/"docs/mla_host_glm53_kernel_matrix_20261029.md"
 META=json.loads((DEST/"experiment.json").read_text())
 
 
+def setting_label(setting):
+    if setting["name"]=="nvlink":return "物理 NVLink"
+    if setting["name"]=="pcie":return "物理 Host PCIe"
+    bw=setting["bandwidth_GBps"]
+    return (f"{bw} GB/s" if bw else "不限速")+f"＋{setting['latency_ns']/1000:g} µs"
+
+
 def read(path):return json.loads(path.read_text())
 
 
@@ -54,6 +61,9 @@ def gather():
             bw=cfg["setting"].get("bandwidth_GBps",0)
             transfer_us=miss/n*1152/(bw*1000) if bw else None
             rows.append(dict(kind=cfg["kind"],setting=cfg["setting"]["name"],mtp=cfg["mtp"],
+                             bandwidth_GBps=cfg["setting"].get("bandwidth_GBps"),
+                             added_latency_us=cfg["setting"].get("latency_ns",0)/1000,
+                             emulated=cfg["setting"].get("emulated",False),
                              requests=cfg["requests"],query_rows=cfg["query_rows"],
                              host_fraction_target=case["host_fraction_requested"],
                              host_fraction_actual=case["host_fraction_actual"],
@@ -103,10 +113,25 @@ def document(rows,files):
             values=[r for r in rows if r["kind"]==kind]
             if values:
                 wins=sum(r["ours_to_memcpy"]<1 for r in values)
+                faster=sum(r["ours_to_memcpy"]<.97 for r in values)
+                slower=sum(r["ours_to_memcpy"]>1.03 for r in values)
                 yield (f"- {title}：已完成{len(values)}格，本文快于Memcpy {wins}格；"
+                       f"按±3%阅读阈值：快于3% {faster}格、接近{len(values)-faster-slower}格、慢于3% {slower}格。"
                        f"本文÷Memcpy范围{min(r['ours_to_memcpy'] for r in values):.3f}–{max(r['ours_to_memcpy'] for r in values):.3f}，"
                        f"本文÷本地平均范围{min(r['ours_to_local_mean'] for r in values):.3f}–{max(r['ours_to_local_mean'] for r in values):.3f}。")
         yield ""
+        yield "### 典型参数摘录\n"
+        yield "这里只摘录预先选定的1/4/16/128请求及四类链路；无LRU取目标Host 30%。所有其他比例和batch仍见后面的完整逐格表，不按赢家挑选配置。时间单位µs。\n"
+        yield "| 场景 | 链路 | MTP | 请求 | 本文 | Memcpy | 纯本地 | 本文÷Memcpy | 本文÷本地 |"
+        yield "|---|---|---:|---:|---:|---:|---:|---:|---:|"
+        selected=[r for r in rows if r["requests"] in (1,4,16,128) and r["setting"] in ("g100_l20000","g50_l20000","nvlink","pcie")
+                  and (r["kind"]=="lru" or r["host_fraction_target"]==.3)]
+        for r in sorted(selected,key=lambda x:(x["kind"],x["setting"],x["mtp"],x["requests"])):
+            setting=next(s for s in META["settings"] if s["name"]==r["setting"])
+            yield (f"| {'trace＋LRU' if r['kind']=='lru' else '无LRU，Host30%'} | {setting_label(setting)} | {r['mtp']} | {r['requests']} | "
+                   f"{r['ours_mean_us']:.2f} | {r['memcpy_mean_us']:.2f} | {r['local_mean_us']:.2f} | {r['ours_to_memcpy']:.3f} | {r['ours_to_local_mean']:.3f} |")
+        yield ""
+        yield "±3%是便于阅读的差异分组，不是统计显著性检验。小于pass间波动的差距不宜宣称稳定收益；CSV/JSON保留每次pass均值及极差。\n"
         yield "### 参数分布图\n"
         yield "图中无LRU展示目标Host 30%；其他比例仍见完整逐格表。灰色为未完成，图标题注明已测格数；数值越低越好。\n"
         yield "![无LRU性能比值](assets/glm53_kernel_matrix_20261029/nocache.png)\n"
@@ -132,6 +157,8 @@ def document(rows,files):
            "无LRU部分按固定(request,position)映射指定0/5/10/15/20/25/30%，同时报告实际比例；"
            "源trace局部性保持，按四个间隔位置采样单步。LRU部分除最新token外KV原始驻留远端，"
            "不人为指定缓存命中率，连续跑完1024位置后记录缓存及最终远端比例。\n")
+    yield ("LRU命中率是对真实top-k索引，在本报告指定的驻留规则、4096槽容量和逐launch LRU政策上"
+           "回放得到的结果，并非从生产部署直接采集的缓存计数；换容量、驻留策略或请求调度后可能改变。\n")
     yield "## 2. 数据、设备和完整参数\n"
     yield ("设备：A100-SXM4-40GB双卡，GPU0运行，GPU1为真实NV12远端；物理PCIe为NUMA0 Host pinned内存。"
            "模拟链路是在同一真实远端路径上使用原有虚拟链路时钟，带宽按字节收费、访问附加延迟。"
@@ -177,6 +204,9 @@ def document(rows,files):
            "采样query行与数学参考比较。GPU gather/H2D、写缓存槽及attention均计时；CPU LRU规划和"
            "PCIe CPU gather不计时，后者另保存耗时，所以它是GPU部分对照，不是完整CPU+GPU延迟。"
            "没有沿用此前只搬未命中却缺完整缓存结果的计时替身。\n")
+    yield ("大batch的Host源数据按段打包，避免为完整窗口一次保留上百GB的pinned内存。"
+           "每步拥有独立源缓冲，并在该段GPU完成后才释放；CPU打包和索引上传仍在事件外，"
+           "实际H2D、缓存scatter与attention仍全部计时。每份新数据记录其预打包内存上限。\n")
     yield ("无LRU Memcpy使用连续的本地staging，直接H2D/gather写入该区域，不额外scatter。"
            "修正前已通过的本文样本原样保留，只重测对应Memcpy，前后源码SHA与旧Memcpy样本都记录；"
            "主表只接受memcpy_path_version=2的对照。LRU因持久槽不连续，保留必要的scatter。\n")
@@ -188,7 +218,8 @@ def document(rows,files):
            "对应no-LRU比较逐个Host比例使用完全相同映射的四个位置本地样本，另有273个本地对照格；"
            "LRU比较取完整1024位置的本地均值。\n")
     yield ("如何解释距离本地极限：若每步仍需搬运B字节，带宽W GB/s，则仅传输理想时间为"
-           "B/(1000W) µs；即使计算与传输完全重叠，总时间也不应低于max(本地计算,理想传输)。"
+           "B/(1000W) µs；以max(本地计算实测,理想传输)作为理想重叠参考。该参考中的本地时间来自"
+           "指定attention实现，不能视为所有可能kernel的数学下界。"
            "因此远端流量较高且链路只有50GB/s时，本文/本地显著大于1并不全是调度浪费。"
            "matrix.csv/json额外保存这一乐观参考，不计附加延迟且不用于替代实测。\n")
     yield ("baseline的离线LRU规划另通过独立Python oracle，覆盖逐步淘汰、同stamp并列、MTP内重复、"
@@ -198,7 +229,7 @@ def document(rows,files):
     yield "时间单位µs。本文÷本地越接近1越好，本文÷Memcpy小于1代表本文更快。"
     for setting in META["settings"]:
         name=setting["name"]
-        yield f"### {name}\n"
+        yield f"### {setting_label(setting)}（{name}）\n"
         for mtp in (1,8):
             sub=[r for r in rows if r["kind"]=="nocache" and r["setting"]==name and r["mtp"]==mtp]
             yield f"#### MTP{mtp}\n"
@@ -215,7 +246,7 @@ def document(rows,files):
            "miss引用/全部top-k条目，搬运unique%再扣除同launch重复。各分母不同，不能混用。Memcpy的LRU相同但同stamp淘汰"
            "并列顺序可不同，分别列出其缓存命中率。\n")
     for setting in META["settings"]:
-        name=setting["name"];yield f"### {name}\n"
+        name=setting["name"];yield f"### {setting_label(setting)}（{name}）\n"
         yield "| MTP | 请求 | query行 | 本文µs | Memcpyµs | 纯本地µs | 本文÷Memcpy | 本文÷本地 | 原始Host% | 本文unique命中% | 本文引用命中% | Memcpy unique命中% | miss引用% | 搬运unique% | 未命中页/步 |"
         yield "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"
         sub=[r for r in rows if r["kind"]=="lru" and r["setting"]==name]

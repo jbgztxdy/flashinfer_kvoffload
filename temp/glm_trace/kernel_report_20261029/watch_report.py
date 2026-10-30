@@ -14,6 +14,7 @@ while True:
             time.sleep(30)
             continue
         subprocess.run(["python3",str(DEST/"report.py")],check=True)
+        subprocess.run(["python3",str(DEST/"export_html.py")],check=True)
         print("REPORT_AND_AUDIT_COMPLETE",flush=True)
         break
     time.sleep(60)

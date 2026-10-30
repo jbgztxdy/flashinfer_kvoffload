@@ -1,5 +1,9 @@
 # 交接：远端 KV 稀疏 MLA 算子项目（2026-10-29）
 
+**10/30 11:12 最新续跑状态**：GPU0/1于10:35释放。11组无LRU稳定性复测全部完成，最大pass均值极差/均值2.18%，旧波动样本保留failures/stability_before_repeat。完整LRU已完成428/663并继续，最新日志run_resume10.log；当前前台监督runner PID1179609、unified exec session23217（后续必须ps/工具核实，状态会变化）。旧后台resume PID1114088及1171607均已终止，不可当作活进程。report watcher PID见report_watch.pid，仍运行。
+
+**512 Host中断诊断与措施**：原512 Host全窗口预打包约155.37GiB。第一次控制器/runner/bench全部退出，祖先memory.events有oom_kill=1，无法单凭计数确认归因；将预打包上限改8GiB、较大场景按16步分段（CPU packing在计时外，独立缓冲同步后释放）。第二次仍全部退出，但OOM计数未增加，且观察到另一项目在GPU0/1运行，原因仍未确定，两次均无完成JSON、未混入数据。改用前台工具session监督，并先测较短MTP8全矩阵，MTP1 512的全部剩余16格仍保留为要求。此后进程稳定推进。两次中断证据interruption_20261030_1048.json/1055.json。不得写成已证明OOM或已彻底解决大batch中断。
+
 **10/30 10:27 续接状态（优先于下方进程状态）**：用户再次要求完成无LRU/真实trace＋LRU与Memcpy/纯本地两baseline全矩阵报告。旧runner已终止，无LRU4641格、完整LRU225/663格、本地312格保留；另11组波动待重测，不可称最终完成。GPU0/1现在各被VLLM占约34GB，无权自行停止；已向用户异步询问是否允许暂停，尚未收到答复。独立后台resume.py在等待原GPU0/1空闲，PID见temp/glm_trace/kernel_report_20261029/resume.pid，当前state见resume_state.json；必须先ps核实，不重复启动。它先重测stability_repeat.json中的11组，再运行run.py（日志run_resume9.log），最终audit/report/plot/export_html。原GPU测试进程已确认不存在，故本次重启是从已停状态续跑。每组启动前检查外部GPU进程，结束前再核查，避免与VLLM并发。GPU2服务未动。
 
 **本次CPU验证和文档**：check_real_plan.py在真实1024位置、topk2048、MTP1/8四请求上逐数组比较串行与并行CPU规划，并验证每一步真实payload，全通过。audit.py已补形状/参数/实际Host比/缓存计数/继承源码快照/复测hash检查，1533540次计时launch通过，438格LRU缺失，complete=false。新报告同名HTML自包含9MB，含4866个已测格筛选表/CSV导出/内嵌图，浏览器验证通过；未称全完成。新的resources.py/resume.py均只管理本实验，不操作其他GPU进程。工具问题修复/预实验均在独立目录留档，生产kernel保持SHA354f0204…未修改。

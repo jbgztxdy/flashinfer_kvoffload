@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-10-30T10:51:50+0800",
+  "state": "interrupted",
+  "old_controller_pid": 1114088,
+  "old_runner_pid": 1163093,
+  "old_benchmark_pid": 1163128,
+  "lru_complete": 225,
+  "full_window_host_pack_GiB": 155.37067472934723,
+  "evidence": "All three process handles missing; run log ended during lru_pcie_mtp1_b512; ancestor memory.events has oom_kill=1. No accepted output exists for this case.",
+  "cause_inference": "NUMA-local pinned allocation pressure is suspected; the counter cannot by itself date or identify the killed process.",
+  "remedy": "Cap full-window pinned prepacking at 8 GiB and prepare larger cases in 16-step chunks outside timing."
+}

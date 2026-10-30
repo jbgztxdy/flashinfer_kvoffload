@@ -13,5 +13,1228 @@
     "temp/glm_trace/kernel_report_20261029/raw/nocache_pcie_mtp8_b32.json"
   ],
   "reason": "pass mean range exceeds 20% of mean",
-  "complete": false
+  "complete": true,
+  "repeated": [
+    {
+      "file": "temp/glm_trace/kernel_report_20261029/raw/nocache_g0_l10000_mtp8_b32.json",
+      "sha256": "2d8a3029be0a002ba04d5d1681f6f5b7f4736c05b489c884245bf8ddc02d6a8b",
+      "changes": [
+        {
+          "host_fraction": 0,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1280.9386750062306,
+              "new_mean_us": 985.6853385766348,
+              "new_pass_range_over_mean": 0.008830380780698217
+            },
+            "memcpy": {
+              "old_mean_us": 835.1573298374811,
+              "new_mean_us": 837.6320004463196,
+              "new_pass_range_over_mean": 0.002445006391101543
+            }
+          }
+        },
+        {
+          "host_fraction": 0.05,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1039.7866715987523,
+              "new_mean_us": 983.8933298985163,
+              "new_pass_range_over_mean": 0.007805738226335629
+            },
+            "memcpy": {
+              "old_mean_us": 902.9120008150736,
+              "new_mean_us": 905.8986604213715,
+              "new_pass_range_over_mean": 0.0031085062415051002
+            }
+          }
+        },
+        {
+          "host_fraction": 0.1,
+          "modes": {
+            "ours": {
+              "old_mean_us": 997.3759998877844,
+              "new_mean_us": 994.3039963642756,
+              "new_pass_range_over_mean": 0.006694105827392654
+            },
+            "memcpy": {
+              "old_mean_us": 941.3973440726598,
+              "new_mean_us": 945.920005440712,
+              "new_pass_range_over_mean": 0.0032476408923513196
+            }
+          }
+        },
+        {
+          "host_fraction": 0.15,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1014.3573383490244,
+              "new_mean_us": 1009.6640189488729,
+              "new_pass_range_over_mean": 0.009127799344697457
+            },
+            "memcpy": {
+              "old_mean_us": 975.0186651945114,
+              "new_mean_us": 980.0533403952917,
+              "new_pass_range_over_mean": 0.0015672583637958914
+            }
+          }
+        },
+        {
+          "host_fraction": 0.2,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1034.3253314495087,
+              "new_mean_us": 1028.6079943180084,
+              "new_pass_range_over_mean": 0.002986583235492407
+            },
+            "memcpy": {
+              "old_mean_us": 1012.7359877030054,
+              "new_mean_us": 1013.9306684335073,
+              "new_pass_range_over_mean": 0.002019847959943959
+            }
+          }
+        },
+        {
+          "host_fraction": 0.25,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1221.8026717503865,
+              "new_mean_us": 1043.455998102824,
+              "new_pass_range_over_mean": 0.005397461026381761
+            },
+            "memcpy": {
+              "old_mean_us": 1046.698659658432,
+              "new_mean_us": 1050.7093171278636,
+              "new_pass_range_over_mean": 0.002436467871152885
+            }
+          }
+        },
+        {
+          "host_fraction": 0.3,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1997.568001349767,
+              "new_mean_us": 1046.015997727712,
+              "new_pass_range_over_mean": 0.0014684114744670086
+            },
+            "memcpy": {
+              "old_mean_us": 1083.050658305486,
+              "new_mean_us": 1086.8906577428181,
+              "new_pass_range_over_mean": 0.0018842885251545024
+            }
+          }
+        }
+      ]
+    },
+    {
+      "file": "temp/glm_trace/kernel_report_20261029/raw/nocache_g0_l20000_mtp8_b32.json",
+      "sha256": "efb986b3ea532461fdcb34dd3ec29c8a3cccb2bf84635621d816151b805387fc",
+      "changes": [
+        {
+          "host_fraction": 0,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1585.3226731220882,
+              "new_mean_us": 981.1626672744751,
+              "new_pass_range_over_mean": 0.011741170650119937
+            },
+            "memcpy": {
+              "old_mean_us": 835.3279878695806,
+              "new_mean_us": 837.2053255637487,
+              "new_pass_range_over_mean": 0.0030577977872011312
+            }
+          }
+        },
+        {
+          "host_fraction": 0.05,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1486.8480066458385,
+              "new_mean_us": 984.6613357464472,
+              "new_pass_range_over_mean": 0.011959457262065492
+            },
+            "memcpy": {
+              "old_mean_us": 920.23466527462,
+              "new_mean_us": 923.0506668488184,
+              "new_pass_range_over_mean": 0.001386700526158618
+            }
+          }
+        },
+        {
+          "host_fraction": 0.1,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1007.872000336647,
+              "new_mean_us": 1005.1413327455521,
+              "new_pass_range_over_mean": 0.00432977233797314
+            },
+            "memcpy": {
+              "old_mean_us": 957.6960057020187,
+              "new_mean_us": 959.7439964612325,
+              "new_pass_range_over_mean": 0.001600407920448474
+            }
+          }
+        },
+        {
+          "host_fraction": 0.15,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1041.152000427246,
+              "new_mean_us": 1038.9333367347717,
+              "new_pass_range_over_mean": 0.00024643713179650574
+            },
+            "memcpy": {
+              "old_mean_us": 987.9040072361628,
+              "new_mean_us": 989.1840070486069,
+              "new_pass_range_over_mean": 0.0018115778561729984
+            }
+          }
+        },
+        {
+          "host_fraction": 0.2,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1064.3626650174458,
+              "new_mean_us": 1064.3626550833385,
+              "new_pass_range_over_mean": 0.0026457629185751767
+            },
+            "memcpy": {
+              "old_mean_us": 1024.1706768671672,
+              "new_mean_us": 1025.7066786289215,
+              "new_pass_range_over_mean": 0.00099831464126527
+            }
+          }
+        },
+        {
+          "host_fraction": 0.25,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1289.983997742335,
+              "new_mean_us": 1065.9840007623036,
+              "new_pass_range_over_mean": 0.0024015273108695316
+            },
+            "memcpy": {
+              "old_mean_us": 1055.7440121968586,
+              "new_mean_us": 1058.0480098724365,
+              "new_pass_range_over_mean": 0.004839052227749266
+            }
+          }
+        },
+        {
+          "host_fraction": 0.3,
+          "modes": {
+            "ours": {
+              "old_mean_us": 2022.8266716003418,
+              "new_mean_us": 1076.223999261856,
+              "new_pass_range_over_mean": 0.004281613758939701
+            },
+            "memcpy": {
+              "old_mean_us": 1089.6213452021282,
+              "new_mean_us": 1093.8880145549774,
+              "new_pass_range_over_mean": 0.0032764115180495103
+            }
+          }
+        }
+      ]
+    },
+    {
+      "file": "temp/glm_trace/kernel_report_20261029/raw/nocache_g0_l5000_mtp8_b32.json",
+      "sha256": "a877aeef80b1103042621068a89f6d3be5755c834dd0f27f6bd2363d895097e5",
+      "changes": [
+        {
+          "host_fraction": 0,
+          "modes": {
+            "ours": {
+              "old_mean_us": 984.2346658309301,
+              "new_mean_us": 980.4800003767014,
+              "new_pass_range_over_mean": 0.009138374792563018
+            },
+            "memcpy": {
+              "old_mean_us": 836.010659734408,
+              "new_mean_us": 837.9733363787333,
+              "new_pass_range_over_mean": 0.001833007840678591
+            }
+          }
+        },
+        {
+          "host_fraction": 0.05,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1294.7626759608586,
+              "new_mean_us": 985.344002644221,
+              "new_pass_range_over_mean": 0.010911932620864576
+            },
+            "memcpy": {
+              "old_mean_us": 896.3413337866465,
+              "new_mean_us": 898.8159994284312,
+              "new_pass_range_over_mean": 0.0017089112740287034
+            }
+          }
+        },
+        {
+          "host_fraction": 0.1,
+          "modes": {
+            "ours": {
+              "old_mean_us": 993.1946744521459,
+              "new_mean_us": 992.4266735712687,
+              "new_pass_range_over_mean": 0.007996576408590349
+            },
+            "memcpy": {
+              "old_mean_us": 933.8026692469915,
+              "new_mean_us": 936.106671889623,
+              "new_pass_range_over_mean": 0.0010939007572439911
+            }
+          }
+        },
+        {
+          "host_fraction": 0.15,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1054.634655515353,
+              "new_mean_us": 1012.2239887714386,
+              "new_pass_range_over_mean": 0.005058148629509883
+            },
+            "memcpy": {
+              "old_mean_us": 967.8506702184677,
+              "new_mean_us": 971.0079977909724,
+              "new_pass_range_over_mean": 0.0005272757779793559
+            }
+          }
+        },
+        {
+          "host_fraction": 0.2,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1031.5093199412029,
+              "new_mean_us": 1028.5226702690125,
+              "new_pass_range_over_mean": 0.003982412352244153
+            },
+            "memcpy": {
+              "old_mean_us": 1003.1786759694418,
+              "new_mean_us": 1004.9706796805064,
+              "new_pass_range_over_mean": 0.0015284292647337072
+            }
+          }
+        },
+        {
+          "host_fraction": 0.25,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1249.1093277931213,
+              "new_mean_us": 1027.4133483568828,
+              "new_pass_range_over_mean": 0.0072259105229915705
+            },
+            "memcpy": {
+              "old_mean_us": 1037.823994954427,
+              "new_mean_us": 1040.4693285624187,
+              "new_pass_range_over_mean": 0.0012302234303437469
+            }
+          }
+        },
+        {
+          "host_fraction": 0.3,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1047.8080014387767,
+              "new_mean_us": 1046.698659658432,
+              "new_pass_range_over_mean": 0.002445746791434357
+            },
+            "memcpy": {
+              "old_mean_us": 1074.0053455034893,
+              "new_mean_us": 1076.0533511638641,
+              "new_pass_range_over_mean": 0.0009516052283200309
+            }
+          }
+        }
+      ]
+    },
+    {
+      "file": "temp/glm_trace/kernel_report_20261029/raw/nocache_g100_l0_mtp8_b32.json",
+      "sha256": "3aae74c1b7e32f80cccfca9cd00a910eb8c65a73ca8701be0f67196b9717339f",
+      "changes": [
+        {
+          "host_fraction": 0,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1566.7200088500977,
+              "new_mean_us": 980.1386644442877,
+              "new_pass_range_over_mean": 0.007835640052195943
+            },
+            "memcpy": {
+              "old_mean_us": 835.2426687876383,
+              "new_mean_us": 837.3759984970093,
+              "new_pass_range_over_mean": 0.0027514375210248706
+            }
+          }
+        },
+        {
+          "host_fraction": 0.05,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1028.2666732867558,
+              "new_mean_us": 987.4773373206457,
+              "new_pass_range_over_mean": 0.0095921013673232
+            },
+            "memcpy": {
+              "old_mean_us": 951.8933345874151,
+              "new_mean_us": 956.5866688887278,
+              "new_pass_range_over_mean": 0.0032114272448843647
+            }
+          }
+        },
+        {
+          "host_fraction": 0.1,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1000.1066674788793,
+              "new_mean_us": 1002.3253411054611,
+              "new_pass_range_over_mean": 0.005363553941902699
+            },
+            "memcpy": {
+              "old_mean_us": 1044.650673866272,
+              "new_mean_us": 1045.6746518611908,
+              "new_pass_range_over_mean": 0.0026930187486146943
+            }
+          }
+        },
+        {
+          "host_fraction": 0.15,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1019.0506875514984,
+              "new_mean_us": 1016.405334075292,
+              "new_pass_range_over_mean": 0.007304169583199038
+            },
+            "memcpy": {
+              "old_mean_us": 1133.0559849739075,
+              "new_mean_us": 1135.5306605497997,
+              "new_pass_range_over_mean": 0.0031561788755592114
+            }
+          }
+        },
+        {
+          "host_fraction": 0.2,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1049.6000051498413,
+              "new_mean_us": 1043.0293182531993,
+              "new_pass_range_over_mean": 0.002699848789609699
+            },
+            "memcpy": {
+              "old_mean_us": 1219.9253141880035,
+              "new_mean_us": 1222.7413356304169,
+              "new_pass_range_over_mean": 0.0027217494344343165
+            }
+          }
+        },
+        {
+          "host_fraction": 0.25,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1279.146671295166,
+              "new_mean_us": 1053.5253286361694,
+              "new_pass_range_over_mean": 0.0004860193552307292
+            },
+            "memcpy": {
+              "old_mean_us": 1308.6719810962677,
+              "new_mean_us": 1310.8906547228496,
+              "new_pass_range_over_mean": 0.0037104599205505205
+            }
+          }
+        },
+        {
+          "host_fraction": 0.3,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1645.6532975037892,
+              "new_mean_us": 1061.2053374449413,
+              "new_pass_range_over_mean": 0.003377261270027687
+            },
+            "memcpy": {
+              "old_mean_us": 1394.9439823627472,
+              "new_mean_us": 1400.9173313776653,
+              "new_pass_range_over_mean": 0.0007309551922198002
+            }
+          }
+        }
+      ]
+    },
+    {
+      "file": "temp/glm_trace/kernel_report_20261029/raw/nocache_g100_l10000_mtp8_b32.json",
+      "sha256": "515b19e8ec0514e083850d65ec272633bbfe3bfdad690731514810c348f2269b",
+      "changes": [
+        {
+          "host_fraction": 0,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1377.7920007705688,
+              "new_mean_us": 982.4426621198654,
+              "new_pass_range_over_mean": 0.01094414247124147
+            },
+            "memcpy": {
+              "old_mean_us": 835.2426638205847,
+              "new_mean_us": 836.9493285814921,
+              "new_pass_range_over_mean": 0.0009176252632074715
+            }
+          }
+        },
+        {
+          "host_fraction": 0.05,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1094.1440065701802,
+              "new_mean_us": 988.5013252496719,
+              "new_pass_range_over_mean": 0.004920602543963228
+            },
+            "memcpy": {
+              "old_mean_us": 963.498666882515,
+              "new_mean_us": 965.2053366104761,
+              "new_pass_range_over_mean": 0.005569810826028974
+            }
+          }
+        },
+        {
+          "host_fraction": 0.1,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1003.8613379001617,
+              "new_mean_us": 1003.861332933108,
+              "new_pass_range_over_mean": 0.004080231353780211
+            },
+            "memcpy": {
+              "old_mean_us": 1055.573324362437,
+              "new_mean_us": 1055.8293461799622,
+              "new_pass_range_over_mean": 0.0026670897624500836
+            }
+          }
+        },
+        {
+          "host_fraction": 0.15,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1027.5839865207672,
+              "new_mean_us": 1022.8053331375122,
+              "new_pass_range_over_mean": 0.004505290438259688
+            },
+            "memcpy": {
+              "old_mean_us": 1142.6133414109547,
+              "new_mean_us": 1146.0266808668773,
+              "new_pass_range_over_mean": 0.0020104137014746943
+            }
+          }
+        },
+        {
+          "host_fraction": 0.2,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1054.6346704165142,
+              "new_mean_us": 1048.3199954032898,
+              "new_pass_range_over_mean": 0.004151435780446899
+            },
+            "memcpy": {
+              "old_mean_us": 1231.7013243834178,
+              "new_mean_us": 1231.871982415517,
+              "new_pass_range_over_mean": 0.002909391186082637
+            }
+          }
+        },
+        {
+          "host_fraction": 0.25,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1544.0213282903035,
+              "new_mean_us": 1058.3893259366353,
+              "new_pass_range_over_mean": 0.00362815397248446
+            },
+            "memcpy": {
+              "old_mean_us": 1317.1200056870778,
+              "new_mean_us": 1321.7280010382335,
+              "new_pass_range_over_mean": 0.0021305153825572146
+            }
+          }
+        },
+        {
+          "host_fraction": 0.3,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1426.6879955927532,
+              "new_mean_us": 1064.277321100235,
+              "new_pass_range_over_mean": 0.0012027032063675449
+            },
+            "memcpy": {
+              "old_mean_us": 1406.8906803925831,
+              "new_mean_us": 1412.0106796423595,
+              "new_pass_range_over_mean": 0.003082132025414322
+            }
+          }
+        }
+      ]
+    },
+    {
+      "file": "temp/glm_trace/kernel_report_20261029/raw/nocache_g100_l20000_mtp8_b28.json",
+      "sha256": "879143cf7c76df100a4857f48e181fed7a429f9dedb1e20887b0917cf7298d89",
+      "changes": [
+        {
+          "host_fraction": 0,
+          "modes": {
+            "ours": {
+              "old_mean_us": 921.7706620693207,
+              "new_mean_us": 775.5093375841776,
+              "new_pass_range_over_mean": 0.005941908191096262
+            },
+            "memcpy": {
+              "old_mean_us": 829.5253316561381,
+              "new_mean_us": 835.1573447386423,
+              "new_pass_range_over_mean": 0.0012261255962032738
+            }
+          }
+        },
+        {
+          "host_fraction": 0.05,
+          "modes": {
+            "ours": {
+              "old_mean_us": 934.5706601937612,
+              "new_mean_us": 866.645336151123,
+              "new_pass_range_over_mean": 0.0038401065592216063
+            },
+            "memcpy": {
+              "old_mean_us": 955.1359961430231,
+              "new_mean_us": 961.10933025678,
+              "new_pass_range_over_mean": 0.0018645108184852978
+            }
+          }
+        },
+        {
+          "host_fraction": 0.1,
+          "modes": {
+            "ours": {
+              "old_mean_us": 917.0773277680079,
+              "new_mean_us": 850.4320085048676,
+              "new_pass_range_over_mean": 0.0033112484148400028
+            },
+            "memcpy": {
+              "old_mean_us": 1031.7653516928356,
+              "new_mean_us": 1037.6533170541127,
+              "new_pass_range_over_mean": 0.002960548905144038
+            }
+          }
+        },
+        {
+          "host_fraction": 0.15,
+          "modes": {
+            "ours": {
+              "old_mean_us": 862.6346737146378,
+              "new_mean_us": 862.634668747584,
+              "new_pass_range_over_mean": 0.0023740883194182153
+            },
+            "memcpy": {
+              "old_mean_us": 1109.418660402298,
+              "new_mean_us": 1114.3680016199748,
+              "new_pass_range_over_mean": 0.001608071875937478
+            }
+          }
+        },
+        {
+          "host_fraction": 0.2,
+          "modes": {
+            "ours": {
+              "old_mean_us": 887.0399991671244,
+              "new_mean_us": 887.2960011164347,
+              "new_pass_range_over_mean": 0.0031736778217728227
+            },
+            "memcpy": {
+              "old_mean_us": 1181.7813316980998,
+              "new_mean_us": 1187.4986688296,
+              "new_pass_range_over_mean": 0.004095985587120631
+            }
+          }
+        },
+        {
+          "host_fraction": 0.25,
+          "modes": {
+            "ours": {
+              "old_mean_us": 895.2320019404093,
+              "new_mean_us": 896.42666776975,
+              "new_pass_range_over_mean": 0.001427869105471428
+            },
+            "memcpy": {
+              "old_mean_us": 1259.861320257187,
+              "new_mean_us": 1265.066663424174,
+              "new_pass_range_over_mean": 0.00263071143778773
+            }
+          }
+        },
+        {
+          "host_fraction": 0.3,
+          "modes": {
+            "ours": {
+              "old_mean_us": 940.2879923582077,
+              "new_mean_us": 937.2159938017527,
+              "new_pass_range_over_mean": 0.003824105022626367
+            },
+            "memcpy": {
+              "old_mean_us": 1337.1733327706654,
+              "new_mean_us": 1342.378666003545,
+              "new_pass_range_over_mean": 0.0024792001134388906
+            }
+          }
+        }
+      ]
+    },
+    {
+      "file": "temp/glm_trace/kernel_report_20261029/raw/nocache_g100_l20000_mtp8_b32.json",
+      "sha256": "cb1435e4969c5170016ac73cf0f5c41416037d6de2975498c939e95200232fb9",
+      "changes": [
+        {
+          "host_fraction": 0,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1617.578665415446,
+              "new_mean_us": 981.5039932727814,
+              "new_pass_range_over_mean": 0.007563914031322645
+            },
+            "memcpy": {
+              "old_mean_us": 835.4986558357874,
+              "new_mean_us": 837.5466664632162,
+              "new_pass_range_over_mean": 0.0003056569377696233
+            }
+          }
+        },
+        {
+          "host_fraction": 0.05,
+          "modes": {
+            "ours": {
+              "old_mean_us": 986.8800044059753,
+              "new_mean_us": 990.3786679108938,
+              "new_pass_range_over_mean": 0.009305512191255026
+            },
+            "memcpy": {
+              "old_mean_us": 978.7733405828476,
+              "new_mean_us": 976.9813368717829,
+              "new_pass_range_over_mean": 0.0026203056232143845
+            }
+          }
+        },
+        {
+          "host_fraction": 0.1,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1008.5546771685282,
+              "new_mean_us": 1008.2133462031683,
+              "new_pass_range_over_mean": 0.004824412467076769
+            },
+            "memcpy": {
+              "old_mean_us": 1070.1653361320496,
+              "new_mean_us": 1069.9093242486317,
+              "new_pass_range_over_mean": 0.002153497772096885
+            }
+          }
+        },
+        {
+          "host_fraction": 0.15,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1039.8720006148021,
+              "new_mean_us": 1037.3973151048024,
+              "new_pass_range_over_mean": 0.0012338377260016494
+            },
+            "memcpy": {
+              "old_mean_us": 1158.2293311754863,
+              "new_mean_us": 1157.8879952430725,
+              "new_pass_range_over_mean": 0.0006633073780958098
+            }
+          }
+        },
+        {
+          "host_fraction": 0.2,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1069.6533421675365,
+              "new_mean_us": 1061.2053175767262,
+              "new_pass_range_over_mean": 0.004342237273919331
+            },
+            "memcpy": {
+              "old_mean_us": 1246.2080021699269,
+              "new_mean_us": 1247.8293279806774,
+              "new_pass_range_over_mean": 0.0012309469423574901
+            }
+          }
+        },
+        {
+          "host_fraction": 0.25,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1075.114667415619,
+              "new_mean_us": 1071.3599920272827,
+              "new_pass_range_over_mean": 0.0033453062621485023
+            },
+            "memcpy": {
+              "old_mean_us": 1334.2720170815785,
+              "new_mean_us": 1332.479993502299,
+              "new_pass_range_over_mean": 0.0005763509015921261
+            }
+          }
+        },
+        {
+          "host_fraction": 0.3,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1081.087996562322,
+              "new_mean_us": 1076.5653451283772,
+              "new_pass_range_over_mean": 0.0014267428358993549
+            },
+            "memcpy": {
+              "old_mean_us": 1419.2639986673992,
+              "new_mean_us": 1422.9333301385243,
+              "new_pass_range_over_mean": 0.00035984377489642897
+            }
+          }
+        }
+      ]
+    },
+    {
+      "file": "temp/glm_trace/kernel_report_20261029/raw/nocache_g100_l2000_mtp8_b32.json",
+      "sha256": "642e24e71917b3b44d4ff1f25693d65d3bfdf0dcb6317c408cb91a154b1004b1",
+      "changes": [
+        {
+          "host_fraction": 0,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1177.6853203773499,
+              "new_mean_us": 978.9440085490545,
+              "new_pass_range_over_mean": 0.005230150080425462
+            },
+            "memcpy": {
+              "old_mean_us": 835.0719958543777,
+              "new_mean_us": 837.802658478419,
+              "new_pass_range_over_mean": 0.0021389270204339957
+            }
+          }
+        },
+        {
+          "host_fraction": 0.05,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1023.3173370361328,
+              "new_mean_us": 986.1120035250982,
+              "new_pass_range_over_mean": 0.007268946073488562
+            },
+            "memcpy": {
+              "old_mean_us": 955.1360110441843,
+              "new_mean_us": 956.5866639216741,
+              "new_pass_range_over_mean": 0.0024085665518123757
+            }
+          }
+        },
+        {
+          "host_fraction": 0.1,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1004.7146826982498,
+              "new_mean_us": 1001.557340224584,
+              "new_pass_range_over_mean": 0.0035784395413440673
+            },
+            "memcpy": {
+              "old_mean_us": 1047.3813513914745,
+              "new_mean_us": 1046.8693276246388,
+              "new_pass_range_over_mean": 0.0031789980381437067
+            }
+          }
+        },
+        {
+          "host_fraction": 0.15,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1020.2453434467316,
+              "new_mean_us": 1020.7573274771372,
+              "new_pass_range_over_mean": 0.0025079317305591207
+            },
+            "memcpy": {
+              "old_mean_us": 1133.9093148708344,
+              "new_mean_us": 1137.7492944399517,
+              "new_pass_range_over_mean": 0.0015750514229536166
+            }
+          }
+        },
+        {
+          "host_fraction": 0.2,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1046.698659658432,
+              "new_mean_us": 1043.4560080369313,
+              "new_pass_range_over_mean": 0.0017173830342339588
+            },
+            "memcpy": {
+              "old_mean_us": 1223.6800094445546,
+              "new_mean_us": 1224.8746752738953,
+              "new_pass_range_over_mean": 0.0020900013221419557
+            }
+          }
+        },
+        {
+          "host_fraction": 0.25,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1630.2933096885681,
+              "new_mean_us": 1055.573324362437,
+              "new_pass_range_over_mean": 0.004122909359142588
+            },
+            "memcpy": {
+              "old_mean_us": 1308.9279929796855,
+              "new_mean_us": 1312.341312567393,
+              "new_pass_range_over_mean": 0.001755654204991284
+            }
+          }
+        },
+        {
+          "host_fraction": 0.3,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1344.4266716639202,
+              "new_mean_us": 1059.413343667984,
+              "new_pass_range_over_mean": 0.004107965190628235
+            },
+            "memcpy": {
+              "old_mean_us": 1398.4426657358806,
+              "new_mean_us": 1402.8800030549367,
+              "new_pass_range_over_mean": 0.0020072933065969924
+            }
+          }
+        }
+      ]
+    },
+    {
+      "file": "temp/glm_trace/kernel_report_20261029/raw/nocache_g100_l5000_mtp8_b32.json",
+      "sha256": "68353332d86a7f3a8fdbdba5b7859d2f2aa4f16de2c1fa69949216333b1aaa95",
+      "changes": [
+        {
+          "host_fraction": 0,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1348.6933261156082,
+              "new_mean_us": 979.6266655127207,
+              "new_pass_range_over_mean": 0.00836237217879053
+            },
+            "memcpy": {
+              "old_mean_us": 835.5839997529984,
+              "new_mean_us": 835.7546577850977,
+              "new_pass_range_over_mean": 0.0009189547936561875
+            }
+          }
+        },
+        {
+          "host_fraction": 0.05,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1139.5413378874462,
+              "new_mean_us": 985.344002644221,
+              "new_pass_range_over_mean": 0.009872693741353224
+            },
+            "memcpy": {
+              "old_mean_us": 958.2079996665319,
+              "new_mean_us": 959.8293304443359,
+              "new_pass_range_over_mean": 0.003200562320781675
+            }
+          }
+        },
+        {
+          "host_fraction": 0.1,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1004.8853506644567,
+              "new_mean_us": 1001.7280081907908,
+              "new_pass_range_over_mean": 0.0010222264803491305
+            },
+            "memcpy": {
+              "old_mean_us": 1050.7946610450745,
+              "new_mean_us": 1050.6239732106526,
+              "new_pass_range_over_mean": 0.0031676371599834766
+            }
+          }
+        },
+        {
+          "host_fraction": 0.15,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1023.6586729685465,
+              "new_mean_us": 1020.2453136444092,
+              "new_pass_range_over_mean": 0.0037637709124024735
+            },
+            "memcpy": {
+              "old_mean_us": 1138.6879980564117,
+              "new_mean_us": 1140.2239898840587,
+              "new_pass_range_over_mean": 0.0017961258580152127
+            }
+          }
+        },
+        {
+          "host_fraction": 0.2,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1049.1733352343242,
+              "new_mean_us": 1047.7226773897808,
+              "new_pass_range_over_mean": 0.006597158938998466
+            },
+            "memcpy": {
+              "old_mean_us": 1226.1546850204468,
+              "new_mean_us": 1225.5573272705078,
+              "new_pass_range_over_mean": 0.00020886183068890117
+            }
+          }
+        },
+        {
+          "host_fraction": 0.25,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1305.8559894561768,
+              "new_mean_us": 1056.8533440430958,
+              "new_pass_range_over_mean": 0.00460232014183099
+            },
+            "memcpy": {
+              "old_mean_us": 1315.8400058746338,
+              "new_mean_us": 1313.2799863815308,
+              "new_pass_range_over_mean": 0.002339199122487165
+            }
+          }
+        },
+        {
+          "host_fraction": 0.3,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1641.3866678873699,
+              "new_mean_us": 1062.0586772759755,
+              "new_pass_range_over_mean": 0.0072311816986585405
+            },
+            "memcpy": {
+              "old_mean_us": 1403.1359950701396,
+              "new_mean_us": 1405.5253366629283,
+              "new_pass_range_over_mean": 0.0012749354236344787
+            }
+          }
+        }
+      ]
+    },
+    {
+      "file": "temp/glm_trace/kernel_report_20261029/raw/nocache_g50_l0_mtp8_b32.json",
+      "sha256": "60e628063272d8bbc58d8705512c42be15a2f5f0f7cc855a549101d09c1e1f96",
+      "changes": [
+        {
+          "host_fraction": 0,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1313.1093432505925,
+              "new_mean_us": 978.0906687180201,
+              "new_pass_range_over_mean": 0.004449503891922542
+            },
+            "memcpy": {
+              "old_mean_us": 835.4986608028412,
+              "new_mean_us": 836.6933266321818,
+              "new_pass_range_over_mean": 0.0009179060277942563
+            }
+          }
+        },
+        {
+          "host_fraction": 0.05,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1379.5839995145798,
+              "new_mean_us": 988.416001200676,
+              "new_pass_range_over_mean": 0.010878033392141514
+            },
+            "memcpy": {
+              "old_mean_us": 1037.909338871638,
+              "new_mean_us": 1034.581333398819,
+              "new_pass_range_over_mean": 0.0024744209161115744
+            }
+          }
+        },
+        {
+          "host_fraction": 0.1,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1486.7626627286274,
+              "new_mean_us": 1027.669330437978,
+              "new_pass_range_over_mean": 0.006227673570238015
+            },
+            "memcpy": {
+              "old_mean_us": 1215.5733307202656,
+              "new_mean_us": 1213.098665078481,
+              "new_pass_range_over_mean": 0.009074253338116822
+            }
+          }
+        },
+        {
+          "host_fraction": 0.15,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1517.7386502424877,
+              "new_mean_us": 1066.069334745407,
+              "new_pass_range_over_mean": 0.0021611987760820103
+            },
+            "memcpy": {
+              "old_mean_us": 1388.1173233191173,
+              "new_mean_us": 1393.6639924844105,
+              "new_pass_range_over_mean": 0.002020588504545747
+            }
+          }
+        },
+        {
+          "host_fraction": 0.2,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1099.4346837202709,
+              "new_mean_us": 1093.5466587543488,
+              "new_pass_range_over_mean": 0.003745557401879257
+            },
+            "memcpy": {
+              "old_mean_us": 1566.4639870325725,
+              "new_mean_us": 1565.2693311373393,
+              "new_pass_range_over_mean": 0.0034345407681151867
+            }
+          }
+        },
+        {
+          "host_fraction": 0.25,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1141.5040294329326,
+              "new_mean_us": 1139.6266718705494,
+              "new_pass_range_over_mean": 0.0020216777967878735
+            },
+            "memcpy": {
+              "old_mean_us": 1741.2266731262207,
+              "new_mean_us": 1745.4933325449626,
+              "new_pass_range_over_mean": 0.002493262765595965
+            }
+          }
+        },
+        {
+          "host_fraction": 0.3,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1267.1146889527638,
+              "new_mean_us": 1263.3599837621052,
+              "new_pass_range_over_mean": 0.0016210627362609868
+            },
+            "memcpy": {
+              "old_mean_us": 1918.0373052755992,
+              "new_mean_us": 1923.6693382263184,
+              "new_pass_range_over_mean": 0.001863104753401333
+            }
+          }
+        }
+      ]
+    },
+    {
+      "file": "temp/glm_trace/kernel_report_20261029/raw/nocache_pcie_mtp8_b32.json",
+      "sha256": "cc62551d3f844258f2945895f7cb21dac82315840f96bbb65a4398c2800bda1f",
+      "changes": [
+        {
+          "host_fraction": 0,
+          "modes": {
+            "ours": {
+              "old_mean_us": 862.9760046799978,
+              "new_mean_us": 860.1599931716919,
+              "new_pass_range_over_mean": 0.0217261655218005
+            },
+            "memcpy": {
+              "old_mean_us": 742.5706535577774,
+              "new_mean_us": 747.2640126943588,
+              "new_pass_range_over_mean": 0.0027406654924233428
+            }
+          }
+        },
+        {
+          "host_fraction": 0.05,
+          "modes": {
+            "ours": {
+              "old_mean_us": 925.6959954897562,
+              "new_mean_us": 892.5013293822607,
+              "new_pass_range_over_mean": 0.003728840987850404
+            },
+            "memcpy": {
+              "old_mean_us": 1121.0240026315053,
+              "new_mean_us": 1112.831989924113,
+              "new_pass_range_over_mean": 0.0032205829075275445
+            }
+          }
+        },
+        {
+          "host_fraction": 0.1,
+          "modes": {
+            "ours": {
+              "old_mean_us": 989.5253330469131,
+              "new_mean_us": 987.4773472547531,
+              "new_pass_range_over_mean": 0.014777024547249709
+            },
+            "memcpy": {
+              "old_mean_us": 1473.365346590678,
+              "new_mean_us": 1465.941329797109,
+              "new_pass_range_over_mean": 0.0027941100393215302
+            }
+          }
+        },
+        {
+          "host_fraction": 0.15,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1252.6933252811432,
+              "new_mean_us": 1254.6559969584148,
+              "new_pass_range_over_mean": 0.005713115781075155
+            },
+            "memcpy": {
+              "old_mean_us": 1807.3599835236867,
+              "new_mean_us": 1815.2106901009877,
+              "new_pass_range_over_mean": 0.010718347377919763
+            }
+          }
+        },
+        {
+          "host_fraction": 0.2,
+          "modes": {
+            "ours": {
+              "old_mean_us": 1933.0559968948364,
+              "new_mean_us": 1608.021318912506,
+              "new_pass_range_over_mean": 0.0023880276910315584
+            },
+            "memcpy": {
+              "old_mean_us": 2150.826652844747,
+              "new_mean_us": 2153.813342253367,
+              "new_pass_range_over_mean": 0.0014263183031959557
+            }
+          }
+        },
+        {
+          "host_fraction": 0.25,
+          "modes": {
+            "ours": {
+              "old_mean_us": 3313.066601753235,
+              "new_mean_us": 1976.6613344351451,
+              "new_pass_range_over_mean": 0.0036263141546662783
+            },
+            "memcpy": {
+              "old_mean_us": 2496.511995792389,
+              "new_mean_us": 2504.36270236969,
+              "new_pass_range_over_mean": 0.0009199777400325788
+            }
+          }
+        },
+        {
+          "host_fraction": 0.3,
+          "modes": {
+            "ours": {
+              "old_mean_us": 3860.7359727223716,
+              "new_mean_us": 2165.162672599157,
+              "new_pass_range_over_mean": 0.0013006050206069983
+            },
+            "memcpy": {
+              "old_mean_us": 2848.853329817454,
+              "new_mean_us": 2728.8746436436973,
+              "new_pass_range_over_mean": 0.0004690613947888775
+            }
+          }
+        }
+      ]
+    }
+  ]
 }

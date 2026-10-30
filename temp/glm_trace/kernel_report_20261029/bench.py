@@ -230,6 +230,7 @@ def run_setting(setting):
                 aggregation=META["aggregation"],gpu_only=True,host_cpu_gather_timed=False,
                 ours_dispatch="batched_staged_all_shapes",
                 memcpy_path_version=2,
+                host_pack_limit_GiB=int(os.environ.get("REPORT_HOST_PACK_LIMIT_GIB","8")),
                 baseline_cpu_lru_planning_timed=False,staging_rows=NNZ),
                 timestamp=time.strftime("%Y-%m-%dT%H:%M:%S%z"),device=torch.cuda.get_device_name(0),
                 hardware_start=hardware(),torch_version=torch.__version__,cuda_version=torch.version.cuda,
@@ -273,7 +274,9 @@ def run_setting(setting):
             free_bytes,_=torch.cuda.mem_get_info()
             kernel_reserve=(R*CAP+NNZ)*1152+far*12+NNZ*24+(1<<30)
             host_pack_bytes=plan["src"].numel()*1152 if host is not None else 0
-            host_pack_limit=int(os.environ.get("REPORT_HOST_PACK_LIMIT_GIB","256"))<<30
+            # Bound pinned memory even when the host has ample aggregate RAM:
+            # NUMA-local allocation can exhaust one node with a full trace pack.
+            host_pack_limit=int(os.environ.get("REPORT_HOST_PACK_LIMIT_GIB","8"))<<30
             if estimate < min(free_bytes*.65,max(0,free_bytes-kernel_reserve)):
                 snapshot_meta=chunk_metadata(pages,plan,0,len(ticks),kv.near)
                 print(label,"cached GPU metadata bytes",estimate,flush=True)

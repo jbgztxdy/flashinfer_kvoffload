@@ -99,6 +99,7 @@ if stability.get("complete"):
     assert {r["file"] for r in stability["repeated"]}==set(stability["files"])
     for repeated in stability["repeated"]:
         assert hashlib.sha256((ROOT/repeated["file"]).read_bytes()).hexdigest()==repeated["sha256"]
+        assert all(v["new_pass_range_over_mean"]<=.20 for c in repeated["changes"] for v in c["modes"].values())
 summary=dict(expected_cells=len(expected),completed_cells=len(seen),missing_cells=len(expected-seen),
              incomplete_files=missing_files,accepted_segments=guards,timed_launches=launches,
              local_reference_cases=len(local_seen),expected_local_reference_cases=len(local_expected),

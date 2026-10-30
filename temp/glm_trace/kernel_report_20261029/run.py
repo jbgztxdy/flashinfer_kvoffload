@@ -23,7 +23,8 @@ if not (DEST/"calibration.json").exists():
         subprocess.run(["numactl","-N0","-m0","/mnt/data/mhy-vllm-venv/bin/python",str(DEST/"calibrate.py")],
                        env=runenv,stdout=stream,stderr=subprocess.STDOUT,check=True)
 for kind in ("floor","snapshots","nocache","lru"):
-    for mtp in (1,8):
+    # Finish the shorter replay groups first; the same full matrix remains required.
+    for mtp in ((8,1) if kind=="lru" else (1,8)):
         for batch in meta["batches"][str(mtp)]:
             groups=[(False,["floor"])] if kind in ("floor","snapshots") else [(False,normal),(True,sim)]
             for simulated,settings in groups:
