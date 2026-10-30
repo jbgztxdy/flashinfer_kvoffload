@@ -4,6 +4,8 @@ import json
 import math
 from pathlib import Path
 import re
+import statistics
+from references import for_row
 
 DEST=Path(__file__).resolve().parent
 ROOT=DEST.parents[2]
@@ -29,7 +31,7 @@ def label(s):
 
 settings={label(s):s["name"] for s in meta["settings"]}
 text=DOC.read_text();lines=text.splitlines()
-mode=None;checked=0;summaries=0;bounds=0
+mode=None;checked=0;summaries=0;bounds=0;near_rows=0;repeat_rows=0;physical_rows=0
 for line in lines:
     if not line.startswith("|"):
         mode=None;continue
@@ -42,6 +44,12 @@ for line in lines:
         mode=("summary",False,False,len(fields));continue
     if fields[0].startswith("场景：MTP8"):
         mode=("bounds",False,False,len(fields));continue
+    if fields[0]=="MTP8请求数":
+        mode=("near",False,False,len(fields));continue
+    if fields[0]=="MTP8 / 128请求":
+        mode=("repeat",False,False,len(fields));continue
+    if fields[0]=="物理链路补测":
+        mode=("physical",False,False,len(fields));continue
     if not mode or all(re.fullmatch(r"[:\-]+",f) for f in fields):continue
     assert len(fields)==mode[3],fields
     if mode[0]=="samples":
@@ -52,8 +60,11 @@ for line in lines:
         r=lookup[kind,s,m,b,fraction]
         result=[fields[0],str(m),str(b)]+([f"{fraction:.0%}"] if host else [])
         result.extend(f"{r[k]:.2f}" for k in ("ours_mean_us","memcpy_mean_us","local_mean_us"))
-        result.extend([f"{(1-r['ours_mean_us']/r['memcpy_mean_us'])*100:.1f}%",
-                       f"{r['ours_mean_us']/r['local_mean_us']:.3f}×"])
+        reference=for_row(r)
+        result.extend([f"{reference['mean_stepwise_max_us']:.2f}",
+                       f"{(1-r['ours_mean_us']/r['memcpy_mean_us'])*100:.1f}%",
+                       f"{r['ours_mean_us']/r['local_mean_us']:.3f}×",
+                       f"{r['ours_mean_us']/reference['mean_stepwise_max_us']:.3f}×"])
         if cache:result.append(f"{r['ours_reference_cache_hit_rate']*100:.2f}%")
         assert result==fields,(result,fields)
         checked+=1
@@ -66,16 +77,41 @@ for line in lines:
             result.extend([str(win),f"{speed:.3f}×"])
         assert result==fields,(result,fields)
         summaries+=1
-    else:
+    elif mode[0]=="bounds":
         kind,link=fields[0].rsplit("，",1)
         kind="nocache" if kind.startswith("无LRU") else "lru"
         r=lookup[kind,settings[link],8,128,.3 if kind=="nocache" else None]
-        bound=r["ideal_compute_transfer_bound_us"]
+        bound=for_row(r)["mean_stepwise_max_us"]
         result=[fields[0],*[f"{r[k]:.2f}" for k in ("ours_mean_us","memcpy_mean_us","local_mean_us")],
                 f"{bound:.2f}",f"{(r['ours_mean_us']/bound-1)*100:.1f}%"]
         assert result==fields,(result,fields)
         bounds+=1
-assert (checked,summaries,bounds)==(26,17,4),(checked,summaries,bounds)
+    elif mode[0]=="near":
+        r=lookup["lru","g100_l20000",8,int(fields[0]),None]
+        near=1-r["host_fraction_actual"]
+        cached=r["host_fraction_actual"]-r["ours_remote_reference_fraction"]
+        expected=[fields[0],f"{near*100:.4f}%",f"{cached*100:.2f}%",f"{(near+cached)*100:.2f}%"]
+        assert fields==expected,(fields,expected)
+        near_rows+=1
+    elif mode[0]=="repeat":
+        setting=settings[fields[0]]
+        original=lookup["lru",setting,8,128,None]
+        repeated=load(DEST/"recheck/raw"/f"lru_{setting}_mtp8_b128.json")
+        assert repeated["complete"]
+        ours=repeated["cases"][0]["timings"]["ours"]["mean_us"]
+        memcpy=repeated["cases"][0]["timings"]["memcpy"]["mean_us"]
+        expected=[fields[0],f"{original['ours_mean_us']:.2f}",f"{ours:.2f}",
+            f"{(ours/original['ours_mean_us']-1)*100:+.2f}%",f"{original['memcpy_mean_us']:.2f}",f"{memcpy:.2f}"]
+        assert fields==expected,(fields,expected)
+        repeat_rows+=1
+    else:
+        probe=load(DEST/"physical_bandwidth.json")
+        r=next(s for s in probe["settings"] if s["name"]==settings[fields[0]])
+        expected=[fields[0],f"{r['measurements']['dma_contiguous']['median_GBps']:.2f}",
+                  f"{r['measurements']['sm_gather_random']['median_GBps']:.2f}",f"{r['reference_GBps']:.2f}"]
+        assert fields==expected
+        physical_rows+=1
+assert (checked,summaries,bounds,near_rows,repeat_rows,physical_rows)==(26,17,6,4,2,2)
 
 figures=load(DEST/"figure_data.json")
 assert len(figures)==6
@@ -86,6 +122,19 @@ for name,figure in figures.items():
     for r in figure["rows"]:
         assert r==lookup[key(r)]
         fig_count+=1
+    assert len(figure["overlap_references"])==len(figure["rows"])
+    for r,reference in zip(figure["rows"],figure["overlap_references"]):
+        assert reference==for_row(r)
+        raw=load(ROOT/r["raw"])
+        c=next(c for c in raw["cases"] if c["host_fraction_requested"]==r["host_fraction_target"])
+        mode="floor" if r["kind"]=="lru" else "snapshots"
+        local_file=SOURCE/"raw"/f"{mode}_floor_mtp{r['mtp']}_b{r['requests']}.json"
+        local=next(c for c in load(local_file)["cases"] if c["host_fraction_requested"]==r["host_fraction_target"])
+        compute=[sum(v)/len(v) for v in local["timings"]["local"]["per_step_samples_us"]]
+        transfer=[m*1152/(1000*reference["bandwidth_GBps"]) for m in c["ours_unique_misses"]]
+        expected=sum(max(a,b) for a,b in zip(compute,transfer))/len(compute)
+        assert abs(expected-reference["mean_stepwise_max_us"])<1e-7
+        assert expected>=max(sum(compute)/len(compute),sum(transfer)/len(transfer))-1e-7
 assert len(re.findall(r"!\[图",text))==6
 for link in re.findall(r"\]\(([^)]+)\)",text):
     assert (DOC.parent/link).resolve().exists(),link
@@ -100,10 +149,23 @@ for setting,expected in (("g100_l20000",("14.0%","32.1%","1.369")),
     actual=(f"{min(reductions):.1f}%",f"{max(reductions):.1f}%",f"{speed:.3f}")
     assert actual==expected and all(value in text for value in actual)
 r=lookup["lru","g50_l20000",8,128,None]
-assert f"{100*(r['ours_mean_us']/r['ideal_compute_transfer_bound_us']-1):.1f}%"=="9.4%"
+assert f"{100*(for_row(r)['ours_to_reference']-1):.1f}%"=="9.4%"
 assert f"{r['ours_mean_us']/r['local_mean_us']:.2f}"=="2.30"
+assert manifest["physical_bandwidth_sha256"]==digest(DEST/"physical_bandwidth.json")
+assert manifest["verification_sha256"]==digest(DEST/"verification.json")
+assert manifest["verification_notes_sha256"]==digest(DEST/"verification_notes.md")
+for name,sha in manifest["analysis_source_sha256"].items():assert digest(DEST/name)==sha
+verification=load(DEST/"verification.json")
+assert verification["matrix_unchanged_sha256"]==digest(SOURCE/"matrix.json")
+assert all(abs(t["change_fraction"])<.03 for r in verification["key_repeats"] for t in r["mode_results"].values())
+for batch,expected in ((32,"8.8%"),(64,"8.4%"),(128,"4.8%")):
+    r=lookup["lru","pcie",8,batch,None]
+    assert f"{100*(for_row(r)['ours_to_reference']-1):.1f}%"==expected
 summary=dict(complete=True,source_matrix_sha256=digest(SOURCE/"matrix.json"),sample_table_rows=checked,
-    full_link_summaries=summaries,ideal_bound_rows=bounds,figures=len(figures),figure_source_cells=fig_count,
+    full_link_summaries=summaries,ideal_bound_rows=bounds,near_fraction_rows=near_rows,
+    independently_repeated_cases=3,repeat_comparison_rows=repeat_rows,physical_bandwidth_rows=physical_rows,
+    reference_definition=manifest["reference_definition"],
+    figures=len(figures),figure_source_cells=fig_count,per_step_reference_cells_verified=fig_count,
     artifact_sha256=manifest["artifact_sha256"])
 (DEST/"report_check.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2)+"\n")
 print(json.dumps(summary,ensure_ascii=False,indent=2))

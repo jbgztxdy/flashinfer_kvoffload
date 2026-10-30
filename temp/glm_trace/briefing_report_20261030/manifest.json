@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-30T13:01:43+0800",
+  "timestamp": "2026-10-30T13:37:30+0800",
   "source_commit": "8c624445",
   "source_matrix_sha256": "e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99",
   "source_csv_sha256": "afcb0d4dbe90785a993067d5b1736b382d856febf5e108d8305e7d0dd7df9a5c",
@@ -17,6 +17,16 @@
     "calibration_passed": true,
     "complete": true
   },
+  "reference_definition": "mean_t(max(mean_pass(local_t), mean_pass(unique_misses_t)*1152/(1000*W)))",
+  "physical_bandwidth_sha256": "32c2102c1a9f23dfb9d5d5059d01b47532c4e203d16b22d980f3867350a938dc",
+  "verification_sha256": "9d29cf01d13f37fec621c093a50b6caa33a43b75bbae7ad76a1dcd887f9811f2",
+  "verification_notes_sha256": "d67b5b22b9b90a62ba800da3b6474ee943af5816ec88c27e418c2014ce3b7722",
+  "analysis_source_sha256": {
+    "build_report.py": "edd7e8bdc16dc7943b6d7185e2df2e7b9ee3f1ed83639760fc69eb136928cd11",
+    "references.py": "8ef850c6581107936ee7c9cc7d86f194b2b9c1ede6bec2424ef4272f98e1952e",
+    "verify_sources.py": "ffdf0b77e855ed56154e4f68274132ddffcfc2cefbfafbb50b470b6b76984917",
+    "probe_physical.py": "425e73dd8cde42af185208d2d2c462a07fc3b226e03393637c753b3546dc0268"
+  },
   "figure_count": 6,
   "figure_cells": {
     "single_step": 28,
@@ -27,12 +37,12 @@
     "bandwidth_latency": 390
   },
   "artifact_sha256": {
-    "docs/mla_host_glm53_report_external.md": "33075734501172d63ea4b6eba648899953e2ce8ff6e9090aa8cc4c095f40384d",
+    "docs/mla_host_glm53_report_external.md": "6e034d7fb2be5d54f4e27c20c20a92bcb2fae86593c5683fd8ffd74485659ede",
     "docs/assets/glm53_briefing_20261030/bandwidth_latency.png": "f6099694e9aed50d4e02cee05f8c5f147d5fb08cfdfb7325b8758002e752b936",
-    "docs/assets/glm53_briefing_20261030/distance_to_limits.png": "b2836fd01ba97c58f6ef22d9a2d79c3133f32979132de479b502351d260dabc7",
-    "docs/assets/glm53_briefing_20261030/physical_links.png": "d710364776d21a1e84e823e014ae030748378846994d9ab8d31fa46375ff9e4a",
-    "docs/assets/glm53_briefing_20261030/single_step.png": "da2fe1cc1a56369d95ddeba03029a4e8a404c6aefa99406f10034e6b2fe522d3",
-    "docs/assets/glm53_briefing_20261030/trace_latency.png": "2c9f0385a8e8b5a80379a3c9a06498ee63aef7cfd00d8f081332e5b61d46be4b",
-    "docs/assets/glm53_briefing_20261030/trace_traffic.png": "8d070a8ac56e77057d347d73bd4deac18849758d58a2c63bb0bb06a5e7e361f9"
+    "docs/assets/glm53_briefing_20261030/distance_to_limits.png": "4e906ee7dade5ad14d93e3617a5b7e4f2d5fcbadb550068044352844f50b167d",
+    "docs/assets/glm53_briefing_20261030/physical_links.png": "0572a9ae3679f0e65bf48f83207e3b79d754616af6076bbd4d650631a62ecbcc",
+    "docs/assets/glm53_briefing_20261030/single_step.png": "a3fb12dfbac1943c5c1074c5ac07043d491f2bae1e92098c0543fc2df495a5ef",
+    "docs/assets/glm53_briefing_20261030/trace_latency.png": "af16913baa161eb12e1bf9258c58949511ac7999d054c3f95e82f9db515a44a2",
+    "docs/assets/glm53_briefing_20261030/trace_traffic.png": "7d6430bf41a5e8e707d23e578e2c96654fc35bd0b06aefe9f0b6afb834bac4d3"
   }
 }

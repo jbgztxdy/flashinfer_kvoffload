@@ -4,7 +4,9 @@
 
 **产物与验证**：实验目录`temp/glm_trace/kernel_report_20261029/`；完整报告`docs/mla_host_glm53_kernel_matrix_20261029.md`及同名自包含HTML（筛选/导出CSV、内嵌图）；平面表`matrix.csv/json`、每步样本`raw/`、失败历史`failures/`、SHA源码快照均保留。`audit.json: complete=true`；`check_report.py`核对MD/CSV/JSON/HTML全部5304格，并实际用禁用GPU的Chrome验证筛选和CSV下载，结果与报告产物SHA见`report_check.json`。新报告是A100-SXM4实测，不是H800实测。
 
-**10/30 汇报版**：用户要突出相对Memcpy收益及接近极限的证据，随后明确“写markdown就行，我自己导出pdf”。新建`docs/mla_host_glm53_report_external.md`，六张配图在`docs/assets/glm53_briefing_20261030/`；旧`mla_host_lru_report_external.md`未改。报告含设计/开关（本轮全部staged；无LRU单步/4096槽trace）、采集方法、模拟/校准、单步和trace数据及全17链路汇总。重点MTP8 16–128请求trace在100/50GB/s20us全部14形状领先，降时14.0%–32.1%/29.3%–38.1%；单步接近device与大batch距理想重叠9.4%分别说明，未把9.4%冒充距纯device。作图/核对脚本及537个图源格、26行对比/17链路/4行参考验证保存在`temp/glm_trace/briefing_report_20261030/`，不产生HTML/PDF，不重跑GPU实验。
+**10/30 汇报版与下限复核**：用户要突出相对Memcpy收益及接近极限，明确只写Markdown自行导出PDF。报告`docs/mla_host_glm53_report_external.md`，六图在`docs/assets/glm53_briefing_20261030/`，旧external未改。随后要求柱图增加max(计算,搬运)、问原始本地是否0、追问历史1%–10%差距。已给三组柱图加参考线，修正衍生下限为逐步取max再平均：100GB/s20us MTP8/128请求由2595.96→2691.45us，高出71.4%→65.3%；原5304格矩阵不修改，汇报derived在references.py。图3原始本地0.0475%–0.0488%，历史KV远端/最新token本地，已标数值并放大；LRU后本地78.95%另计。
+
+**最新复核证据**：`temp/glm_trace/briefing_report_20261030/`含537个图源格及逐步参考、26对比/17链路/6参考/4本地占比/2复测/2物理带宽验证。GPU0/1当时空闲，独立复测同kernel SHA、绑定、完整1024位置3pass：100GB/s20us4450.15→4376.00us（−1.67%），50GB/s20us5679.23→5682.67（+0.06%），本地2467.18→2457.21（−0.40%），正确性/guard通过；recheck/raw和源码快照保留。物理带宽补测PCIe27.039965/NVLink281.123759GB/s，取9次中位数max(DMA,gather)，physical_bandwidth.json。当前trace PCIe MTP8的32/64/128请求距逐步重叠参考8.8%/8.4%/4.8%；50GB/s128请求9.4%。旧代理PCIe112请求/25%约1.01来自较大索引组bytes，均值预算重算1.036；旧100GB/s20us128请求也高55.8%，不能外推所有场景10%内。verification_notes.md/json与verify_sources.py记录全部依据。复测/探针已结束，无GPU任务；不自动重跑矩阵或改kernel。
 
 **运行已结束，不要重复启动**：监督器`supervise.py`所记录的run.py PID1217424于12:17:11正常exit0，`signal_matrix_run11.json` signals为空；session26797已返回0。日志`run_resume11.log`含ALL_MATRIX_COMPLETE，report watcher已输出REPORT_AND_AUDIT_COMPLETE并退出。旧PID/锁文件不是活进程证据，后续仍先ps核实。GPU2其他VLLM始终未碰，GPU0/1各组均检查独占。
 

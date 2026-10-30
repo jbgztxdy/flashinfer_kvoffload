@@ -15,8 +15,24 @@ Only the existing audited matrix is read; these commands run no GPU experiment.
 `figure_data.json` retains every plotted source cell, `summary_metrics.json`
 records aggregates for all 17 links, and `manifest.json` / `report_check.json`
 record source and output hashes. Validation independently checks all 26 selected
-comparison rows, 17 complete link summaries, four ideal-bound rows, headline
+comparison rows, 17 complete link summaries, six ideal-bound rows, headline
 aggregate claims, image references and 537 source cells across the six figures.
+
+The reference now uses the mean of each step's max(compute, unique-byte budget),
+rather than the max of two whole-window means. Every figure record includes its
+per-step reference arrays; independent validation recomputes all 537 references.
+Physical link bandwidth comes from the separately retained physical_bandwidth.json
+probe: max(median DMA bandwidth, median random gather bandwidth). References omit
+the additional access latency and cache/synchronization overhead.
+
+verification_notes.md and verification.json explain original near-KV fractions,
+the reference aggregation correction, and the historical 1%/10% comparisons.
+The recheck directory retains independent full-window 3-pass repetitions of
+MTP8/request128 at 100/50 GB/s + 20 us and an all-local repetition, with unchanged
+kernel source SHA and trace bindings. These support the existing matrix; they do
+not replace individual matrix cells. verify_sources.py verifies and reconstructs
+the notes from retained evidence without launching GPU work. The probe and
+repetitions executed sequentially on the original GPU0/1 pair; no GPU task remains.
 
 The report leads with measured benefits for bandwidth-constrained medium/large
 batches, separates zero-transfer device time from the optimistic overlap

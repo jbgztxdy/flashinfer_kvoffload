@@ -1,0 +1,185 @@
+{
+  "timestamp": "2026-10-30T13:21:55+0800",
+  "resources_start": {
+    "timestamp": "2026-10-30T13:21:55+0800",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+        "used_mib": 4,
+        "total_mib": 40960,
+        "utilization": 0
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81",
+        "used_mib": 4,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "settings": [
+    {
+      "name": "nvlink",
+      "tier": "peer",
+      "rows": 1048576,
+      "bytes": 1207959552,
+      "measurements": {
+        "dma_contiguous": {
+          "samples_us": [
+            4299.520015716553,
+            4288.127899169922,
+            4304.448127746582,
+            4296.895980834961,
+            4285.952091217041,
+            4307.328224182129,
+            4294.20804977417,
+            4283.199787139893,
+            4302.239894866943
+          ],
+          "median_GBps": 281.1237594272116
+        },
+        "sm_gather_random": {
+          "samples_us": [
+            4576.255798339844,
+            4588.543891906738,
+            4573.184013366699,
+            4577.280044555664,
+            4575.232028961182,
+            4592.639923095703,
+            4572.159767150879,
+            4576.255798339844,
+            4573.184013366699
+          ],
+          "median_GBps": 263.9624193294044
+        }
+      },
+      "reference_GBps": 281.1237594272116,
+      "residency": [
+        {
+          "tier": "near_hbm",
+          "address": "0x402000000",
+          "bytes": 1207959552,
+          "location_type": 1,
+          "location_id": 0
+        },
+        {
+          "tier": "far_peer_hbm_gpu1",
+          "address": "0x44a000000",
+          "bytes": 1207959552,
+          "location_type": 1,
+          "location_id": 1
+        },
+        {
+          "tier": "near_hbm_alias",
+          "address": "0x492000000",
+          "bytes": 1207959552,
+          "location_type": 1,
+          "location_id": 0
+        },
+        {
+          "tier": "staging_hbm",
+          "address": "0x4da000000",
+          "bytes": 1207959552,
+          "location_type": 1,
+          "location_id": 0
+        }
+      ],
+      "payload_sample_check": true
+    },
+    {
+      "name": "pcie",
+      "tier": "host",
+      "rows": 1048576,
+      "bytes": 1207959552,
+      "measurements": {
+        "dma_contiguous": {
+          "samples_us": [
+            44676.513671875,
+            44670.814514160156,
+            44674.27062988281,
+            44677.8564453125,
+            44667.1028137207,
+            44673.118591308594,
+            44671.61560058594,
+            44671.0090637207,
+            44675.23193359375
+          ],
+          "median_GBps": 27.03996475041291
+        },
+        "sm_gather_random": {
+          "samples_us": [
+            44673.02322387695,
+            44674.049377441406,
+            44675.071716308594,
+            44677.120208740234,
+            44669.952392578125,
+            44675.071716308594,
+            44672.000885009766,
+            44679.168701171875,
+            44675.071716308594
+          ],
+          "median_GBps": 27.03878260499883
+        }
+      },
+      "reference_GBps": 27.03996475041291,
+      "residency": [
+        {
+          "tier": "near_hbm",
+          "address": "0x402000000",
+          "bytes": 1207959552,
+          "location_type": 1,
+          "location_id": 0
+        },
+        {
+          "tier": "far_host_dram",
+          "address": "0x44a000000",
+          "bytes": 1207959552,
+          "location_type": 3,
+          "location_id": 0
+        },
+        {
+          "tier": "near_hbm_alias",
+          "address": "0x492000000",
+          "bytes": 1207959552,
+          "location_type": 1,
+          "location_id": 0
+        },
+        {
+          "tier": "staging_hbm",
+          "address": "0x4da000000",
+          "bytes": 1207959552,
+          "location_type": 1,
+          "location_id": 0
+        }
+      ],
+      "payload_sample_check": true
+    }
+  ],
+  "resources_end": {
+    "timestamp": "2026-10-30T13:21:58+0800",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+        "used_mib": 497,
+        "total_mib": 40960,
+        "utilization": 0
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81",
+        "used_mib": 423,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "hardware": "0, GPU-6e5259ec-3532-b1b2-b0ab-b26231386565, NVIDIA A100-SXM4-40GB, 590.44.01, 1410 MHz, 1215 MHz\n1, GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81, NVIDIA A100-SXM4-40GB, 590.44.01, 1410 MHz, 1215 MHz\n",
+  "complete": true
+}
