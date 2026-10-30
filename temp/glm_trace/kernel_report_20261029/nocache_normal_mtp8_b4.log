@@ -1,0 +1,20 @@
+repair only memcpy baseline nocache_nvlink_mtp8_b4
+start nocache_nvlink_mtp8_b4
+nocache_nvlink_mtp8_b4 fraction 0 mean_us {'memcpy': 113.493, 'ours': 138.496}
+nocache_nvlink_mtp8_b4 fraction 0.05 mean_us {'memcpy': 129.877, 'ours': 215.979}
+nocache_nvlink_mtp8_b4 fraction 0.1 mean_us {'memcpy': 137.472, 'ours': 222.293}
+nocache_nvlink_mtp8_b4 fraction 0.15 mean_us {'memcpy': 145.152, 'ours': 224.853}
+nocache_nvlink_mtp8_b4 fraction 0.2 mean_us {'memcpy': 150.784, 'ours': 245.931}
+nocache_nvlink_mtp8_b4 fraction 0.25 mean_us {'memcpy': 155.307, 'ours': 251.563}
+nocache_nvlink_mtp8_b4 fraction 0.3 mean_us {'memcpy': 159.744, 'ours': 253.013}
+complete nocache_nvlink_mtp8_b4
+repair only memcpy baseline nocache_pcie_mtp8_b4
+start nocache_pcie_mtp8_b4
+nocache_pcie_mtp8_b4 fraction 0 mean_us {'memcpy': 113.493, 'ours': 138.325}
+nocache_pcie_mtp8_b4 fraction 0.05 mean_us {'memcpy': 175.275, 'ours': 226.645}
+nocache_pcie_mtp8_b4 fraction 0.1 mean_us {'memcpy': 226.389, 'ours': 227.243}
+nocache_pcie_mtp8_b4 fraction 0.15 mean_us {'memcpy': 269.739, 'ours': 234.752}
+nocache_pcie_mtp8_b4 fraction 0.2 mean_us {'memcpy': 317.184, 'ours': 284.587}
+nocache_pcie_mtp8_b4 fraction 0.25 mean_us {'memcpy': 363.093, 'ours': 329.728}
+nocache_pcie_mtp8_b4 fraction 0.3 mean_us {'memcpy': 414.72, 'ours': 370.261}
+complete nocache_pcie_mtp8_b4

@@ -1,0 +1,9 @@
+start nocache_nvlink_mtp1_b1
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/kernel_report_20261029/bench.py", line 322, in <module>
+    for setting in SETTINGS:run_setting(setting)
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/kernel_report_20261029/bench.py", line 286, in run_setting
+    if repeat>=0 and not valid:raise RuntimeError(f"CPU enqueue contaminated timing: {guards[-1]}")
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CPU enqueue contaminated timing: {'mode': 'ours', 'pass_index': 0, 'first': 0, 'last': 4, 'enqueue_ms': 23.053241005982272, 'guard_ms': 23.154687881469727, 'valid': False}

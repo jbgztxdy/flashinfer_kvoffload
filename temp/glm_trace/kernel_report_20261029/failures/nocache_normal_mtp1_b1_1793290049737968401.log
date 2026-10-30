@@ -1,0 +1,9 @@
+start nocache_nvlink_mtp1_b1
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/kernel_report_20261029/bench.py", line 319, in <module>
+    for setting in SETTINGS:run_setting(setting)
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/kernel_report_20261029/bench.py", line 274, in run_setting
+    if mode=="ours":diag[j]=w._host_batch_buffers[5][1]
+                            ~~~~~~~~~~~~~~~~~~~~~^^^
+TypeError: 'NoneType' object is not subscriptable

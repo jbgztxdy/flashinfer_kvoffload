@@ -8,10 +8,26 @@ Run from the FlashInfer repository root:
 python3 temp/glm_trace/kernel_report_20261029/run.py
 python3 temp/glm_trace/kernel_report_20261029/audit.py
 python3 temp/glm_trace/kernel_report_20261029/report.py
+python3 temp/glm_trace/kernel_report_20261029/plot.py
+python3 temp/glm_trace/kernel_report_20261029/export_html.py
+python3 temp/glm_trace/kernel_report_20261029/check_report.py
 python3 temp/glm_trace/kernel_report_20261029/status.py
 ```
 
-To wait for the original GPU pair and resume interrupted work, run `resume.py`.
+For a new interrupted run, first check live processes and the latest signal record.
+The final continuation used the signal-recording supervisor (it forwards and honors
+termination signals):
+
+```bash
+python3 -u temp/glm_trace/kernel_report_20261029/supervise.py \
+  --record temp/glm_trace/kernel_report_20261029/signal_new_run.json \
+  -- python3 -u temp/glm_trace/kernel_report_20261029/run.py
+```
+
+`run.py` waits between groups for the original GPU pair to be free. Do not start
+another controller while one is alive. A fully audited matrix needs no new GPU run.
+
+The earlier controller `resume.py` can also wait and resume interrupted work.
 It observes GPU0/1 without creating CUDA contexts, waits while other compute
 processes occupy either GPU, repeats the recorded unstable no-LRU groups, and
 then resumes the full matrix. Its current state is `resume_state.json` and the
@@ -20,7 +36,11 @@ controller. Every benchmark checks exclusive GPU use again before accepting data
 
 `export_html.py` generates the portable HTML report with embedded images and a
 filterable data table. It contains the full measured matrix and can export a CSV
-for the current filter without a network connection.
+for the current filter without a network connection. `check_report.py` requires
+the completed raw-data audit, checks every Markdown and CSV cell against the JSON
+matrix, checks the embedded HTML payload, and exercises offline filters and CSV
+export in headless Chrome with GPU rendering disabled. Its result is
+`report_check.json`.
 
 `run.py` uses only GPUs 0/1 sequentially, NUMA0, the existing `/mnt/data/mhy-vllm-venv` environment, CUDA 13.1, and distinct normal/emulated JIT directories. It skips complete files, retains incomplete runs under `failures`, and retries guard failures with longer guards. Do not launch another GPU benchmark concurrently.
 

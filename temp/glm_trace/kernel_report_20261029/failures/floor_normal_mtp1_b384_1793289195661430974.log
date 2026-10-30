@@ -1,0 +1,9 @@
+start floor_floor_mtp1_b384
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/kernel_report_20261029/bench.py", line 305, in <module>
+    for setting in SETTINGS:run_setting(setting)
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/kernel_report_20261029/bench.py", line 270, in run_setting
+    if repeat>=0 and not valid:raise RuntimeError(f"CPU enqueue contaminated timing: {guards[-1]}")
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CPU enqueue contaminated timing: {'mode': 'local', 'pass_index': 0, 'first': 848, 'last': 864, 'enqueue_ms': 4.742542005260475, 'guard_ms': 5.71292781829834, 'valid': False}

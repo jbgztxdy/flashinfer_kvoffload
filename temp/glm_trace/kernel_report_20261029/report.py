@@ -100,11 +100,19 @@ def document(rows,files):
     expected1=expected0//7
     done0=sum(x["kind"]=="nocache" for x in rows);done1=len(rows)-done0
     audit=read(DEST/"audit.json") if (DEST/"audit.json").exists() else {}
+    complete=(done0,done1)==(expected0,expected1) and audit.get("complete",False)
     yield "# GLM-5.3 真实 trace：远端 KV sparse MLA kernel 完整性能对比\n"
     yield "报告更新时间："+time.strftime("%Y-%m-%d %H:%M:%S %z")+"。\n"
     yield f"实验范围：不开 LRU {done0}/{expected0} 格；连续 LRU {done1}/{expected1} 格。"
-    yield ("**状态：全组合实验与审计完成。**\n" if (done0,done1)==(expected0,expected1) and audit.get("complete") else
+    yield ("**状态：全组合实验与审计完成。**\n" if complete else
            "**状态：实验进行中。本报告只列已完成的实测，不以估算填补空格。**\n")
+    yield "本报告全部性能数据来自A100-SXM4-40GB；模拟带宽/延迟不是H800实测。\n"
+    if complete:
+        yield (f"完整性审计：{audit['completed_cells']}/{audit['expected_cells']}个比较格、"
+               f"{audit['local_reference_cases']}/{audit['expected_local_reference_cases']}个本地参考格，"
+               f"{audit['timed_launches']:,}次计时launch；15种链路校准与稳定性复测通过。"
+               f"采样数学校验最大绝对误差{audit['sampled_max_abs_error']:.8f}。"
+               "逐文件SHA和计时队列覆盖记录见audit.json。\n")
     stability=read(DEST/"stability_repeat.json") if (DEST/"stability_repeat.json").exists() else {}
     if not stability.get("complete"):
         done=len(stability.get("repeated",[]));total=len(stability.get("files",[]))
@@ -127,6 +135,27 @@ def document(rows,files):
                        f"本文÷Memcpy范围{min(r['ours_to_memcpy'] for r in values):.3f}–{max(r['ours_to_memcpy'] for r in values):.3f}，"
                        f"本文÷本地平均范围{min(r['ours_to_local_mean'] for r in values):.3f}–{max(r['ours_to_local_mean'] for r in values):.3f}。")
         yield ""
+        if complete:
+            yield "### 汇报时应强调的结论\n"
+            for name in ("g100_l20000","g50_l20000"):
+                sub=[r for r in rows if r["kind"]=="lru" and r["setting"]==name]
+                setting=next(s for s in META["settings"] if s["name"]==name)
+                speed=math.exp(sum(math.log(1/r["ours_to_memcpy"]) for r in sub)/len(sub))
+                gap=math.exp(sum(math.log(r["ours_to_local_mean"]) for r in sub)/len(sub))
+                yield (f"- 真实trace＋LRU、{setting_label(setting)}：{len(sub)}个形状中"
+                       f"{sum(r['ours_to_memcpy']<1 for r in sub)}个快于Memcpy，"
+                       f"等权几何平均加速{speed:.3f}倍，耗时为纯本地参考的{gap:.3f}倍。")
+            yield ("- 固定staged配置在部分小batch和物理NVLink格子仍慢于Memcpy；"
+                   "这份完整矩阵保留了这些结果，不能概括成所有参数均已胜出或已接近纯本地。")
+            lru=[r for r in rows if r["kind"]=="lru"]
+            yield (f"- 真实trace回放的原始远端引用比例为"
+                   f"{min(r['host_fraction_actual'] for r in lru)*100:.3f}%–"
+                   f"{max(r['host_fraction_actual'] for r in lru)*100:.3f}%；"
+                   f"开启4096槽LRU后，本文引用命中率为"
+                   f"{min(r['ours_reference_cache_hit_rate'] for r in lru)*100:.2f}%–"
+                   f"{max(r['ours_reference_cache_hit_rate'] for r in lru)*100:.2f}%，"
+                   "各batch/MTP的unique命中率、引用命中率及最终远端流量见逐格表。")
+            yield ""
         yield "### 典型参数摘录\n"
         yield "这里固定摘录1/4/16/128请求及四类链路；无LRU取目标Host 30%。所有其他比例和batch仍见后面的完整逐格表，不按赢家挑选配置。时间单位µs。\n"
         yield "| 场景 | 链路 | MTP | 请求 | 本文 | Memcpy | 纯本地 | 本文÷Memcpy | 本文÷本地 |"
@@ -139,6 +168,23 @@ def document(rows,files):
                    f"{r['ours_mean_us']:.2f} | {r['memcpy_mean_us']:.2f} | {r['local_mean_us']:.2f} | {r['ours_to_memcpy']:.3f} | {r['ours_to_local_mean']:.3f} |")
         yield ""
         yield "±3%是便于阅读的差异分组，不是统计显著性检验。小于pass间波动的差距不宜宣称稳定收益；CSV/JSON保留每次pass均值及极差。\n"
+        if complete:
+            yield "### 传输约束和剩余差距\n"
+            yield ("以下固定列出MTP8、1/4/16/128请求的连续LRU。理想传输仅按实际unique未命中字节/"
+                   "设置带宽计算；理想重叠参考=max(纯本地均值,理想传输)，没有加入附加延迟、"
+                   "LRU或同步开销，因此用于解释差距，不替代实测或证明数学最优。时间单位µs。\n")
+            yield "| 链路 | 请求 | 本文 | 纯本地 | 理想unique传输 | 理想重叠参考 | 本文÷重叠参考 |"
+            yield "|---|---:|---:|---:|---:|---:|---:|"
+            for r in sorted((r for r in rows if r["kind"]=="lru" and r["mtp"]==8
+                             and r["requests"] in (1,4,16,128)
+                             and r["setting"] in ("g100_l20000","g50_l20000")),
+                            key=lambda r:(r["setting"],r["requests"])):
+                setting=next(s for s in META["settings"] if s["name"]==r["setting"])
+                bound=r["ideal_compute_transfer_bound_us"]
+                yield (f"| {setting_label(setting)} | {r['requests']} | {r['ours_mean_us']:.2f} | "
+                       f"{r['local_mean_us']:.2f} | {r['ideal_unique_transfer_us']:.2f} | {bound:.2f} | "
+                       f"{r['ours_mean_us']/bound:.3f} |")
+            yield ""
         yield "### 参数分布图\n"
         yield "图中无LRU展示目标Host 30%；其他比例仍见完整逐格表。灰色为未完成，图标题注明已测格数；数值越低越好。\n"
         yield "![无LRU性能比值](assets/glm53_kernel_matrix_20261029/nocache.png)\n"
@@ -166,6 +212,8 @@ def document(rows,files):
            "不人为指定缓存命中率，连续跑完1024位置后记录缓存及最终远端比例。\n")
     yield ("LRU命中率是对真实top-k索引，在本报告指定的驻留规则、4096槽容量和逐launch LRU政策上"
            "回放得到的结果，并非从生产部署直接采集的缓存计数；换容量、驻留策略或请求调度后可能改变。\n")
+    yield ("两部分的原始远端驻留规则不同：无LRU指定0%–30%，连续LRU除最新token外原始KV均在远端。"
+           "因此不能直接用两部分表格的耗时差声称开启LRU的净收益；各部分均与自身相同输入的两个baseline比较。\n")
     yield "## 2. 数据、设备和完整参数\n"
     yield ("设备：A100-SXM4-40GB双卡，GPU0运行，GPU1为真实NV12远端；物理PCIe为NUMA0 Host pinned内存。"
            "模拟链路是在同一真实远端路径上使用原有虚拟链路时钟，带宽按字节收费、访问附加延迟。"
@@ -184,6 +232,8 @@ def document(rows,files):
            "block loss gate没有通过，不能据此声称完整模型质量已经验证。MTP8是连续8个实测位置组合，"
            "不包含推测生成接受率。batch>128时本地near物理KV按128请求复用，远端和LRU槽按请求独立；"
            "这影响本地cache局部性，应将此作为实验范围限制。输入来源和每请求层/窗口绑定保存于raw JSON。\n")
+    yield ("不同请求可绑定不同indexer层的真实窗口，且该绑定在整个回放期间固定。这是由真实访问序列"
+           "组成的合成batch，不是线上调度器采集的同层并发请求批次；结果用于比较kernel处理这些访问模式的耗时。\n")
     yield "## 3. 计时与正确性\n"
     calibration=DEST/"calibration.json"
     if calibration.exists():
@@ -198,12 +248,15 @@ def document(rows,files):
            "GPU保护区耗时，正式样本必须全部在GPU保护区结束前完成入队，否则整任务失败且不标完成。"
            "段间同步保留LRU状态；模型加载、索引上传、CPU规划、参考计算和warm-up不计入主耗时。"
            "首次检查pass不参与平均；正式3pass记录全部逐步原始样本及pass均值。\n")
-    yield ("连续LRU后续使用每16步CUDA Graph录制并仅回放一次，每步仍用external CUDA event记录；"
+    yield ("连续LRU后续使用每16步CUDA Graph录制，每段在每个pass回放一次，每步仍用external CUDA event记录；"
            "录制本身不执行kernel，不改变LRU，整段GPU工作一次提交，因此没有CPU逐步入队间隙。"
            "不含capture/graph launch主机时间，仍保留逐步事件、miss及graph输出正确性锚点。"
            "与原guard计时的完整窗口交叉检查：100GB/s＋20µs、MTP8单请求，本文差−0.16%，"
            "Memcpy差−1.75%；两份数据均留档。早期5个完整LRU校验格中4格仍用已通过guard的计时，"
            "原始JSON逐段记录timing_queue，报告不把两种计时方法隐去。\n")
+    yield ("长trace的校验pass在第0/1/中点/最后一步，检查首/中/末query行与数学参考的一致性；"
+           "Graph路径还在已选检查点的段末核对回放输出。采样范围与最大误差逐文件保存，"
+           "不将这些检查描述为每次launch的所有query全量参考验证。\n")
     yield ("可复用的Graph在不同pass重新回放；每次pass开始都清空本文LRU，Memcpy按同一离线冷启动规划"
            "逐步重新装入数据。Graph只复用操作描述，不复用上一pass的LRU热缓存。\n")
     yield ("Memcpy baseline维护真实缓存KV和有效索引：离线CPU计算精确逐launch LRU、发出未命中搬运，"
@@ -230,8 +283,19 @@ def document(rows,files):
            "因此远端流量较高且链路只有50GB/s时，本文/本地显著大于1并不全是调度浪费。"
            "matrix.csv/json额外保存这一乐观参考，不计附加延迟且不用于替代实测。\n")
     yield ("baseline的离线LRU规划另通过独立Python oracle，覆盖逐步淘汰、同stamp并列、MTP内重复、"
-           "容量溢出与实际payload映射，结果为planner_check.json。计时保护区和诊断读取不计入kernel事件；"
+           "容量溢出与实际payload映射，结果为planner_check.json；完整1024位置真实trace的串行/并行"
+           "规划逐数组和逐步payload复核见planner_real_trace_check.json。计时保护区和诊断读取不计入kernel事件；"
            "CPU标量写GPU造成的隐式同步已在正式采样前排除。失败和预实验保留在failures/，不进入汇报表。\n")
+    if rows:
+        yield "| 类别 | 本文最大pass极差/均值 | Memcpy最大pass极差/均值 |"
+        yield "|---|---:|---:|"
+        for kind in ("nocache","lru"):
+            sub=[r for r in rows if r["kind"]==kind]
+            if sub:
+                yield (f"| {kind} | {max(r['ours_pass_range_over_mean'] for r in sub)*100:.2f}% | "
+                       f"{max(r['memcpy_pass_range_over_mean'] for r in sub)*100:.2f}% |")
+        yield ""
+        yield "这里的最大值覆盖全部参数格，反映三次pass间的最大波动；汇报小幅收益时应同时查看该格的pass均值。\n"
     yield "## 4. 不开 LRU：全组合结果\n"
     yield "时间单位µs。本文÷本地越接近1越好，本文÷Memcpy小于1代表本文更快。"
     for setting in META["settings"]:
@@ -268,9 +332,13 @@ def document(rows,files):
         yield ""
     yield "## 6. 原始数据与复现\n"
     yield ("同名HTML为自包含离线版本，含完整正文、内嵌图和可筛选的实测表，支持导出筛选后的CSV。"
-           "Markdown和HTML均标明完成度，不能将部分完成的LRU统计解读为全矩阵结论。\n")
+           "Markdown和HTML均标明完成度。\n")
+    yield ("`audit.py`检查原始计时、参数覆盖、均值与源码快照；`check_report.py`逐格核对Markdown/CSV/JSON/"
+           "HTML一致性，并在禁用GPU渲染的Chrome中实际验证离线筛选和CSV导出。"
+           "最终检查及报告产物SHA记录于`report_check.json`。\n")
     yield ("参数在 `temp/glm_trace/kernel_report_20261029/experiment.json`，完整平面表 `matrix.csv`/`matrix.json`，"
-           "每个参数格及所有逐步样本在 `raw/*.json`；`progress.json`为任务状态，`run.log`为流水日志。"
+           "每个参数格及所有逐步样本在 `raw/*.json`；`progress.json`为最近一次续跑状态，"
+           "`run*.log`保留各次流水日志，最后完整续跑为`run_resume11.log`。"
            "`bench.py`运行单batch，`run.py`遍历全组合、跳过已完成文件，不覆写完成数据；`plans.cpp`"
            "生成Memcpy的真实缓存规划。源码SHA/输入绑定/远端物理驻留均写入原始文件。\n")
     yield "完整性要求：39个batch×17种链路=663个LRU格，另×7个Host比例=4641个无LRU格；本地另有39份完整回放＋273个按Host比例匹配的快照对照格。"
