@@ -4,6 +4,8 @@
 
 **产物与验证**：实验目录`temp/glm_trace/kernel_report_20261029/`；完整报告`docs/mla_host_glm53_kernel_matrix_20261029.md`及同名自包含HTML（筛选/导出CSV、内嵌图）；平面表`matrix.csv/json`、每步样本`raw/`、失败历史`failures/`、SHA源码快照均保留。`audit.json: complete=true`；`check_report.py`核对MD/CSV/JSON/HTML全部5304格，并实际用禁用GPU的Chrome验证筛选和CSV下载，结果与报告产物SHA见`report_check.json`。新报告是A100-SXM4实测，不是H800实测。
 
+**10/30 汇报版**：用户要突出相对Memcpy收益及接近极限的证据，随后明确“写markdown就行，我自己导出pdf”。新建`docs/mla_host_glm53_report_external.md`，六张配图在`docs/assets/glm53_briefing_20261030/`；旧`mla_host_lru_report_external.md`未改。报告含设计/开关（本轮全部staged；无LRU单步/4096槽trace）、采集方法、模拟/校准、单步和trace数据及全17链路汇总。重点MTP8 16–128请求trace在100/50GB/s20us全部14形状领先，降时14.0%–32.1%/29.3%–38.1%；单步接近device与大batch距理想重叠9.4%分别说明，未把9.4%冒充距纯device。作图/核对脚本及537个图源格、26行对比/17链路/4行参考验证保存在`temp/glm_trace/briefing_report_20261030/`，不产生HTML/PDF，不重跑GPU实验。
+
 **运行已结束，不要重复启动**：监督器`supervise.py`所记录的run.py PID1217424于12:17:11正常exit0，`signal_matrix_run11.json` signals为空；session26797已返回0。日志`run_resume11.log`含ALL_MATRIX_COMPLETE，report watcher已输出REPORT_AND_AUDIT_COMPLETE并退出。旧PID/锁文件不是活进程证据，后续仍先ps核实。GPU2其他VLLM始终未碰，GPU0/1各组均检查独占。
 
 **主要结果**：无LRU2643/4641格严格快于Memcpy；LRU538/663。按±3%阅读阈值，无LRU快2368/近535/慢1738，LRU快512/近45/慢106。LRU100GB/s＋20us快36/39、几何平均1.217倍，50GB/s＋20us快39/39、1.374倍。MTP8 128请求：100GB/s20us本文4450.15/Memcpy6287.30/纯本地2467.18us；50GB/s20us5679.23/8968.73/2467.18us，理想传输5191.78us，距理想重叠约9.4%。仍有小batch/NVLink输的场景，不宣称普遍胜出。本文统一staged，不逐格挑最优实现。
