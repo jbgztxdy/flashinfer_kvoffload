@@ -1,0 +1,978 @@
+{
+  "complete": true,
+  "sweep_complete": true,
+  "sweep_cells": 20,
+  "confirmation_cells": 4,
+  "conditions": "A100 SXM4, complete GLM53 trace 1024 positions, MTP8, 128 requests, staged, LRU4096/request",
+  "original_matrix_sha256": "e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99",
+  "rows": [
+    {
+      "confirmation": true,
+      "setting": "g100_l0",
+      "fetch_ctas": 16,
+      "host_item_entries": 64,
+      "host_split": true,
+      "passes": 5,
+      "mean_us": 4108.220804110169,
+      "pass_means_us": [
+        4067.4319993704557,
+        4112.480008974671,
+        4121.696002781391,
+        4118.54400113225,
+        4120.952008292079
+      ],
+      "pass_range_over_mean": 0.013208638483268878,
+      "memcpy_mean_us": 6239.905599504709,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.445312173832,
+      "ours_to_reference": 1.526399509411556,
+      "reference_cache_hit_rate": 0.7894121296552224,
+      "unique_miss_MB": 259.5985506,
+      "max_abs_error": {
+        "ours": 0.0022426247596740723,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/confirm_f16_i64_son_lru_g100_l0_mtp8_b128.json"
+    },
+    {
+      "confirmation": true,
+      "setting": "g100_l20000",
+      "fetch_ctas": 16,
+      "host_item_entries": 64,
+      "host_split": true,
+      "passes": 5,
+      "mean_us": 4428.1696036458015,
+      "pass_means_us": [
+        4403.024015948176,
+        4429.7999907284975,
+        4433.879990130663,
+        4428.640026599169,
+        4445.503994822502
+      ],
+      "pass_range_over_mean": 0.009593123723027936,
+      "memcpy_mean_us": 6265.411203354597,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.591734665817,
+      "ours_to_reference": 1.6451862095629428,
+      "reference_cache_hit_rate": 0.7892948763445131,
+      "unique_miss_MB": 259.634304,
+      "max_abs_error": {
+        "ours": 0.0024538040161132812,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/confirm_f16_i64_son_lru_g100_l20000_mtp8_b128.json"
+    },
+    {
+      "confirmation": true,
+      "setting": "g100_l0",
+      "fetch_ctas": 32,
+      "host_item_entries": 64,
+      "host_split": false,
+      "passes": 5,
+      "mean_us": 4208.092803508043,
+      "pass_means_us": [
+        4170.672016218305,
+        4203.376000747085,
+        4227.392006665468,
+        4211.2159840762615,
+        4227.8080098330975
+      ],
+      "pass_range_over_mean": 0.013577645808372348,
+      "memcpy_mean_us": 6239.796806126833,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.458362173832,
+      "ours_to_reference": 1.5634991284462074,
+      "reference_cache_hit_rate": 0.789424101717672,
+      "unique_miss_MB": 259.5922938,
+      "max_abs_error": {
+        "ours": 0.0019550323486328125,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/confirm_f32_i64_soff_lru_g100_l0_mtp8_b128.json"
+    },
+    {
+      "confirmation": true,
+      "setting": "g100_l20000",
+      "fetch_ctas": 32,
+      "host_item_entries": 64,
+      "host_split": false,
+      "passes": 5,
+      "mean_us": 4222.929603233933,
+      "pass_means_us": [
+        4191.096022725105,
+        4229.92798872292,
+        4233.448002487421,
+        4225.224008783698,
+        4234.951993450522
+      ],
+      "pass_range_over_mean": 0.010385200523312557,
+      "memcpy_mean_us": 6258.753596991301,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.178912173832,
+      "ours_to_reference": 1.5691746037883492,
+      "reference_cache_hit_rate": 0.789405097438228,
+      "unique_miss_MB": 259.5826602,
+      "max_abs_error": {
+        "ours": 0.002171754837036133,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/confirm_f32_i64_soff_lru_g100_l20000_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l0",
+      "fetch_ctas": 16,
+      "host_item_entries": 256,
+      "host_split": true,
+      "passes": 3,
+      "mean_us": 4098.146668945749,
+      "pass_means_us": [
+        4055.3679950535297,
+        4108.880018815398,
+        4130.191992968321
+      ],
+      "pass_range_over_mean": 0.01825800879255491,
+      "memcpy_mean_us": 6247.680004686117,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.476614173832,
+      "ours_to_reference": 1.5226387802755272,
+      "reference_cache_hit_rate": 0.7894277671570438,
+      "unique_miss_MB": 259.58883,
+      "max_abs_error": {
+        "ours": 0.0019856393337249756,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f16_i256_son_lru_g100_l0_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l20000",
+      "fetch_ctas": 16,
+      "host_item_entries": 256,
+      "host_split": true,
+      "passes": 3,
+      "mean_us": 4343.738663941622,
+      "pass_means_us": [
+        4332.495991140604,
+        4345.600003376603,
+        4353.119997307658
+      ],
+      "pass_range_over_mean": 0.004747985033781801,
+      "memcpy_mean_us": 6265.306664009889,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.389464173832,
+      "ours_to_reference": 1.613939090482026,
+      "reference_cache_hit_rate": 0.7894489728866528,
+      "unique_miss_MB": 259.569348,
+      "max_abs_error": {
+        "ours": 0.002123713493347168,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f16_i256_son_lru_g100_l20000_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l0",
+      "fetch_ctas": 16,
+      "host_item_entries": 64,
+      "host_split": false,
+      "passes": 3,
+      "mean_us": 3894.314669072628,
+      "pass_means_us": [
+        3869.4480042904615,
+        3893.488012254238,
+        3920.0079906731844
+      ],
+      "pass_range_over_mean": 0.012983025430444465,
+      "memcpy_mean_us": 6240.885340919097,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.453424173832,
+      "ours_to_reference": 1.4469188409857123,
+      "reference_cache_hit_rate": 0.7894387619843354,
+      "unique_miss_MB": 259.585215,
+      "max_abs_error": {
+        "ours": 0.0019550323486328125,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f16_i64_soff_lru_g100_l0_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l20000",
+      "fetch_ctas": 16,
+      "host_item_entries": 64,
+      "host_split": false,
+      "passes": 3,
+      "mean_us": 4366.754664729039,
+      "pass_means_us": [
+        4347.336003556848,
+        4374.143997207284,
+        4378.783993422985
+      ],
+      "pass_range_over_mean": 0.007201684610346407,
+      "memcpy_mean_us": 6260.10933270057,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.652340665817,
+      "ours_to_reference": 1.6223323490762789,
+      "reference_cache_hit_rate": 0.7893140309487144,
+      "unique_miss_MB": 259.642503,
+      "max_abs_error": {
+        "ours": 0.0019550323486328125,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f16_i64_soff_lru_g100_l20000_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l0",
+      "fetch_ctas": 16,
+      "host_item_entries": 64,
+      "host_split": true,
+      "passes": 3,
+      "mean_us": 4057.5679944207272,
+      "pass_means_us": [
+        4023.896001279354,
+        4076.6879860311747,
+        4072.1199959516525
+      ],
+      "pass_range_over_mean": 0.01301074555605995,
+      "memcpy_mean_us": 6241.3093484938145,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.458494173832,
+      "ours_to_reference": 1.507572196711967,
+      "reference_cache_hit_rate": 0.7894213752489743,
+      "unique_miss_MB": 259.59024,
+      "max_abs_error": {
+        "ours": 0.0021439790725708008,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f16_i64_son_lru_g100_l0_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l20000",
+      "fetch_ctas": 16,
+      "host_item_entries": 64,
+      "host_split": true,
+      "passes": 3,
+      "mean_us": 4400.242671991388,
+      "pass_means_us": [
+        4373.544009402394,
+        4408.912003040314,
+        4418.272003531456
+      ],
+      "pass_range_over_mean": 0.010164892589621529,
+      "memcpy_mean_us": 6260.106675326824,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.612604173832,
+      "ours_to_reference": 1.634797914517125,
+      "reference_cache_hit_rate": 0.7892932861322044,
+      "unique_miss_MB": 259.642242,
+      "max_abs_error": {
+        "ours": 0.002272963523864746,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f16_i64_son_lru_g100_l20000_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l0",
+      "fetch_ctas": 32,
+      "host_item_entries": 256,
+      "host_split": true,
+      "passes": 3,
+      "mean_us": 4411.802666261792,
+      "pass_means_us": [
+        4387.903990224004,
+        4414.40000385046,
+        4433.104004710913
+      ],
+      "pass_range_over_mean": 0.010245248463301687,
+      "memcpy_mean_us": 6240.424007177353,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.516424173832,
+      "ours_to_reference": 1.6391513076558715,
+      "reference_cache_hit_rate": 0.7893639077093104,
+      "unique_miss_MB": 259.615077,
+      "max_abs_error": {
+        "ours": 0.0024538040161132812,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f32_i256_son_lru_g100_l0_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l20000",
+      "fetch_ctas": 32,
+      "host_item_entries": 256,
+      "host_split": true,
+      "passes": 3,
+      "mean_us": 4436.2506705025835,
+      "pass_means_us": [
+        4410.880019888282,
+        4446.519995108247,
+        4451.351996511221
+      ],
+      "pass_range_over_mean": 0.009123013920751695,
+      "memcpy_mean_us": 6263.877348353465,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.6774206658174,
+      "ours_to_reference": 1.6481360791759458,
+      "reference_cache_hit_rate": 0.7892914809927631,
+      "unique_miss_MB": 259.638678,
+      "max_abs_error": {
+        "ours": 0.0024538040161132812,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f32_i256_son_lru_g100_l20000_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l0",
+      "fetch_ctas": 32,
+      "host_item_entries": 64,
+      "host_split": false,
+      "passes": 3,
+      "mean_us": 4211.725331222017,
+      "pass_means_us": [
+        4183.192007243633,
+        4222.455998882651,
+        4229.527987539768
+      ],
+      "pass_range_over_mean": 0.011001662419113814,
+      "memcpy_mean_us": 6239.584007610877,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.447964173832,
+      "ours_to_reference": 1.564854824349112,
+      "reference_cache_hit_rate": 0.7893746640047556,
+      "unique_miss_MB": 259.605006,
+      "max_abs_error": {
+        "ours": 0.0019512176513671875,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f32_i64_soff_lru_g100_l0_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l20000",
+      "fetch_ctas": 32,
+      "host_item_entries": 64,
+      "host_split": false,
+      "passes": 3,
+      "mean_us": 4230.800000950694,
+      "pass_means_us": [
+        4214.176008477807,
+        4229.103999212384,
+        4249.119995161891
+      ],
+      "pass_range_over_mean": 0.008259427691271568,
+      "memcpy_mean_us": 6268.610676129659,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.187564173832,
+      "ours_to_reference": 1.5720940663047052,
+      "reference_cache_hit_rate": 0.7894356623126865,
+      "unique_miss_MB": 259.571181,
+      "max_abs_error": {
+        "ours": 0.0019550323486328125,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f32_i64_soff_lru_g100_l20000_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l0",
+      "fetch_ctas": 32,
+      "host_item_entries": 64,
+      "host_split": true,
+      "passes": 3,
+      "mean_us": 4420.040012647708,
+      "pass_means_us": [
+        4396.824030205607,
+        4428.552012890577,
+        4434.74399484694
+      ],
+      "pass_range_over_mean": 0.008579099857201898,
+      "memcpy_mean_us": 6240.930676460266,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.452360665817,
+      "ours_to_reference": 1.6422508818080173,
+      "reference_cache_hit_rate": 0.789403349943983,
+      "unique_miss_MB": 259.602558,
+      "max_abs_error": {
+        "ours": 0.0033152103424072266,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f32_i64_son_lru_g100_l0_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l20000",
+      "fetch_ctas": 32,
+      "host_item_entries": 64,
+      "host_split": true,
+      "passes": 3,
+      "mean_us": 4431.898669029276,
+      "pass_means_us": [
+        4423.536006361246,
+        4430.936004966497,
+        4441.223995760083
+      ],
+      "pass_range_over_mean": 0.003991063586909876,
+      "memcpy_mean_us": 6268.0480020741625,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.179284173832,
+      "ours_to_reference": 1.6468240132094467,
+      "reference_cache_hit_rate": 0.7894427151527469,
+      "unique_miss_MB": 259.563036,
+      "max_abs_error": {
+        "ours": 0.0026288628578186035,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f32_i64_son_lru_g100_l20000_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l0",
+      "fetch_ctas": 64,
+      "host_item_entries": 64,
+      "host_split": false,
+      "passes": 3,
+      "mean_us": 4652.130658427875,
+      "pass_means_us": [
+        4636.81598007679,
+        4661.703988909721,
+        4657.8720062971115
+      ],
+      "pass_range_over_mean": 0.005349808649042134,
+      "memcpy_mean_us": 6237.6053395370645,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.4737041738317,
+      "ours_to_reference": 1.7284696674589586,
+      "reference_cache_hit_rate": 0.7893993607473239,
+      "unique_miss_MB": 259.596243,
+      "max_abs_error": {
+        "ours": 0.0019550323486328125,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f64_i64_soff_lru_g100_l0_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l20000",
+      "fetch_ctas": 64,
+      "host_item_entries": 64,
+      "host_split": false,
+      "passes": 3,
+      "mean_us": 4671.869333833456,
+      "pass_means_us": [
+        4656.287983059883,
+        4677.448008209467,
+        4681.872010231018
+      ],
+      "pass_range_over_mean": 0.0054761863705940226,
+      "memcpy_mean_us": 6260.530670483907,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.4903706658174,
+      "ours_to_reference": 1.735792698629546,
+      "reference_cache_hit_rate": 0.7893277055322171,
+      "unique_miss_MB": 259.623483,
+      "max_abs_error": {
+        "ours": 0.0019550323486328125,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f64_i64_soff_lru_g100_l20000_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l0",
+      "fetch_ctas": 64,
+      "host_item_entries": 64,
+      "host_split": true,
+      "passes": 3,
+      "mean_us": 4651.586659252644,
+      "pass_means_us": [
+        4638.7440003454685,
+        4655.783995985985,
+        4660.231981426477
+      ],
+      "pass_range_over_mean": 0.004619494949807367,
+      "memcpy_mean_us": 6240.093329300483,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.467764173832,
+      "ours_to_reference": 1.7282713622544486,
+      "reference_cache_hit_rate": 0.7893842922433443,
+      "unique_miss_MB": 259.603071,
+      "max_abs_error": {
+        "ours": 0.0019512176513671875,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f64_i64_son_lru_g100_l0_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l20000",
+      "fetch_ctas": 64,
+      "host_item_entries": 64,
+      "host_split": true,
+      "passes": 3,
+      "mean_us": 4669.522667924563,
+      "pass_means_us": [
+        4654.6560153365135,
+        4673.759985715151,
+        4680.152002722025
+      ],
+      "pass_range_over_mean": 0.005460084295263408,
+      "memcpy_mean_us": 6254.645336419344,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.153904173832,
+      "ours_to_reference": 1.735137726862217,
+      "reference_cache_hit_rate": 0.7894197080107568,
+      "unique_miss_MB": 259.57398,
+      "max_abs_error": {
+        "ours": 0.0019550323486328125,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f64_i64_son_lru_g100_l20000_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l0",
+      "fetch_ctas": 8,
+      "host_item_entries": 64,
+      "host_split": false,
+      "passes": 3,
+      "mean_us": 5891.330664356549,
+      "pass_means_us": [
+        5887.623980641365,
+        5891.840003430843,
+        5894.52800899744
+      ],
+      "pass_range_over_mean": 0.0011718962572998513,
+      "memcpy_mean_us": 6237.546669940154,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.415504173832,
+      "ours_to_reference": 2.1889339105092867,
+      "reference_cache_hit_rate": 0.7894304394591346,
+      "unique_miss_MB": 259.586064,
+      "max_abs_error": {
+        "ours": 0.0030652880668640137,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f8_i64_soff_lru_g100_l0_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l20000",
+      "fetch_ctas": 8,
+      "host_item_entries": 64,
+      "host_split": false,
+      "passes": 3,
+      "mean_us": 7419.253331919511,
+      "pass_means_us": [
+        7416.767992079258,
+        7417.687993496656,
+        7423.304010182619
+      ],
+      "pass_range_over_mean": 0.0008809536230878545,
+      "memcpy_mean_us": 6255.466664830844,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.171484173832,
+      "ours_to_reference": 2.7568861276772787,
+      "reference_cache_hit_rate": 0.7894595962502878,
+      "unique_miss_MB": 259.561932,
+      "max_abs_error": {
+        "ours": 0.002272963523864746,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f8_i64_soff_lru_g100_l20000_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l0",
+      "fetch_ctas": 8,
+      "host_item_entries": 64,
+      "host_split": true,
+      "passes": 3,
+      "mean_us": 5911.36800001065,
+      "pass_means_us": [
+        5908.079996705055,
+        5912.648003548384,
+        5913.375999778509
+      ],
+      "pass_range_over_mean": 0.0008959014349037925,
+      "memcpy_mean_us": 6235.9066766997175,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.4946606658173,
+      "ours_to_reference": 2.1963142213881657,
+      "reference_cache_hit_rate": 0.7894157635388188,
+      "unique_miss_MB": 259.596915,
+      "max_abs_error": {
+        "ours": 0.0024538040161132812,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f8_i64_son_lru_g100_l0_mtp8_b128.json"
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l20000",
+      "fetch_ctas": 8,
+      "host_item_entries": 64,
+      "host_split": true,
+      "passes": 3,
+      "mean_us": 7591.965331385533,
+      "pass_means_us": [
+        7590.167984366417,
+        7589.912012219429,
+        7595.815997570753
+      ],
+      "pass_range_over_mean": 0.000777662317149518,
+      "memcpy_mean_us": 6256.15734855334,
+      "local_mean_us": 2467.1786644806466,
+      "reference_mean_stepwise_max_us": 2691.167794173832,
+      "ours_to_reference": 2.821067251109925,
+      "reference_cache_hit_rate": 0.7894194197847758,
+      "unique_miss_MB": 259.573236,
+      "max_abs_error": {
+        "ours": 0.0026288628578186035,
+        "memcpy": 0.0019550323486328125
+      },
+      "raw": "temp/glm_trace/100gb_review_20261030/raw/f8_i64_son_lru_g100_l20000_mtp8_b128.json"
+    }
+  ],
+  "comparisons": [
+    {
+      "confirmation": false,
+      "setting": "g100_l0",
+      "default": {
+        "confirmation": false,
+        "setting": "g100_l0",
+        "fetch_ctas": 16,
+        "host_item_entries": 64,
+        "host_split": true,
+        "passes": 3,
+        "mean_us": 4057.5679944207272,
+        "pass_means_us": [
+          4023.896001279354,
+          4076.6879860311747,
+          4072.1199959516525
+        ],
+        "pass_range_over_mean": 0.01301074555605995,
+        "memcpy_mean_us": 6241.3093484938145,
+        "local_mean_us": 2467.1786644806466,
+        "reference_mean_stepwise_max_us": 2691.458494173832,
+        "ours_to_reference": 1.507572196711967,
+        "reference_cache_hit_rate": 0.7894213752489743,
+        "unique_miss_MB": 259.59024,
+        "max_abs_error": {
+          "ours": 0.0021439790725708008,
+          "memcpy": 0.0019550323486328125
+        },
+        "raw": "temp/glm_trace/100gb_review_20261030/raw/f16_i64_son_lru_g100_l0_mtp8_b128.json"
+      },
+      "best": {
+        "confirmation": false,
+        "setting": "g100_l0",
+        "fetch_ctas": 16,
+        "host_item_entries": 64,
+        "host_split": false,
+        "passes": 3,
+        "mean_us": 3894.314669072628,
+        "pass_means_us": [
+          3869.4480042904615,
+          3893.488012254238,
+          3920.0079906731844
+        ],
+        "pass_range_over_mean": 0.012983025430444465,
+        "memcpy_mean_us": 6240.885340919097,
+        "local_mean_us": 2467.1786644806466,
+        "reference_mean_stepwise_max_us": 2691.453424173832,
+        "ours_to_reference": 1.4469188409857123,
+        "reference_cache_hit_rate": 0.7894387619843354,
+        "unique_miss_MB": 259.585215,
+        "max_abs_error": {
+          "ours": 0.0019550323486328125,
+          "memcpy": 0.0019550323486328125
+        },
+        "raw": "temp/glm_trace/100gb_review_20261030/raw/f16_i64_soff_lru_g100_l0_mtp8_b128.json"
+      },
+      "reduction_vs_same_round_default": 0.04023427964055737
+    },
+    {
+      "confirmation": false,
+      "setting": "g100_l20000",
+      "default": {
+        "confirmation": false,
+        "setting": "g100_l20000",
+        "fetch_ctas": 16,
+        "host_item_entries": 64,
+        "host_split": true,
+        "passes": 3,
+        "mean_us": 4400.242671991388,
+        "pass_means_us": [
+          4373.544009402394,
+          4408.912003040314,
+          4418.272003531456
+        ],
+        "pass_range_over_mean": 0.010164892589621529,
+        "memcpy_mean_us": 6260.106675326824,
+        "local_mean_us": 2467.1786644806466,
+        "reference_mean_stepwise_max_us": 2691.612604173832,
+        "ours_to_reference": 1.634797914517125,
+        "reference_cache_hit_rate": 0.7892932861322044,
+        "unique_miss_MB": 259.642242,
+        "max_abs_error": {
+          "ours": 0.002272963523864746,
+          "memcpy": 0.0019550323486328125
+        },
+        "raw": "temp/glm_trace/100gb_review_20261030/raw/f16_i64_son_lru_g100_l20000_mtp8_b128.json"
+      },
+      "best": {
+        "confirmation": false,
+        "setting": "g100_l20000",
+        "fetch_ctas": 32,
+        "host_item_entries": 64,
+        "host_split": false,
+        "passes": 3,
+        "mean_us": 4230.800000950694,
+        "pass_means_us": [
+          4214.176008477807,
+          4229.103999212384,
+          4249.119995161891
+        ],
+        "pass_range_over_mean": 0.008259427691271568,
+        "memcpy_mean_us": 6268.610676129659,
+        "local_mean_us": 2467.1786644806466,
+        "reference_mean_stepwise_max_us": 2691.187564173832,
+        "ours_to_reference": 1.5720940663047052,
+        "reference_cache_hit_rate": 0.7894356623126865,
+        "unique_miss_MB": 259.571181,
+        "max_abs_error": {
+          "ours": 0.0019550323486328125,
+          "memcpy": 0.0019550323486328125
+        },
+        "raw": "temp/glm_trace/100gb_review_20261030/raw/f32_i64_soff_lru_g100_l20000_mtp8_b128.json"
+      },
+      "reduction_vs_same_round_default": 0.038507574166133596
+    },
+    {
+      "confirmation": true,
+      "setting": "g100_l0",
+      "default": {
+        "confirmation": true,
+        "setting": "g100_l0",
+        "fetch_ctas": 16,
+        "host_item_entries": 64,
+        "host_split": true,
+        "passes": 5,
+        "mean_us": 4108.220804110169,
+        "pass_means_us": [
+          4067.4319993704557,
+          4112.480008974671,
+          4121.696002781391,
+          4118.54400113225,
+          4120.952008292079
+        ],
+        "pass_range_over_mean": 0.013208638483268878,
+        "memcpy_mean_us": 6239.905599504709,
+        "local_mean_us": 2467.1786644806466,
+        "reference_mean_stepwise_max_us": 2691.445312173832,
+        "ours_to_reference": 1.526399509411556,
+        "reference_cache_hit_rate": 0.7894121296552224,
+        "unique_miss_MB": 259.5985506,
+        "max_abs_error": {
+          "ours": 0.0022426247596740723,
+          "memcpy": 0.0019550323486328125
+        },
+        "raw": "temp/glm_trace/100gb_review_20261030/raw/confirm_f16_i64_son_lru_g100_l0_mtp8_b128.json"
+      },
+      "best": {
+        "confirmation": true,
+        "setting": "g100_l0",
+        "fetch_ctas": 16,
+        "host_item_entries": 64,
+        "host_split": true,
+        "passes": 5,
+        "mean_us": 4108.220804110169,
+        "pass_means_us": [
+          4067.4319993704557,
+          4112.480008974671,
+          4121.696002781391,
+          4118.54400113225,
+          4120.952008292079
+        ],
+        "pass_range_over_mean": 0.013208638483268878,
+        "memcpy_mean_us": 6239.905599504709,
+        "local_mean_us": 2467.1786644806466,
+        "reference_mean_stepwise_max_us": 2691.445312173832,
+        "ours_to_reference": 1.526399509411556,
+        "reference_cache_hit_rate": 0.7894121296552224,
+        "unique_miss_MB": 259.5985506,
+        "max_abs_error": {
+          "ours": 0.0022426247596740723,
+          "memcpy": 0.0019550323486328125
+        },
+        "raw": "temp/glm_trace/100gb_review_20261030/raw/confirm_f16_i64_son_lru_g100_l0_mtp8_b128.json"
+      },
+      "reduction_vs_same_round_default": 0.0
+    },
+    {
+      "confirmation": true,
+      "setting": "g100_l20000",
+      "default": {
+        "confirmation": true,
+        "setting": "g100_l20000",
+        "fetch_ctas": 16,
+        "host_item_entries": 64,
+        "host_split": true,
+        "passes": 5,
+        "mean_us": 4428.1696036458015,
+        "pass_means_us": [
+          4403.024015948176,
+          4429.7999907284975,
+          4433.879990130663,
+          4428.640026599169,
+          4445.503994822502
+        ],
+        "pass_range_over_mean": 0.009593123723027936,
+        "memcpy_mean_us": 6265.411203354597,
+        "local_mean_us": 2467.1786644806466,
+        "reference_mean_stepwise_max_us": 2691.591734665817,
+        "ours_to_reference": 1.6451862095629428,
+        "reference_cache_hit_rate": 0.7892948763445131,
+        "unique_miss_MB": 259.634304,
+        "max_abs_error": {
+          "ours": 0.0024538040161132812,
+          "memcpy": 0.0019550323486328125
+        },
+        "raw": "temp/glm_trace/100gb_review_20261030/raw/confirm_f16_i64_son_lru_g100_l20000_mtp8_b128.json"
+      },
+      "best": {
+        "confirmation": true,
+        "setting": "g100_l20000",
+        "fetch_ctas": 32,
+        "host_item_entries": 64,
+        "host_split": false,
+        "passes": 5,
+        "mean_us": 4222.929603233933,
+        "pass_means_us": [
+          4191.096022725105,
+          4229.92798872292,
+          4233.448002487421,
+          4225.224008783698,
+          4234.951993450522
+        ],
+        "pass_range_over_mean": 0.010385200523312557,
+        "memcpy_mean_us": 6258.753596991301,
+        "local_mean_us": 2467.1786644806466,
+        "reference_mean_stepwise_max_us": 2691.178912173832,
+        "ours_to_reference": 1.5691746037883492,
+        "reference_cache_hit_rate": 0.789405097438228,
+        "unique_miss_MB": 259.5826602,
+        "max_abs_error": {
+          "ours": 0.002171754837036133,
+          "memcpy": 0.0019550323486328125
+        },
+        "raw": "temp/glm_trace/100gb_review_20261030/raw/confirm_f32_i64_soff_lru_g100_l20000_mtp8_b128.json"
+      },
+      "reduction_vs_same_round_default": 0.04634872165756476
+    }
+  ],
+  "files": [
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/confirm_f16_i64_son_lru_g100_l0_mtp8_b128.json",
+      "sha256": "a1e2b2de1cc661b7ac9b3c30a9ff72340a4d476341fbeb1b706ac169f7a5fd74"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/confirm_f16_i64_son_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "1f356ab43bb2925d2876a9d804849a29430a5656ffa20e7db13c5871af1d2cb9"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/confirm_f32_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "235fc4b3f543b6d428d0d586c71a03249d4fe42a64b457ec51b3a5cab00e2e43"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/confirm_f32_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "a4f47a144fcf9865d128e1a411c480a9ff339a3ed862650c1be88533bdfcc15f"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f16_i256_son_lru_g100_l0_mtp8_b128.json",
+      "sha256": "0c3b8a77a7cf14dada1a8247e53bb2eca63eb830fa755d9b9edbca81654e8f20"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f16_i256_son_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "595bd74cfa07376d3c62d850a6a808d3f873e897ad5fde04da2cf81961a9fa38"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f16_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "c565ecec0553db4cb2947e8687571ba39e4f38d3da75a62bdaffcf6c21b2c42a"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f16_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "2f0054c8dcbda43b65a0686208bf6ac77a55bc72301ed8dee649401a8618c7fa"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f16_i64_son_lru_g100_l0_mtp8_b128.json",
+      "sha256": "9b3c9621022ce45df7f78bc998ba75d2f8b67ea19eba137daf344b8e4853c5e3"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f16_i64_son_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "12330398b15d1feea7c086bdb7fd4d3e4eb981ff54f00ff68852f64ae49eeb2c"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f32_i256_son_lru_g100_l0_mtp8_b128.json",
+      "sha256": "f11abd77f102ecd599e711f8b91373ccacde6e30fbef829ac61d7de2825f387b"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f32_i256_son_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "d2fd1db58c611d6a5bca5b24846b36f44bf48529949c0335d07cef31cc44709c"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f32_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "aac59c5965f427d5d2baa967eaf0b7fdf7eacfdc4cdb277e9f29ae3097cd4194"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f32_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "1e1c06f3c98112c63943df2c6b0ace6d6469b9ddd3c4341d911e100690d43786"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f32_i64_son_lru_g100_l0_mtp8_b128.json",
+      "sha256": "b286d875b87ea879deaaf4d39fca365302d83b8c4d39d52e233f7c6b4e331969"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f32_i64_son_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "4f4bdbe745bc685ce491fdc6b25157c22e5a541d822f2cc91549b8f8f6819d2c"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f64_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "18e8da4164a7150be7ff1c3b7087b08b18ee6004caff44973e360dacda820694"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f64_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "54ca414e3f5c3c52085f8d8968b8c295f7e25d3581a5ef155ad2e5f649a8a375"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f64_i64_son_lru_g100_l0_mtp8_b128.json",
+      "sha256": "fb05da580862367aa2e635752c975857da9a354e4617f4b87d9d1b26dc4f7227"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f64_i64_son_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "8f92c93af0f74959bac88b31f3fed764ffb96cdcd1056448e15a4a4a3f01ff4a"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f8_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "9d117f367196c07b97b0abf1c0b7eb4794313243a101bf802ef4953bdf3848dd"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f8_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "2d6696918d6c8a7a7c86b966be3f4debf63f0b827fc44e5cf95dc8faa62b6bd1"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f8_i64_son_lru_g100_l0_mtp8_b128.json",
+      "sha256": "b5259275d8439cb0250d157d971ce854cf8608a55a51c321358a2de270daf4aa"
+    },
+    {
+      "path": "temp/glm_trace/100gb_review_20261030/raw/f8_i64_son_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "39f1bad96f9604c8fa979940d667ba0fe7eb333c862f604d0a7d01fd6d33e792"
+    }
+  ]
+}

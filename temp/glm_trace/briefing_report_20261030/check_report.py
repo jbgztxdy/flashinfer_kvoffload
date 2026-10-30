@@ -10,7 +10,7 @@ from references import for_row
 DEST=Path(__file__).resolve().parent
 ROOT=DEST.parents[2]
 SOURCE=ROOT/"temp/glm_trace/kernel_report_20261029"
-DOC=ROOT/"docs/mla_host_glm53_report_external.md"
+DOC=ROOT/"docs/mla_host_glm53_report.md"
 load=lambda p:json.loads(p.read_text())
 digest=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 rows=load(SOURCE/"matrix.json")
@@ -32,8 +32,11 @@ def label(s):
 settings={label(s):s["name"] for s in meta["settings"]}
 text=DOC.read_text();lines=text.splitlines()
 mode=None;checked=0;summaries=0;bounds=0;near_rows=0;repeat_rows=0;physical_rows=0;route_rows=0
+link_diagnosis_rows=0;parameter_rows=0
 routes=load(ROOT/"temp/glm_trace/route_compare_20261030/summary.json")
 assert routes["complete"] and len(routes["pairs"])==12
+review=load(ROOT/"temp/glm_trace/100gb_review_20261030/summary.json")
+assert review["complete"] and review["sweep_cells"]==20 and review["confirmation_cells"]==4
 for line in lines:
     if not line.startswith("|"):
         mode=None;continue
@@ -54,6 +57,10 @@ for line in lines:
         mode=("physical",False,False,len(fields));continue
     if fields[:4]==["链路","请求","staged µs","原地读 µs"]:
         mode=("route",False,False,len(fields));continue
+    if fields[0]=="主矩阵链路对照":
+        mode=("link_diagnosis",False,False,len(fields));continue
+    if fields[0]=="参数核查阶段":
+        mode=("parameters",False,False,len(fields));continue
     if not mode or all(re.fullmatch(r"[:\-]+",f) for f in fields):continue
     assert len(fields)==mode[3],fields
     if mode[0]=="samples":
@@ -83,7 +90,7 @@ for line in lines:
         summaries+=1
     elif mode[0]=="bounds":
         kind,link=fields[0].rsplit("，",1)
-        kind="nocache" if kind.startswith("无LRU") else "lru"
+        kind="nocache" if "无LRU" in kind else "lru"
         r=lookup[kind,settings[link],8,128,.3 if kind=="nocache" else None]
         bound=for_row(r)["mean_stepwise_max_us"]
         result=[fields[0],*[f"{r[k]:.2f}" for k in ("ours_mean_us","memcpy_mean_us","local_mean_us")],
@@ -115,13 +122,30 @@ for line in lines:
                   f"{r['measurements']['sm_gather_random']['median_GBps']:.2f}",f"{r['reference_GBps']:.2f}"]
         assert fields==expected
         physical_rows+=1
-    else:
+    elif mode[0]=="route":
         p=next(p for p in routes["pairs"] if p["setting"]==settings[fields[0]] and p["requests"]==int(fields[1]))
         expected=[fields[0],fields[1],f"{p['staged']['mean_us']:.2f}",f"{p['inplace']['mean_us']:.2f}",
                   f"{p['inplace_to_staged']:.3f}","原地读" if p["faster_route"]=="inplace" else "staged"]
         assert fields==expected,(fields,expected)
         route_rows+=1
+    elif mode[0]=="link_diagnosis":
+        r=lookup["lru",settings[fields[0]],8,128,None]
+        expected=[fields[0],*[f"{r[k]:.2f}" for k in ("ours_mean_us","memcpy_mean_us","local_mean_us")],
+                  f"{for_row(r)['mean_stepwise_max_us']:.2f}"]
+        assert fields==expected,(fields,expected)
+        link_diagnosis_rows+=1
+    else:
+        confirmed=fields[0].startswith("倒序确认")
+        name="default" if fields[0].endswith("默认") else "best"
+        pair=next(p for p in review["comparisons"] if p["confirmation"]==confirmed and p["setting"]=="g100_l20000")
+        r=pair[name]
+        expected=[fields[0],str(r["fetch_ctas"]),str(r["host_item_entries"]),"on" if r["host_split"] else "off",
+                  *[f"{r[k]:.2f}" for k in ("mean_us","memcpy_mean_us","local_mean_us","reference_mean_stepwise_max_us")],
+                  f"{(r['ours_to_reference']-1)*100:.1f}%",f"{r['reference_cache_hit_rate']*100:.3f}%"]
+        assert fields==expected,(fields,expected)
+        parameter_rows+=1
 assert (checked,summaries,bounds,near_rows,repeat_rows,physical_rows,route_rows)==(26,17,6,4,2,2,12)
+assert link_diagnosis_rows==parameter_rows==4
 
 figures=load(DEST/"figure_data.json")
 assert len(figures)==6
@@ -129,6 +153,7 @@ fig_count=0
 for name,figure in figures.items():
     assert (ROOT/figure["file"]).exists()
     assert len(figure["rows"])==manifest["figure_cells"][name]
+    assert all(s in figure["caption"] for s in ("trace","staged","LRU"))
     for r in figure["rows"]:
         assert r==lookup[key(r)]
         fig_count+=1
@@ -165,6 +190,15 @@ assert manifest["physical_bandwidth_sha256"]==digest(DEST/"physical_bandwidth.js
 assert manifest["verification_sha256"]==digest(DEST/"verification.json")
 assert manifest["verification_notes_sha256"]==digest(DEST/"verification_notes.md")
 assert manifest["route_comparison_sha256"]==digest(ROOT/"temp/glm_trace/route_compare_20261030/summary.json")
+assert manifest["parameter_review_sha256"]==digest(ROOT/"temp/glm_trace/100gb_review_20261030/summary.json")
+parameter_audit=load(ROOT/"temp/glm_trace/100gb_review_20261030/audit.json")
+assert parameter_audit["complete"] and parameter_audit["source_matrix_sha256"]==digest(SOURCE/"matrix.json")
+review_dir=ROOT/"temp/glm_trace/100gb_review_20261030"
+assert parameter_audit["summary_sha256"]==digest(review_dir/"summary.json")
+assert parameter_audit["csv_sha256"]==digest(review_dir/"parameters.csv")
+assert parameter_audit["readme_sha256"]==digest(review_dir/"README.md")
+for name,sha in parameter_audit["source_sha256"].items():assert digest(review_dir/name)==sha
+for f in parameter_audit["files"]:assert digest(ROOT/f["path"])==f["sha256"]
 for name,sha in manifest["analysis_source_sha256"].items():assert digest(DEST/name)==sha
 verification=load(DEST/"verification.json")
 assert verification["matrix_unchanged_sha256"]==digest(SOURCE/"matrix.json")
@@ -176,6 +210,8 @@ summary=dict(complete=True,source_matrix_sha256=digest(SOURCE/"matrix.json"),sam
     full_link_summaries=summaries,ideal_bound_rows=bounds,near_fraction_rows=near_rows,
     independently_repeated_cases=3,repeat_comparison_rows=repeat_rows,physical_bandwidth_rows=physical_rows,
     supplemental_route_comparison_rows=route_rows,
+    supplemental_link_diagnosis_rows=link_diagnosis_rows,supplemental_parameter_rows=parameter_rows,
+    parameter_sweep_cells=review["sweep_cells"],parameter_confirmation_cells=review["confirmation_cells"],
     reference_definition=manifest["reference_definition"],
     figures=len(figures),figure_source_cells=fig_count,per_step_reference_cells_verified=fig_count,
     artifact_sha256=manifest["artifact_sha256"])

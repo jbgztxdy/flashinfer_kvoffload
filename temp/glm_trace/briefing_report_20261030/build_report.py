@@ -1,4 +1,4 @@
-"""Management briefing derived exclusively from the audited GLM53 kernel matrix."""
+"""Management briefing from the audited GLM53 matrix and labeled follow-up checks."""
 import hashlib
 import json
 import math
@@ -16,7 +16,7 @@ DEST=Path(__file__).resolve().parent
 ROOT=DEST.parents[2]
 SOURCE=ROOT/"temp/glm_trace/kernel_report_20261029"
 ASSETS=ROOT/"docs/assets/glm53_briefing_20261030"
-DOC=ROOT/"docs/mla_host_glm53_report_external.md"
+DOC=ROOT/"docs/mla_host_glm53_report.md"
 ASSETS.mkdir(parents=True,exist_ok=True)
 load=lambda path:json.loads(path.read_text())
 digest=lambda path:hashlib.sha256(path.read_bytes()).hexdigest()
@@ -121,8 +121,8 @@ def figures():
             bars(ax,values,[f"{f:.0%}" for f in META["host_fractions"]],legend=i==0 and j==0)
             ax.set_title(f"{label(s)} · {b} 请求 × MTP8",loc="left")
             ax.set_xlabel("选中 KV 的目标原始远端占比")
-    fig.suptitle("单步无 LRU：取数与计算融合，覆盖全部 0%–30% 远端比例",fontsize=15)
-    save(fig,"single_step",records,"固定MTP8、16/128请求，100/50GB/s＋20µs，全部七个远端比例。黑虚线为逐步max(纯device计算,unique搬运预算)的平均；细线为三次pass范围。")
+    fig.suptitle("真实 trace 快照 · staged · 无 LRU · 远端比例 0%–30%",fontsize=15)
+    save(fig,"single_step",records,"真实trace四个快照；本文staged、LRU关闭，Memcpy同样无LRU。MTP8、16/128请求，100/50GB/s＋20µs，全部七个远端比例。黑虚线为逐步max(纯device计算,unique搬运预算)的平均；细线为三次pass范围。")
 
     fig,axes=plt.subplots(2,2,figsize=(13.6,8.0),layout="constrained");records=[]
     for i,m in enumerate((1,8)):
@@ -131,8 +131,8 @@ def figures():
             values=[row("lru",s,m,b) for b in batches];records+=values
             ax=axes[i,j];bars(ax,values,[str(b) for b in batches],legend=i==0 and j==0)
             ax.set_title(f"{label(s)} · MTP{m}",loc="left");ax.set_xlabel("并发请求数")
-    fig.suptitle("真实 GLM-5.3 trace＋4096 槽 LRU：完整窗口平均耗时",fontsize=15)
-    save(fig,"trace_latency",records,"MTP1固定1/4/16/128/512请求，MTP8固定1/4/16/64/128请求；完整1024位置平均。黑虚线为逐步max(计算,unique搬运)的平均。")
+    fig.suptitle("真实 trace 完整回放 · staged · LRU 4096 槽/请求",fontsize=15)
+    save(fig,"trace_latency",records,"真实trace完整1024位置回放；本文staged＋LRU4096槽/请求，Memcpy同容量LRU。MTP1固定1/4/16/128/512请求，MTP8固定1/4/16/64/128请求。黑虚线为逐步max(计算,unique搬运)的平均。")
 
     fig,axes=plt.subplots(1,2,figsize=(13.6,4.0),layout="constrained");records=[]
     for m,marker in ((1,"o"),(8,"s")):
@@ -169,7 +169,8 @@ def figures():
     inset.set_title("原始本地占比放大",fontsize=8)
     inset.set_facecolor("#ffffff");inset.tick_params(length=2)
     for i,v in enumerate(original):inset.text(i,v+.002,f"{v:.3f}%",ha="center",fontsize=6)
-    save(fig,"trace_traffic",records,"取100GB/s＋20µs的实际miss计数；各项以全部top-k引用为分母并合计100%。原始本地约0.05%，左下角单独放大；LRU命中属于另外的本地读取。")
+    fig.suptitle("真实 trace 完整回放 · staged · LRU 4096 槽/请求",fontsize=15)
+    save(fig,"trace_traffic",records,"真实trace完整回放、本文staged＋LRU4096槽/请求，100GB/s＋20µs的实际miss计数；各项以全部top-k引用为分母并合计100%。原始本地约0.05%，左下角单独放大；LRU命中属于另外的本地读取。")
 
     fig,axes=plt.subplots(1,2,figsize=(13.6,4.1),layout="constrained");records=[]
     for ax,s in zip(axes,("g100_l20000","g50_l20000")):
@@ -183,17 +184,17 @@ def figures():
         ax.set_xticks(x,[r["requests"] for r in values],rotation=60,fontsize=8)
         ax.set_xlabel("并发请求数（列出全部25种MTP8形状）")
         ax.set_ylim(.85,4.2);dress(ax,"相对纯 device 计算的耗时倍数")
-        ax.set_title(label(s)+" · trace＋LRU",loc="left")
+        ax.set_title(label(s)+" · trace＋LRU4096 · staged",loc="left")
     axes[0].legend(frameon=False,ncol=2,fontsize=8)
-    save(fig,"distance_to_limits",records,"完整25种MTP8形状；黑虚线为逐步max(纯device计算,实际unique未命中字节/设置带宽)的平均，不包含附加延迟。")
+    save(fig,"distance_to_limits",records,"真实trace完整回放、本文staged＋LRU4096槽/请求，完整25种MTP8形状；黑虚线为逐步max(纯device计算,实际unique未命中字节/设置带宽)的平均，不包含附加延迟。")
 
     fig,axes=plt.subplots(1,2,figsize=(13.6,4.1),layout="constrained");records=[]
     for ax,s in zip(axes,("nvlink","pcie")):
         values=[row("lru",s,8,b) for b in (1,4,16,64,128)];records+=values
         bars(ax,values,[str(r["requests"]) for r in values],legend=s=="nvlink")
         ax.set_xlabel("并发请求数");ax.set_title(label(s)+" · MTP8＋LRU",loc="left")
-    fig.suptitle("物理链路补充：全部使用本文 staged 路径",fontsize=15)
-    save(fig,"physical_links",records,"固定1/4/16/64/128请求；黑虚线为逐步max(计算,unique搬运)的平均，PCIe/NVLink使用本次补测的物理带宽。全部为staged实测。")
+    fig.suptitle("物理链路 · 真实 trace 完整回放 · staged · LRU 4096 槽/请求",fontsize=15)
+    save(fig,"physical_links",records,"真实trace完整回放、本文staged＋LRU4096槽/请求，Memcpy同容量LRU，MTP8固定1/4/16/64/128请求；黑虚线为逐步max(计算,unique搬运)的平均，PCIe/NVLink使用本次补测的物理带宽。")
 
     fig,axes=plt.subplots(1,2,figsize=(13.0,3.6),layout="constrained");records=[]
     for ax,m in zip(axes,(1,8)):
@@ -211,7 +212,8 @@ def figures():
         for i in range(2):
             for j in range(5):ax.text(j,i,annotations[i][j],ha="center",va="center",fontsize=10)
         ax.tick_params(length=0)
-    save(fig,"bandwidth_latency",records,"每格覆盖该MTP全部batch形状；数值为等权几何平均加速比，另标严格快于Memcpy的形状数。")
+    fig.suptitle("真实 trace 完整回放 · staged · LRU 4096 槽/请求",fontsize=15)
+    save(fig,"bandwidth_latency",records,"真实trace完整回放、本文staged＋LRU4096槽/请求，Memcpy同容量LRU；每格覆盖该MTP全部batch形状；数值为等权几何平均加速比，另标严格快于Memcpy的形状数。")
 
 
 def image(name,number):
@@ -253,17 +255,27 @@ def document():
     yield ("本次已完成 **39 种 batch/MTP 形状 × 17 种链路**的系统测试：无 LRU 再扫描 7 个远端比例，"
            "共 **4,641 个单步比较格＋663 个真实 trace/LRU 比较格**，另有 312 个纯 device 参考格。"
            "全部参数覆盖与数值检查审计通过。\n")
+    yield ("**阅读口径**：文中“快”指算子GPU平均耗时更低；“接近极限”分别指纯device零传输参考，"
+           "或按实际unique未命中字节计算的完美重叠参考。主矩阵是固定参数的实测，尚未证明每种形状已达到最优配置。\n")
+    yield "| 实验部分 | 索引来源与回放 | 本文LRU | 本文路径 | Memcpy对照 |"
+    yield "|---|---|---|---|---|"
+    yield "| 单步扫描：§5、图1 | GLM-5.3真实trace的四个间隔快照 | 关闭，容量0 | staged，fetch16/item64 | 同输入，无LRU，先去重搬运再attention |"
+    yield "| 连续回放：§6、§7.2–7.3、图2–6 | 相同真实trace，完整1024位置 | 开启，4096槽/请求，每pass冷启动 | staged，fetch16/item64/split on | 同输入，同容量离线LRU，GPU搬运＋缓存写入＋attention |"
+    yield "| 路径对照：§7.4 | 相同真实trace，完整1024位置 | 两路径均开启4096槽/请求 | staged与原地读分别列出 | 每轮均保留同容量LRU的Memcpy计时 |"
+    yield "| 参数核查：§7.5 | 相同真实trace，完整1024位置，128请求×MTP8 | 开启4096槽/请求 | 全部staged，只改fetch/item/split | 每轮均保留同容量LRU的Memcpy计时 |"
+    yield "| 纯device参考 | 与对应实验相同query和selected KV，全部预置本地 | 无远端LRU维护 | 正常构建的本地attention | 只计attention，准备在事件外 |"
+    yield ""
     yield "| 汇报要点 | 本次实测证据 |"
     yield "|---|---|"
-    yield (f"| **与 Memcpy 相比，中大 batch 的融合收益明显** | 真实trace、MTP8、16–128请求的全部14种形状，"
+    yield (f"| **与 Memcpy 相比，中大 batch 的融合收益明显** | 真实trace完整回放、staged＋LRU4096、MTP8、16–128请求的全部14种形状，"
            f"100 GB/s＋20 µs下均领先，耗时降低{large['g100_l20000']['reduction_min']*100:.1f}%–"
            f"{large['g100_l20000']['reduction_max']*100:.1f}%；50 GB/s＋20 µs下均领先，降低"
            f"{large['g50_l20000']['reduction_min']*100:.1f}%–{large['g50_l20000']['reduction_max']*100:.1f}%。 |")
-    yield (f"| **单步计算可接近纯 device 参考** | 无LRU、100 GB/s＋20 µs、MTP8/16请求、远端10%–30%时，"
+    yield (f"| **单步计算可接近纯 device 参考** | 真实trace快照、staged、无LRU、100 GB/s＋20 µs、MTP8/16请求、远端10%–30%时，"
            f"本文耗时为纯device的{min(single_ratios):.2f}–"
            f"{max(single_ratios):.2f}倍；物理NVLink、远端10%时为"
            f"{near['ours_to_local_mean']:.3f}倍。 |")
-    yield (f"| **带宽受限的大 batch 已接近理想重叠下限** | 真实trace、50 GB/s＋20 µs、MTP8/128请求："
+    yield (f"| **带宽受限的大 batch 已接近理想重叠下限** | 真实trace完整回放、staged＋LRU4096、50 GB/s＋20 µs、MTP8/128请求："
            f"本文{c['ours_mean_us']/1000:.3f} ms，Memcpy {c['memcpy_mean_us']/1000:.3f} ms，耗时降低"
            f"{(1-c['ours_to_memcpy'])*100:.1f}%；理想重叠参考{c_ref['mean_stepwise_max_us']/1000:.3f} ms，"
            f"本文高出{(c_ref['ours_to_reference']-1)*100:.1f}%。物理PCIe的32/64/128请求高出约"
@@ -272,7 +284,8 @@ def document():
     yield ""
     yield ("**结论的适用范围**：中大 batch、有限带宽场景已体现稳定且可观的融合收益；低远端比例或较快链路"
            "可以接近纯 device 计算。原始远端流量较高时，物理传输预算会高于纯 device 时间，此时应考察"
-           "与计算/传输共同决定的理想重叠下限的距离。小 batch 和部分 NVLink 参数仍有改进空间，完整汇总见第8节。\n")
+           "与计算/传输共同决定的理想重叠下限的距离。100 GB/s的128请求、MTP8、staged＋LRU仍高于参考65.3%，"
+           "不能概括为所有链路都接近极限；小batch和部分NVLink参数也仍有改进空间，完整汇总见第8节。\n")
     yield "## 2. Kernel 设计与本次启用配置\n"
     yield ("Memcpy 方案先把所需远端页搬到本地，再执行 attention；搬运和计算在依赖关系上串行。本文先统一解析"
            "整个 batch 的 top-k，识别本地页、LRU命中页和远端未命中页；fetch线程块只取唯一未命中页，"
@@ -290,19 +303,21 @@ def document():
     yield "**主矩阵与图1–6的本文数据均为 staged 路径，包括物理 NVLink；§7.4另外列出原地读路径对照。**\n"
     yield "| 测试部分 | 本文LRU | 本文取数路径 | 其他固定参数 |"
     yield "|---|---|---|---|"
-    yield "| 单步、指定远端比例 | 关闭（容量0） | batched staged；MTP内去重仍开启 | fetch CTA=16，Host item=64条目 |"
+    yield "| 单步、指定远端比例 | 关闭（容量0） | batched staged；MTP内去重仍开启 | fetch CTA=16，Host item=64条目，host_split=on |"
     yield "| 连续真实trace回放 | 开启，每请求4096槽 | 同一batched staged路径，融合LRU | 同上，每pass冷启动 |"
     yield "| 纯device参考 | 不需要远端缓存 | 正常构建的本地attention | 全部选中KV预置本地，只计attention |"
     yield ""
     yield ("本报告的远端比例指top-k引用落到原始远端的比例，与LRU命中率不同；该定义同时适用于Host和peer存储。"
            "无LRU的0%–30%为目标值，固定页映射下实际比例略有波动，完整矩阵同时记录实际值。\n")
     yield ("主矩阵中单query也固定使用batched staged实现；可选SMALL_PREPARE优化本轮关闭。主矩阵评估同一套固定配置，"
-           "并未按参数点重新调优。产品实现同时支持原地读；§7.4补充两种路径的独立对照，不改变主矩阵汇总口径。\n")
+           "并未按参数点重新调优。产品实现同时支持原地读；§7.4补充路径对照，§7.5补充现有参数扫描。"
+           "host_split控制尾部attention工作项是否拆成本地/远端两类，关闭它仍可使用staged，并不等于原地读。\n")
     yield "## 3. GLM-5.3 trace 采集与回放方法\n"
     yield ("使用GLM-5.3权重对软件开发agent的多轮轨迹进行离线因果前向计算。原始语料来自"
            "`nebius/SWE-rebench-openhands-trajectories`，按模型原生聊天及工具调用模板构造4篇64K文档，"
            "每篇来自一条轨迹。逐层记录indexer选出的top-2048 token位置、对应index score及窗口/层来源。"
-           "模型共有21个实际执行indexer的层；其余层复用映射另行保留。\n")
+           "模型共有21个实际执行indexer的层；其余层复用映射另行保留。采集使用A800上的BF16逐层prefill，"
+           "输入已知语料的真实token前缀（teacher forcing），记录每位置的因果top-k；不是在线自由生成或真实MTP草稿过程的计时trace。\n")
     yield ("正式性能回放选取**4段完整、连续的1024位置assistant窗口**，起点为文档1的35184/41887/48296和"
            "文档3的50621；每窗口21层，共84组层×窗口访问序列。窗口内不跳过位置、不拼接不连续token，"
            "请求在不同batch之间使用相同前缀绑定，整个回放期间不换层或窗口。\n")
@@ -345,7 +360,8 @@ def document():
         yield (f"| {label(s['name'])} | {s['measurements']['dma_contiguous']['median_GBps']:.2f} | "
                f"{s['measurements']['sm_gather_random']['median_GBps']:.2f} | {s['reference_GBps']:.2f} |")
     yield ""
-    yield "## 5. 单步无 LRU：融合取数相对 Memcpy 的收益\n"
+    yield "## 5. 真实 trace 快照、staged、无 LRU：单步取数融合收益\n"
+    yield "**本节全部数据：GLM-5.3真实trace四快照；本文staged、LRU关闭；Memcpy也关闭LRU。**\n"
     yield image("single_step",1)
     yield (f"在100 GB/s＋20 µs、MTP8/16请求下，远端比例从10%到30%，本文分别为{a['ours_mean_us']:.2f}和"
            f"{b['ours_mean_us']:.2f} µs，对应Memcpy {a['memcpy_mean_us']:.2f}和{b['memcpy_mean_us']:.2f} µs，"
@@ -359,12 +375,13 @@ def document():
            "例如低流量时，Memcpy搬运成本较小，融合调度与staging成本可能抵消重叠收益。"
            "本图固定16和128请求，未按优胜结果筛选参数点。\n")
     yield "### 5.1 MTP1 与小 batch 补充\n"
-    yield ("以下固定远端目标30%，补充MTP1的1/4/16/128请求。小batch的融合准备开销更突出；"
+    yield ("以下仍为真实trace四快照、staged、LRU关闭；固定远端目标30%，补充MTP1的1/4/16/128请求。小batch的融合准备开销更突出；"
            "耗时降低为负值表示本文较慢，这些格子作为后续优化方向保留。\n")
     yield from comparison_table([row("nocache",s,1,batch,.3) for s in ("g100_l20000","g50_l20000")
                                  for batch in (1,4,16,128)],host=True)
     yield ""
-    yield "## 6. 真实 trace＋LRU：中大 batch 的收益持续存在\n"
+    yield "## 6. 真实 trace 完整回放、staged＋LRU：中大 batch 的收益\n"
+    yield "**本节全部数据：完整1024位置；本文staged、每请求4096槽LRU；Memcpy使用同容量LRU；三次冷启动pass的全步骤平均。**\n"
     yield image("trace_latency",2)
     for s in ("g100_l20000","g50_l20000"):
         all_shapes=stats(subset("lru",s));large_shapes=large[s]
@@ -399,6 +416,8 @@ def document():
            "缓存命中与MTP去重共同降低必须跨链路搬运的字节数，融合流水再隐藏剩余取数与计算。\n")
     yield ("引用命中率的分母是原始远端引用，最终搬运比例的分母是全部top-k条目，二者不能直接相减。"
            "命中率来自指定驻留规则、4096槽容量和逐launch LRU政策下的实测回放，并非线上生产缓存计数。\n")
+    yield ("Memcpy使用同容量的离线LRU规划，本文使用GPU并行融合LRU；同stamp淘汰并列次序可不同，"
+           "因此完整矩阵分别记录两者实际未命中量。本节命中率与黑虚线的unique字节采用本文实测值。\n")
     yield "### 6.2 对不同带宽与延迟组合的覆盖\n"
     yield image("bandwidth_latency",4)
     yield ("图4对每个MTP的全部batch等权统计，覆盖100/50 GB/s与五档延迟的所有组合。50 GB/s下，"
@@ -406,15 +425,16 @@ def document():
            "小batch的准备和同步成本仍会影响领先幅度。\n")
     yield "## 7. 距离纯 device 与理想重叠下限还有多远\n"
     yield "### 7.1 纯 device 是零传输计算参考\n"
-    yield (f"无LRU、物理NVLink、MTP8/16请求、远端10%时，本文{near['ours_mean_us']:.2f} µs，"
+    yield (f"真实trace快照、staged、无LRU、物理NVLink、MTP8/16请求、远端10%时，本文{near['ours_mean_us']:.2f} µs，"
            f"纯device {near['local_mean_us']:.2f} µs，差{(near['ours_to_local_mean']-1)*100:.1f}%；"
-           f"真实trace＋LRU、NVLink、MTP8/14请求时，本文{near_trace['ours_mean_us']:.2f} µs，"
+           f"真实trace完整回放、staged＋LRU4096、NVLink、MTP8/14请求时，本文{near_trace['ours_mean_us']:.2f} µs，"
            f"纯device {near_trace['local_mean_us']:.2f} µs，差{(near_trace['ours_to_local_mean']-1)*100:.1f}%，"
            f"同时比Memcpy降低{(1-near_trace['ours_to_memcpy'])*100:.1f}%耗时。后者是特定形状的接近device实例，"
            "不作为所有batch的代表；高延迟16请求的范围见第1节与图1。\n")
     yield ("纯device数值来自相同query和完整selected KV的全本地attention实测，代表本报告所用attention实现的"
            "零传输参考，不是对所有可能GPU kernel的数学绝对下界。\n")
     yield "### 7.2 完美重叠参考：传输主导时已接近链路极限\n"
+    yield "**本节图5：真实trace完整回放、staged＋LRU4096。下表另列无LRU快照作对照，各行标明。**\n"
     yield "```text\n每步理想传输时间（µs）= 该步unique未命中字节数 / (1000 × 带宽GB/s)\n每步完美重叠参考 = max(该步纯device平均时间, 该步理想传输时间)\n完整窗口参考 = 所有步骤完美重叠参考的算术平均\n```\n"
     yield ("本版按逐步数据重新核对参考值，修正了上一版先平均再取max的汇总顺序。"
            "对于流量随trace步骤变化的场景，mean(max)通常高于max(mean)。"
@@ -429,7 +449,7 @@ def document():
     for kind in ("nocache","lru"):
         for s in ("pcie","g50_l20000","g100_l20000"):
             r=row(kind,s,8,128,.3 if kind=="nocache" else None);bound=for_row(r)["mean_stepwise_max_us"]
-            yield (f"| {'无LRU，远端30%' if kind=='nocache' else '真实trace＋LRU'}，{label(s)} | "
+            yield (f"| {'trace快照／无LRU／staged／远端30%' if kind=='nocache' else 'trace完整回放／LRU4096／staged'}，{label(s)} | "
                    f"{r['ours_mean_us']:.2f} | {r['memcpy_mean_us']:.2f} | {r['local_mean_us']:.2f} | "
                    f"{bound:.2f} | {(r['ours_mean_us']/bound-1)*100:.1f}% |")
     yield ""
@@ -450,8 +470,8 @@ def document():
            "旧代理trace的100 GB/s＋20 µs、MTP8/128请求同样曾为5585.41 µs，"
            "传输参考3584.34 µs，约高55.8%；这不是本次独有的现象。"
            "本轮不限速模拟的同形状staged耗时约4.056 ms，而纯device为2.467 ms，说明差距不只来自"
-           "100 GB/s带宽和20 µs等待；各项固定成本的贡献仍需单独消融确认。\n")
-    yield "**关键点独立复测**：在原矩阵之外，使用相同脚本、同一对GPU、完整1024位置、3次冷启动pass重新测量，结果如下。\n"
+           "100 GB/s带宽和20 µs等待；各项成本的贡献仍需单独消融确认，§7.5给出本次参数核查。\n")
+    yield "**关键点独立复测**：均为staged＋LRU4096；在原矩阵之外，使用相同脚本、同一对GPU、完整1024位置、3次冷启动pass重新测量，结果如下。\n"
     yield "| MTP8 / 128请求 | 原本文 µs | 复测本文 µs | 变化 | 原Memcpy µs | 复测Memcpy µs |"
     yield "|---|---:|---:|---:|---:|---:|"
     for setting in ("g100_l20000","g50_l20000"):
@@ -469,6 +489,7 @@ def document():
            "复测输出校验通过，三项计时均与原矩阵接近；报告继续采用同一完整矩阵，不用单次复测替换更慢格子。"
            "详细流量、逐步参考与新旧对照证据见本报告的数据复核记录。\n")
     yield "### 7.3 物理 PCIe / NVLink 的补充验证\n"
+    yield "**本节全部数据：真实trace完整1024位置、MTP8；本文staged＋LRU4096，Memcpy同容量LRU。物理链路未注入额外带宽/延迟限制。**\n"
     yield image("physical_links",6)
     yield ("物理Host PCIe的连续LRU全部39个形状均快于Memcpy，等权几何平均加速"
            f"{stats(subset('lru','pcie'))['speedup']:.3f}倍；32/64/128请求同时距完美重叠参考"
@@ -494,8 +515,54 @@ def document():
         yield ("路径应随链路及访问模式选择。100 GB/s下继续优化的方向是staged内部开销与并发取数，"
                "本次切换原地读未带来提升；物理NVLink可采用原地读以获得额外收益。"
                "[完整路径对照与流量记录](mla_host_glm53_route_comparison.md)。\n")
+    review_path=ROOT/"temp/glm_trace/100gb_review_20261030/summary.json"
+    review=load(review_path)
+    assert review["complete"] and review["sweep_cells"]==20 and review["confirmation_cells"]==4
+    yield "### 7.5 100 GB/s差距核查：仍有优化空间，尚非最优\n"
+    yield ("**本节全部数据：GLM-5.3真实trace完整1024位置、128请求×MTP8、staged、LRU4096槽/请求。**"
+           "100 GB/s的绝对耗时低于50 GB/s；较差的是相对完美重叠参考的效率。这个差距不能全部解释成必需传输，"
+           "也不能直接称为不可避免的LRU开销。\n")
+    yield "| 主矩阵链路对照 | 本文 µs | Memcpy µs | 纯device µs | 重叠参考 µs |"
+    yield "|---|---:|---:|---:|---:|"
+    for setting in ("g0_l0","g100_l0","g100_l20000","g50_l20000"):
+        r=row("lru",setting,8,128)
+        yield (f"| {label(setting)} | {r['ours_mean_us']:.2f} | {r['memcpy_mean_us']:.2f} | "
+               f"{r['local_mean_us']:.2f} | {for_row(r)['mean_stepwise_max_us']:.2f} |")
+    yield ""
+    yield ("从100 GB/s＋0 µs到＋20 µs，本文由4.099增至4.450 ms，增加约0.351 ms；"
+           "延迟按块施加，不能简单理解为整次launch只多20 µs。不限速、零附加延迟的模拟构建也需4.056 ms，"
+           "所以仅靠降低注入延迟不足以消除差距。该对照仍含融合LRU、staging、工作项调度和模拟构建成本，"
+           "不能用差值精确归因其中任意一项。\n")
+    yield ("另外，§7.2中的真实trace快照、无LRU、staged、100 GB/s＋20 µs、128请求×MTP8、远端30%也高于重叠参考48.3%，"
+           "说明LRU维护并非差距的唯一来源。快照与完整回放的驻留规则不同，不能将二者差值当作LRU开销消融。\n")
+    yield ("为核查是否已经最优，补测fetch CTA=8/16/32/64、host_split开/关，以及item64/256的共10套现有参数，"
+           "各测100 GB/s的0/20 µs两种链路，共20格、每格3次冷启动pass。随后将20 µs候选最优与默认配置倒序复测，"
+           "每格5pass，共4格；生产kernel未改。下表列100 GB/s＋20 µs的默认/候选对照，全部扫描与0 µs结果另行保留。\n")
+    yield "| 参数核查阶段 | fetch CTA | item | host split | 本文 µs | 同轮Memcpy µs | 纯device µs | 重叠参考 µs | 高于参考 | LRU引用命中率 |"
+    yield "|---|---:|---:|---|---:|---:|---:|---:|---:|---:|"
+    for confirmation in (False,True):
+        pair=next(p for p in review["comparisons"] if p["confirmation"]==confirmation and p["setting"]=="g100_l20000")
+        for name,r in (("默认",pair["default"]),("候选",pair["best"])):
+            yield (f"| {'倒序确认5pass' if confirmation else '扫描3pass'}·{name} | {r['fetch_ctas']} | {r['host_item_entries']} | "
+                   f"{'on' if r['host_split'] else 'off'} | {r['mean_us']:.2f} | {r['memcpy_mean_us']:.2f} | {r['local_mean_us']:.2f} | "
+                   f"{r['reference_mean_stepwise_max_us']:.2f} | {(r['ours_to_reference']-1)*100:.1f}% | {r['reference_cache_hit_rate']*100:.3f}% |")
+    yield ""
+    confirmed=next(p for p in review["comparisons"] if p["confirmation"] and p["setting"]=="g100_l20000")
+    best=confirmed["best"]
+    yield (f"5pass确认中，候选比同轮默认降低{confirmed['reduction_vs_same_round_default']*100:.1f}%，"
+           f"但仍高于重叠参考{(best['ours_to_reference']-1)*100:.1f}%，并非已逼近下限。"
+           "这证明默认参数仍有改进空间，但本次现有参数扫描只消除了一小部分差距；没有证明候选是全局最优。"
+           "原主矩阵4450.15 µs继续保留，参数搜索结果作为独立补充，未替换其中个别格子。\n")
+    yield ("从实现看，max模型假设attention和搬运能同时达到各自独占资源的速度，而本kernel的fetch和attention共享SM与本地HBM，"
+           "还存在staging写读、部分结果合并、就绪等待及工作项尾部。50 GB/s的较长传输可以掩盖部分成本，"
+           "100 GB/s下它们更显著。这个解释与参数扫描一致：fetch8明显不足，fetch64也回退，单纯增加取数CTA没有持续收益。"
+           "具体哪一阶段占据剩余差距尚无阶段计时，不能把65.3%直接当作已定位的固定开销。\n")
+    yield ("因此，100 GB/s接下来的优化应先定位prepare/resolve、fetch完成和attention尾部的时间，"
+           "再调整取数资源分配、先到数据的消费顺序及staging写回；不应假定现有差距已不可缩小。"
+           "[全部24格、逐pass数据及审计](../temp/glm_trace/100gb_review_20261030/README.md)。\n")
     yield "## 8. 全参数汇总、计时口径与结论边界\n"
     yield "### 8.1 全部17种链路汇总\n"
+    yield "**全部主矩阵采用staged；无LRU列为真实trace四快照，LRU列为真实trace完整1024位置、4096槽/请求。**\n"
     yield ("无LRU列覆盖全部39形状×7远端比例＝273格，包含0%远端；trace列覆盖39形状。加速比为"
            "Memcpy/本文的等权几何平均，大于1表示本文更快。下表保留不限速和NVLink平均未领先的结果。\n")
     yield "| 链路 | 无LRU领先格/273 | 无LRU平均加速 | Trace＋LRU领先格/39 | Trace＋LRU平均加速 |"
@@ -513,9 +580,9 @@ def document():
     yield "| 设备 | A100-SXM4-40GB双卡，GPU0计算、GPU1为NV12 peer；Host pinned内存绑定NUMA0。全部数据来自A100。 |"
     yield "| Attention形状 | 64 heads，BF16，KV维度512＋64，page size=1，top-k=2048，每KV行1152 B。 |"
     yield "| 请求数 | MTP1：1/2/4/8/16/32/48/64/96/128/192/256/384/512；MTP8：1/2/3/4/5/6/7/8/10/12/14/16/20/24/28/32/40/48/56/64/72/80/96/112/128。 |"
-    yield "| 平均口径 | 三次pass、全部步骤的算术平均；LRU每pass从冷缓存开始，含第一步；无LRU取四个trace分组，不使用后半段或最好样本代替均值。 |"
+    yield "| 平均口径 | 主矩阵为三次pass、全部步骤的算术平均；LRU每pass从冷缓存开始，含第一步；无LRU取四个trace分组。§7.5另标5pass确认；均不使用后半段或最好样本代替均值。 |"
     yield "| GPU计时 | CUDA event；guard验证的预入队或16步CUDA Graph，避免CPU逐步发射间隙进入事件；每步记录原始时间。 |"
-    yield "| 本文范围 | 单个cooperative kernel，含去重、LRU（如开启）、staged取数、attention和合并。 |"
+    yield "| 本文范围 | 单个cooperative kernel，含去重、LRU（如开启）、取数、attention和合并。主矩阵为staged；§7.4原地读另标。 |"
     yield "| Memcpy范围 | 实际远端gather/H2D、必要cache scatter和完整本地attention；CPU LRU规划、Host CPU gather及索引上传在外。无LRU直接写连续staging，无冗余scatter。 |"
     yield "| 纯device范围 | 相同query/selected KV均在本地，正常构建，只计attention；无LRU逐远端比例匹配布局，LRU用完整窗口均值。 |"
     yield (f"| 验证 | {audit['timed_launches']:,}次计时launch、{audit['accepted_segments']:,}段有效队列；"
@@ -533,12 +600,14 @@ def document():
            "两部分各自与相同输入的baseline比较；开启LRU的净收益需另外做同输入消融。\n")
     yield "## 9. 结论与后续方向\n"
     yield ("**本文融合kernel在有限带宽、中大batch场景下已显著优于先搬后算的Memcpy路径。**"
-           "真实GLM-5.3 trace下，MTP8、16–128请求的全部14个形状在100/50 GB/s＋20 µs均领先；"
+           "真实GLM-5.3 trace完整回放、staged＋LRU4096下，MTP8、16–128请求的全部14个形状在100/50 GB/s＋20 µs均领先；"
            "几何平均加速分别为1.369倍和1.541倍。\n")
     yield ("**接近极限已有明确实例，且不同极限的含义清晰。**低远端比例的单步场景可做到接近纯device计算；"
            "物理PCIe的32–128请求真实trace距离理想重叠参考约4.8%–8.8%，50 GB/s＋20 µs的128请求约9.4%。"
            "后续主要空间集中在小batch固定成本、staged内部调度和更充分的链路利用，以及继续减少必需远端字节数。"
-           "补充路径对照表明，所测100/50 GB/s条件保留staged，物理NVLink采用原地读更合适。\n")
+           "补充路径对照表明，所测100/50 GB/s条件保留staged，物理NVLink采用原地读更合适。"
+           "100 GB/s＋20 µs、128请求的现有参数补测确认仍能再降约4.6%，但仍高于重叠参考约57%，"
+           "这一格需要继续定位和优化，不能宣称已达到接近极限的水平。\n")
     yield "---\n"
     yield ("数据来源：[完整5304格实验报告](mla_host_glm53_kernel_matrix_20261029.md)、"
            "[全量CSV](../temp/glm_trace/kernel_report_20261029/matrix.csv)、"
@@ -562,6 +631,7 @@ manifest=dict(timestamp=time.strftime("%FT%T%z"),source_commit="8c624445",
               analysis_source_sha256={p.name:digest(p) for p in
                   (DEST/"build_report.py",DEST/"references.py",DEST/"verify_sources.py",DEST/"probe_physical.py")},
               route_comparison_sha256=digest(ROOT/"temp/glm_trace/route_compare_20261030/summary.json"),
+              parameter_review_sha256=digest(ROOT/"temp/glm_trace/100gb_review_20261030/summary.json"),
               figure_count=len(FIGURES),figure_cells={k:len(v["rows"]) for k,v in FIGURES.items()},
               artifact_sha256={str(p.relative_to(ROOT)):digest(p) for p in [DOC,*sorted(ASSETS.glob("*.png"))]})
 (DEST/"manifest.json").write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+"\n")

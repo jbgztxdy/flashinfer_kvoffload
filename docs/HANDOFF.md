@@ -1,5 +1,11 @@
 # 交接：远端 KV 稀疏 MLA 算子项目（2026-10-29）
 
+**10/30 汇报重命名与100GB核查（最新）**：用户将汇报重命名为`docs/mla_host_glm53_report.md`，已同步生成器/校验器路径，保留重命名。新增实验口径总表、各节与六幅图的trace快照/完整回放、staged/原地读、LRU关闭/4096槽标注，补充A800逐层prefill teacher-forcing采集及同容量基线LRU不保证同stamp淘汰并列次序一致。全部主图依旧来自原5304格矩阵；原始矩阵SHA未变。已核对报告数字/537个图源及逐步max，原26比较/17链路/6参考/12路径对之外新增4链路诊断行和4参数行。
+
+**100GB参数补测**：`temp/glm_trace/100gb_review_20261030/`，A100 GPU0/1独占串行、真实assistant完整1024位置、128请求×MTP8、staged＋LRU4096；只调整现有fetch8/16/32/64、item64/256、host_split的10套组合×100GB/s 0/20us，共20格3pass，再倒序确认默认/候选各0/20us四格5pass。未修改生产kernel。含原始样本、逐pass、源码快照、CSV、README、summary/audit、退出信号记录；审计complete=true。主扫描20us默认4400.24→候选4230.80us（3.85%），倒序确认4428.17→4222.93us（4.63%），候选fetch32/item64/split off仍是staged，并非原地读，仍高于逐步重叠参考56.9%。0us扫描最低fetch16/item64/split off3894.31us。fetch8严重回退，fetch64也回退。原矩阵4450.15us仍保留，不逐格替换。
+
+**100GB解释边界**：原矩阵100GB0us4099.12、20us4450.15、不限速零附加延迟模拟4056.09、本地2467.18us；即去掉20us不足以解决。无LRU快照staged 128请求远端30%也高重叠参考48.3%，不能归因于LRU唯一开销（两输入不能相减当消融）。共享SM/HBM、staging、工作项尾部/等待是待定位候选；本次未做内部阶段计时，不精确分摊。结果支持有限带宽中大batch优于Memcpy和50GB/PCIe接近参考，不支持100GB普遍接近下限。生产kernel未改，无GPU任务留跑；supervise记录扫描与确认均exit0。
+
 **10/30 12:18 当前任务已完成**：用户要求的kernel-only全矩阵已收齐并审计通过：无LRU4641/4641、完整trace＋LRU663/663、本地参考312/312；5304比较格无缺失，1955940次计时launch、143745段有效队列，采样数学校验最大绝对误差0.00692034。15组链路校准、11组波动复测完成。此任务只评估现有kernel，没有修改生产kernel/csrc/Python API；不等于H800调优目标已达成。
 
 **产物与验证**：实验目录`temp/glm_trace/kernel_report_20261029/`；完整报告`docs/mla_host_glm53_kernel_matrix_20261029.md`及同名自包含HTML（筛选/导出CSV、内嵌图）；平面表`matrix.csv/json`、每步样本`raw/`、失败历史`failures/`、SHA源码快照均保留。`audit.json: complete=true`；`check_report.py`核对MD/CSV/JSON/HTML全部5304格，并实际用禁用GPU的Chrome验证筛选和CSV下载，结果与报告产物SHA见`report_check.json`。新报告是A100-SXM4实测，不是H800实测。
