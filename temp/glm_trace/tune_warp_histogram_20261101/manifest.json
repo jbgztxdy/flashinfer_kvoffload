@@ -1,0 +1,12 @@
+{
+  "base_sha256": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
+  "candidate_sha256": "093c4daef94fed17e6c9ee3d19472f4c66b5778ba2732c888a63fb59227c73ee",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "base": "Frozen JQ a2f; production remains b6 until its original retention gate finishes",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "mechanism": "Eight warp-private 256-bin radix histograms, same warp-aggregated integer counts; warp0 reduces private rows into its original eight owned bins before the existing prefix scan.",
+  "dispatch": "Only existing ROW_MERGE cached staged rows*headtiles<=32, 2stage/CTA32/QK_SHARD, 160000<=shared_limit<200000; all other existing JQ instantiations remain literal.",
+  "invariants": "Same stamp loads, radix rank/prefix, victim threshold, tie traversal, scans, payload, attention, fetch, chunk planner and simulator. No added CTA or grid barriers. One cooperative kernel.",
+  "tradeoff": "Adds8192 static shared bytes and64 histogram loads per warp0 lane per radix byte; only measured evidence can decide whether avoided contention pays."
+}

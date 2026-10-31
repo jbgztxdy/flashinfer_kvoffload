@@ -1,0 +1,15 @@
+{
+  "recorded_at": "2026-11-01T06:32:25+0800",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "conclusion": "每 warp 独立 LRU 直方图候选拒绝。六个同参数短窗口配对的收益不稳定，最佳仅0.111%，最差慢1.047%；不保留到生产。",
+  "next_scope": "不扩展完整1024位置×5pass、物理PCIe/NVLink或跨形状矩阵；也不继续扫描私有直方图行数、warp分组或归并布局。短测不构成跨场景收益证据。原JQ72075/1398继续等待最后三格确认，生产保留决策由其原门槛执行。",
+  "audit_sha256": "6fb949913b591ebe5f5dd6c43e775b2965449f77535359fa42cd93f0167889bf",
+  "pairs": 6,
+  "reduction_range": [
+    -0.010470573364436797,
+    0.0011142957658918373
+  ],
+  "correctness": "109 normal tests;36EMU/72normal originals exact words;actual1kernel;original and forced-radix synccheck/racecheck0. No failures or retries.",
+  "causal_limit": "The net schedule is measured. The amount of contention and merge/clear overhead are not separately timed, so no claim that one cost alone causes the negative result."
+}

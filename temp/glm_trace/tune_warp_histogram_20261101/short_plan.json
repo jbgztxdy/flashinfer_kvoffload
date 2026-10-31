@@ -1,0 +1,29 @@
+{
+  "positions": 256,
+  "passes": 3,
+  "shapes": [
+    {
+      "mtp": 1,
+      "requests": 1
+    },
+    {
+      "mtp": 8,
+      "requests": 1
+    }
+  ],
+  "fetch_ctas": 16,
+  "host_split": "on",
+  "settings": [
+    "g100_l0",
+    "g100_l20000",
+    "g50_l20000"
+  ],
+  "order": [
+    "base",
+    "warp_hist"
+  ],
+  "headers": {
+    "base": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
+    "warp_hist": "093c4daef94fed17e6c9ee3d19472f4c66b5778ba2732c888a63fb59227c73ee"
+  }
+}

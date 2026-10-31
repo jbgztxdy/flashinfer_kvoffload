@@ -1,0 +1,66 @@
+{
+  "start": "2026-11-01T06:29:45+0800",
+  "complete": true,
+  "steps": [
+    {
+      "tool": "synccheck",
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "synccheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=WarpHistogramHostParams",
+        "--launch-skip",
+        "1",
+        "--launch-count",
+        "1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_histogram_20261101/probe_radix_warp_hist.py"
+      ],
+      "start": "2026-11-01T06:30:25+0800",
+      "pid": 2049412,
+      "exit_code": 0,
+      "end": "2026-11-01T06:30:31+0800"
+    },
+    {
+      "tool": "racecheck",
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "racecheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=WarpHistogramHostParams",
+        "--launch-skip",
+        "1",
+        "--launch-count",
+        "1",
+        "--racecheck-num-workers",
+        "8",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_histogram_20261101/probe_radix_warp_hist.py"
+      ],
+      "start": "2026-11-01T06:30:31+0800",
+      "pid": 2049598,
+      "exit_code": 0,
+      "end": "2026-11-01T06:30:47+0800"
+    }
+  ],
+  "reason": "Original first cold-cache launch may have equal keys and skip radix. Instrument the next launch with injected four-byte stamp differences and 4096 idle slots.",
+  "end": "2026-11-01T06:30:47+0800"
+}

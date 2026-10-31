@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-01 06:13 九warp两版拒绝；JQ正向最后三格等待新外部进程，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-01 06:33 小batch私有直方图拒绝；JQ正向最后三格仍等待，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -18,9 +18,17 @@
 
 **当前生产header是cached_ids，SHA=`b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a`，不再是52919。下文§2.1–2.6保留各阶段历史，冲突时以本节及实际文件为准。** 单kernel、数学、精确LRU/真实cache载荷、模拟器和原5304矩阵不变；只在已有whole CTA32且启用LRU的路径共享块页号，未改路径原9EMU/18normal kernel指令与资源完全相同。基线52919保存在W/base.cuh及其他独立实验树。
 
-**最新自动收尾runner为JQ/complete_retention.py，原handle1398，先查它及completion_state.json，不能并行手动install。** 它只等待已验证存活的JM/JQ原SXM进程，全部156格JQ矩阵、JM完整SXM、JQ三组SXM完整1024×5pass三方确认结束后，重新performance/coverage/controls审计；retain_joint_qk.py要求60个改变路径配对不慢于1%、100GB完整两顺序均>1%收益、正常物理链路不慢于1%，以及原34/68和清理源36/72完整代码等价/109测试/实际Graph。门槛失败停止，不放宽，不重复提交。全部通过才逐字节安装retained_joint_qk.cuh，再新jit_production_joint_normal从root include编译BF16/FP16、109测试、72实例指令资源验证及实际Graph；安装后任何失败只在root仍为本候选时恢复冻结b6并记日志，避免覆盖其他人编辑。完成/失败以实际state/handle为准，安装不等于全goal完成。**当前06:13仍waiting，root保持b6；JQ156矩阵完整、full反向与正常物理链路已完成，full正向base及JM六格完成；最后JQ三格因新外部GPU0/1进程1780064/1780065等待。后续不能只相信本文时间快照。**
+**最新自动收尾runner为JQ/complete_retention.py，原handle1398，先查它及completion_state.json，不能并行手动install。** 它只等待已验证存活的JM/JQ原SXM进程，全部156格JQ矩阵、JM完整SXM、JQ三组SXM完整1024×5pass三方确认结束后，重新performance/coverage/controls审计；retain_joint_qk.py要求60个改变路径配对不慢于1%、100GB完整两顺序均>1%收益、正常物理链路不慢于1%，以及原34/68和清理源36/72完整代码等价/109测试/实际Graph。门槛失败停止，不放宽，不重复提交。全部通过才逐字节安装retained_joint_qk.cuh，再新jit_production_joint_normal从root include编译BF16/FP16、109测试、72实例指令资源验证及实际Graph；安装后任何失败只在root仍为本候选时恢复冻结b6并记日志，避免覆盖其他人编辑。完成/失败以实际state/handle为准，安装不等于全goal完成。**当前06:33仍waiting，root保持b6；JQ156矩阵完整、full反向与正常物理链路已完成，full正向base及JM六格完成；最后JQ三格因新外部GPU0/1进程1780064/1780065等待。后续不能只相信本文时间快照。**
 
 保留用retained_joint_qk.cuh只把新host dispatcher里的KV64局部别名改为Joint，无device/helper/params字段改动；原测源a2f37…c4b7c保持不覆盖。retained_codegen的36EMU/72normal全部原+新增实例指令/资源精确相同，machine_word_identity.json进一步验证全部Ampere机器字/控制字相同。额外正常105+4测试通过。cleanup源码SHA见retained_source_manifest.json。root新安装后还须更新audits/report/HANDOFF并只提交本任务文件；不要把尚未结束的1398当失败重启。
+
+**新WH=`temp/glm_trace/tune_warp_histogram_20261101/`已完成拒绝。** 只在原cached/staged ROW_MERGE（rows×headtiles≤32）、A100/2stage/CTA32派发新Params实例；保持所有原JQ36EMU/72normal实例指令/资源及机器字/控制字全相同。新helper保留warp聚合，用8×256-bin私有直方图避免warp间相同epoch计数争用，warp0归并回原lane负责的八个bin，再执行原radix rank/prefix和thread-major同龄淘汰。无新barrier，LRU/缓存载荷/attention数学/fetch/planner/模拟器不变；额外8192B static，新static10240+dynamic147968=158208B，实际108CTA/block32x4x2/active1。新REG246EMU/244normal、STACK0/LOCAL0。
+
+WH通过正常105+4测试。新增4项BF16/FP16×capacity512/4096，注入同龄、单字节和四字节stamp差异，用CPU精确槽位oracle核对淘汰/保护hit/全部cache载荷，并测output/LSE、空/单元素/padding和零miss Graph重放。普通首个冷cache launch可能skip radix，因此另用4096空闲旧槽、776个miss和四字节差异的实际Graph launch做synccheck/racecheck（skip首个匹配warm launch，仅检查下一匹配launch），都零错误；原冷launch诊断也完整保留，不冒称穷尽验证。
+
+WH固定GPU3/NUMA1、f16/split on、256位置×3冷pass、JQ→WH、MTP1/R1与MTP8/R1：100GB0µs分别慢1.047%/0.358%，100GB20µs慢0.027%/快0.037%，50GB20µs快0.056%/0.111%。没有稳定收益，拒绝，不扩full1024×5/native/跨形状或继续私有直方图行数/warp分组/归并布局扫描。12格/6个对JQ配对、10368计时launch/648segment、两参考/命中率/源码快照齐全，109测试及checkpoint通过；原handles16107/31851/84049/24248/69911全部terminal0，无失败/重试。基线是冻结JQ a2f37，不是root b6；[报告](mla_host_a100_warp_histogram_20261101.md)。本轮未改变生产。
+
+06:32:41复查原JQ72075父PID1640200、1398父PID1693759仍live；completion_state仍仅缺最后JQ三格，GPU0/1外部1780064/1780065仍在，不动、不复制原runner。H800本轮只读队列仍原五任务Priority/Dependency、原watcher4160646/1174145 live；AGENTS/MEMORY哈希与已读快照相同，保存JQ/h800_context_hashes_0620.txt与h800_queue_0628.txt，无新远端提交/源码写入。整体goal active，约25%–29%差距未解决；本轮实现和拒绝验证属于实质进展，非blocked。
 
 **新N9=`temp/glm_trace/tune_nine_warp_20261101/`及N9S=`temp/glm_trace/tune_nine_warp_static_20261101/`已完成，两版拒绝。** 单108CTA/block32x9x1，保留完整64head的8计算warp，另1服务warp；前后288线程准备/退出，计算组虚拟y/z和named barrier1/256线程。QPE直接按同一MMA片段从global读取，shared QPE8KB缩为128B对齐padding；计算shared139904B，两个8行cp.async辅助stage18432B，第三8行payload在源码声明为每线程18个uint4，希望进寄存器。dynamic158336/static1664=160000B，实查active1；**两版REG168/STACK248/LOCAL0，有LDL/STL，不是栈零或全寄存器缓冲。** 后一版只把stage和payload展开为固定表达式/18个标量，未消除栈。原JQ36EMU/72normal指令/资源及机器字/控制字全相同，两版共218测试（长LSE/空单行/padding/淘汰/Graph/全cache载荷），实际单kernel及各synccheck/racecheck均通过。
 

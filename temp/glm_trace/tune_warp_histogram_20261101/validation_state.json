@@ -1,0 +1,182 @@
+{
+  "start": "2026-11-01T06:26:06+0800",
+  "phase": "short_screen_complete",
+  "complete": true,
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_histogram_20261101/compiler_warp_hist.py"
+      ],
+      "start": "2026-11-01T06:27:56+0800",
+      "log": "compiler_warp_hist.log",
+      "pid": 2045844,
+      "exit_code": 0,
+      "end": "2026-11-01T06:28:21+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_histogram_20261101/compiler_warp_hist.py",
+        "--normal"
+      ],
+      "start": "2026-11-01T06:28:21+0800",
+      "log": "compiler_warp_hist_normal.log",
+      "pid": 2046320,
+      "exit_code": 0,
+      "end": "2026-11-01T06:29:04+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_histogram_20261101/verify_machine_words.py"
+      ],
+      "start": "2026-11-01T06:29:04+0800",
+      "log": "verify_machine_words.log",
+      "pid": 2047135,
+      "exit_code": 0,
+      "end": "2026-11-01T06:29:09+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_histogram_20261101/probe_warp_hist.py"
+      ],
+      "start": "2026-11-01T06:29:09+0800",
+      "log": "probe_warp_hist.log",
+      "pid": 2047258,
+      "exit_code": 0,
+      "end": "2026-11-01T06:29:13+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "synccheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=WarpHistogramHostParams",
+        "--launch-count",
+        "1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_histogram_20261101/probe_warp_hist.py"
+      ],
+      "start": "2026-11-01T06:29:13+0800",
+      "log": "synccheck_warp_hist.log",
+      "pid": 2047416,
+      "exit_code": 0,
+      "end": "2026-11-01T06:29:18+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "racecheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=WarpHistogramHostParams",
+        "--launch-count",
+        "1",
+        "--racecheck-num-workers",
+        "8",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_histogram_20261101/probe_warp_hist.py"
+      ],
+      "start": "2026-11-01T06:29:18+0800",
+      "log": "racecheck_warp_hist.log",
+      "pid": 2047571,
+      "exit_code": 0,
+      "end": "2026-11-01T06:29:24+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_histogram_20261101/screen.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "warp_hist",
+        "--variants",
+        "base",
+        "warp_hist",
+        "--requests",
+        "1",
+        "--mtp",
+        "1",
+        "--fetch-ctas",
+        "16",
+        "--host-split",
+        "on",
+        "--tag",
+        "small256_m1_"
+      ],
+      "start": "2026-11-01T06:29:24+0800",
+      "log": "screen_mtp1_gpu3.log",
+      "pid": 2047745,
+      "exit_code": 0,
+      "end": "2026-11-01T06:30:10+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_histogram_20261101/screen.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "warp_hist",
+        "--variants",
+        "base",
+        "warp_hist",
+        "--requests",
+        "1",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "16",
+        "--host-split",
+        "on",
+        "--tag",
+        "small256_m8_"
+      ],
+      "start": "2026-11-01T06:30:10+0800",
+      "log": "screen_mtp8_gpu3.log",
+      "pid": 2048854,
+      "exit_code": 0,
+      "end": "2026-11-01T06:30:24+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_histogram_20261101/audit_performance.py"
+      ],
+      "start": "2026-11-01T06:30:24+0800",
+      "log": "audit_performance.log",
+      "pid": 2049403,
+      "exit_code": 0,
+      "end": "2026-11-01T06:30:24+0800"
+    }
+  ],
+  "end": "2026-11-01T06:30:24+0800"
+}

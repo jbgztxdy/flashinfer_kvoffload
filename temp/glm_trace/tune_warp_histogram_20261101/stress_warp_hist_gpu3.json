@@ -1,0 +1,58 @@
+{
+  "variant": "warp_hist",
+  "header_sha256": "093c4daef94fed17e6c9ee3d19472f4c66b5778ba2732c888a63fb59227c73ee",
+  "stress_source_sha256": "c747540d4c2bcca47bb22b299c3156eb3da61662fe665ecac047ebe474a2548e",
+  "helper_source_sha256": "5845ad3cf3f5fe1193011e707002b774faebaa3f9c70ab345b95db845d2d74a8",
+  "start": "2026-11-01T06:27:44+0800",
+  "resources_start": {
+    "timestamp": "2026-11-01T06:27:44+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "complete": true,
+  "tests": 4,
+  "performance_claim": false,
+  "command": [
+    "numactl",
+    "-N1",
+    "-m1",
+    "/mnt/data/mhy-vllm-venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "-p",
+    "jitpaths",
+    "-p",
+    "candidatepaths",
+    "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_histogram_20261101/test_histogram_lru.py"
+  ],
+  "pid": 2045529,
+  "exit_code": 0,
+  "end": "2026-11-01T06:27:48+0800",
+  "resources_end": {
+    "timestamp": "2026-11-01T06:27:49+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "log_sha256": "88da021324d6d242d588113c1a55da88adaf9d53beca1d0f36a813392ea4bc30"
+}
