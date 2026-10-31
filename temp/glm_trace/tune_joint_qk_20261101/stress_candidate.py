@@ -11,7 +11,7 @@ import time
 p = Path(__file__).resolve().parent
 root = p.parents[2]
 parser = argparse.ArgumentParser()
-parser.add_argument('--variant', required=True, choices=['joint_qk'])
+parser.add_argument('--variant', required=True, choices=['joint_qk','retained_joint_qk'])
 a = parser.parse_args()
 from resources_gpu3 import snapshot, require_exclusive
 sha = lambda f: hashlib.sha256(f.read_bytes()).hexdigest()

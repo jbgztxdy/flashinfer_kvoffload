@@ -1,0 +1,17 @@
+{
+  "measured_header_sha256": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
+  "reviewable_header_sha256": "7193255e2fdf83d3baa9347dea1a02b892c29ed746da719818e30fdf4066d469",
+  "math_header_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "change": "Hostlocalaliases/variables renamedfromKV64 toJoint; device/helpers/parameterdefinitionsliteralunchanged. Requirefulloriginal+targetkernelinstruction/resourceidentity inbothEMUandnormalbuilds beforebridginganymeasurement.",
+  "candidate_adopted": false,
+  "test_evidence": [
+    {
+      "path": "tests_retained_joint_qk_gpu3.json",
+      "sha256": "2f49b56664acab3e4ecf7b3fb77e4c6c6f2518378e76a2331c692a819b990750"
+    },
+    {
+      "path": "stress_retained_joint_qk_gpu3.json",
+      "sha256": "f08537d55539bc182a18b6d0a4e7a9e6ba21bc8ce288c505bdf97a70f34a585e"
+    }
+  ]
+}

@@ -2,29 +2,33 @@
   "complete": true,
   "goal_status": "active",
   "candidate_adopted": false,
-  "new_normal_tests": 109,
+  "new_normal_tests": 218,
   "reused_control_new_tests": 0,
-  "performance_rows": 46,
-  "production_paired_comparisons": 24,
-  "three_way_points": 6,
-  "timed_launches": 35776,
-  "accepted_segments": 2236,
+  "performance_rows": 180,
+  "production_paired_comparisons": 86,
+  "three_way_points": 11,
+  "timed_launches": 292184,
+  "accepted_segments": 18338,
   "incomplete_raw": 0,
   "active_runners": [
     {
-      "session_id": 69652,
-      "command": "normalfull1024x5threeway2links"
+      "session_id": 66919,
+      "command": "SXMlimited60cellmatrix"
     },
     {
-      "session_id": 63115,
-      "command": "localchangedlimited40cellmatrix"
+      "session_id": 18187,
+      "command": "SXMnative20cellmatrix"
     },
     {
-      "session_id": 74895,
-      "command": "localnative36cellmatrix"
+      "session_id": 72075,
+      "command": "SXM3cohortfull5passthreewayconfirmation"
+    },
+    {
+      "session_id": 1398,
+      "command": "gatedretentionpipeline waitsverifiedexistingSXMthenfinalaudit/install/freshroot109tests+codegen+Graph;rollbackonpostinstallfailure"
     }
   ],
-  "verified_source_snapshots": 17,
+  "verified_source_snapshots": 32,
   "production_header_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
   "canonical_math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
   "original_matrix_sha256": "e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99"

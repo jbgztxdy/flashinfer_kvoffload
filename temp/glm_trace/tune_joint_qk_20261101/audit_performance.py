@@ -194,15 +194,16 @@ for f in sorted(p.glob('tests_*_gpu3.json')):
     if f.name=='tests_production_gpu3.json':
         assert t['normal_build'] and t['exit_code']==0
         assert t['resources_start']['foreign']==t['resources_end']['foreign']==[]
-        assert t['production_header_sha256']==sha(p/'cached_ids.cuh')
+        assert t['production_header_sha256']==sha(p/'retained_joint_qk.cuh')
         assert t['math_header_sha256']=='34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3'
         assert t['test_source_sha256']==sha(root/'tests/attention/test_mla_host_batch.py')
         log=p/'pytest_production_gpu3.log'
-        assert sha(log)==t['log_sha256'] and '105 passed' in log.read_text()
+        assert sha(log)==t['log_sha256'] and '109 passed' in log.read_text()
+        assert t['stress_source_sha256']==sha(p/'test_cofetch_progress.py') and t['expected_tests']==109
         assert len(t['libraries'])==4
-        retained=load(p/'cached_ids_retention.json')
-        assert retained['production_validation']['sha256']==sha(f)
-        tests.append(dict(variant='retained_production',tests=105,sha256=sha(f),fresh_root_include=True))
+        retained=load(p/'joint_qk_retention.json')
+        assert retained['candidate_adopted'] and retained['candidate_header_sha256']==t['production_header_sha256']
+        tests.append(dict(variant='retained_production',tests=109,sha256=sha(f),fresh_root_include=True))
         continue
     assert t['normal_build'] and t['exit_code'] == t['compile_exit_code'] == 0
     assert t['resources_start']['foreign'] == t['resources_end']['foreign'] == []
@@ -251,11 +252,11 @@ audit = dict(goal_complete=False, candidate_adopted=False, rows=rows, pairs=pair
     timed_launches=launches, accepted_segments=segments, files=files, incomplete=incomplete,
     production_header_sha256=sha(root / 'include/flashinfer/attention/mla_host_batch.cuh'),
     original_matrix_sha256=sha(root / 'temp/glm_trace/kernel_report_20261029/matrix.json'))
-retention=p/'cached_ids_retention.json'
+retention=p/'joint_qk_retention.json'
 if retention.exists():
     retained=load(retention)
     audit['candidate_adopted']=bool(retained['candidate_adopted'] and retained['candidate_header_sha256']==audit['production_header_sha256'])
-    audit['retained_variant']='cached_ids' if audit['candidate_adopted'] else None
+    audit['retained_variant']='joint_qk' if audit['candidate_adopted'] else None
 assert audit['original_matrix_sha256'] == 'e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99'
 (p / 'performance_audit.json').write_text(json.dumps(audit, indent=2) + '\n')
 pending_fields=['cohort','variant','kind','mtp','requests','fetch_ctas','setting','fraction','positions','passes',

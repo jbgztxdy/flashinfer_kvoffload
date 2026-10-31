@@ -1,0 +1,85 @@
+[
+  {
+    "tag": "compositionsxmreverse1024_f24_",
+    "variants": [
+      "joint_qk",
+      "joint_mdo_typed",
+      "base"
+    ],
+    "settings": [
+      "g100_l0",
+      "g100_l20000",
+      "g50_l20000"
+    ],
+    "native": false,
+    "start": "2026-11-01T04:10:30+0800",
+    "command": [
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_qk_20261101/screen.py",
+      "--hardware",
+      "sxm",
+      "--candidate",
+      "joint_qk",
+      "--variants",
+      "joint_qk",
+      "joint_mdo_typed",
+      "base",
+      "--tag",
+      "compositionsxmreverse1024_f24_",
+      "--fetch-ctas",
+      "24",
+      "--positions",
+      "1024",
+      "--passes",
+      "5",
+      "--settings",
+      "g100_l0",
+      "g100_l20000",
+      "g50_l20000"
+    ],
+    "pid": 1640201,
+    "exit_code": 0,
+    "end": "2026-11-01T04:51:02+0800"
+  },
+  {
+    "tag": "compositionsxmnative1024_f24_",
+    "variants": [
+      "base",
+      "joint_mdo_typed",
+      "joint_qk"
+    ],
+    "settings": [
+      "nvlink",
+      "pcie"
+    ],
+    "native": true,
+    "start": "2026-11-01T04:51:02+0800",
+    "command": [
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_qk_20261101/screen.py",
+      "--hardware",
+      "sxm",
+      "--candidate",
+      "joint_qk",
+      "--variants",
+      "base",
+      "joint_mdo_typed",
+      "joint_qk",
+      "--tag",
+      "compositionsxmnative1024_f24_",
+      "--fetch-ctas",
+      "24",
+      "--positions",
+      "1024",
+      "--passes",
+      "5",
+      "--settings",
+      "nvlink",
+      "pcie",
+      "--native"
+    ],
+    "pid": 1695723
+  }
+]

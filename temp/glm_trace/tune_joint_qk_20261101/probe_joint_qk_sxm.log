@@ -1,0 +1,73 @@
+WAITING_GPU3 {'timestamp': '2026-11-01T04:07:40+0800', 'gpus': [{'index': 0, 'uuid': 'GPU-6e5259ec-3532-b1b2-b0ab-b26231386565', 'used_mib': 739, 'total_mib': 40960, 'utilization': 100}, {'index': 1, 'uuid': 'GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81', 'used_mib': 433, 'total_mib': 40960, 'utilization': 0}], 'foreign': [{'gpu_uuid': 'GPU-6e5259ec-3532-b1b2-b0ab-b26231386565', 'pid': 1631493, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '718'}, {'gpu_uuid': 'GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81', 'pid': 1631493, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '416'}], 'available': False}
+{
+  "timestamp": "2026-11-01T04:07:54+0800",
+  "physical_gpu": 0,
+  "resources_start": {
+    "timestamp": "2026-11-01T04:07:50+0800",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+        "used_mib": 4,
+        "total_mib": 40960,
+        "utilization": 0
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81",
+        "used_mib": 4,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "resources_end": {
+    "timestamp": "2026-11-01T04:07:54+0800",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+        "used_mib": 987,
+        "total_mib": 40960,
+        "utilization": 5
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81",
+        "used_mib": 4,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": false
+  },
+  "header_sha256": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
+  "math_header_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "graph_nodes": 1,
+  "kernel_nodes": 1,
+  "launches": [
+    {
+      "grid": [
+        1,
+        108,
+        1
+      ],
+      "block": [
+        32,
+        4,
+        2
+      ],
+      "dynamic_shared_bytes": 147968,
+      "active_blocks_per_SM": 1,
+      "kernel_name": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI13__nv_bfloat16S3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    }
+  ],
+  "checked_rows": [
+    0,
+    431
+  ],
+  "max_abs_error": 0.004127860069274902
+}

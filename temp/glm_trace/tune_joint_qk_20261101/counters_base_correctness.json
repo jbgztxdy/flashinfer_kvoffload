@@ -1,0 +1,49 @@
+{
+  "complete": true,
+  "variant": "base",
+  "synthetic": true,
+  "trace_performance_claim": false,
+  "source_sha256": "f868619992d461d0f88a99062f8d837f0f5c26929263bf635390dfba2213d7c0",
+  "header_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "configuration": {
+    "requests": 128,
+    "mtp": 8,
+    "topk": 2048,
+    "capacity": 4096,
+    "fetch_ctas": 24,
+    "split": false,
+    "far": "independentHBMonGPU3",
+    "changed_unique_fraction": 0.25
+  },
+  "resources_start": {
+    "timestamp": "2026-11-01T04:45:01+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "resources_end": {
+    "timestamp": "2026-11-01T04:45:10+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 6097,
+        "total_mib": 40960,
+        "utilization": 2
+      }
+    ],
+    "foreign": [],
+    "available": false
+  },
+  "checked_cache_slots": 327680,
+  "max_abs_error": 0.001943051815032959,
+  "limitation": "One syntheticcounterlaunch,fullysharedMTPsetswith25%newpages;no trace performance/referenceclaim or exactcausality attribution."
+}

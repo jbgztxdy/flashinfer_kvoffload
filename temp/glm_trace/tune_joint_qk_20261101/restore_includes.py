@@ -4,7 +4,7 @@ from pathlib import Path
 p=Path(__file__).resolve().parent;root=p.parents[2]
 m=json.loads((p/'manifest.json').read_text())
 sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
-for v,h in [('base',m['base_sha256']),('joint_mdo_typed',m['joint_mdo_control_sha256']),('joint_qk',m['candidate_sha256'])]:
+for v,h in [('base',m['base_sha256']),('joint_mdo_typed',m['joint_mdo_control_sha256']),('joint_qk',m['candidate_sha256']),('retained_joint_qk',json.loads((p/'retained_source_manifest.json').read_text())['reviewable_header_sha256'])]:
     assert sha(p/(v+'.cuh'))==h and sha(p/(v+'_mla.cuh'))==m['math_sha256']
     for suffix in ['', '_normal']:
         tree=p/('include_'+v+suffix)

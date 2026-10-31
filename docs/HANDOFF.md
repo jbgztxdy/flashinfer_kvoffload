@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-01 04:00 联合MDO本机98格完成；组合QK完整确认有额外收益，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-01 04:51 SXM回归进行中；地址表拒绝；保留流程等待门槛，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -17,6 +17,22 @@
 ### 2.0 最新生产：共享页号已保留；联合MDO候选待SXM验证
 
 **当前生产header是cached_ids，SHA=`b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a`，不再是52919。下文§2.1–2.6保留各阶段历史，冲突时以本节及实际文件为准。** 单kernel、数学、精确LRU/真实cache载荷、模拟器和原5304矩阵不变；只在已有whole CTA32且启用LRU的路径共享块页号，未改路径原9EMU/18normal kernel指令与资源完全相同。基线52919保存在W/base.cuh及其他独立实验树。
+
+**最新自动收尾runner为JQ/complete_retention.py，原handle1398，先查它及completion_state.json，不能并行手动install。** 它只等待已验证存活的JM/JQ原SXM进程，全部156格JQ矩阵、JM完整SXM、JQ三组SXM完整1024×5pass三方确认结束后，重新performance/coverage/controls审计；retain_joint_qk.py要求60个改变路径配对不慢于1%、100GB完整两顺序均>1%收益、正常物理链路不慢于1%，以及原34/68和清理源36/72完整代码等价/109测试/实际Graph。门槛失败停止，不放宽，不重复提交。全部通过才逐字节安装retained_joint_qk.cuh，再新jit_production_joint_normal从root include编译BF16/FP16、109测试、72实例指令资源验证及实际Graph；安装后任何失败只在root仍为本候选时恢复冻结b6并记日志，避免覆盖其他人编辑。完成/失败以实际state/handle为准，安装不等于全goal完成。**当前04:52仍waiting，root保持b6；后续不能只相信本文时间快照。**
+
+保留用retained_joint_qk.cuh只把新host dispatcher里的KV64局部别名改为Joint，无device/helper/params字段改动；原测源a2f37…c4b7c保持不覆盖。retained_codegen的36EMU/72normal全部原+新增实例指令/资源精确相同，machine_word_identity.json进一步验证全部Ampere机器字/控制字相同。额外正常105+4测试通过。cleanup源码SHA见retained_source_manifest.json。root新安装后还须更新audits/report/HANDOFF并只提交本任务文件；不要把尚未结束的1398当失败重启。
+
+**新AM=`temp/glm_trace/tune_address_map_20261101/`已完成拒绝。** 复用whole-row闲置partial_o存uint64行地址，prepare/resolve连同remap写指针、padding compaction复制同样disjoint mover，沿用原grid同步，不增分配/barrier/kernel。派发明确uint64(rows)×max_kv_len×8≤partial_capacity×64×512×sizeof(O)，不足回原生产路径。canonical math/fetch/LRU/真实cache载荷不变。原34/68全等价，新REG252/STACK0/LOCAL0，实际单108CTA/block32x4x2通过。105+4长测试及1容量不足/全backing哨兵/Graph/padding/cache载荷测试，共110项通过。JQ控制复用原binary/gates不算新增测试。三方256×3pass：相对JQ的100GB0/20慢2.812%/3.159%，50GB慢0.493%；相对生产100GB20快0.742%也保留。9格/6对生产配对、3三方点、1728launch/108segment、两参考完整，全部10839/97365/62831/20361/3002/25750/2690terminal0。停止，不扫地址布局/容量参数。[报告](mla_host_a100_address_map_20261101.md)。
+
+JQ本轮两项>1%GPU3未改路径负差已经64659完整5pass前/候选/后夹测（terminal0）：MTP1/R256 HBM原慢1.113%，夹测1053.639/1054.992/1054.030µs（约慢0.110%）；MTP8/R64无LRU零远端HBM原慢1.223%，夹测1205.146/1203.712/1203.814（约快0.064%）。原负差不删除，controls_audit保留每pass及两端，不仅凭代码身份放宽门槛。
+
+硬件计数器诊断已单独完成（41849terminal0；56668首版因pytest导入缺失在GPU工作前exit1，失败源/log保留，改用make_wrapper后成功）。GPU3合成1024×2048/MTP8全共享/25%新页，application replay每次重建LRU/epoch，输出及327680有效cache槽全载荷通过；两版实际Tensor指令均71827456，short-scoreboard26.98→19.31%、long-scoreboard5.39→11.13%、barrier8.48→9.05%。默认Ncu cache控制、原CSV/source/限制见counters_audit.json；不计trace收益/参考，stall不能相加当时间分解。它提示shared读取/加载重叠取舍，不证明真实trace全部剩余差距因果。
+
+GPU0/1已自然空闲、JM/JQ的原SXM验证均在运行，不再是waitingotherusers。JQ新66919 limited60格、18187 native20格，实际SXMprobe55667已terminal0；JQ完整5pass三方72075依次反向EMU3设置→正常NVLink/PCIe→正向EMU3设置，所有任务共用gpu01锁串行。长MTP1/R512每步metadata/PCIe回放会耗时，先ps/proc确认活动，不终止或重复。GPU3原69652/63115/74895均terminal0，正常full三方JQ较生产HBM快3.311%、PCIe慢0.031%，较JM快0.142%/慢0.043%。本机全部76矩阵格完整，新的SXM正负格见freshaudit。JM原98811 native20格已terminal0，30328 limited还在MTP1/R512最后十格；不能重启旧本机矩阵。
+
+SXM完整反向三方首组已完成：JQ相对生产100GB0/20µs快5.228%/4.886%、50GB20µs快0.367%；相对JM的额外收益较GPU3小，分别约0.13%/0.24%，不能将全部生产收益归给Q复用。正常完整NVLink/PCIe及正向完整确认仍排队运行，不可跳过。
+
+当前已测JQ full100GB距逐步max：GPU3约26.94%/27.89%，SXM约25.42%/26.53%，仍明显高于10%目标。50GB约6%差距，不能将优化3%–5%写成已解决主目标。H80004:05:35仍原五作业Priority/Dependency，预估11/05，两个watcher活、AGENTS/MEMORY哈希不变；没有修改/重新提交远端排队源。
 
 **最新WR=`temp/glm_trace/tune_warp_roles_20261101/`空间warp分工两版已结束，均不采用。** 同256线程CTA，物理z0/1四warp取数，z2/3四warp计算映射到虚拟z0/1，named barrier2/1各128线程；全CTA做原prepare/LRU，grid同步后分角色，结束全CTA/grid同步后原lastCTA复位。原32head/sharded32KV/2stage计算shared110848B，加独立2×16row payload36864B共147712≤原dynamic147968B；每query两headitem直接输出。所有108CTA取数，实际在途3456row比原f24的3072多12.5%，明确是策略变化，未暗称预算相同。FAR waiter仍物理(0,0,0)，模拟器/字节不变。
 

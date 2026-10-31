@@ -1,5 +1,5 @@
 {
-  "recorded_at": "2026-11-01T04:00:12+08:00",
+  "recorded_at": "2026-11-01T04:52:21+08:00",
   "goal_status": "active",
   "candidate_adopted": false,
   "manifest": {
@@ -15,19 +15,23 @@
   },
   "active_runners": [
     {
-      "session_id": 69652,
-      "command": "normalfull1024x5threeway2links"
+      "session_id": 66919,
+      "command": "SXMlimited60cellmatrix"
     },
     {
-      "session_id": 63115,
-      "command": "localchangedlimited40cellmatrix"
+      "session_id": 18187,
+      "command": "SXMnative20cellmatrix"
     },
     {
-      "session_id": 74895,
-      "command": "localnative36cellmatrix"
+      "session_id": 72075,
+      "command": "SXM3cohortfull5passthreewayconfirmation"
+    },
+    {
+      "session_id": 1398,
+      "command": "gatedretentionpipeline waitsverifiedexistingSXMthenfinalaudit/install/freshroot109tests+codegen+Graph;rollbackonpostinstallfailure"
     }
   ],
-  "next_action": "Inspect3existinglocalhandles, no duplicates. Reaudit/correctnegatives. JMfixedSXM30328/98811stillwaiting; do not overwrite theirsource orqueuedplans. Decidepreferredcandidateonlyafterlocal/native confirmation. Bothremainuninstalled, main32-34%historicalgapnotcomplete.",
+  "next_action": "Inspectcompletion_state.json and original1398 FIRST: livepipelinewillinstallonlyafter156matrixcells+SXM3fullconfirmstages+controlgates, thenfreshroot109tests/codegen/actualGraph. No manualinstall/rerunsinparallel. Onpipelinefailed, inspectfailurebeforeanyretry; sourceSHAguardsandrollbackpreserveb6. Updateaudit/report/HANDOFFandcommitproductiononlyaftercompletedrootvalidation. Main~25-28%gapremains,goalactive.",
   "completed_handles": {
     "88681": 0,
     "28946": 0,
@@ -36,7 +40,20 @@
     "81003": 0,
     "95130": 0,
     "52989": 0,
-    "75294": 0
+    "75294": 0,
+    "69652": 0,
+    "63115": 0,
+    "74895": 0,
+    "55667": 0,
+    "64659": 0,
+    "18986": 0,
+    "78201": 0,
+    "89261": 0,
+    "74903": 0,
+    "95653": 0,
+    "1518": 0,
+    "56668": 1,
+    "41849": 0
   },
-  "results": "109newtestspass;34/68exact,REG251STACK0. ShortnewvsJM100GB+0.916/+0.398%;fullreverse+1.026/+0.837%,newvsproduction+3.766/+3.856%. Normalfull3wayand76localcellsrunning. Noadoption. R64limited10pointscomplete:100GB+2.664-3.335%,50GB+0.211-0.379%; nativeR64HBM+2.923%,PCIe-0.188%,noadoption."
+  "results": "109newtestspass;34/68exact,REG251STACK0. ShortnewvsJM100GB+0.916/+0.398%;fullreverse+1.026/+0.837%,newvsproduction+3.766/+3.856%. Normalfull3wayand76localcellsrunning. Noadoption. R64limited10pointscomplete:100GB+2.664-3.335%,50GB+0.211-0.379%; nativeR64HBM+2.923%,PCIe-0.188%,noadoption. FullnormalGPU3newvsbaseHBM+3.311%,PCIe-0.031%;vsJMHBM+0.142%,PCIe-0.043%. Bothuninstalled. GPU0/1freednaturally,JMrealSXMmatrixrunning; newJQplansstartedindependently. Local76matrixcellsandnormalfull3waycomplete. Two>1%originalpathnegativesnotreproducedin5passbrackets:~0.11%slow/~0.06%fast. Retainedsourcehostlocalrenameall36/72SASSmachinewordsidentical,105+4testspass;notinstalled. Address-mapexperiment110testsbutslow2.8-3.2%vsJQrejected. SXMfullreverse100GBnewvsproduction+5.228/+4.886%,50GB+0.367%; normal/fullforwardandM1matrixremaining. Completion1398verifiedwaiting."
 }
