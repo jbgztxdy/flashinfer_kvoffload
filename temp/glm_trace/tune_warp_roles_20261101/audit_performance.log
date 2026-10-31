@@ -1,0 +1,105 @@
+{
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "pairs": [
+    {
+      "hardware": "GPU3",
+      "cohort": "isolated256_f24_",
+      "variant": "warp_roles_isolated",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l0",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3589.781348903974,
+      "new_us": 3715.349351366361,
+      "reduction": -0.034979289894835786,
+      "old_raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "memcpy_us": 6088.09598783652,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.8586011410966,
+      "over_reference": 0.3761273830400107
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "isolated256_f24_",
+      "variant": "warp_roles_isolated",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3596.170681218306,
+      "new_us": 3780.7466785113015,
+      "reduction": -0.05132570549473048,
+      "old_raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "memcpy_us": 6096.106648445129,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.8326811410966,
+      "over_reference": 0.4003633280390366
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "isolated256_f24_",
+      "variant": "warp_roles_isolated",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g50_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 5285.13066470623,
+      "new_us": 5290.805357197921,
+      "reduction": -0.001073709024752345,
+      "old_raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "memcpy_us": 8492.650638024012,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.84,
+      "over_reference": 0.06672903908148653
+    }
+  ],
+  "tests": [
+    {
+      "variant": "warp_roles",
+      "tests": 105,
+      "sha256": "5de49ca540fbb4a7c5446af7ee8854ef5a7a2badf42e8287257434dae9c22778"
+    },
+    {
+      "variant": "warp_roles_isolated",
+      "tests": 105,
+      "sha256": "f171638ad76e9e79d479f49ce173d8fe9bab6b499c78e7043230e90d4f9fd7d9"
+    }
+  ],
+  "stress_tests": [
+    {
+      "variant": "warp_roles",
+      "tests": 4,
+      "sha256": "0d1b2342c95702ba1e49664b45cb9802cec4572956581fd99d633e217288020f",
+      "scope": "BF16/FP16, 128 pools >108 SMs, K2048, capacities512/4096, eviction/zero-miss/Graph, all filled cache payloads"
+    },
+    {
+      "variant": "warp_roles_isolated",
+      "tests": 4,
+      "sha256": "97b9d474db5e727219be085af9f24fe26ca91a3ab8d3fc0acbf97615772c9761",
+      "scope": "BF16/FP16, 128 pools >108 SMs, K2048, capacities512/4096, eviction/zero-miss/Graph, all filled cache payloads"
+    }
+  ],
+  "pending_references": [],
+  "pending_reference_pairs": [],
+  "timed_launches": 1152,
+  "accepted_segments": 72,
+  "incomplete": [],
+  "production_header_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "original_matrix_sha256": "e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99"
+}

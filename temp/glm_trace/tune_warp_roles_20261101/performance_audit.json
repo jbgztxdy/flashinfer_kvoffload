@@ -1,0 +1,313 @@
+{
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "rows": [
+    {
+      "hardware": "GPU3",
+      "cohort": "isolated256_f24_",
+      "variant": "base",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g100_l0",
+      "ours_us": 3589.781348903974,
+      "memcpy_us": 6093.898668885231,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.8024411410966,
+      "over_reference": 0.3296459378660017,
+      "reference_hit_rate": 0.7673343409909889,
+      "unique_miss_MB": 247.947744,
+      "pass_mean_us": [
+        3564.544029533863,
+        3568.09601187706,
+        3636.7040053009987
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "isolated256_f24_",
+      "variant": "base",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g100_l20000",
+      "ours_us": 3596.170681218306,
+      "memcpy_us": 6119.594648480415,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.961681141097,
+      "over_reference": 0.33193397015117654,
+      "reference_hit_rate": 0.7673425852458688,
+      "unique_miss_MB": 247.958928,
+      "pass_mean_us": [
+        3602.1440029144287,
+        3567.5520226359367,
+        3618.816018104553
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "isolated256_f24_",
+      "variant": "base",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g50_l20000",
+      "ours_us": 5285.13066470623,
+      "memcpy_us": 8493.685354789099,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.61032,
+      "over_reference": 0.06563425827903147,
+      "reference_hit_rate": 0.7672284179694304,
+      "unique_miss_MB": 247.980516,
+      "pass_mean_us": [
+        5287.135995924473,
+        5284.959986805916,
+        5283.296011388302
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "isolated256_f24_",
+      "variant": "warp_roles_isolated",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g100_l0",
+      "ours_us": 3715.349351366361,
+      "memcpy_us": 6088.09598783652,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.8586011410966,
+      "over_reference": 0.3761273830400107,
+      "reference_hit_rate": 0.7673267825149959,
+      "unique_miss_MB": 247.946352,
+      "pass_mean_us": [
+        3651.584006845951,
+        3691.1360174417496,
+        3803.3280298113823
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "f15afc1ec80bb07c0a52883e42efe8839ca34121654e090c4e988ecf2295b446"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "isolated256_f24_",
+      "variant": "warp_roles_isolated",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g100_l20000",
+      "ours_us": 3780.7466785113015,
+      "memcpy_us": 6096.106648445129,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.8326811410966,
+      "over_reference": 0.4003633280390366,
+      "reference_hit_rate": 0.7673325221861148,
+      "unique_miss_MB": 247.951884,
+      "pass_mean_us": [
+        3743.744008243084,
+        3739.136017858982,
+        3859.360009431839
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "f15afc1ec80bb07c0a52883e42efe8839ca34121654e090c4e988ecf2295b446"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "isolated256_f24_",
+      "variant": "warp_roles_isolated",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g50_l20000",
+      "ours_us": 5290.805357197921,
+      "memcpy_us": 8492.650638024012,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.84,
+      "over_reference": 0.06672903908148653,
+      "reference_hit_rate": 0.7672115965090516,
+      "unique_miss_MB": 247.992,
+      "pass_mean_us": [
+        5286.464013159275,
+        5292.2880202531815,
+        5293.664038181305
+      ],
+      "max_abs_error": 0.002171754837036133,
+      "raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "f15afc1ec80bb07c0a52883e42efe8839ca34121654e090c4e988ecf2295b446"
+    }
+  ],
+  "pairs": [
+    {
+      "hardware": "GPU3",
+      "cohort": "isolated256_f24_",
+      "variant": "warp_roles_isolated",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l0",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3589.781348903974,
+      "new_us": 3715.349351366361,
+      "reduction": -0.034979289894835786,
+      "old_raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "memcpy_us": 6088.09598783652,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.8586011410966,
+      "over_reference": 0.3761273830400107
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "isolated256_f24_",
+      "variant": "warp_roles_isolated",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3596.170681218306,
+      "new_us": 3780.7466785113015,
+      "reduction": -0.05132570549473048,
+      "old_raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "memcpy_us": 6096.106648445129,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.8326811410966,
+      "over_reference": 0.4003633280390366
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "isolated256_f24_",
+      "variant": "warp_roles_isolated",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g50_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 5285.13066470623,
+      "new_us": 5290.805357197921,
+      "reduction": -0.001073709024752345,
+      "old_raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "memcpy_us": 8492.650638024012,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.84,
+      "over_reference": 0.06672903908148653
+    }
+  ],
+  "tests": [
+    {
+      "variant": "warp_roles",
+      "tests": 105,
+      "sha256": "5de49ca540fbb4a7c5446af7ee8854ef5a7a2badf42e8287257434dae9c22778"
+    },
+    {
+      "variant": "warp_roles_isolated",
+      "tests": 105,
+      "sha256": "f171638ad76e9e79d479f49ce173d8fe9bab6b499c78e7043230e90d4f9fd7d9"
+    }
+  ],
+  "stress_tests": [
+    {
+      "variant": "warp_roles",
+      "tests": 4,
+      "sha256": "0d1b2342c95702ba1e49664b45cb9802cec4572956581fd99d633e217288020f",
+      "scope": "BF16/FP16, 128 pools >108 SMs, K2048, capacities512/4096, eviction/zero-miss/Graph, all filled cache payloads"
+    },
+    {
+      "variant": "warp_roles_isolated",
+      "tests": 4,
+      "sha256": "97b9d474db5e727219be085af9f24fe26ca91a3ab8d3fc0acbf97615772c9761",
+      "scope": "BF16/FP16, 128 pools >108 SMs, K2048, capacities512/4096, eviction/zero-miss/Graph, all filled cache payloads"
+    }
+  ],
+  "pending_references": [],
+  "pending_reference_pairs": [],
+  "timed_launches": 1152,
+  "accepted_segments": 72,
+  "files": [
+    {
+      "path": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "356b2fe5ecbdd31a25bc1e659aecb1bfad69ca9cfc2c487eda8994bfcf431351"
+    },
+    {
+      "path": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "d0bc34874f2b0265cd739bd3876eff3dcf76a5bae8657c99184cdf74cff46abd"
+    },
+    {
+      "path": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "sha256": "629ad55a6ded6fb75d8a6e339ee6795ed2577b802c41e9af03ae49ced2697621"
+    },
+    {
+      "path": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "500321112eb8940f8320a36a12182e59db4423e01936dadd9db794d24f242d58"
+    },
+    {
+      "path": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "86a7848d66467912faad24cfb1fdccc8c5ad6fd2f9635b0bfbf342777e50c0c0"
+    },
+    {
+      "path": "temp/glm_trace/tune_warp_roles_20261101/gpu3/raw/isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "sha256": "a7d51f25aaef873a5ddac98585f274043e1e103b58e14e6ca9a02b601bd01347"
+    }
+  ],
+  "incomplete": [],
+  "production_header_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "original_matrix_sha256": "e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99"
+}

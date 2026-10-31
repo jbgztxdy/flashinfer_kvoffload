@@ -1,0 +1,79 @@
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+WAITING_CORRECTNESS
+{
+  "timestamp": "2026-11-01T02:43:22+0800",
+  "physical_gpu": 3,
+  "resources_start": {
+    "timestamp": "2026-11-01T02:43:19+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 97
+      }
+    ],
+    "foreign": [],
+    "available": false
+  },
+  "resources_end": {
+    "timestamp": "2026-11-01T02:43:22+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 987,
+        "total_mib": 40960,
+        "utilization": 7
+      }
+    ],
+    "foreign": [],
+    "available": false
+  },
+  "header_sha256": "55a7ff3256614df31318e23c1dc66fd2280e8f45792c1264381605d13cd8c3d7",
+  "math_header_sha256": "7c95011575accd4f8eb4832b4d53f61b4bf2b19a3545c3d4e095f77e4a5666b7",
+  "graph_nodes": 1,
+  "kernel_nodes": 1,
+  "launches": [
+    {
+      "grid": [
+        1,
+        108,
+        1
+      ],
+      "block": [
+        32,
+        2,
+        4
+      ],
+      "dynamic_shared_bytes": 147968,
+      "active_blocks_per_SM": 1,
+      "kernel_name": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_"
+    }
+  ],
+  "checked_rows": [
+    0,
+    431
+  ],
+  "max_abs_error": 0.004127860069274902
+}

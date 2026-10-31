@@ -1,0 +1,62 @@
+{
+  "recorded_at": "2026-11-01T02:54:36+08:00",
+  "goal_status": "active",
+  "candidate_adopted": false,
+  "active_runners": [],
+  "next_action": "Spatial4fetch/4compute roles rejected after all3points slower. Continue a distinct mechanism; no simple warp/chunk/fetch/cadence scan.",
+  "production_header_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "previous_checkpoint": "1e9356ca rejects F/S five candidates,545 tests/36cells/21pairs; production unchanged.",
+  "completed_handles": {
+    "97958": 0,
+    "7799": 1,
+    "9586": 1,
+    "94288": 0,
+    "76653": 0,
+    "54946": 0,
+    "44177": 0,
+    "50727": 0,
+    "96623": 1,
+    "76601": 0,
+    "33181": 0,
+    "94914": 0,
+    "97502": 0,
+    "23211": 1,
+    "11870": 1,
+    "72315": 0
+  },
+  "v1": "CPUbuildEMUnormal success;109tests+actual108CTA32x2x4pass. ExactoldkernelSASS gatefailed bothbuilds;screen96623exited1beforeanyperformance. Originalfrozen source retained;isolatedversionclonesrolehelpersandkeepsoriginaldefinitionsliteral. No processes were cancelled: attemptedpretestcancellationassertsafelyrefused aftertestchildhadstarted;alltestscompletednaturally.",
+  "v1_new_resources": [
+    {
+      "file": "warp_roles_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_resources.txt",
+      "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_:",
+      "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "file": "warp_roles_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_resources.txt",
+      "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_:",
+      "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "file": "warp_roles_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_resources.txt",
+      "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_:",
+      "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "file": "warp_roles_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_resources.txt",
+      "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_:",
+      "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "file": "warp_roles_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_resources.txt",
+      "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_:",
+      "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "file": "warp_roles_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_resources.txt",
+      "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_:",
+      "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    }
+  ],
+  "v1_codegen_review": "v1_codegen_review.json:22/34EMU and44/68normal originals differ; all puredevice BatchMLAPagedAttentionKernel exact. No v1 performance.",
+  "results": "6cells/3pairs,1152launches/72segments,218tests; both references complete."
+}

@@ -1,0 +1,1214 @@
+{
+  "build": "normal BF16/FP16",
+  "base_header_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "candidate_header_sha256": "f15afc1ec80bb07c0a52883e42efe8839ca34121654e090c4e988ecf2295b446",
+  "math_header_sha256": "f5ff8427de99036990af929a66684106b79ae726cb0113b49ccccd068046c141",
+  "unchanged_original_kernels": 68,
+  "unchanged": [
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_"
+    }
+  ],
+  "new_kernels": [
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_",
+      "instructions": 7104,
+      "instruction_sha256": "47fcc53ba09b2b080b1fd5422bdfcab58b4797c74dd15fadd578d1e68bd229b6",
+      "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_",
+      "instructions": 7104,
+      "instruction_sha256": "47fcc53ba09b2b080b1fd5422bdfcab58b4797c74dd15fadd578d1e68bd229b6",
+      "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_",
+      "instructions": 7104,
+      "instruction_sha256": "15f903eebc60f24ef217d0d19d4cb40aa93562c07cbdd977ea4173c9b716baed",
+      "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_",
+      "instructions": 7104,
+      "instruction_sha256": "15f903eebc60f24ef217d0d19d4cb40aa93562c07cbdd977ea4173c9b716baed",
+      "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    }
+  ],
+  "unique_new_kernel_symbols": 2,
+  "all_new_stack_and_local_zero": true,
+  "libraries": {
+    "base": [
+      {
+        "name": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "6fc60c9aefb3273909c6e7ae5bb5519e5e7d108f924d126180e119dd953dc05e"
+      },
+      {
+        "name": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "ab40410f6b2f75d53533e092ce534af8606ca2e801b4d64e9b9114182e9700c4"
+      },
+      {
+        "name": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "b4a52dd512d3b4db3b5bb6e0b635d505baf3642292670b420e783a8c58dd4219"
+      },
+      {
+        "name": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "b1225ec692e679cf31c776d73e7cc6aa04985408c9c7569a68823d8ce2d362ab"
+      }
+    ],
+    "warp_roles_isolated": [
+      {
+        "name": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "2d30c159fab523e8e66600268bd0d82a4419750c3855878ccf99f51d4c701415"
+      },
+      {
+        "name": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "19966af4f2e954ed9a9fac8a26d62eb49c75ce6d59f49059b7b00d2d1f23cd04"
+      },
+      {
+        "name": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "4d747f6746faa3374711d5984bb23ca12c2389082c07df7527072c69976bf77c"
+      },
+      {
+        "name": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "9a1f685089af67d6f7934f6d39a13c7a0d91fd52a73a1224b22f48d5dc75047e"
+      }
+    ]
+  },
+  "records": {
+    "base": {
+      "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "5e3d5ce97a4af565e40d29fc1ca4578271eee32f5495bcc3a5f0d9ee55b5d71a",
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "9b243ed56cfd6c37137d1914dfa4dc41b8c9fe0647d7cbcbb4a1bab2b246f2c8",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "50791f851bce109d083adcfb6a69c8d1100483559ff23dd29de77c0b9cbb8ac7",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "f1113410651b61b2d47fa3e7460e9ec6f0d3fd39ec3539ef64d830994596af8a",
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "9dd2dd36429f4a00f1e08163c86735e3a9bf5280a8d56ce3e51bfafdd426b5f8",
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "206644c6d03c94bb4b69f56d888dc47897fdb64d6deacf2e65e75771d5459e02",
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "2c5eb961752643e984ee3d7d31726f5d966304b134e32d01ec4190e76c31a3df",
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "1ab7911440c129280df077517f65e7e376557871d8695c3e3112ab9370f0d016",
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "78bfc59cb188fea18ca1fe67920d8e9751a5dc0721ed8811981fcc62405cc66d",
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "d89167d89f98b124553c9a448e73bf5577a1683dc229612833a22c8e7ebc91d2",
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "5f92d69babc0142fe78a6e4958741dd473d6453c90da089e3d65cc3a8a0674ce",
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "bde195a3fe423f6398243f4146ba2046edc3b900de1c364b665503bff3a6be36",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "c618bd107d593845e42c368edd78d6b274d77c5b26ae6703142fa868dd992719",
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "076c4a987c4021f8c01801e3794379b103dc0c7c47233425bcb54ebbeddb6327",
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "f872c09b685a86baf5daedccfa4ff81412acc6343cfb260422bb662083cce6e6",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "b77ab4cbdfb8fe02499701fd790cbb178acbd6d71d9406213fb6af54c8425ede",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "93f3c13619393fada76887007a8ef22d565d10251b1a849d8995c4fc7ff61174",
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      },
+      "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "5e3d5ce97a4af565e40d29fc1ca4578271eee32f5495bcc3a5f0d9ee55b5d71a",
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "9b243ed56cfd6c37137d1914dfa4dc41b8c9fe0647d7cbcbb4a1bab2b246f2c8",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "50791f851bce109d083adcfb6a69c8d1100483559ff23dd29de77c0b9cbb8ac7",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "f1113410651b61b2d47fa3e7460e9ec6f0d3fd39ec3539ef64d830994596af8a",
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "9dd2dd36429f4a00f1e08163c86735e3a9bf5280a8d56ce3e51bfafdd426b5f8",
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "206644c6d03c94bb4b69f56d888dc47897fdb64d6deacf2e65e75771d5459e02",
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "2c5eb961752643e984ee3d7d31726f5d966304b134e32d01ec4190e76c31a3df",
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "1ab7911440c129280df077517f65e7e376557871d8695c3e3112ab9370f0d016",
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "78bfc59cb188fea18ca1fe67920d8e9751a5dc0721ed8811981fcc62405cc66d",
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "d89167d89f98b124553c9a448e73bf5577a1683dc229612833a22c8e7ebc91d2",
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "5f92d69babc0142fe78a6e4958741dd473d6453c90da089e3d65cc3a8a0674ce",
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "bde195a3fe423f6398243f4146ba2046edc3b900de1c364b665503bff3a6be36",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "c618bd107d593845e42c368edd78d6b274d77c5b26ae6703142fa868dd992719",
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "076c4a987c4021f8c01801e3794379b103dc0c7c47233425bcb54ebbeddb6327",
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "f872c09b685a86baf5daedccfa4ff81412acc6343cfb260422bb662083cce6e6",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "b77ab4cbdfb8fe02499701fd790cbb178acbd6d71d9406213fb6af54c8425ede",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "93f3c13619393fada76887007a8ef22d565d10251b1a849d8995c4fc7ff61174",
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      },
+      "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "559e64d05bd5233d1e398ae4092e10e392ece3ed5ea6fab010d167ac1f3b538f",
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "fc06028e485363ff74e906283fb406a29227e3223c6fce26416669c67d71927e",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "d49cdac25c0c0f2a917797bf2f005695655d3b89fdbb9811f67d9e78cf2dd48e",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "36c01e5bc1280eba37e43b8407545f66baa933882c2545a5021d1733c65050a8",
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "cf64c1b820ee1ed377dec8cc47cadee66eb8dd4d4c42b2d47844df0bac507f6a",
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "b8c9b1fb0d4e58f4a97469c33f415261453aa5cbc03b74dbce910af23d7a84d3",
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "c6d66b6cc652577c76efd864c2a174dbe191c011b2b0513efe6afc395a039ed4",
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "0b10f895e4f66284379734cec4cf54ea3702b1df7bfd0fea87d855ade80aa9f9",
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "0e938d45776a8898f0bab5df29fa68e71113b5e9d5d6e5c3405029c1ef759e93",
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "239bb8c965bceb7cba52aace4529d114b66adf27f062e93fa8068d1e0b48c41b",
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "1ad5dde04c010ff3674617ce322d000197407005559d5dd2f0ecb3339c42c545",
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "dffbb47c14d36cb9ad882f2df32896264064bc5afb86c898dc2f5c6a77168a4a",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "a5ee95d2d3ff1753081697ed000553484677a680e6f186ac7bd9c7837f8d892e",
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "1bf80cbb796d64e370efd4c71682edc8365acdd6c96e293b572b004ad4efaa99",
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "0504e74648330a4b73a5d909cc3ef2f95f000cb2b3f7383694dc1a526897417a",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "065cb81400c895cca2bcdf110991ecd21d04b259780c0f5d1437f66f878bfe62",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "4a0f2d17c63bdaa4863da1ea32809bcc21aa536570db21943c8b45cce5604b6a",
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      },
+      "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "559e64d05bd5233d1e398ae4092e10e392ece3ed5ea6fab010d167ac1f3b538f",
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "fc06028e485363ff74e906283fb406a29227e3223c6fce26416669c67d71927e",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "d49cdac25c0c0f2a917797bf2f005695655d3b89fdbb9811f67d9e78cf2dd48e",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "36c01e5bc1280eba37e43b8407545f66baa933882c2545a5021d1733c65050a8",
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "cf64c1b820ee1ed377dec8cc47cadee66eb8dd4d4c42b2d47844df0bac507f6a",
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "b8c9b1fb0d4e58f4a97469c33f415261453aa5cbc03b74dbce910af23d7a84d3",
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "c6d66b6cc652577c76efd864c2a174dbe191c011b2b0513efe6afc395a039ed4",
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "0b10f895e4f66284379734cec4cf54ea3702b1df7bfd0fea87d855ade80aa9f9",
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "0e938d45776a8898f0bab5df29fa68e71113b5e9d5d6e5c3405029c1ef759e93",
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "239bb8c965bceb7cba52aace4529d114b66adf27f062e93fa8068d1e0b48c41b",
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "1ad5dde04c010ff3674617ce322d000197407005559d5dd2f0ecb3339c42c545",
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "dffbb47c14d36cb9ad882f2df32896264064bc5afb86c898dc2f5c6a77168a4a",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "a5ee95d2d3ff1753081697ed000553484677a680e6f186ac7bd9c7837f8d892e",
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "1bf80cbb796d64e370efd4c71682edc8365acdd6c96e293b572b004ad4efaa99",
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "0504e74648330a4b73a5d909cc3ef2f95f000cb2b3f7383694dc1a526897417a",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "065cb81400c895cca2bcdf110991ecd21d04b259780c0f5d1437f66f878bfe62",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "4a0f2d17c63bdaa4863da1ea32809bcc21aa536570db21943c8b45cce5604b6a",
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      }
+    },
+    "warp_roles_isolated": {
+      "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "5e3d5ce97a4af565e40d29fc1ca4578271eee32f5495bcc3a5f0d9ee55b5d71a",
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "9b243ed56cfd6c37137d1914dfa4dc41b8c9fe0647d7cbcbb4a1bab2b246f2c8",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "50791f851bce109d083adcfb6a69c8d1100483559ff23dd29de77c0b9cbb8ac7",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "f1113410651b61b2d47fa3e7460e9ec6f0d3fd39ec3539ef64d830994596af8a",
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "9dd2dd36429f4a00f1e08163c86735e3a9bf5280a8d56ce3e51bfafdd426b5f8",
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "206644c6d03c94bb4b69f56d888dc47897fdb64d6deacf2e65e75771d5459e02",
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "2c5eb961752643e984ee3d7d31726f5d966304b134e32d01ec4190e76c31a3df",
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "1ab7911440c129280df077517f65e7e376557871d8695c3e3112ab9370f0d016",
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "78bfc59cb188fea18ca1fe67920d8e9751a5dc0721ed8811981fcc62405cc66d",
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "d89167d89f98b124553c9a448e73bf5577a1683dc229612833a22c8e7ebc91d2",
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_",
+          "instructions": 7104,
+          "instruction_sha256": "47fcc53ba09b2b080b1fd5422bdfcab58b4797c74dd15fadd578d1e68bd229b6",
+          "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "5f92d69babc0142fe78a6e4958741dd473d6453c90da089e3d65cc3a8a0674ce",
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "bde195a3fe423f6398243f4146ba2046edc3b900de1c364b665503bff3a6be36",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "c618bd107d593845e42c368edd78d6b274d77c5b26ae6703142fa868dd992719",
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "076c4a987c4021f8c01801e3794379b103dc0c7c47233425bcb54ebbeddb6327",
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "f872c09b685a86baf5daedccfa4ff81412acc6343cfb260422bb662083cce6e6",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "b77ab4cbdfb8fe02499701fd790cbb178acbd6d71d9406213fb6af54c8425ede",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "93f3c13619393fada76887007a8ef22d565d10251b1a849d8995c4fc7ff61174",
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      },
+      "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "5e3d5ce97a4af565e40d29fc1ca4578271eee32f5495bcc3a5f0d9ee55b5d71a",
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "9b243ed56cfd6c37137d1914dfa4dc41b8c9fe0647d7cbcbb4a1bab2b246f2c8",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "50791f851bce109d083adcfb6a69c8d1100483559ff23dd29de77c0b9cbb8ac7",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "f1113410651b61b2d47fa3e7460e9ec6f0d3fd39ec3539ef64d830994596af8a",
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "9dd2dd36429f4a00f1e08163c86735e3a9bf5280a8d56ce3e51bfafdd426b5f8",
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "206644c6d03c94bb4b69f56d888dc47897fdb64d6deacf2e65e75771d5459e02",
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "2c5eb961752643e984ee3d7d31726f5d966304b134e32d01ec4190e76c31a3df",
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "1ab7911440c129280df077517f65e7e376557871d8695c3e3112ab9370f0d016",
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "78bfc59cb188fea18ca1fe67920d8e9751a5dc0721ed8811981fcc62405cc66d",
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "d89167d89f98b124553c9a448e73bf5577a1683dc229612833a22c8e7ebc91d2",
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_",
+          "instructions": 7104,
+          "instruction_sha256": "47fcc53ba09b2b080b1fd5422bdfcab58b4797c74dd15fadd578d1e68bd229b6",
+          "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "5f92d69babc0142fe78a6e4958741dd473d6453c90da089e3d65cc3a8a0674ce",
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "bde195a3fe423f6398243f4146ba2046edc3b900de1c364b665503bff3a6be36",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "c618bd107d593845e42c368edd78d6b274d77c5b26ae6703142fa868dd992719",
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "076c4a987c4021f8c01801e3794379b103dc0c7c47233425bcb54ebbeddb6327",
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "f872c09b685a86baf5daedccfa4ff81412acc6343cfb260422bb662083cce6e6",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "b77ab4cbdfb8fe02499701fd790cbb178acbd6d71d9406213fb6af54c8425ede",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "93f3c13619393fada76887007a8ef22d565d10251b1a849d8995c4fc7ff61174",
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      },
+      "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "559e64d05bd5233d1e398ae4092e10e392ece3ed5ea6fab010d167ac1f3b538f",
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "fc06028e485363ff74e906283fb406a29227e3223c6fce26416669c67d71927e",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "d49cdac25c0c0f2a917797bf2f005695655d3b89fdbb9811f67d9e78cf2dd48e",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "36c01e5bc1280eba37e43b8407545f66baa933882c2545a5021d1733c65050a8",
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "cf64c1b820ee1ed377dec8cc47cadee66eb8dd4d4c42b2d47844df0bac507f6a",
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "b8c9b1fb0d4e58f4a97469c33f415261453aa5cbc03b74dbce910af23d7a84d3",
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "c6d66b6cc652577c76efd864c2a174dbe191c011b2b0513efe6afc395a039ed4",
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "0b10f895e4f66284379734cec4cf54ea3702b1df7bfd0fea87d855ade80aa9f9",
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "0e938d45776a8898f0bab5df29fa68e71113b5e9d5d6e5c3405029c1ef759e93",
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "239bb8c965bceb7cba52aace4529d114b66adf27f062e93fa8068d1e0b48c41b",
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_",
+          "instructions": 7104,
+          "instruction_sha256": "15f903eebc60f24ef217d0d19d4cb40aa93562c07cbdd977ea4173c9b716baed",
+          "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "1ad5dde04c010ff3674617ce322d000197407005559d5dd2f0ecb3339c42c545",
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "dffbb47c14d36cb9ad882f2df32896264064bc5afb86c898dc2f5c6a77168a4a",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "a5ee95d2d3ff1753081697ed000553484677a680e6f186ac7bd9c7837f8d892e",
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "1bf80cbb796d64e370efd4c71682edc8365acdd6c96e293b572b004ad4efaa99",
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "0504e74648330a4b73a5d909cc3ef2f95f000cb2b3f7383694dc1a526897417a",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "065cb81400c895cca2bcdf110991ecd21d04b259780c0f5d1437f66f878bfe62",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "4a0f2d17c63bdaa4863da1ea32809bcc21aa536570db21943c8b45cce5604b6a",
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      },
+      "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "559e64d05bd5233d1e398ae4092e10e392ece3ed5ea6fab010d167ac1f3b538f",
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "fc06028e485363ff74e906283fb406a29227e3223c6fce26416669c67d71927e",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "d49cdac25c0c0f2a917797bf2f005695655d3b89fdbb9811f67d9e78cf2dd48e",
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "36c01e5bc1280eba37e43b8407545f66baa933882c2545a5021d1733c65050a8",
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "cf64c1b820ee1ed377dec8cc47cadee66eb8dd4d4c42b2d47844df0bac507f6a",
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "b8c9b1fb0d4e58f4a97469c33f415261453aa5cbc03b74dbce910af23d7a84d3",
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "c6d66b6cc652577c76efd864c2a174dbe191c011b2b0513efe6afc395a039ed4",
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "0b10f895e4f66284379734cec4cf54ea3702b1df7bfd0fea87d855ade80aa9f9",
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "0e938d45776a8898f0bab5df29fa68e71113b5e9d5d6e5c3405029c1ef759e93",
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "239bb8c965bceb7cba52aace4529d114b66adf27f062e93fa8068d1e0b48c41b",
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_",
+          "instructions": 7104,
+          "instruction_sha256": "15f903eebc60f24ef217d0d19d4cb40aa93562c07cbdd977ea4173c9b716baed",
+          "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "1ad5dde04c010ff3674617ce322d000197407005559d5dd2f0ecb3339c42c545",
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "dffbb47c14d36cb9ad882f2df32896264064bc5afb86c898dc2f5c6a77168a4a",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "a5ee95d2d3ff1753081697ed000553484677a680e6f186ac7bd9c7837f8d892e",
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "1bf80cbb796d64e370efd4c71682edc8365acdd6c96e293b572b004ad4efaa99",
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "0504e74648330a4b73a5d909cc3ef2f95f000cb2b3f7383694dc1a526897417a",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "065cb81400c895cca2bcdf110991ecd21d04b259780c0f5d1437f66f878bfe62",
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "4a0f2d17c63bdaa4863da1ea32809bcc21aa536570db21943c8b45cce5604b6a",
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      }
+    }
+  },
+  "complete": true
+}

@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_roles_20261101/bench_gpu3_native.py", line 76, in <module>
+    RESOURCE_START=require_exclusive()
+                   ^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_roles_20261101/resources_gpu3.py", line 15, in require_exclusive
+    if state['foreign']:raise RuntimeError('Other physical GPU3 process: '+str(state['foreign']))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Other physical GPU3 process: [{'gpu_uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'pid': 1500489, 'process': '/mnt/raid/ny_work/envs/dynampaq_py310_torch251/bin/python', 'used_mib': '12'}]
+start isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l0_mtp8_b128
+isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l0_mtp8_b128 cached GPU metadata bytes 649802000
+isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l0_mtp8_b128 fraction 1.0 mean_us {'ours': 3715.349, 'memcpy': 6088.096}
+complete isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l0_mtp8_b128
+start isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128
+isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128 cached GPU metadata bytes 649802000
+isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128 fraction 1.0 mean_us {'ours': 3780.747, 'memcpy': 6096.107}
+complete isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128
+start isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128
+isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128 cached GPU metadata bytes 649802000
+isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128 fraction 1.0 mean_us {'ours': 5290.805, 'memcpy': 8492.651}
+complete isolated256_f24_warp_roles_isolated_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128

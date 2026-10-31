@@ -1,0 +1,9 @@
+# Spatial warp roles, 2026-11-01
+
+Rejected; production b6eea095…e72a / 0f82e9de, goal active. See [report](../../../docs/mla_host_a100_warp_roles_20261101.md), decisions.json and performance_audit.json.
+
+A256-thread CTA divides four fetch/four compute warps, named barriers2/1 each128, physicalz0/1 fetch andz2/3 compute mapped to virtualz0/1. Full256-thread prepare/LRU and final grid/exit remain. Native32head/sharded32KV/2stage attention uses110848B, independent2x16row fetch payload36864B follows; total147712B within original147968B. Every108CTA fetch subgroup walks16row chunks;3456 in-flight rows versus basef24's3072 (+12.5%), explicitly an algorithm/policy change. One cooperative kernel,108CTAx256,block32x2x4,active1,static1408B,REG246,STACK0/LOCAL0.
+
+warp_roles v1 passes109tests/actual dispatch but fails exact-old instruction gate(22/34EMU,44/68normal changed; puredevice kernels exact). No v1 performance. warp_roles_isolated clones dedicated helpers and keeps originals literal, passes34/68 exact proof plus109tests/actual dispatch; only it is screened. All218tests include cache payloads,>SM pools,eviction,zero miss,padding andGraph. All six cells/three pairs slow,1152 timed launches/72segments with both references; no further parameter/full-window/native-link expansion. Every failure and original source remains: precompile generation insertion error, v1 codegen rejection, missingplans.cpp preflight, and any resource failures in state/raw/failures. Nothing was cancelled; no signals to other users.
+
+restore_includes.py validates or restores host/math pairs without overwrite. make_candidate.py/make_isolated.py and warp_roles.inc reproduce frozen sources. Baselines reuse W/jit_cached_ids and W/jit_retained_normal; build W first on a fresh checkout. The auditor requires matching private math/host and68-original proof before canonical same-hardware reference reuse. All runners terminal; original5304matrix untouched.

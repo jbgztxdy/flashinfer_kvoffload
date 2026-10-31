@@ -1,0 +1,2187 @@
+{
+  "complete": true,
+  "performance_authorized": false,
+  "builds": {
+    "emu": {
+      "original_count": 34,
+      "equal_count": 12,
+      "changed_count": 22,
+      "pure_device_exact": true,
+      "original_records": [
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7352,
+          "new_count": 7352,
+          "different_positions": 5,
+          "examples": [
+            {
+              "index": 3076,
+              "old": "LOP3.LUT P0, RZ, R243, R242, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R242, R243, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 3747,
+              "old": "LOP3.LUT P0, RZ, R243, R242, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R242, R243, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4141,
+              "old": "LOP3.LUT R189, R27, R168, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT R189, R27, R168.reuse, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4149,
+              "old": "IMAD R188, R157, 0x38, R188",
+              "new": "IMAD R188, R157.reuse, 0x38, R188"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 13136,
+          "new_count": 13136,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4423,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5407,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6114,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 13272,
+          "new_count": 13272,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4420,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5405,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6112,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7888,
+          "new_count": 7888,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 3229,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4334,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4920,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7784,
+          "new_count": 7784,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 3122,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4227,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4813,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 13544,
+          "new_count": 13544,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4368,
+              "old": "LOP3.LUT P1, RZ, R201, R200, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R200, R201, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5830,
+              "old": "LOP3.LUT P3, RZ, R201, R200, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R200, R201, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6681,
+              "old": "LOP3.LUT P3, RZ, R201, R200, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R200, R201, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 13688,
+          "new_count": 13688,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4363,
+              "old": "LOP3.LUT P2, RZ, R200, R183, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R183, R200, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5827,
+              "old": "LOP3.LUT P3, RZ, R200, R183, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R183, R200, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6681,
+              "old": "LOP3.LUT P3, RZ, R200, R183, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R183, R200, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 9320,
+          "new_count": 9320,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 3113,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4811,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6166,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 15480,
+          "new_count": 15480,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4375,
+              "old": "LOP3.LUT P1, RZ, R184, R7, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R7, R184, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6625,
+              "old": "LOP3.LUT P4, RZ, R184, R7, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P4, RZ, R7, R184, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 7943,
+              "old": "LOP3.LUT P4, RZ, R184, R7, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P4, RZ, R7, R184, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 15608,
+          "new_count": 15608,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4369,
+              "old": "LOP3.LUT P2, RZ, R6, R7, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R7, R6, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6617,
+              "old": "LOP3.LUT P4, RZ, R6, R7, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P4, RZ, R7, R6, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 7929,
+              "old": "LOP3.LUT P4, RZ, R6, R7, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P4, RZ, R7, R6, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4480,
+          "new_count": 4480,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4968,
+          "new_count": 4968,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 6496,
+          "new_count": 6496,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4432,
+          "new_count": 4432,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4880,
+          "new_count": 4880,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 6416,
+          "new_count": 6416,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "equal": false,
+          "old_count": 9536,
+          "new_count": 9536,
+          "different_positions": 4,
+          "examples": [
+            {
+              "index": 6600,
+              "old": "IADD3 R32, P2, P3, R32, R33, R182",
+              "new": "IADD3 R32, P2, P3, R32, R182.reuse, R33"
+            },
+            {
+              "index": 6623,
+              "old": "IADD3 R99, P3, P4, R34, R33, R182",
+              "new": "IADD3 R99, P3, P4, R34, R182, R33"
+            },
+            {
+              "index": 6636,
+              "old": "IADD3 R105, P3, P4, R100, R101, R182",
+              "new": "IADD3 R105, P3, P4, R100, R182, R101"
+            },
+            {
+              "index": 6641,
+              "old": "IADD3 R103, P3, P4, R103, R101, R182",
+              "new": "IADD3 R103, P3, P4, R103, R182, R101"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7352,
+          "new_count": 7352,
+          "different_positions": 5,
+          "examples": [
+            {
+              "index": 3076,
+              "old": "LOP3.LUT P0, RZ, R243, R242, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R242, R243, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 3747,
+              "old": "LOP3.LUT P0, RZ, R243, R242, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R242, R243, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4141,
+              "old": "LOP3.LUT R189, R27, R168, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT R189, R27, R168.reuse, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4149,
+              "old": "IMAD R188, R157, 0x38, R188",
+              "new": "IMAD R188, R157.reuse, 0x38, R188"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 13136,
+          "new_count": 13136,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4423,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5407,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6114,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 13272,
+          "new_count": 13272,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4420,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5405,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6112,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7888,
+          "new_count": 7888,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 3229,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4334,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4920,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7784,
+          "new_count": 7784,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 3122,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4227,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4813,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 13544,
+          "new_count": 13544,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4368,
+              "old": "LOP3.LUT P1, RZ, R201, R200, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R200, R201, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5830,
+              "old": "LOP3.LUT P3, RZ, R201, R200, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R200, R201, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6681,
+              "old": "LOP3.LUT P3, RZ, R201, R200, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R200, R201, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 13688,
+          "new_count": 13688,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4363,
+              "old": "LOP3.LUT P2, RZ, R200, R183, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R183, R200, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5827,
+              "old": "LOP3.LUT P3, RZ, R200, R183, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R183, R200, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6681,
+              "old": "LOP3.LUT P3, RZ, R200, R183, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R183, R200, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 9320,
+          "new_count": 9320,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 3113,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4811,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6166,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 15480,
+          "new_count": 15480,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4375,
+              "old": "LOP3.LUT P1, RZ, R184, R7, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R7, R184, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6625,
+              "old": "LOP3.LUT P4, RZ, R184, R7, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P4, RZ, R7, R184, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 7943,
+              "old": "LOP3.LUT P4, RZ, R184, R7, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P4, RZ, R7, R184, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 15608,
+          "new_count": 15608,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4369,
+              "old": "LOP3.LUT P2, RZ, R6, R7, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R7, R6, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6617,
+              "old": "LOP3.LUT P4, RZ, R6, R7, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P4, RZ, R7, R6, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 7929,
+              "old": "LOP3.LUT P4, RZ, R6, R7, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P4, RZ, R7, R6, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4480,
+          "new_count": 4480,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4968,
+          "new_count": 4968,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 6496,
+          "new_count": 6496,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4432,
+          "new_count": 4432,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4880,
+          "new_count": 4880,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 6416,
+          "new_count": 6416,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "equal": false,
+          "old_count": 9536,
+          "new_count": 9536,
+          "different_positions": 4,
+          "examples": [
+            {
+              "index": 6600,
+              "old": "IADD3 R32, P2, P3, R32, R33, R182",
+              "new": "IADD3 R32, P2, P3, R32, R182.reuse, R33"
+            },
+            {
+              "index": 6623,
+              "old": "IADD3 R99, P3, P4, R34, R33, R182",
+              "new": "IADD3 R99, P3, P4, R34, R182, R33"
+            },
+            {
+              "index": 6636,
+              "old": "IADD3 R105, P3, P4, R100, R101, R182",
+              "new": "IADD3 R105, P3, P4, R100, R182, R101"
+            },
+            {
+              "index": 6641,
+              "old": "IADD3 R103, P3, P4, R103, R101, R182",
+              "new": "IADD3 R103, P3, P4, R103, R182, R101"
+            }
+          ],
+          "pure_device": false
+        }
+      ],
+      "new_instances": [
+        {
+          "archive": "warp_roles_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_"
+        },
+        {
+          "archive": "warp_roles_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_"
+        }
+      ]
+    },
+    "_normal": {
+      "original_count": 68,
+      "equal_count": 24,
+      "changed_count": 44,
+      "pure_device_exact": true,
+      "original_records": [
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7152,
+          "new_count": 7152,
+          "different_positions": 5,
+          "examples": [
+            {
+              "index": 2879,
+              "old": "LOP3.LUT P0, RZ, R243, R242, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R242, R243, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 3550,
+              "old": "LOP3.LUT P0, RZ, R243, R242, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R242, R243, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 3944,
+              "old": "LOP3.LUT R189, R27, R168, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT R189, R27, R168.reuse, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 3952,
+              "old": "IMAD R188, R157, 0x38, R188",
+              "new": "IMAD R188, R157.reuse, 0x38, R188"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 12320,
+          "new_count": 12320,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4234,
+              "old": "LOP3.LUT P0, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4984,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5475,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 12464,
+          "new_count": 12464,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4234,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4985,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5475,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7712,
+          "new_count": 7712,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 3051,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4156,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4742,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7600,
+          "new_count": 7600,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 2944,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4049,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4635,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 12688,
+          "new_count": 12688,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4176,
+              "old": "LOP3.LUT P0, RZ, R178, R177, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R177, R178, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5387,
+              "old": "LOP3.LUT P1, RZ, R178, R177, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R177, R178, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6040,
+              "old": "LOP3.LUT P1, RZ, R178.reuse, R177, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R177, R178, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 12824,
+          "new_count": 12824,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4170,
+              "old": "LOP3.LUT P1, RZ, R177, R176, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R176, R177, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5380,
+              "old": "LOP3.LUT P2, RZ, R177, R176, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R176, R177, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6031,
+              "old": "LOP3.LUT P2, RZ, R177.reuse, R176, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R176, R177, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 9144,
+          "new_count": 9144,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 2935,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4633,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5988,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 14344,
+          "new_count": 14344,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4183,
+              "old": "LOP3.LUT P0, RZ, R162, R161, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R161, R162, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6048,
+              "old": "LOP3.LUT P3, RZ, R162, R161, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R161, R162, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 7072,
+              "old": "LOP3.LUT P3, RZ, R162, R161, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R161, R162, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 14480,
+          "new_count": 14480,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4175,
+              "old": "LOP3.LUT P1, RZ, R161, R160, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R160, R161, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6037,
+              "old": "LOP3.LUT P3, RZ, R161, R160, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R160, R161, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 7056,
+              "old": "LOP3.LUT P3, RZ, R161, R160, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R160, R161, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3888,
+          "new_count": 3888,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4176,
+          "new_count": 4176,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5608,
+          "new_count": 5608,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3768,
+          "new_count": 3768,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4096,
+          "new_count": 4096,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5504,
+          "new_count": 5504,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "equal": false,
+          "old_count": 9256,
+          "new_count": 9256,
+          "different_positions": 4,
+          "examples": [
+            {
+              "index": 6443,
+              "old": "IADD3 R47, P5, P6, R32, R33, R190",
+              "new": "IADD3 R47, P5, P6, R32, R190.reuse, R33"
+            },
+            {
+              "index": 6461,
+              "old": "IADD3 R101, P3, P4, R35, R37, R190",
+              "new": "IADD3 R101, P3, P4, R35, R190, R37"
+            },
+            {
+              "index": 6474,
+              "old": "IADD3 R103, P3, P4, R45, R103, R190.reuse",
+              "new": "IADD3 R103, P3, P4, R45, R190.reuse, R103"
+            },
+            {
+              "index": 6479,
+              "old": "IADD3 R45, P3, P4, R104, R45, R190",
+              "new": "IADD3 R45, P3, P4, R104, R190, R45"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7152,
+          "new_count": 7152,
+          "different_positions": 5,
+          "examples": [
+            {
+              "index": 2879,
+              "old": "LOP3.LUT P0, RZ, R243, R242, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R242, R243, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 3550,
+              "old": "LOP3.LUT P0, RZ, R243, R242, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R242, R243, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 3944,
+              "old": "LOP3.LUT R189, R27, R168, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT R189, R27, R168.reuse, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 3952,
+              "old": "IMAD R188, R157, 0x38, R188",
+              "new": "IMAD R188, R157.reuse, 0x38, R188"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 12320,
+          "new_count": 12320,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4234,
+              "old": "LOP3.LUT P0, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4984,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5475,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 12464,
+          "new_count": 12464,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4234,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4985,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5475,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7712,
+          "new_count": 7712,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 3051,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4156,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4742,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7600,
+          "new_count": 7600,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 2944,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4049,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4635,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 12688,
+          "new_count": 12688,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4176,
+              "old": "LOP3.LUT P0, RZ, R178, R177, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R177, R178, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5387,
+              "old": "LOP3.LUT P1, RZ, R178, R177, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R177, R178, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6040,
+              "old": "LOP3.LUT P1, RZ, R178.reuse, R177, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R177, R178, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 12824,
+          "new_count": 12824,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4170,
+              "old": "LOP3.LUT P1, RZ, R177, R176, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R176, R177, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5380,
+              "old": "LOP3.LUT P2, RZ, R177, R176, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R176, R177, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6031,
+              "old": "LOP3.LUT P2, RZ, R177.reuse, R176, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R176, R177, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 9144,
+          "new_count": 9144,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 2935,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4633,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5988,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 14344,
+          "new_count": 14344,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4183,
+              "old": "LOP3.LUT P0, RZ, R162, R161, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R161, R162, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6048,
+              "old": "LOP3.LUT P3, RZ, R162, R161, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R161, R162, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 7072,
+              "old": "LOP3.LUT P3, RZ, R162, R161, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R161, R162, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 14480,
+          "new_count": 14480,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4175,
+              "old": "LOP3.LUT P1, RZ, R161, R160, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R160, R161, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6037,
+              "old": "LOP3.LUT P3, RZ, R161, R160, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R160, R161, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 7056,
+              "old": "LOP3.LUT P3, RZ, R161, R160, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R160, R161, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3888,
+          "new_count": 3888,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4176,
+          "new_count": 4176,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5608,
+          "new_count": 5608,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3768,
+          "new_count": 3768,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4096,
+          "new_count": 4096,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5504,
+          "new_count": 5504,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "equal": false,
+          "old_count": 9256,
+          "new_count": 9256,
+          "different_positions": 4,
+          "examples": [
+            {
+              "index": 6443,
+              "old": "IADD3 R47, P5, P6, R32, R33, R190",
+              "new": "IADD3 R47, P5, P6, R32, R190.reuse, R33"
+            },
+            {
+              "index": 6461,
+              "old": "IADD3 R101, P3, P4, R35, R37, R190",
+              "new": "IADD3 R101, P3, P4, R35, R190, R37"
+            },
+            {
+              "index": 6474,
+              "old": "IADD3 R103, P3, P4, R45, R103, R190.reuse",
+              "new": "IADD3 R103, P3, P4, R45, R190.reuse, R103"
+            },
+            {
+              "index": 6479,
+              "old": "IADD3 R45, P3, P4, R104, R45, R190",
+              "new": "IADD3 R45, P3, P4, R104, R190, R45"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7152,
+          "new_count": 7152,
+          "different_positions": 5,
+          "examples": [
+            {
+              "index": 2879,
+              "old": "LOP3.LUT P0, RZ, R243, R242, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R242, R243, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 3550,
+              "old": "LOP3.LUT P0, RZ, R243, R242, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R242, R243, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 3944,
+              "old": "LOP3.LUT R189, R27, R168, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT R189, R27, R168.reuse, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 3952,
+              "old": "IMAD R188, R157, 0x38, R188",
+              "new": "IMAD R188, R157.reuse, 0x38, R188"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 12320,
+          "new_count": 12320,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4234,
+              "old": "LOP3.LUT P0, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4984,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5479,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 12464,
+          "new_count": 12464,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4234,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4985,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5475,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7712,
+          "new_count": 7712,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 3051,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4156,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4742,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7600,
+          "new_count": 7600,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 2944,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4049,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4635,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 12688,
+          "new_count": 12688,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4176,
+              "old": "LOP3.LUT P0, RZ, R178, R177, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R177, R178, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5387,
+              "old": "LOP3.LUT P1, RZ, R178, R177, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R177, R178, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6038,
+              "old": "LOP3.LUT P1, RZ, R178, R177, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R177, R178, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 12824,
+          "new_count": 12824,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4170,
+              "old": "LOP3.LUT P1, RZ, R177, R176, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R176, R177, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5380,
+              "old": "LOP3.LUT P2, RZ, R177, R176, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R176, R177, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6031,
+              "old": "LOP3.LUT P2, RZ, R177.reuse, R176, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R176, R177, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 9144,
+          "new_count": 9144,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 2935,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4633,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5988,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 14344,
+          "new_count": 14344,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4183,
+              "old": "LOP3.LUT P0, RZ, R162, R161, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R161, R162, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6048,
+              "old": "LOP3.LUT P3, RZ, R162, R161, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R161, R162, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 7072,
+              "old": "LOP3.LUT P3, RZ, R162, R161, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R161, R162, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 14480,
+          "new_count": 14480,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4175,
+              "old": "LOP3.LUT P1, RZ, R161, R160, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R160, R161, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6037,
+              "old": "LOP3.LUT P3, RZ, R161, R160, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R160, R161, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 7056,
+              "old": "LOP3.LUT P3, RZ, R161, R160, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R160, R161, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3888,
+          "new_count": 3888,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4176,
+          "new_count": 4176,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5608,
+          "new_count": 5608,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3768,
+          "new_count": 3768,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4096,
+          "new_count": 4096,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5504,
+          "new_count": 5504,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "equal": false,
+          "old_count": 9256,
+          "new_count": 9256,
+          "different_positions": 4,
+          "examples": [
+            {
+              "index": 6442,
+              "old": "IADD3 R47, P5, P6, R32, R33, R190",
+              "new": "IADD3 R47, P5, P6, R32, R190.reuse, R33"
+            },
+            {
+              "index": 6456,
+              "old": "IADD3 R101, P3, P4, R35, R37, R190",
+              "new": "IADD3 R101, P3, P4, R35, R190, R37"
+            },
+            {
+              "index": 6473,
+              "old": "IADD3 R103, P3, P4, R45, R103, R190.reuse",
+              "new": "IADD3 R103, P3, P4, R45, R190.reuse, R103"
+            },
+            {
+              "index": 6478,
+              "old": "IADD3 R45, P3, P4, R104, R45, R190",
+              "new": "IADD3 R45, P3, P4, R104, R190, R45"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7152,
+          "new_count": 7152,
+          "different_positions": 5,
+          "examples": [
+            {
+              "index": 2879,
+              "old": "LOP3.LUT P0, RZ, R243, R242, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R242, R243, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 3550,
+              "old": "LOP3.LUT P0, RZ, R243, R242, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R242, R243, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 3944,
+              "old": "LOP3.LUT R189, R27, R168, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT R189, R27, R168.reuse, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 3952,
+              "old": "IMAD R188, R157, 0x38, R188",
+              "new": "IMAD R188, R157.reuse, 0x38, R188"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 12320,
+          "new_count": 12320,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4234,
+              "old": "LOP3.LUT P0, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4984,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5479,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 12464,
+          "new_count": 12464,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4234,
+              "old": "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4985,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5475,
+              "old": "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7712,
+          "new_count": 7712,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 3051,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4156,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4742,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 7600,
+          "new_count": 7600,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 2944,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4049,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4635,
+              "old": "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 12688,
+          "new_count": 12688,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4176,
+              "old": "LOP3.LUT P0, RZ, R178, R177, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R177, R178, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5387,
+              "old": "LOP3.LUT P1, RZ, R178, R177, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R177, R178, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6038,
+              "old": "LOP3.LUT P1, RZ, R178, R177, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R177, R178, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 12824,
+          "new_count": 12824,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4170,
+              "old": "LOP3.LUT P1, RZ, R177, R176, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R176, R177, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5380,
+              "old": "LOP3.LUT P2, RZ, R177, R176, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R176, R177, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6031,
+              "old": "LOP3.LUT P2, RZ, R177.reuse, R176, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P2, RZ, R176, R177, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 9144,
+          "new_count": 9144,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 2935,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 4633,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 5988,
+              "old": "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 14344,
+          "new_count": 14344,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4183,
+              "old": "LOP3.LUT P0, RZ, R162, R161, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P0, RZ, R161, R162, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6048,
+              "old": "LOP3.LUT P3, RZ, R162, R161, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R161, R162, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 7072,
+              "old": "LOP3.LUT P3, RZ, R162, R161, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R161, R162, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 14480,
+          "new_count": 14480,
+          "different_positions": 3,
+          "examples": [
+            {
+              "index": 4175,
+              "old": "LOP3.LUT P1, RZ, R161, R160, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P1, RZ, R160, R161, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 6037,
+              "old": "LOP3.LUT P3, RZ, R161, R160, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R160, R161, RZ, 0xfc, !PT"
+            },
+            {
+              "index": 7056,
+              "old": "LOP3.LUT P3, RZ, R161, R160, RZ, 0xfc, !PT",
+              "new": "LOP3.LUT P3, RZ, R160, R161, RZ, 0xfc, !PT"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3888,
+          "new_count": 3888,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4176,
+          "new_count": 4176,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5608,
+          "new_count": 5608,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3768,
+          "new_count": 3768,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4096,
+          "new_count": 4096,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5504,
+          "new_count": 5504,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "equal": false,
+          "old_count": 9256,
+          "new_count": 9256,
+          "different_positions": 4,
+          "examples": [
+            {
+              "index": 6442,
+              "old": "IADD3 R47, P5, P6, R32, R33, R190",
+              "new": "IADD3 R47, P5, P6, R32, R190.reuse, R33"
+            },
+            {
+              "index": 6456,
+              "old": "IADD3 R101, P3, P4, R35, R37, R190",
+              "new": "IADD3 R101, P3, P4, R35, R190, R37"
+            },
+            {
+              "index": 6473,
+              "old": "IADD3 R103, P3, P4, R45, R103, R190.reuse",
+              "new": "IADD3 R103, P3, P4, R45, R190.reuse, R103"
+            },
+            {
+              "index": 6478,
+              "old": "IADD3 R45, P3, P4, R104, R45, R190",
+              "new": "IADD3 R45, P3, P4, R104, R190, R45"
+            }
+          ],
+          "pure_device": false
+        }
+      ],
+      "new_instances": [
+        {
+          "archive": "warp_roles_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_"
+        },
+        {
+          "archive": "warp_roles_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_"
+        },
+        {
+          "archive": "warp_roles_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_"
+        },
+        {
+          "archive": "warp_roles_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla22BatchMLAWarpRoleKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_21WarpRoleComputeTraitsIS3_S3_S3_iEENS0_18WarpRoleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEEEEvT1_"
+        }
+      ]
+    }
+  },
+  "limitation": "Observed commuted logical operands and register-reuse hints do not establish equivalent performance. No v1 benchmark launch; strict original34/68 gate remains required for isolated correction."
+}

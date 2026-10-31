@@ -1,0 +1,86 @@
+[
+  {
+    "build": "emu",
+    "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+    "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+    "instructions": 7272,
+    "hmma": 411,
+    "ldsm": 318,
+    "barriers": {
+      "BAR.SYNC 0x0": 9,
+      "BAR.SYNC.DEFER_BLOCKING 0x0": 24,
+      "BAR.SYNC.DEFER_BLOCKING 0x1, 0x80": 18,
+      "BAR.SYNC.DEFER_BLOCKING 0x2, 0x80": 7
+    }
+  },
+  {
+    "build": "emu",
+    "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+    "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+    "instructions": 7272,
+    "hmma": 411,
+    "ldsm": 318,
+    "barriers": {
+      "BAR.SYNC 0x0": 9,
+      "BAR.SYNC.DEFER_BLOCKING 0x0": 24,
+      "BAR.SYNC.DEFER_BLOCKING 0x1, 0x80": 18,
+      "BAR.SYNC.DEFER_BLOCKING 0x2, 0x80": 7
+    }
+  },
+  {
+    "build": "_normal",
+    "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+    "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+    "instructions": 7104,
+    "hmma": 411,
+    "ldsm": 318,
+    "barriers": {
+      "BAR.SYNC 0x0": 9,
+      "BAR.SYNC.DEFER_BLOCKING 0x0": 24,
+      "BAR.SYNC.DEFER_BLOCKING 0x1, 0x80": 18,
+      "BAR.SYNC.DEFER_BLOCKING 0x2, 0x80": 7
+    }
+  },
+  {
+    "build": "_normal",
+    "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+    "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+    "instructions": 7104,
+    "hmma": 411,
+    "ldsm": 318,
+    "barriers": {
+      "BAR.SYNC 0x0": 9,
+      "BAR.SYNC.DEFER_BLOCKING 0x0": 24,
+      "BAR.SYNC.DEFER_BLOCKING 0x1, 0x80": 18,
+      "BAR.SYNC.DEFER_BLOCKING 0x2, 0x80": 7
+    }
+  },
+  {
+    "build": "_normal",
+    "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+    "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+    "instructions": 7104,
+    "hmma": 411,
+    "ldsm": 318,
+    "barriers": {
+      "BAR.SYNC 0x0": 9,
+      "BAR.SYNC.DEFER_BLOCKING 0x0": 24,
+      "BAR.SYNC.DEFER_BLOCKING 0x1, 0x80": 18,
+      "BAR.SYNC.DEFER_BLOCKING 0x2, 0x80": 7
+    }
+  },
+  {
+    "build": "_normal",
+    "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+    "resource": "REG:246 STACK:0 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+    "instructions": 7104,
+    "hmma": 411,
+    "ldsm": 318,
+    "barriers": {
+      "BAR.SYNC 0x0": 9,
+      "BAR.SYNC.DEFER_BLOCKING 0x0": 24,
+      "BAR.SYNC.DEFER_BLOCKING 0x1, 0x80": 18,
+      "BAR.SYNC.DEFER_BLOCKING 0x2, 0x80": 7
+    }
+  }
+]

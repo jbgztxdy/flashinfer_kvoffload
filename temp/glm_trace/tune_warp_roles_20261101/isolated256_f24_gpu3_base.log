@@ -1,0 +1,30 @@
+start isolated256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_roles_20261101/bench_gpu3_native.py", line 489, in <module>
+    for setting in SETTINGS:run_setting(setting)
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_roles_20261101/bench_gpu3_native.py", line 283, in run_setting
+    source_sha256=sources(),git_commit=subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip(),
+                  ^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_roles_20261101/bench_gpu3_native.py", line 109, in sources
+    files={s: digest(ROOT / s) for s in (str(Path(__file__).relative_to(ROOT)),
+              ^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_roles_20261101/bench_gpu3_native.py", line 90, in digest
+    with Path(path).open("rb") as f:
+         ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_warp_roles_20261101/plans.cpp'
+start isolated256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128
+isolated256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128 cached GPU metadata bytes 649802000
+isolated256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128 fraction 1.0 mean_us {'ours': 3589.781, 'memcpy': 6093.899}
+complete isolated256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128
+start isolated256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128
+isolated256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128 cached GPU metadata bytes 649802000
+isolated256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128 fraction 1.0 mean_us {'ours': 3596.171, 'memcpy': 6119.595}
+complete isolated256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128
+start isolated256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128
+isolated256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128 cached GPU metadata bytes 649802000
+isolated256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128 fraction 1.0 mean_us {'ours': 5285.131, 'memcpy': 8493.685}
+complete isolated256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128

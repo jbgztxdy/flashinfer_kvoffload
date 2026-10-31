@@ -1,0 +1,10 @@
+{
+  "base_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "canonical_math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "candidate_sha256": "55a7ff3256614df31318e23c1dc66fd2280e8f45792c1264381605d13cd8c3d7",
+  "candidate_math_sha256": "7c95011575accd4f8eb4832b4d53f61b4bf2b19a3545c3d4e095f77e4a5666b7",
+  "mechanism": "Spatial4fetch/4computewarps in256threadCTA; physicalz0/1fetch,virtualz0/1=physicalz2/3compute; namedbarriers2/1 each128. Full256threadprepare/LRU then grid barrier; full256 finalgrid/exit. Native32head/sharded32KV/2stageattention. Two16rowfetchbuffersafter110848Bcompute; total147712 within147968. OriginalFARwaiter/hooks/bytes unchanged.",
+  "fetch_policy": "Every108CTAfetchsubgroup walks16rowchunks in round-robin;108*16*2=3456 rows in flight versus base24*64*2=3072. No budget sweep. API fetch_ctas remains24 in paired screen; policy is part of algorithm change.",
+  "candidate_adopted": false,
+  "goal_complete": false
+}

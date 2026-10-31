@@ -1,0 +1,190 @@
+43:template <typename DTypeQ_, typename DTypeKV_, typename DTypeO_, typename IdType_>
+44:struct MLAHostBatchParams {
+127:template <typename Params>
+128:struct FullyStagedHostBatchParams : Params {
+133:template <typename Params>
+134:struct WholeRowHostBatchParams : FullyStagedHostBatchParams<Params> {
+140:template <typename Params>
+141:struct CachedSharedIdsHostBatchParams : WholeRowHostBatchParams<Params> {
+145:constexpr uint32_t kHostBatchFetchRows = 64;
+147:constexpr uint32_t kHostBatchMinFetchRows = 16;
+149:constexpr uint32_t kHostBatchMaxDeferred = 64;
+157:constexpr uint32_t kHostBatchGaps = 0;
+159:constexpr uint32_t kHostBatchUnique = 1;
+160:constexpr uint32_t kHostBatchExit = 2;
+161:constexpr uint32_t kHostBatchEpoch = 3;
+162:constexpr uint32_t kHostBatchHostCounts = 4;
+164:constexpr uint32_t kHostBatchScratchEpoch = 0;
+165:constexpr uint32_t kHostBatchScratchClaimed = 1;
+166:constexpr uint32_t kHostBatchScratchFetchRows = 2;
+169:constexpr uint32_t kHostBatchRankBits = 16;
+173:constexpr int32_t kHostBatchOwnerBit = 1 << 30;
+175:constexpr int32_t kHostBatchNoEntry = INT32_MIN;
+177:constexpr uint32_t kHostBatchMaxPool = 8192;
+179:template <typename Params>
+180:__device__ __forceinline__ bool host_batch_caching(const Params& params) {
+186:template <typename Params>
+187:__device__ __forceinline__ bool host_batch_writes_back(const Params& params) {
+195:template <typename Params>
+196:__device__ __forceinline__ typename Params::IdType host_batch_cached_entry(const Params& params,
+201:template <typename Params>
+202:__device__ __forceinline__ typename Params::IdType host_batch_staged_entry(const Params& params,
+207:template <typename Params>
+208:__device__ __forceinline__ uint32_t* host_batch_row_claims(const Params& params) {
+212:template <typename Params>
+213:__device__ __forceinline__ uint32_t* host_batch_local_cursors(const Params& params) {
+220:template <typename Params>
+221:__device__ __forceinline__ uint32_t host_batch_row_len(const Params& params, uint32_t row) {
+228:template <typename Params>
+229:__device__ __forceinline__ uint32_t* host_batch_host_items(const Params& params) {
+233:template <typename Params>
+234:__device__ __forceinline__ uint32_t* host_batch_host_item_rows(const Params& params) {
+238:template <typename Params>
+239:__device__ __forceinline__ uint32_t* host_batch_flags(const Params& params) {
+243:template <typename Params>
+244:__device__ __forceinline__ uint32_t* host_batch_claims(const Params& params) {
+248:__device__ __forceinline__ uint32_t host_batch_ld_acquire(const uint32_t* address) {
+254:template <typename Params>
+255:__device__ __forceinline__ uint32_t* host_batch_row_completed(const Params& params) {
+261:template <bool ROW_MERGE, typename Params>
+262:__device__ __forceinline__ void wait_host_batch_row(const Params& params, uint32_t row,
+265:    const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+271:    __syncthreads();
+286:template <uint32_t CTA_TILE_KV>
+287:__device__ __forceinline__ uint2 host_batch_host_chunks(uint32_t host, uint32_t max_items,
+297:template <typename Params>
+298:__device__ __forceinline__ uint32_t host_batch_split_host(const Params& params, uint32_t row) {
+302:template <typename Params>
+303:__device__ __forceinline__ uint32_t host_batch_max_host_items(const Params& params) {
+326:template <typename KTraits, typename Params>
+327:__device__ __forceinline__ void prepare_host_batch_rows(const Params& params, uint32_t stamp) {
+331:  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+434:template <typename KTraits, typename Params>
+435:__device__ __forceinline__ void prepare_host_batch_rows_in_place(const Params& params,
+440:  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+516:template <uint32_t THREADS, typename Value>
+517:__device__ __forceinline__ uint32_t host_batch_block_scan(uint32_t n, Value value, uint32_t* out) {
+518:  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+532:    __syncthreads();
+536:    __syncthreads();
+538:    __syncthreads();
+546:template <typename KTraits, typename Params>
+547:__device__ __forceinline__ uint32_t resolve_host_batch_slots(const Params& params, uint8_t* smem) {
+550:  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+611:    __syncthreads();
+628:template <typename KTraits, typename Params>
+629:__device__ __forceinline__ void compact_host_batch_rows(const Params& params) {
+631:  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+655:template <bool ROW_MERGE, typename Params>
+656:__device__ __forceinline__ uint32_t host_batch_fetch_rows(const Params& params, uint32_t unique) {
+673:template <typename Params>
+674:__device__ __forceinline__ void bind_host_batch_staged_slot(const Params& params, uint32_t staged,
+689:template <typename KTraits, typename Params>
+690:__device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uint8_t* smem,
+701:  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+721:      __syncthreads();
+755:    __syncthreads();
+778:      __syncthreads();
+797:      const bool defer = params.stage && !__syncthreads_and(ready) &&
+800:        __syncthreads();
+824:        __syncthreads();
+838:      __syncthreads();
+844:  __syncthreads();
+859:    __syncthreads();
+870:    __syncthreads();
+882:template <typename KTraits, typename Params>
+883:__device__ __forceinline__ void resolve_host_batch_row(const Params& params,
+898:template <typename KTraits, typename Params>
+899:__device__ __forceinline__ void wait_host_batch_tile(const Params& params, const uint32_t* scratch,
+903:  if (threadIdx.y != 0 || threadIdx.z != 0) return;
+919:template <typename KTraits>
+920:constexpr uint32_t kHostBatchTileRows = KTraits::NUM_MMA_KV == 1 ? 1 : KTraits::NUM_MMA_KV / 2;
+922:template <typename KTraits>
+923:__device__ __forceinline__ uint32_t host_batch_tile_row(uint32_t j) {
+925:  return KTraits::NUM_MMA_KV == 1 ? row : row + (threadIdx.z + j * 2) * 16;
+930:template <typename KTraits, typename Params>
+931:__device__ __forceinline__ void read_host_batch_pages(const Params& params, uint32_t index_base,
+942:template <typename KTraits>
+943:__device__ __forceinline__ int32_t* host_batch_tile_victims() {
+949:template <typename KTraits, typename Params>
+950:__device__ __forceinline__ void load_host_batch_kv(typename KTraits::SharedStorage* smem_storage,
+962:  if (KTraits::NUM_MMA_KV == 1 && threadIdx.z != 0) return;
+1009:template <typename KTraits, typename Params, bool ROW_MERGE>
+1010:__device__ __forceinline__ void merge_host_batch_single_query(const Params& params,
+1017:  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+1068:    __syncthreads();
+1087:    __syncthreads();
+1091:template <typename KTraits, uint32_t VEC_SIZE, typename Params, bool ROW_MERGE>
+1092:__device__ __forceinline__ void merge_host_batch_chunks(const Params& params) {
+1100:  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+1170:template <typename KTraits, typename Params>
+1171:__device__ __forceinline__ void writeback_host_batch_tile(const Params& params,
+1180:  if (KTraits::NUM_MMA_KV == 1 && threadIdx.z != 0) return;
+1214:template <typename KTraits, typename Params>
+1215:__device__ __forceinline__ void attend_host_batch_tiles(
+1235:  __syncthreads();
+1255:    __syncthreads();
+1268:      __syncthreads();
+1281:    __syncthreads();
+1291:    __syncthreads();
+1298:  __syncthreads();
+1313:template <uint32_t THREADS>
+1314:__device__ __forceinline__ uint2 host_batch_thread_scan(uint32_t value, uint32_t* warp_sums) {
+1315:  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+1324:  __syncthreads();
+1331:  __syncthreads();
+1336:template <typename Params>
+1337:__device__ __forceinline__ int32_t host_batch_claim_entry(const Params& params, uint32_t pool,
+1367:template <typename KTraits, typename Params>
+1368:__device__ __noinline__ void run_host_batch_lru(const Params& params, uint8_t* smem,
+1372:  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+1420:  __syncthreads();
+1426:  __syncthreads();
+1430:  __syncthreads();
+1442:      __syncthreads();
+1456:      __syncthreads();
+1478:      __syncthreads();
+1482:      __syncthreads();
+1503:    __syncthreads();
+1536:  __syncthreads();
+1545:template <typename Params>
+1546:__device__ __forceinline__ bool claim_host_batch_item(const Params& params, uint32_t* scratch,
+1548:  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+1553:  __syncthreads();
+1556:  __syncthreads();
+1562:template <typename KTraits, typename Params, bool ROW_MERGE>
+1563:__device__ __forceinline__ void run_host_batch_item(const Params& params,
+1613:  __syncthreads();
+1627:  __syncthreads();
+1649:      __syncthreads();
+1650:      const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+1666:template <typename KTraits, typename Params, bool ROW_MERGE>
+1667:__device__ __forceinline__ void run_host_batch_items(const Params& params,
+1698:      __syncthreads();
+1709:template <typename KTraits, typename Params>
+1710:__device__ __forceinline__ void prepare_host_batch_small_rows(const Params& params, uint32_t stamp) {
+1716:  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+1811:template <uint32_t THREADS, typename Value>
+1812:__device__ __forceinline__ uint32_t host_batch_small_scan(uint32_t n, Value value, uint32_t* out) {
+1813:  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+1828:    __syncthreads();
+1832:template <typename KTraits, typename Params>
+1833:__device__ __forceinline__ uint32_t resolve_host_batch_small_slots(const Params& params, uint8_t* smem) {
+1836:  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+1897:    __syncthreads();
+1911:template <typename KTraits, typename Params, bool ROW_MERGE>
+1912:__global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
+1924:  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+1960:        __syncthreads();
+1987:  __syncthreads();
+2012:  __syncthreads();
+2018:  __syncthreads();
+2032:    __syncthreads();
+2044:struct HostBatchCostEvent {
+2049:struct HostBatchCostLater {
+2116:struct HostBatchShapeMemo {
+2133:template <uint32_t HEAD_DIM_CKV, uint32_t HEAD_DIM_KPE, typename Params>
+2168:      auto kernel = row_merge ? BatchMLAHostBatchKernel<KTraits, Params, true>
+2169:                              : BatchMLAHostBatchKernel<KTraits, Params, false>;
+2173:        kernel = reinterpret_cast<decltype(kernel)>(BatchMLAHostBatchKernel<KTraits, WholeParams, false>);
+2179:            kernel = reinterpret_cast<decltype(kernel)>(BatchMLAHostBatchKernel<KTraits, SharedParams, false>);

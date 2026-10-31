@@ -1,0 +1,339 @@
+[
+  {
+    "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+    "diff": [
+      {
+        "old": [
+          "LOP3.LUT P0, RZ, R243, R242, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P0, RZ, R242, R243, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P0, RZ, R243, R242, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P0, RZ, R242, R243, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT R189, R27, R168, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT R189, R27, R168.reuse, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "IMAD R188, R157, 0x38, R188",
+          "LOP3.LUT P0, RZ, R243, R242, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "IMAD R188, R157.reuse, 0x38, R188",
+          "LOP3.LUT P0, RZ, R242, R243, RZ, 0xfc, !PT"
+        ]
+      }
+    ]
+  },
+  {
+    "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+    "diff": [
+      {
+        "old": [
+          "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+        ]
+      }
+    ]
+  },
+  {
+    "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+    "diff": [
+      {
+        "old": [
+          "LOP3.LUT P1, RZ, R0, R3, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P1, RZ, R3, R0, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P2, RZ, R0, R3, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P2, RZ, R3, R0, RZ, 0xfc, !PT"
+        ]
+      }
+    ]
+  },
+  {
+    "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+    "diff": [
+      {
+        "old": [
+          "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+        ]
+      }
+    ]
+  },
+  {
+    "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+    "diff": [
+      {
+        "old": [
+          "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P0, RZ, R191, R190, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P0, RZ, R190, R191, RZ, 0xfc, !PT"
+        ]
+      }
+    ]
+  },
+  {
+    "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+    "diff": [
+      {
+        "old": [
+          "LOP3.LUT P1, RZ, R201, R200, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P1, RZ, R200, R201, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P3, RZ, R201, R200, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P3, RZ, R200, R201, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P3, RZ, R201, R200, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P3, RZ, R200, R201, RZ, 0xfc, !PT"
+        ]
+      }
+    ]
+  },
+  {
+    "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+    "diff": [
+      {
+        "old": [
+          "LOP3.LUT P2, RZ, R200, R183, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P2, RZ, R183, R200, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P3, RZ, R200, R183, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P3, RZ, R183, R200, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P3, RZ, R200, R183, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P3, RZ, R183, R200, RZ, 0xfc, !PT"
+        ]
+      }
+    ]
+  },
+  {
+    "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+    "diff": [
+      {
+        "old": [
+          "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P0, RZ, R199, R198, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P0, RZ, R198, R199, RZ, 0xfc, !PT"
+        ]
+      }
+    ]
+  },
+  {
+    "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+    "diff": [
+      {
+        "old": [
+          "LOP3.LUT P1, RZ, R184, R7, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P1, RZ, R7, R184, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P4, RZ, R184, R7, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P4, RZ, R7, R184, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P4, RZ, R184, R7, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P4, RZ, R7, R184, RZ, 0xfc, !PT"
+        ]
+      }
+    ]
+  },
+  {
+    "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+    "diff": [
+      {
+        "old": [
+          "LOP3.LUT P2, RZ, R6, R7, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P2, RZ, R7, R6, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P4, RZ, R6, R7, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P4, RZ, R7, R6, RZ, 0xfc, !PT"
+        ]
+      },
+      {
+        "old": [
+          "LOP3.LUT P4, RZ, R6, R7, RZ, 0xfc, !PT"
+        ],
+        "new": [
+          "LOP3.LUT P4, RZ, R7, R6, RZ, 0xfc, !PT"
+        ]
+      }
+    ]
+  },
+  {
+    "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+    "diff": [
+      {
+        "old": [
+          "IADD3 R32, P2, P3, R32, R33, R182"
+        ],
+        "new": [
+          "IADD3 R32, P2, P3, R32, R182.reuse, R33"
+        ]
+      },
+      {
+        "old": [
+          "IADD3 R99, P3, P4, R34, R33, R182"
+        ],
+        "new": [
+          "IADD3 R99, P3, P4, R34, R182, R33"
+        ]
+      },
+      {
+        "old": [
+          "IADD3 R105, P3, P4, R100, R101, R182"
+        ],
+        "new": [
+          "IADD3 R105, P3, P4, R100, R182, R101"
+        ]
+      },
+      {
+        "old": [
+          "IADD3 R103, P3, P4, R103, R101, R182"
+        ],
+        "new": [
+          "IADD3 R103, P3, P4, R103, R182, R101"
+        ]
+      }
+    ]
+  }
+]
