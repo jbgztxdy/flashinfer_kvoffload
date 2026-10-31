@@ -33,10 +33,12 @@ settings={label(s):s["name"] for s in meta["settings"]}
 text=DOC.read_text();lines=text.splitlines()
 mode=None;checked=0;summaries=0;bounds=0;near_rows=0;repeat_rows=0;physical_rows=0;route_rows=0
 link_diagnosis_rows=0;parameter_rows=0
+optimized_rows=0
 routes=load(ROOT/"temp/glm_trace/route_compare_20261030/summary.json")
 assert routes["complete"] and len(routes["pairs"])==12
 review=load(ROOT/"temp/glm_trace/100gb_review_20261030/summary.json")
 assert review["complete"] and review["sweep_cells"]==20 and review["confirmation_cells"]==4
+optimization=load(ROOT/"temp/glm_trace/tune_100gb_20261030/summary.json")
 for line in lines:
     if not line.startswith("|"):
         mode=None;continue
@@ -61,6 +63,8 @@ for line in lines:
         mode=("link_diagnosis",False,False,len(fields));continue
     if fields[0]=="参数核查阶段":
         mode=("parameters",False,False,len(fields));continue
+    if fields[0]=="新实现确认：MTP":
+        mode=("optimized",False,False,len(fields));continue
     if not mode or all(re.fullmatch(r"[:\-]+",f) for f in fields):continue
     assert len(fields)==mode[3],fields
     if mode[0]=="samples":
@@ -134,7 +138,7 @@ for line in lines:
                   f"{for_row(r)['mean_stepwise_max_us']:.2f}"]
         assert fields==expected,(fields,expected)
         link_diagnosis_rows+=1
-    else:
+    elif mode[0]=="parameters":
         confirmed=fields[0].startswith("倒序确认")
         name="default" if fields[0].endswith("默认") else "best"
         pair=next(p for p in review["comparisons"] if p["confirmation"]==confirmed and p["setting"]=="g100_l20000")
@@ -144,8 +148,21 @@ for line in lines:
                   f"{(r['ours_to_reference']-1)*100:.1f}%",f"{r['reference_cache_hit_rate']*100:.3f}%"]
         assert fields==expected,(fields,expected)
         parameter_rows+=1
+    else:
+        m,b=int(fields[0]),int(fields[1])
+        selected=[r for r in optimization["rows"] if r["confirmation"] and r["kind"]=="lru" and
+                  r["setting"]=="g100_l20000" and r["mtp"]==m and r["requests"]==b]
+        default=next(r for r in selected if r["variant"]=="base" and r["fetch_ctas"]==16)
+        control=next(r for r in selected if r["variant"]=="base" and r["fetch_ctas"]==24)
+        new=next(r for r in selected if r["variant"]=="final")
+        expected=[str(m),str(b),f"{default['ours_us']:.2f}",f"{control['ours_us']:.2f}",
+                  *[f"{new[k]:.2f}" for k in ("ours_us","memcpy_us","local_us","reference_us")],
+                  f"{(1-new['ours_us']/default['ours_us'])*100:.1f}%",f"{new['ours_over_reference']*100:.1f}%"]
+        assert fields==expected,(fields,expected)
+        optimized_rows+=1
 assert (checked,summaries,bounds,near_rows,repeat_rows,physical_rows,route_rows)==(26,17,6,4,2,2,12)
 assert link_diagnosis_rows==parameter_rows==4
+assert optimized_rows==(3 if optimization["complete"] else 0)
 
 figures=load(DEST/"figure_data.json")
 assert len(figures)==6
@@ -199,6 +216,13 @@ assert parameter_audit["csv_sha256"]==digest(review_dir/"parameters.csv")
 assert parameter_audit["readme_sha256"]==digest(review_dir/"README.md")
 for name,sha in parameter_audit["source_sha256"].items():assert digest(review_dir/name)==sha
 for f in parameter_audit["files"]:assert digest(ROOT/f["path"])==f["sha256"]
+if optimized_rows:
+    optimized_dir=ROOT/"temp/glm_trace/tune_100gb_20261030"
+    optimized_audit=load(optimized_dir/"audit.json")
+    assert optimized_audit["complete"]
+    assert optimized_audit["source_matrix_sha256"]==digest(SOURCE/"matrix.json")
+    assert optimized_audit["summary_sha256"]==digest(optimized_dir/"summary.json")
+    assert manifest["optimization_audit_sha256"]==digest(optimized_dir/"audit.json")
 for name,sha in manifest["analysis_source_sha256"].items():assert digest(DEST/name)==sha
 verification=load(DEST/"verification.json")
 assert verification["matrix_unchanged_sha256"]==digest(SOURCE/"matrix.json")
@@ -212,6 +236,7 @@ summary=dict(complete=True,source_matrix_sha256=digest(SOURCE/"matrix.json"),sam
     supplemental_route_comparison_rows=route_rows,
     supplemental_link_diagnosis_rows=link_diagnosis_rows,supplemental_parameter_rows=parameter_rows,
     parameter_sweep_cells=review["sweep_cells"],parameter_confirmation_cells=review["confirmation_cells"],
+    optimized_confirmation_rows=optimized_rows,
     reference_definition=manifest["reference_definition"],
     figures=len(figures),figure_source_cells=fig_count,per_step_reference_cells_verified=fig_count,
     artifact_sha256=manifest["artifact_sha256"])

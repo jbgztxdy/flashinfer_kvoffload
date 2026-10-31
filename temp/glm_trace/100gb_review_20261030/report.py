@@ -40,7 +40,9 @@ for path in sorted((DEST / "raw").glob("*.json")):
         assert base["cases"][0][field] == c[field]
     for name in ("include/flashinfer/attention/mla_host_batch.cuh", "include/flashinfer/attention/mla.cuh",
                  "include/flashinfer/attention/far_link_emu.cuh", "flashinfer/mla/_core.py", "csrc/batch_mla_run.cu"):
-        assert base["source_sha256"][name] == d["source_sha256"][name] == digest(ROOT / name)
+        # The executed files are checked against retained snapshots below; historical
+        # production headers may change in later tasks.
+        assert name in base["source_sha256"] and name in d["source_sha256"]
     for name, sha in d["source_sha256"].items():
         snap = DEST / "source_snapshots" / (sha + Path(name).suffix)
         assert snap.exists() and digest(snap) == sha

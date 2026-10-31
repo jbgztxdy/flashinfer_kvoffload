@@ -51,3 +51,9 @@ matrix or in the six figures. For 128 requests x MTP8, staged and LRU4096, the
 confirmed 100 GB/s + 20 us candidate saves 4.6% against the same-round default,
 but remains 56.9% above the optimistic overlap reference. The report does not
 claim this regime is already optimal or assign the residual to one kernel phase.
+
+Section 7.6 now records the subsequently implemented whole-row kernel path and
+five-pass controls from `../tune_100gb_20261030/`. Its audit must be complete before
+the generator includes this section. The new full 100 GB/s matrix and optimization
+figure live in a separate report; the six original figures remain on the original
+fixed configuration. Three additional confirmation rows are independently checked.

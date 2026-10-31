@@ -44,6 +44,8 @@ struct MLAHostBatchParams {
   using DTypeKV = DTypeKV_;
   using DTypeO = DTypeO_;
   using IdType = IdType_;
+  static constexpr bool fully_staged = false;
+  static constexpr bool whole_rows = false;
 
   DTypeQ* q_nope;
   DTypeQ* q_pe;
@@ -117,6 +119,21 @@ struct MLAHostBatchParams {
 namespace mla {
 
 // Staging slots copied and published together.
+// A launch whose staging can hold every selected entry never reads far KV in attention.
+// Specialize that invariant while retaining the generic overflow/in-place path.
+template <typename Params>
+struct FullyStagedHostBatchParams : Params {
+  static constexpr bool stage = true;
+  static constexpr bool fully_staged = true;
+};
+
+template <typename Params>
+struct WholeRowHostBatchParams : FullyStagedHostBatchParams<Params> {
+  static constexpr bool whole_rows = true;
+  static constexpr bool host_split = false;
+  static constexpr uint32_t num_chunks = 1;
+};
+
 constexpr uint32_t kHostBatchFetchRows = 64;
 // Smallest chunk; ready flags are allocated per this many staging slots.
 constexpr uint32_t kHostBatchMinFetchRows = 16;
@@ -938,7 +955,7 @@ __device__ __forceinline__ void load_host_batch_kv(typename KTraits::SharedStora
       kpe_smem.load_128b_async<SharedMemFillMode::kFillZero>(kpe_smem_offset_w, kpe_ptr, valid);
       kpe_ptr += 8 * upcast_size<DTypeKV>();
     }
-    FAR_EMU_TILE(KTraits::NUM_STAGES, stage_idx,
+    if constexpr (!Params::fully_staged) FAR_EMU_TILE(KTraits::NUM_STAGES, stage_idx,
                  lane_idx % 8 == 0 && valid && pages[j] >= 0 &&
                      (pages[j] & ~kHostBatchOwnerBit) >= params.host_page_start,
                  (KTraits::HEAD_DIM_CKV + KTraits::HEAD_DIM_KPE) * sizeof(DTypeKV));
@@ -1167,7 +1184,10 @@ __device__ __forceinline__ void attend_host_batch_tiles(
   typename KTraits::IdType pages[kHostBatchTileRows<KTraits>];
   int kv_tile_idx = ceil_div(kv_len, CTA_TILE_KV) - 1;
   const int mask_tile_idx = kv_len / CTA_TILE_KV;
-  FAR_EMU_INIT(NUM_STAGES);
+#ifdef FLASHINFER_FAR_EMU
+  ::flashinfer::far_emu::State far_emu_state{0, 0, -1};
+  if constexpr (!Params::fully_staged) ::flashinfer::far_emu::init<NUM_STAGES>();
+#endif
 #pragma unroll
   for (int stage_idx = 0; stage_idx < NUM_STAGES; ++stage_idx) {
     if (kv_tile_idx - stage_idx >= 0 && kv_tile_idx - stage_idx < host_tiles) {
@@ -1194,9 +1214,9 @@ __device__ __forceinline__ void attend_host_batch_tiles(
     const int next = kv_tile_idx - NUM_STAGES;
     if (next >= 0) read_host_batch_pages<KTraits>(params, index_base, kv_len, next * CTA_TILE_KV, pages);
     cp_async::wait_group<NUM_STAGES - 1>();
-    FAR_EMU_WAIT(NUM_STAGES, kv_tile_idx % NUM_STAGES);
+    if constexpr (!Params::fully_staged) FAR_EMU_WAIT(NUM_STAGES, kv_tile_idx % NUM_STAGES);
     __syncthreads();
-    FAR_EMU_PREFETCH(NUM_STAGES, (kv_tile_idx + NUM_STAGES - 1) % NUM_STAGES);
+    if constexpr (!Params::fully_staged) FAR_EMU_PREFETCH(NUM_STAGES, (kv_tile_idx + NUM_STAGES - 1) % NUM_STAGES);
     writeback_host_batch_tile<KTraits>(params, storage, index_base, kv_len,
                                        kv_tile_idx * CTA_TILE_KV, kv_tile_idx % NUM_STAGES);
     compute_mla_qk<KTraits>(&storage, kv_tile_idx % NUM_STAGES, s_frag);
@@ -1220,9 +1240,9 @@ __device__ __forceinline__ void attend_host_batch_tiles(
     const int next = kv_tile_idx - NUM_STAGES;
     read_host_batch_pages<KTraits>(params, index_base, kv_len, next * CTA_TILE_KV, pages);
     cp_async::wait_group<NUM_STAGES - 1>();
-    FAR_EMU_WAIT(NUM_STAGES, kv_tile_idx % NUM_STAGES);
+    if constexpr (!Params::fully_staged) FAR_EMU_WAIT(NUM_STAGES, kv_tile_idx % NUM_STAGES);
     __syncthreads();
-    FAR_EMU_PREFETCH(NUM_STAGES, (kv_tile_idx + NUM_STAGES - 1) % NUM_STAGES);
+    if constexpr (!Params::fully_staged) FAR_EMU_PREFETCH(NUM_STAGES, (kv_tile_idx + NUM_STAGES - 1) % NUM_STAGES);
     writeback_host_batch_tile<KTraits>(params, storage, index_base, kv_len,
                                        kv_tile_idx * CTA_TILE_KV, kv_tile_idx % NUM_STAGES);
     compute_mla_qk<KTraits>(&storage, kv_tile_idx % NUM_STAGES, s_frag);
@@ -1237,7 +1257,7 @@ __device__ __forceinline__ void attend_host_batch_tiles(
     cp_async::commit_group();
   }
   cp_async::wait_group<0>();
-  FAR_EMU_WAIT_ALL(NUM_STAGES);
+  if constexpr (!Params::fully_staged) FAR_EMU_WAIT_ALL(NUM_STAGES);
   __syncthreads();
 
 #pragma unroll
@@ -1515,7 +1535,7 @@ __device__ __forceinline__ void run_host_batch_item(const Params& params,
   const uint32_t tail_tiles = (params.num_rows - params.full_rows) * params.num_head_tiles;
   const uint32_t hbm_end = full_items + tail_tiles * params.num_chunks;
   uint32_t row, head_tile, partial = 0, kv_start, kv_len, host_tiles;
-  if (item < full_items) {
+  if (Params::whole_rows || item < full_items) {
     row = item / params.num_head_tiles;
     head_tile = item % params.num_head_tiles;
     kv_start = 0;
@@ -1572,7 +1592,7 @@ __device__ __forceinline__ void run_host_batch_item(const Params& params,
   finalize_m_<KTraits>(variant, m);
 
   // Each warp reads back output rows other lanes stored to shared memory.
-  if (item < full_items) {
+  if (Params::whole_rows || item < full_items) {
     write_o<KTraits, /*SYNC_WARP=*/true>(&storage, params.final_o + row * params.o_stride_n,
                      params.final_lse ? params.final_lse + row * params.num_heads : nullptr,
                      nullptr, nullptr, o_frag, m, d, params.o_stride_n, params.o_stride_h, 1,
@@ -1933,7 +1953,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
   if (unique > 0 && from_back && !host_batch_writes_back(params)) fetch_host_batch_pages<KTraits>(params, smem, epoch, unique, fetch_rows);
   run_host_batch_items<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, from_back, unique);
   // Uniform over the grid, so every CTA takes the same branch.
-  if (params.full_rows < params.num_rows) {
+  if (!Params::whole_rows && params.full_rows < params.num_rows) {
     // A small staged merge waits only for the row it reads, overlapping the remaining rows and
     // cache writeback. Every other path retains the full-grid merge barrier.
     if constexpr (!ROW_MERGE) cg::this_grid().sync();
@@ -2005,8 +2025,21 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
       // instruction-scheduling effects. Each launch still runs one cooperative kernel.
       const bool row_merge = params.stage && params.pool_capacity > 0 &&
                              params.num_rows * params.num_head_tiles <= 32;
+      using WholeParams = WholeRowHostBatchParams<Params>;
+      // Whole rows avoid partial states and a full-grid merge once enough independent rows
+      // fill several waves. host_split=false opts into this schedule; small launches and
+      // staging overflow retain the original path.
+      const bool whole_rows = params.stage && !params.host_split && params.num_head_tiles == 1 &&
+          params.num_rows >= 4u * num_sms &&
+          static_cast<uint64_t>(params.staging_capacity) >=
+              static_cast<uint64_t>(params.num_rows) * max_kv_len;
       auto kernel = row_merge ? BatchMLAHostBatchKernel<KTraits, Params, true>
                               : BatchMLAHostBatchKernel<KTraits, Params, false>;
+      if (whole_rows) {
+        static_assert(sizeof(WholeParams) == sizeof(Params));
+        static_assert(alignof(WholeParams) == alignof(Params));
+        kernel = reinterpret_cast<decltype(kernel)>(BatchMLAHostBatchKernel<KTraits, WholeParams, false>);
+      }
       const size_t smem_size = sizeof(typename KTraits::SharedStorage);
       FLASHINFER_CUDA_CALL(
           cudaFuncSetAttribute(kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, smem_size));
@@ -2037,6 +2070,10 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
       if (2 * tail_tiles > partial_capacity) {
         params.full_rows = params.num_rows;
         tail_tiles = 0;
+      }
+      if (whole_rows) {
+        params.full_rows=params.num_rows;
+        tail_tiles=0;
       }
       params.partial_capacity = partial_capacity;
       const uint32_t kv_len = max(max_kv_len, 1u);

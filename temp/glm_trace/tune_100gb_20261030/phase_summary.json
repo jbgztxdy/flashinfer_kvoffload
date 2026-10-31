@@ -1,0 +1,7127 @@
+[
+  {
+    "raw": "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_100gb_20261030/raw/profile_f16_i64_son_lru_g100_l20000_mtp8_b128.json",
+    "configuration": {
+      "kind": "lru",
+      "setting": {
+        "name": "g100_l20000",
+        "bandwidth_GBps": 100,
+        "latency_ns": 20000,
+        "tier": "peer",
+        "emulated": true
+      },
+      "requests": 128,
+      "mtp": 8,
+      "query_rows": 1024,
+      "steps": 128,
+      "passes": 3,
+      "capacity": 4096,
+      "topk": 2048,
+      "heads": 64,
+      "aggregation": "arithmetic mean of all measured steps and all passes, including cold first step",
+      "gpu_only": true,
+      "host_cpu_gather_timed": false,
+      "variant": "profile",
+      "ours_dispatch": "batched_staged_all_shapes",
+      "fetch_ctas": 16,
+      "host_item_entries": 64,
+      "host_split": true,
+      "memcpy_path_version": 2,
+      "host_pack_limit_GiB": 8,
+      "baseline_cpu_lru_planning_timed": false,
+      "staging_rows": 2097152
+    },
+    "means": {
+      "start": {
+        "min_us": 0.0,
+        "max_us": 0.136
+      },
+      "prepare_done": {
+        "min_us": 106.792,
+        "max_us": 129.88
+      },
+      "prepare_barrier_done": {
+        "min_us": 131.808,
+        "max_us": 132.136
+      },
+      "resolve_done": {
+        "min_us": 156.656,
+        "max_us": 199.344
+      },
+      "before_fetch_barrier": {
+        "min_us": 157.16,
+        "max_us": 199.872
+      },
+      "fetch_start": {
+        "min_us": 201.16,
+        "max_us": 201.56
+      },
+      "fetch_done": {
+        "min_us": 201.768,
+        "max_us": 4009.72
+      },
+      "attention_done": {
+        "min_us": 3837.096,
+        "max_us": 4234.088
+      },
+      "merge_barrier_done": {
+        "min_us": 4235.6,
+        "max_us": 4235.976
+      },
+      "merge_done": {
+        "min_us": 4358.08,
+        "max_us": 4405.72
+      },
+      "last_lru_start": {
+        "min_us": 203.52,
+        "max_us": 229.496
+      },
+      "last_lru_done": {
+        "min_us": 218.10399999999998,
+        "max_us": 254.384
+      }
+    },
+    "steps": [
+      {
+        "epoch": 386,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 140.288,
+            "max_us": 160.768
+          },
+          "prepare_barrier_done": {
+            "min_us": 161.792,
+            "max_us": 162.816
+          },
+          "resolve_done": {
+            "min_us": 250.88,
+            "max_us": 292.864
+          },
+          "before_fetch_barrier": {
+            "min_us": 251.904,
+            "max_us": 293.888
+          },
+          "fetch_start": {
+            "min_us": 294.912,
+            "max_us": 294.912
+          },
+          "fetch_done": {
+            "min_us": 295.936,
+            "max_us": 9210.88
+          },
+          "attention_done": {
+            "min_us": 8962.048,
+            "max_us": 9359.36
+          },
+          "merge_barrier_done": {
+            "min_us": 9360.384,
+            "max_us": 9361.408
+          },
+          "merge_done": {
+            "min_us": 9481.216,
+            "max_us": 9528.32
+          },
+          "last_lru_start": {
+            "min_us": 296.96,
+            "max_us": 318.464
+          },
+          "last_lru_done": {
+            "min_us": 315.392,
+            "max_us": 339.968
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 387,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 125.952
+          },
+          "prepare_barrier_done": {
+            "min_us": 128.0,
+            "max_us": 128.0
+          },
+          "resolve_done": {
+            "min_us": 153.6,
+            "max_us": 201.728
+          },
+          "before_fetch_barrier": {
+            "min_us": 153.6,
+            "max_us": 202.752
+          },
+          "fetch_start": {
+            "min_us": 203.776,
+            "max_us": 203.776
+          },
+          "fetch_done": {
+            "min_us": 203.776,
+            "max_us": 3495.936
+          },
+          "attention_done": {
+            "min_us": 3390.464,
+            "max_us": 3831.808
+          },
+          "merge_barrier_done": {
+            "min_us": 3832.832,
+            "max_us": 3833.856
+          },
+          "merge_done": {
+            "min_us": 3953.664,
+            "max_us": 3999.744
+          },
+          "last_lru_start": {
+            "min_us": 205.824,
+            "max_us": 240.64
+          },
+          "last_lru_done": {
+            "min_us": 221.184,
+            "max_us": 275.456
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 388,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 102.4,
+            "max_us": 124.928
+          },
+          "prepare_barrier_done": {
+            "min_us": 125.952,
+            "max_us": 125.952
+          },
+          "resolve_done": {
+            "min_us": 148.48,
+            "max_us": 192.512
+          },
+          "before_fetch_barrier": {
+            "min_us": 149.504,
+            "max_us": 192.512
+          },
+          "fetch_start": {
+            "min_us": 194.56,
+            "max_us": 194.56
+          },
+          "fetch_done": {
+            "min_us": 194.56,
+            "max_us": 3050.496
+          },
+          "attention_done": {
+            "min_us": 3248.128,
+            "max_us": 3727.36
+          },
+          "merge_barrier_done": {
+            "min_us": 3728.384,
+            "max_us": 3728.384
+          },
+          "merge_done": {
+            "min_us": 3846.144,
+            "max_us": 3891.2
+          },
+          "last_lru_start": {
+            "min_us": 196.608,
+            "max_us": 230.4
+          },
+          "last_lru_done": {
+            "min_us": 210.944,
+            "max_us": 254.976
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 389,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 103.424,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 153.6,
+            "max_us": 193.536
+          },
+          "before_fetch_barrier": {
+            "min_us": 153.6,
+            "max_us": 194.56
+          },
+          "fetch_start": {
+            "min_us": 195.584,
+            "max_us": 195.584
+          },
+          "fetch_done": {
+            "min_us": 196.608,
+            "max_us": 3265.536
+          },
+          "attention_done": {
+            "min_us": 3302.4,
+            "max_us": 3741.696
+          },
+          "merge_barrier_done": {
+            "min_us": 3742.72,
+            "max_us": 3743.744
+          },
+          "merge_done": {
+            "min_us": 3862.528,
+            "max_us": 3903.488
+          },
+          "last_lru_start": {
+            "min_us": 197.632,
+            "max_us": 230.4
+          },
+          "last_lru_done": {
+            "min_us": 211.968,
+            "max_us": 259.072
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 390,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 103.424,
+            "max_us": 126.976
+          },
+          "prepare_barrier_done": {
+            "min_us": 128.0,
+            "max_us": 128.0
+          },
+          "resolve_done": {
+            "min_us": 149.504,
+            "max_us": 189.44
+          },
+          "before_fetch_barrier": {
+            "min_us": 150.528,
+            "max_us": 189.44
+          },
+          "fetch_start": {
+            "min_us": 190.464,
+            "max_us": 191.488
+          },
+          "fetch_done": {
+            "min_us": 191.488,
+            "max_us": 3592.192
+          },
+          "attention_done": {
+            "min_us": 3338.24,
+            "max_us": 3885.056
+          },
+          "merge_barrier_done": {
+            "min_us": 3886.08,
+            "max_us": 3887.104
+          },
+          "merge_done": {
+            "min_us": 4002.816,
+            "max_us": 4054.016
+          },
+          "last_lru_start": {
+            "min_us": 193.536,
+            "max_us": 226.304
+          },
+          "last_lru_done": {
+            "min_us": 207.872,
+            "max_us": 249.856
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 391,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 103.424,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 152.576,
+            "max_us": 198.656
+          },
+          "before_fetch_barrier": {
+            "min_us": 152.576,
+            "max_us": 199.68
+          },
+          "fetch_start": {
+            "min_us": 200.704,
+            "max_us": 200.704
+          },
+          "fetch_done": {
+            "min_us": 200.704,
+            "max_us": 3765.248
+          },
+          "attention_done": {
+            "min_us": 3527.68,
+            "max_us": 4020.224
+          },
+          "merge_barrier_done": {
+            "min_us": 4022.272,
+            "max_us": 4022.272
+          },
+          "merge_done": {
+            "min_us": 4144.128,
+            "max_us": 4182.016
+          },
+          "last_lru_start": {
+            "min_us": 202.752,
+            "max_us": 234.496
+          },
+          "last_lru_done": {
+            "min_us": 217.088,
+            "max_us": 261.12
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 392,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 124.928
+          },
+          "prepare_barrier_done": {
+            "min_us": 126.976,
+            "max_us": 126.976
+          },
+          "resolve_done": {
+            "min_us": 151.552,
+            "max_us": 195.584
+          },
+          "before_fetch_barrier": {
+            "min_us": 151.552,
+            "max_us": 196.608
+          },
+          "fetch_start": {
+            "min_us": 197.632,
+            "max_us": 197.632
+          },
+          "fetch_done": {
+            "min_us": 198.656,
+            "max_us": 3796.992
+          },
+          "attention_done": {
+            "min_us": 3613.696,
+            "max_us": 3936.256
+          },
+          "merge_barrier_done": {
+            "min_us": 3937.28,
+            "max_us": 3938.304
+          },
+          "merge_done": {
+            "min_us": 4061.184,
+            "max_us": 4104.192
+          },
+          "last_lru_start": {
+            "min_us": 199.68,
+            "max_us": 232.448
+          },
+          "last_lru_done": {
+            "min_us": 215.04,
+            "max_us": 249.856
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 393,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 135.168
+          },
+          "prepare_barrier_done": {
+            "min_us": 138.24,
+            "max_us": 138.24
+          },
+          "resolve_done": {
+            "min_us": 160.768,
+            "max_us": 201.728
+          },
+          "before_fetch_barrier": {
+            "min_us": 161.792,
+            "max_us": 202.752
+          },
+          "fetch_start": {
+            "min_us": 203.776,
+            "max_us": 203.776
+          },
+          "fetch_done": {
+            "min_us": 203.776,
+            "max_us": 3824.64
+          },
+          "attention_done": {
+            "min_us": 3551.232,
+            "max_us": 4046.848
+          },
+          "merge_barrier_done": {
+            "min_us": 4048.896,
+            "max_us": 4048.896
+          },
+          "merge_done": {
+            "min_us": 4161.536,
+            "max_us": 4208.64
+          },
+          "last_lru_start": {
+            "min_us": 205.824,
+            "max_us": 237.568
+          },
+          "last_lru_done": {
+            "min_us": 220.16,
+            "max_us": 257.024
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 394,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 125.952
+          },
+          "prepare_barrier_done": {
+            "min_us": 126.976,
+            "max_us": 128.0
+          },
+          "resolve_done": {
+            "min_us": 149.504,
+            "max_us": 189.44
+          },
+          "before_fetch_barrier": {
+            "min_us": 149.504,
+            "max_us": 189.44
+          },
+          "fetch_start": {
+            "min_us": 191.488,
+            "max_us": 191.488
+          },
+          "fetch_done": {
+            "min_us": 191.488,
+            "max_us": 3467.264
+          },
+          "attention_done": {
+            "min_us": 3391.488,
+            "max_us": 3743.744
+          },
+          "merge_barrier_done": {
+            "min_us": 3745.792,
+            "max_us": 3745.792
+          },
+          "merge_done": {
+            "min_us": 3857.408,
+            "max_us": 3914.752
+          },
+          "last_lru_start": {
+            "min_us": 193.536,
+            "max_us": 225.28
+          },
+          "last_lru_done": {
+            "min_us": 207.872,
+            "max_us": 243.712
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 395,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 193.536
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 194.56
+          },
+          "fetch_start": {
+            "min_us": 195.584,
+            "max_us": 196.608
+          },
+          "fetch_done": {
+            "min_us": 196.608,
+            "max_us": 3829.76
+          },
+          "attention_done": {
+            "min_us": 3648.512,
+            "max_us": 4068.352
+          },
+          "merge_barrier_done": {
+            "min_us": 4069.376,
+            "max_us": 4070.4
+          },
+          "merge_done": {
+            "min_us": 4193.28,
+            "max_us": 4246.528
+          },
+          "last_lru_start": {
+            "min_us": 198.656,
+            "max_us": 223.232
+          },
+          "last_lru_done": {
+            "min_us": 212.992,
+            "max_us": 247.808
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 396,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 103.424,
+            "max_us": 126.976
+          },
+          "prepare_barrier_done": {
+            "min_us": 128.0,
+            "max_us": 129.024
+          },
+          "resolve_done": {
+            "min_us": 152.576,
+            "max_us": 195.584
+          },
+          "before_fetch_barrier": {
+            "min_us": 152.576,
+            "max_us": 195.584
+          },
+          "fetch_start": {
+            "min_us": 196.608,
+            "max_us": 197.632
+          },
+          "fetch_done": {
+            "min_us": 197.632,
+            "max_us": 3864.576
+          },
+          "attention_done": {
+            "min_us": 3662.848,
+            "max_us": 3985.408
+          },
+          "merge_barrier_done": {
+            "min_us": 3987.456,
+            "max_us": 3987.456
+          },
+          "merge_done": {
+            "min_us": 4104.192,
+            "max_us": 4145.152
+          },
+          "last_lru_start": {
+            "min_us": 198.656,
+            "max_us": 224.256
+          },
+          "last_lru_done": {
+            "min_us": 214.016,
+            "max_us": 247.808
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 397,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 129.024
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 197.632
+          },
+          "before_fetch_barrier": {
+            "min_us": 154.624,
+            "max_us": 198.656
+          },
+          "fetch_start": {
+            "min_us": 199.68,
+            "max_us": 200.704
+          },
+          "fetch_done": {
+            "min_us": 200.704,
+            "max_us": 3502.08
+          },
+          "attention_done": {
+            "min_us": 3357.696,
+            "max_us": 3891.2
+          },
+          "merge_barrier_done": {
+            "min_us": 3892.224,
+            "max_us": 3893.248
+          },
+          "merge_done": {
+            "min_us": 4011.008,
+            "max_us": 4058.112
+          },
+          "last_lru_start": {
+            "min_us": 201.728,
+            "max_us": 227.328
+          },
+          "last_lru_done": {
+            "min_us": 216.064,
+            "max_us": 251.904
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 398,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 158.72,
+            "max_us": 193.536
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 193.536
+          },
+          "fetch_start": {
+            "min_us": 194.56,
+            "max_us": 195.584
+          },
+          "fetch_done": {
+            "min_us": 195.584,
+            "max_us": 4131.84
+          },
+          "attention_done": {
+            "min_us": 3889.152,
+            "max_us": 4308.992
+          },
+          "merge_barrier_done": {
+            "min_us": 4311.04,
+            "max_us": 4311.04
+          },
+          "merge_done": {
+            "min_us": 4429.824,
+            "max_us": 4484.096
+          },
+          "last_lru_start": {
+            "min_us": 197.632,
+            "max_us": 223.232
+          },
+          "last_lru_done": {
+            "min_us": 211.968,
+            "max_us": 247.808
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 399,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 105.472,
+            "max_us": 125.952
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 129.024
+          },
+          "resolve_done": {
+            "min_us": 151.552,
+            "max_us": 191.488
+          },
+          "before_fetch_barrier": {
+            "min_us": 152.576,
+            "max_us": 191.488
+          },
+          "fetch_start": {
+            "min_us": 192.512,
+            "max_us": 193.536
+          },
+          "fetch_done": {
+            "min_us": 193.536,
+            "max_us": 3447.808
+          },
+          "attention_done": {
+            "min_us": 3351.552,
+            "max_us": 3792.896
+          },
+          "merge_barrier_done": {
+            "min_us": 3793.92,
+            "max_us": 3793.92
+          },
+          "merge_done": {
+            "min_us": 3915.776,
+            "max_us": 3958.784
+          },
+          "last_lru_start": {
+            "min_us": 195.584,
+            "max_us": 220.16
+          },
+          "last_lru_done": {
+            "min_us": 209.92,
+            "max_us": 244.736
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 400,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 101.376,
+            "max_us": 123.904
+          },
+          "prepare_barrier_done": {
+            "min_us": 126.976,
+            "max_us": 126.976
+          },
+          "resolve_done": {
+            "min_us": 147.456,
+            "max_us": 193.536
+          },
+          "before_fetch_barrier": {
+            "min_us": 148.48,
+            "max_us": 193.536
+          },
+          "fetch_start": {
+            "min_us": 195.584,
+            "max_us": 195.584
+          },
+          "fetch_done": {
+            "min_us": 195.584,
+            "max_us": 2791.424
+          },
+          "attention_done": {
+            "min_us": 3353.6,
+            "max_us": 3644.416
+          },
+          "merge_barrier_done": {
+            "min_us": 3645.44,
+            "max_us": 3645.44
+          },
+          "merge_done": {
+            "min_us": 3769.344,
+            "max_us": 3815.424
+          },
+          "last_lru_start": {
+            "min_us": 197.632,
+            "max_us": 222.208
+          },
+          "last_lru_done": {
+            "min_us": 211.968,
+            "max_us": 244.736
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 401,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 130.048
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 199.68
+          },
+          "before_fetch_barrier": {
+            "min_us": 155.648,
+            "max_us": 199.68
+          },
+          "fetch_start": {
+            "min_us": 201.728,
+            "max_us": 201.728
+          },
+          "fetch_done": {
+            "min_us": 201.728,
+            "max_us": 3818.496
+          },
+          "attention_done": {
+            "min_us": 3589.12,
+            "max_us": 4017.152
+          },
+          "merge_barrier_done": {
+            "min_us": 4018.176,
+            "max_us": 4019.2
+          },
+          "merge_done": {
+            "min_us": 4127.744,
+            "max_us": 4183.04
+          },
+          "last_lru_start": {
+            "min_us": 203.776,
+            "max_us": 229.376
+          },
+          "last_lru_done": {
+            "min_us": 218.112,
+            "max_us": 253.952
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 402,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 102.4,
+            "max_us": 124.928
+          },
+          "prepare_barrier_done": {
+            "min_us": 128.0,
+            "max_us": 128.0
+          },
+          "resolve_done": {
+            "min_us": 149.504,
+            "max_us": 193.536
+          },
+          "before_fetch_barrier": {
+            "min_us": 150.528,
+            "max_us": 194.56
+          },
+          "fetch_start": {
+            "min_us": 195.584,
+            "max_us": 196.608
+          },
+          "fetch_done": {
+            "min_us": 196.608,
+            "max_us": 3543.04
+          },
+          "attention_done": {
+            "min_us": 3403.776,
+            "max_us": 3852.288
+          },
+          "merge_barrier_done": {
+            "min_us": 3853.312,
+            "max_us": 3853.312
+          },
+          "merge_done": {
+            "min_us": 3978.24,
+            "max_us": 4029.44
+          },
+          "last_lru_start": {
+            "min_us": 198.656,
+            "max_us": 223.232
+          },
+          "last_lru_done": {
+            "min_us": 211.968,
+            "max_us": 248.832
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 403,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 105.472,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 130.048
+          },
+          "resolve_done": {
+            "min_us": 151.552,
+            "max_us": 193.536
+          },
+          "before_fetch_barrier": {
+            "min_us": 152.576,
+            "max_us": 193.536
+          },
+          "fetch_start": {
+            "min_us": 195.584,
+            "max_us": 195.584
+          },
+          "fetch_done": {
+            "min_us": 195.584,
+            "max_us": 3887.104
+          },
+          "attention_done": {
+            "min_us": 3644.416,
+            "max_us": 4072.448
+          },
+          "merge_barrier_done": {
+            "min_us": 4074.496,
+            "max_us": 4074.496
+          },
+          "merge_done": {
+            "min_us": 4195.328,
+            "max_us": 4244.48
+          },
+          "last_lru_start": {
+            "min_us": 197.632,
+            "max_us": 223.232
+          },
+          "last_lru_done": {
+            "min_us": 211.968,
+            "max_us": 247.808
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 404,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 131.072
+          },
+          "prepare_barrier_done": {
+            "min_us": 133.12,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 158.72,
+            "max_us": 195.584
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 196.608
+          },
+          "fetch_start": {
+            "min_us": 197.632,
+            "max_us": 197.632
+          },
+          "fetch_done": {
+            "min_us": 197.632,
+            "max_us": 4132.864
+          },
+          "attention_done": {
+            "min_us": 3887.104,
+            "max_us": 4233.216
+          },
+          "merge_barrier_done": {
+            "min_us": 4234.24,
+            "max_us": 4235.264
+          },
+          "merge_done": {
+            "min_us": 4355.072,
+            "max_us": 4400.128
+          },
+          "last_lru_start": {
+            "min_us": 199.68,
+            "max_us": 225.28
+          },
+          "last_lru_done": {
+            "min_us": 214.016,
+            "max_us": 250.88
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 405,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 125.952
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 129.024
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 197.632
+          },
+          "before_fetch_barrier": {
+            "min_us": 155.648,
+            "max_us": 197.632
+          },
+          "fetch_start": {
+            "min_us": 198.656,
+            "max_us": 199.68
+          },
+          "fetch_done": {
+            "min_us": 199.68,
+            "max_us": 3288.064
+          },
+          "attention_done": {
+            "min_us": 3446.784,
+            "max_us": 3800.064
+          },
+          "merge_barrier_done": {
+            "min_us": 3801.088,
+            "max_us": 3801.088
+          },
+          "merge_done": {
+            "min_us": 3927.04,
+            "max_us": 3968.0
+          },
+          "last_lru_start": {
+            "min_us": 201.728,
+            "max_us": 226.304
+          },
+          "last_lru_done": {
+            "min_us": 216.064,
+            "max_us": 249.856
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 406,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 132.096
+          },
+          "prepare_barrier_done": {
+            "min_us": 133.12,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 162.816,
+            "max_us": 209.92
+          },
+          "before_fetch_barrier": {
+            "min_us": 162.816,
+            "max_us": 210.944
+          },
+          "fetch_start": {
+            "min_us": 211.968,
+            "max_us": 212.992
+          },
+          "fetch_done": {
+            "min_us": 212.992,
+            "max_us": 4395.008
+          },
+          "attention_done": {
+            "min_us": 4155.392,
+            "max_us": 4472.832
+          },
+          "merge_barrier_done": {
+            "min_us": 4474.88,
+            "max_us": 4474.88
+          },
+          "merge_done": {
+            "min_us": 4592.64,
+            "max_us": 4645.888
+          },
+          "last_lru_start": {
+            "min_us": 215.04,
+            "max_us": 240.64
+          },
+          "last_lru_done": {
+            "min_us": 229.376,
+            "max_us": 265.216
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 407,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 158.72,
+            "max_us": 205.824
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 205.824
+          },
+          "fetch_start": {
+            "min_us": 206.848,
+            "max_us": 207.872
+          },
+          "fetch_done": {
+            "min_us": 207.872,
+            "max_us": 3884.032
+          },
+          "attention_done": {
+            "min_us": 3767.296,
+            "max_us": 4105.216
+          },
+          "merge_barrier_done": {
+            "min_us": 4107.264,
+            "max_us": 4107.264
+          },
+          "merge_done": {
+            "min_us": 4233.216,
+            "max_us": 4276.224
+          },
+          "last_lru_start": {
+            "min_us": 209.92,
+            "max_us": 236.544
+          },
+          "last_lru_done": {
+            "min_us": 224.256,
+            "max_us": 260.096
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 408,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 131.072
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 156.672,
+            "max_us": 197.632
+          },
+          "before_fetch_barrier": {
+            "min_us": 157.696,
+            "max_us": 197.632
+          },
+          "fetch_start": {
+            "min_us": 199.68,
+            "max_us": 199.68
+          },
+          "fetch_done": {
+            "min_us": 199.68,
+            "max_us": 3986.432
+          },
+          "attention_done": {
+            "min_us": 3778.56,
+            "max_us": 4082.688
+          },
+          "merge_barrier_done": {
+            "min_us": 4083.712,
+            "max_us": 4084.736
+          },
+          "merge_done": {
+            "min_us": 4211.712,
+            "max_us": 4254.72
+          },
+          "last_lru_start": {
+            "min_us": 201.728,
+            "max_us": 227.328
+          },
+          "last_lru_done": {
+            "min_us": 216.064,
+            "max_us": 251.904
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 409,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 109.568,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 202.752
+          },
+          "before_fetch_barrier": {
+            "min_us": 157.696,
+            "max_us": 202.752
+          },
+          "fetch_start": {
+            "min_us": 204.8,
+            "max_us": 204.8
+          },
+          "fetch_done": {
+            "min_us": 204.8,
+            "max_us": 4031.488
+          },
+          "attention_done": {
+            "min_us": 3771.392,
+            "max_us": 4171.776
+          },
+          "merge_barrier_done": {
+            "min_us": 4173.824,
+            "max_us": 4173.824
+          },
+          "merge_done": {
+            "min_us": 4293.632,
+            "max_us": 4344.832
+          },
+          "last_lru_start": {
+            "min_us": 206.848,
+            "max_us": 232.448
+          },
+          "last_lru_done": {
+            "min_us": 221.184,
+            "max_us": 256.0
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 410,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 130.048
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 197.632
+          },
+          "before_fetch_barrier": {
+            "min_us": 154.624,
+            "max_us": 197.632
+          },
+          "fetch_start": {
+            "min_us": 198.656,
+            "max_us": 199.68
+          },
+          "fetch_done": {
+            "min_us": 199.68,
+            "max_us": 3679.232
+          },
+          "attention_done": {
+            "min_us": 3517.44,
+            "max_us": 4048.896
+          },
+          "merge_barrier_done": {
+            "min_us": 4050.944,
+            "max_us": 4050.944
+          },
+          "merge_done": {
+            "min_us": 4170.752,
+            "max_us": 4220.928
+          },
+          "last_lru_start": {
+            "min_us": 201.728,
+            "max_us": 227.328
+          },
+          "last_lru_done": {
+            "min_us": 216.064,
+            "max_us": 249.856
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 411,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 129.024
+          },
+          "resolve_done": {
+            "min_us": 151.552,
+            "max_us": 204.8
+          },
+          "before_fetch_barrier": {
+            "min_us": 151.552,
+            "max_us": 204.8
+          },
+          "fetch_start": {
+            "min_us": 206.848,
+            "max_us": 206.848
+          },
+          "fetch_done": {
+            "min_us": 206.848,
+            "max_us": 3467.264
+          },
+          "attention_done": {
+            "min_us": 3377.152,
+            "max_us": 3911.68
+          },
+          "merge_barrier_done": {
+            "min_us": 3913.728,
+            "max_us": 3913.728
+          },
+          "merge_done": {
+            "min_us": 4032.512,
+            "max_us": 4078.592
+          },
+          "last_lru_start": {
+            "min_us": 208.896,
+            "max_us": 234.496
+          },
+          "last_lru_done": {
+            "min_us": 223.232,
+            "max_us": 259.072
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 412,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 109.568,
+            "max_us": 131.072
+          },
+          "prepare_barrier_done": {
+            "min_us": 133.12,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 200.704
+          },
+          "before_fetch_barrier": {
+            "min_us": 157.696,
+            "max_us": 200.704
+          },
+          "fetch_start": {
+            "min_us": 202.752,
+            "max_us": 202.752
+          },
+          "fetch_done": {
+            "min_us": 202.752,
+            "max_us": 3912.704
+          },
+          "attention_done": {
+            "min_us": 3676.16,
+            "max_us": 4074.496
+          },
+          "merge_barrier_done": {
+            "min_us": 4076.544,
+            "max_us": 4076.544
+          },
+          "merge_done": {
+            "min_us": 4204.544,
+            "max_us": 4256.768
+          },
+          "last_lru_start": {
+            "min_us": 204.8,
+            "max_us": 230.4
+          },
+          "last_lru_done": {
+            "min_us": 219.136,
+            "max_us": 256.0
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 413,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 155.648,
+            "max_us": 201.728
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 202.752
+          },
+          "fetch_start": {
+            "min_us": 203.776,
+            "max_us": 203.776
+          },
+          "fetch_done": {
+            "min_us": 204.8,
+            "max_us": 4175.872
+          },
+          "attention_done": {
+            "min_us": 3914.752,
+            "max_us": 4376.576
+          },
+          "merge_barrier_done": {
+            "min_us": 4378.624,
+            "max_us": 4378.624
+          },
+          "merge_done": {
+            "min_us": 4500.48,
+            "max_us": 4553.728
+          },
+          "last_lru_start": {
+            "min_us": 205.824,
+            "max_us": 231.424
+          },
+          "last_lru_done": {
+            "min_us": 221.184,
+            "max_us": 258.048
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 414,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 130.048
+          },
+          "resolve_done": {
+            "min_us": 153.6,
+            "max_us": 197.632
+          },
+          "before_fetch_barrier": {
+            "min_us": 153.6,
+            "max_us": 197.632
+          },
+          "fetch_start": {
+            "min_us": 198.656,
+            "max_us": 199.68
+          },
+          "fetch_done": {
+            "min_us": 199.68,
+            "max_us": 3535.872
+          },
+          "attention_done": {
+            "min_us": 3380.224,
+            "max_us": 3860.48
+          },
+          "merge_barrier_done": {
+            "min_us": 3862.528,
+            "max_us": 3862.528
+          },
+          "merge_done": {
+            "min_us": 3980.288,
+            "max_us": 4026.368
+          },
+          "last_lru_start": {
+            "min_us": 201.728,
+            "max_us": 226.304
+          },
+          "last_lru_done": {
+            "min_us": 215.04,
+            "max_us": 250.88
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 415,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 201.728
+          },
+          "before_fetch_barrier": {
+            "min_us": 157.696,
+            "max_us": 201.728
+          },
+          "fetch_start": {
+            "min_us": 203.776,
+            "max_us": 203.776
+          },
+          "fetch_done": {
+            "min_us": 203.776,
+            "max_us": 3576.832
+          },
+          "attention_done": {
+            "min_us": 3537.92,
+            "max_us": 3928.064
+          },
+          "merge_barrier_done": {
+            "min_us": 3930.112,
+            "max_us": 3930.112
+          },
+          "merge_done": {
+            "min_us": 4043.776,
+            "max_us": 4101.12
+          },
+          "last_lru_start": {
+            "min_us": 205.824,
+            "max_us": 231.424
+          },
+          "last_lru_done": {
+            "min_us": 220.16,
+            "max_us": 256.0
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 416,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 105.472,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 194.56
+          },
+          "before_fetch_barrier": {
+            "min_us": 157.696,
+            "max_us": 194.56
+          },
+          "fetch_start": {
+            "min_us": 196.608,
+            "max_us": 196.608
+          },
+          "fetch_done": {
+            "min_us": 196.608,
+            "max_us": 3601.408
+          },
+          "attention_done": {
+            "min_us": 3485.696,
+            "max_us": 3906.56
+          },
+          "merge_barrier_done": {
+            "min_us": 3907.584,
+            "max_us": 3907.584
+          },
+          "merge_done": {
+            "min_us": 4031.488,
+            "max_us": 4081.664
+          },
+          "last_lru_start": {
+            "min_us": 198.656,
+            "max_us": 224.256
+          },
+          "last_lru_done": {
+            "min_us": 212.992,
+            "max_us": 248.832
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 417,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 126.976
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 130.048
+          },
+          "resolve_done": {
+            "min_us": 151.552,
+            "max_us": 189.44
+          },
+          "before_fetch_barrier": {
+            "min_us": 152.576,
+            "max_us": 190.464
+          },
+          "fetch_start": {
+            "min_us": 191.488,
+            "max_us": 191.488
+          },
+          "fetch_done": {
+            "min_us": 192.512,
+            "max_us": 3214.336
+          },
+          "attention_done": {
+            "min_us": 3373.056,
+            "max_us": 3792.896
+          },
+          "merge_barrier_done": {
+            "min_us": 3793.92,
+            "max_us": 3793.92
+          },
+          "merge_done": {
+            "min_us": 3911.68,
+            "max_us": 3966.976
+          },
+          "last_lru_start": {
+            "min_us": 193.536,
+            "max_us": 218.112
+          },
+          "last_lru_done": {
+            "min_us": 207.872,
+            "max_us": 241.664
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 418,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 126.976
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 153.6,
+            "max_us": 198.656
+          },
+          "before_fetch_barrier": {
+            "min_us": 154.624,
+            "max_us": 199.68
+          },
+          "fetch_start": {
+            "min_us": 200.704,
+            "max_us": 201.728
+          },
+          "fetch_done": {
+            "min_us": 201.728,
+            "max_us": 3374.08
+          },
+          "attention_done": {
+            "min_us": 3448.832,
+            "max_us": 3912.704
+          },
+          "merge_barrier_done": {
+            "min_us": 3913.728,
+            "max_us": 3913.728
+          },
+          "merge_done": {
+            "min_us": 4034.56,
+            "max_us": 4080.64
+          },
+          "last_lru_start": {
+            "min_us": 202.752,
+            "max_us": 228.352
+          },
+          "last_lru_done": {
+            "min_us": 218.112,
+            "max_us": 256.0
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 419,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 199.68
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 200.704
+          },
+          "fetch_start": {
+            "min_us": 201.728,
+            "max_us": 201.728
+          },
+          "fetch_done": {
+            "min_us": 202.752,
+            "max_us": 3812.352
+          },
+          "attention_done": {
+            "min_us": 3558.4,
+            "max_us": 4070.4
+          },
+          "merge_barrier_done": {
+            "min_us": 4072.448,
+            "max_us": 4072.448
+          },
+          "merge_done": {
+            "min_us": 4198.4,
+            "max_us": 4249.6
+          },
+          "last_lru_start": {
+            "min_us": 203.776,
+            "max_us": 229.376
+          },
+          "last_lru_done": {
+            "min_us": 218.112,
+            "max_us": 253.952
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 420,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 194.56
+          },
+          "before_fetch_barrier": {
+            "min_us": 154.624,
+            "max_us": 194.56
+          },
+          "fetch_start": {
+            "min_us": 195.584,
+            "max_us": 196.608
+          },
+          "fetch_done": {
+            "min_us": 196.608,
+            "max_us": 3840.0
+          },
+          "attention_done": {
+            "min_us": 3609.6,
+            "max_us": 4023.296
+          },
+          "merge_barrier_done": {
+            "min_us": 4024.32,
+            "max_us": 4025.344
+          },
+          "merge_done": {
+            "min_us": 4145.152,
+            "max_us": 4200.448
+          },
+          "last_lru_start": {
+            "min_us": 198.656,
+            "max_us": 223.232
+          },
+          "last_lru_done": {
+            "min_us": 212.992,
+            "max_us": 248.832
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 421,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 131.072
+          },
+          "prepare_barrier_done": {
+            "min_us": 133.12,
+            "max_us": 134.144
+          },
+          "resolve_done": {
+            "min_us": 158.72,
+            "max_us": 199.68
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 200.704
+          },
+          "fetch_start": {
+            "min_us": 201.728,
+            "max_us": 202.752
+          },
+          "fetch_done": {
+            "min_us": 202.752,
+            "max_us": 3874.816
+          },
+          "attention_done": {
+            "min_us": 3619.84,
+            "max_us": 4091.904
+          },
+          "merge_barrier_done": {
+            "min_us": 4092.928,
+            "max_us": 4093.952
+          },
+          "merge_done": {
+            "min_us": 4213.76,
+            "max_us": 4268.032
+          },
+          "last_lru_start": {
+            "min_us": 203.776,
+            "max_us": 230.4
+          },
+          "last_lru_done": {
+            "min_us": 219.136,
+            "max_us": 256.0
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 422,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 155.648,
+            "max_us": 186.368
+          },
+          "before_fetch_barrier": {
+            "min_us": 155.648,
+            "max_us": 187.392
+          },
+          "fetch_start": {
+            "min_us": 188.416,
+            "max_us": 188.416
+          },
+          "fetch_done": {
+            "min_us": 189.44,
+            "max_us": 3674.112
+          },
+          "attention_done": {
+            "min_us": 3461.12,
+            "max_us": 3990.528
+          },
+          "merge_barrier_done": {
+            "min_us": 3992.576,
+            "max_us": 3992.576
+          },
+          "merge_done": {
+            "min_us": 4115.456,
+            "max_us": 4162.56
+          },
+          "last_lru_start": {
+            "min_us": 190.464,
+            "max_us": 216.064
+          },
+          "last_lru_done": {
+            "min_us": 205.824,
+            "max_us": 241.664
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 423,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 126.976
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 130.048
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 192.512
+          },
+          "before_fetch_barrier": {
+            "min_us": 155.648,
+            "max_us": 192.512
+          },
+          "fetch_start": {
+            "min_us": 193.536,
+            "max_us": 194.56
+          },
+          "fetch_done": {
+            "min_us": 194.56,
+            "max_us": 3732.48
+          },
+          "attention_done": {
+            "min_us": 3513.344,
+            "max_us": 4005.888
+          },
+          "merge_barrier_done": {
+            "min_us": 4006.912,
+            "max_us": 4007.936
+          },
+          "merge_done": {
+            "min_us": 4123.648,
+            "max_us": 4171.776
+          },
+          "last_lru_start": {
+            "min_us": 196.608,
+            "max_us": 222.208
+          },
+          "last_lru_done": {
+            "min_us": 210.944,
+            "max_us": 246.784
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 424,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 105.472,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 129.024
+          },
+          "resolve_done": {
+            "min_us": 151.552,
+            "max_us": 191.488
+          },
+          "before_fetch_barrier": {
+            "min_us": 152.576,
+            "max_us": 192.512
+          },
+          "fetch_start": {
+            "min_us": 193.536,
+            "max_us": 194.56
+          },
+          "fetch_done": {
+            "min_us": 194.56,
+            "max_us": 3343.36
+          },
+          "attention_done": {
+            "min_us": 3417.088,
+            "max_us": 3791.872
+          },
+          "merge_barrier_done": {
+            "min_us": 3792.896,
+            "max_us": 3793.92
+          },
+          "merge_done": {
+            "min_us": 3917.824,
+            "max_us": 3960.832
+          },
+          "last_lru_start": {
+            "min_us": 195.584,
+            "max_us": 221.184
+          },
+          "last_lru_done": {
+            "min_us": 210.944,
+            "max_us": 246.784
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 425,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 109.568,
+            "max_us": 131.072
+          },
+          "prepare_barrier_done": {
+            "min_us": 133.12,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 199.68
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 199.68
+          },
+          "fetch_start": {
+            "min_us": 201.728,
+            "max_us": 201.728
+          },
+          "fetch_done": {
+            "min_us": 201.728,
+            "max_us": 3895.296
+          },
+          "attention_done": {
+            "min_us": 3741.696,
+            "max_us": 4067.328
+          },
+          "merge_barrier_done": {
+            "min_us": 4068.352,
+            "max_us": 4069.376
+          },
+          "merge_done": {
+            "min_us": 4193.28,
+            "max_us": 4246.528
+          },
+          "last_lru_start": {
+            "min_us": 203.776,
+            "max_us": 229.376
+          },
+          "last_lru_done": {
+            "min_us": 218.112,
+            "max_us": 254.976
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 426,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 132.096
+          },
+          "prepare_barrier_done": {
+            "min_us": 133.12,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 199.68
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 199.68
+          },
+          "fetch_start": {
+            "min_us": 200.704,
+            "max_us": 201.728
+          },
+          "fetch_done": {
+            "min_us": 201.728,
+            "max_us": 3872.768
+          },
+          "attention_done": {
+            "min_us": 3642.368,
+            "max_us": 4047.872
+          },
+          "merge_barrier_done": {
+            "min_us": 4049.92,
+            "max_us": 4049.92
+          },
+          "merge_done": {
+            "min_us": 4175.872,
+            "max_us": 4218.88
+          },
+          "last_lru_start": {
+            "min_us": 203.776,
+            "max_us": 228.352
+          },
+          "last_lru_done": {
+            "min_us": 218.112,
+            "max_us": 252.928
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 427,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 203.776
+          },
+          "before_fetch_barrier": {
+            "min_us": 154.624,
+            "max_us": 203.776
+          },
+          "fetch_start": {
+            "min_us": 205.824,
+            "max_us": 205.824
+          },
+          "fetch_done": {
+            "min_us": 205.824,
+            "max_us": 3697.664
+          },
+          "attention_done": {
+            "min_us": 3474.432,
+            "max_us": 4025.344
+          },
+          "merge_barrier_done": {
+            "min_us": 4026.368,
+            "max_us": 4027.392
+          },
+          "merge_done": {
+            "min_us": 4155.392,
+            "max_us": 4200.448
+          },
+          "last_lru_start": {
+            "min_us": 207.872,
+            "max_us": 232.448
+          },
+          "last_lru_done": {
+            "min_us": 222.208,
+            "max_us": 257.024
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 428,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 152.576,
+            "max_us": 196.608
+          },
+          "before_fetch_barrier": {
+            "min_us": 153.6,
+            "max_us": 197.632
+          },
+          "fetch_start": {
+            "min_us": 198.656,
+            "max_us": 198.656
+          },
+          "fetch_done": {
+            "min_us": 199.68,
+            "max_us": 3596.288
+          },
+          "attention_done": {
+            "min_us": 3500.032,
+            "max_us": 3833.856
+          },
+          "merge_barrier_done": {
+            "min_us": 3834.88,
+            "max_us": 3834.88
+          },
+          "merge_done": {
+            "min_us": 3957.76,
+            "max_us": 4013.056
+          },
+          "last_lru_start": {
+            "min_us": 200.704,
+            "max_us": 226.304
+          },
+          "last_lru_done": {
+            "min_us": 216.064,
+            "max_us": 251.904
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 429,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 201.728
+          },
+          "before_fetch_barrier": {
+            "min_us": 155.648,
+            "max_us": 202.752
+          },
+          "fetch_start": {
+            "min_us": 203.776,
+            "max_us": 203.776
+          },
+          "fetch_done": {
+            "min_us": 204.8,
+            "max_us": 3937.28
+          },
+          "attention_done": {
+            "min_us": 3749.888,
+            "max_us": 4029.44
+          },
+          "merge_barrier_done": {
+            "min_us": 4031.488,
+            "max_us": 4031.488
+          },
+          "merge_done": {
+            "min_us": 4158.464,
+            "max_us": 4208.64
+          },
+          "last_lru_start": {
+            "min_us": 206.848,
+            "max_us": 233.472
+          },
+          "last_lru_done": {
+            "min_us": 221.184,
+            "max_us": 259.072
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 430,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 130.048
+          },
+          "resolve_done": {
+            "min_us": 152.576,
+            "max_us": 195.584
+          },
+          "before_fetch_barrier": {
+            "min_us": 152.576,
+            "max_us": 195.584
+          },
+          "fetch_start": {
+            "min_us": 197.632,
+            "max_us": 197.632
+          },
+          "fetch_done": {
+            "min_us": 197.632,
+            "max_us": 3460.096
+          },
+          "attention_done": {
+            "min_us": 3426.304,
+            "max_us": 3883.008
+          },
+          "merge_barrier_done": {
+            "min_us": 3884.032,
+            "max_us": 3885.056
+          },
+          "merge_done": {
+            "min_us": 4009.984,
+            "max_us": 4054.016
+          },
+          "last_lru_start": {
+            "min_us": 199.68,
+            "max_us": 224.256
+          },
+          "last_lru_done": {
+            "min_us": 214.016,
+            "max_us": 248.832
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 431,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 126.976
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 129.024
+          },
+          "resolve_done": {
+            "min_us": 152.576,
+            "max_us": 191.488
+          },
+          "before_fetch_barrier": {
+            "min_us": 152.576,
+            "max_us": 192.512
+          },
+          "fetch_start": {
+            "min_us": 193.536,
+            "max_us": 194.56
+          },
+          "fetch_done": {
+            "min_us": 194.56,
+            "max_us": 3406.848
+          },
+          "attention_done": {
+            "min_us": 3406.848,
+            "max_us": 3838.976
+          },
+          "merge_barrier_done": {
+            "min_us": 3841.024,
+            "max_us": 3841.024
+          },
+          "merge_done": {
+            "min_us": 3969.024,
+            "max_us": 4021.248
+          },
+          "last_lru_start": {
+            "min_us": 195.584,
+            "max_us": 220.16
+          },
+          "last_lru_done": {
+            "min_us": 210.944,
+            "max_us": 246.784
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 432,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 193.536
+          },
+          "before_fetch_barrier": {
+            "min_us": 154.624,
+            "max_us": 193.536
+          },
+          "fetch_start": {
+            "min_us": 194.56,
+            "max_us": 195.584
+          },
+          "fetch_done": {
+            "min_us": 195.584,
+            "max_us": 3678.208
+          },
+          "attention_done": {
+            "min_us": 3502.08,
+            "max_us": 3888.128
+          },
+          "merge_barrier_done": {
+            "min_us": 3889.152,
+            "max_us": 3890.176
+          },
+          "merge_done": {
+            "min_us": 4015.104,
+            "max_us": 4062.208
+          },
+          "last_lru_start": {
+            "min_us": 197.632,
+            "max_us": 222.208
+          },
+          "last_lru_done": {
+            "min_us": 211.968,
+            "max_us": 247.808
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 433,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 195.584
+          },
+          "before_fetch_barrier": {
+            "min_us": 154.624,
+            "max_us": 196.608
+          },
+          "fetch_start": {
+            "min_us": 197.632,
+            "max_us": 197.632
+          },
+          "fetch_done": {
+            "min_us": 198.656,
+            "max_us": 3449.856
+          },
+          "attention_done": {
+            "min_us": 3481.6,
+            "max_us": 3802.112
+          },
+          "merge_barrier_done": {
+            "min_us": 3804.16,
+            "max_us": 3804.16
+          },
+          "merge_done": {
+            "min_us": 3929.088,
+            "max_us": 3973.12
+          },
+          "last_lru_start": {
+            "min_us": 199.68,
+            "max_us": 225.28
+          },
+          "last_lru_done": {
+            "min_us": 215.04,
+            "max_us": 250.88
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 434,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 199.68
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 199.68
+          },
+          "fetch_start": {
+            "min_us": 200.704,
+            "max_us": 201.728
+          },
+          "fetch_done": {
+            "min_us": 201.728,
+            "max_us": 3737.6
+          },
+          "attention_done": {
+            "min_us": 3573.76,
+            "max_us": 3991.552
+          },
+          "merge_barrier_done": {
+            "min_us": 3993.6,
+            "max_us": 3993.6
+          },
+          "merge_done": {
+            "min_us": 4113.408,
+            "max_us": 4164.608
+          },
+          "last_lru_start": {
+            "min_us": 203.776,
+            "max_us": 229.376
+          },
+          "last_lru_done": {
+            "min_us": 219.136,
+            "max_us": 253.952
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 435,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 134.144,
+            "max_us": 134.144
+          },
+          "resolve_done": {
+            "min_us": 161.792,
+            "max_us": 196.608
+          },
+          "before_fetch_barrier": {
+            "min_us": 162.816,
+            "max_us": 197.632
+          },
+          "fetch_start": {
+            "min_us": 198.656,
+            "max_us": 198.656
+          },
+          "fetch_done": {
+            "min_us": 198.656,
+            "max_us": 4112.384
+          },
+          "attention_done": {
+            "min_us": 3905.536,
+            "max_us": 4302.848
+          },
+          "merge_barrier_done": {
+            "min_us": 4304.896,
+            "max_us": 4304.896
+          },
+          "merge_done": {
+            "min_us": 4428.8,
+            "max_us": 4480.0
+          },
+          "last_lru_start": {
+            "min_us": 200.704,
+            "max_us": 226.304
+          },
+          "last_lru_done": {
+            "min_us": 215.04,
+            "max_us": 252.928
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 436,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 198.656
+          },
+          "before_fetch_barrier": {
+            "min_us": 154.624,
+            "max_us": 199.68
+          },
+          "fetch_start": {
+            "min_us": 200.704,
+            "max_us": 200.704
+          },
+          "fetch_done": {
+            "min_us": 200.704,
+            "max_us": 3536.896
+          },
+          "attention_done": {
+            "min_us": 3500.032,
+            "max_us": 3814.4
+          },
+          "merge_barrier_done": {
+            "min_us": 3815.424,
+            "max_us": 3816.448
+          },
+          "merge_done": {
+            "min_us": 3941.376,
+            "max_us": 3989.504
+          },
+          "last_lru_start": {
+            "min_us": 202.752,
+            "max_us": 227.328
+          },
+          "last_lru_done": {
+            "min_us": 218.112,
+            "max_us": 252.928
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 437,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 155.648,
+            "max_us": 200.704
+          },
+          "before_fetch_barrier": {
+            "min_us": 155.648,
+            "max_us": 201.728
+          },
+          "fetch_start": {
+            "min_us": 202.752,
+            "max_us": 202.752
+          },
+          "fetch_done": {
+            "min_us": 203.776,
+            "max_us": 4126.72
+          },
+          "attention_done": {
+            "min_us": 3902.464,
+            "max_us": 4271.104
+          },
+          "merge_barrier_done": {
+            "min_us": 4272.128,
+            "max_us": 4273.152
+          },
+          "merge_done": {
+            "min_us": 4399.104,
+            "max_us": 4443.136
+          },
+          "last_lru_start": {
+            "min_us": 205.824,
+            "max_us": 230.4
+          },
+          "last_lru_done": {
+            "min_us": 220.16,
+            "max_us": 256.0
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 438,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 153.6,
+            "max_us": 193.536
+          },
+          "before_fetch_barrier": {
+            "min_us": 153.6,
+            "max_us": 193.536
+          },
+          "fetch_start": {
+            "min_us": 195.584,
+            "max_us": 195.584
+          },
+          "fetch_done": {
+            "min_us": 195.584,
+            "max_us": 3597.312
+          },
+          "attention_done": {
+            "min_us": 3518.464,
+            "max_us": 3846.144
+          },
+          "merge_barrier_done": {
+            "min_us": 3847.168,
+            "max_us": 3848.192
+          },
+          "merge_done": {
+            "min_us": 3971.072,
+            "max_us": 4016.128
+          },
+          "last_lru_start": {
+            "min_us": 197.632,
+            "max_us": 223.232
+          },
+          "last_lru_done": {
+            "min_us": 211.968,
+            "max_us": 247.808
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 439,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 199.68
+          },
+          "before_fetch_barrier": {
+            "min_us": 154.624,
+            "max_us": 200.704
+          },
+          "fetch_start": {
+            "min_us": 201.728,
+            "max_us": 202.752
+          },
+          "fetch_done": {
+            "min_us": 202.752,
+            "max_us": 4062.208
+          },
+          "attention_done": {
+            "min_us": 3887.104,
+            "max_us": 4189.184
+          },
+          "merge_barrier_done": {
+            "min_us": 4191.232,
+            "max_us": 4191.232
+          },
+          "merge_done": {
+            "min_us": 4313.088,
+            "max_us": 4363.264
+          },
+          "last_lru_start": {
+            "min_us": 204.8,
+            "max_us": 231.424
+          },
+          "last_lru_done": {
+            "min_us": 219.136,
+            "max_us": 253.952
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 440,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 197.632
+          },
+          "before_fetch_barrier": {
+            "min_us": 157.696,
+            "max_us": 197.632
+          },
+          "fetch_start": {
+            "min_us": 199.68,
+            "max_us": 199.68
+          },
+          "fetch_done": {
+            "min_us": 199.68,
+            "max_us": 3966.976
+          },
+          "attention_done": {
+            "min_us": 3722.24,
+            "max_us": 4173.824
+          },
+          "merge_barrier_done": {
+            "min_us": 4175.872,
+            "max_us": 4175.872
+          },
+          "merge_done": {
+            "min_us": 4297.728,
+            "max_us": 4341.76
+          },
+          "last_lru_start": {
+            "min_us": 201.728,
+            "max_us": 226.304
+          },
+          "last_lru_done": {
+            "min_us": 216.064,
+            "max_us": 250.88
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 441,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 109.568,
+            "max_us": 132.096
+          },
+          "prepare_barrier_done": {
+            "min_us": 133.12,
+            "max_us": 134.144
+          },
+          "resolve_done": {
+            "min_us": 159.744,
+            "max_us": 190.464
+          },
+          "before_fetch_barrier": {
+            "min_us": 159.744,
+            "max_us": 191.488
+          },
+          "fetch_start": {
+            "min_us": 192.512,
+            "max_us": 193.536
+          },
+          "fetch_done": {
+            "min_us": 193.536,
+            "max_us": 4145.152
+          },
+          "attention_done": {
+            "min_us": 3905.536,
+            "max_us": 4236.288
+          },
+          "merge_barrier_done": {
+            "min_us": 4238.336,
+            "max_us": 4238.336
+          },
+          "merge_done": {
+            "min_us": 4369.408,
+            "max_us": 4418.56
+          },
+          "last_lru_start": {
+            "min_us": 194.56,
+            "max_us": 220.16
+          },
+          "last_lru_done": {
+            "min_us": 209.92,
+            "max_us": 246.784
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 442,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 156.672,
+            "max_us": 191.488
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 192.512
+          },
+          "fetch_start": {
+            "min_us": 193.536,
+            "max_us": 193.536
+          },
+          "fetch_done": {
+            "min_us": 194.56,
+            "max_us": 3743.744
+          },
+          "attention_done": {
+            "min_us": 3603.456,
+            "max_us": 3982.336
+          },
+          "merge_barrier_done": {
+            "min_us": 3984.384,
+            "max_us": 3984.384
+          },
+          "merge_done": {
+            "min_us": 4105.216,
+            "max_us": 4154.368
+          },
+          "last_lru_start": {
+            "min_us": 195.584,
+            "max_us": 221.184
+          },
+          "last_lru_done": {
+            "min_us": 209.92,
+            "max_us": 244.736
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 443,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 152.576,
+            "max_us": 195.584
+          },
+          "before_fetch_barrier": {
+            "min_us": 152.576,
+            "max_us": 195.584
+          },
+          "fetch_start": {
+            "min_us": 196.608,
+            "max_us": 197.632
+          },
+          "fetch_done": {
+            "min_us": 197.632,
+            "max_us": 3580.928
+          },
+          "attention_done": {
+            "min_us": 3431.424,
+            "max_us": 3886.08
+          },
+          "merge_barrier_done": {
+            "min_us": 3888.128,
+            "max_us": 3888.128
+          },
+          "merge_done": {
+            "min_us": 4006.912,
+            "max_us": 4056.064
+          },
+          "last_lru_start": {
+            "min_us": 199.68,
+            "max_us": 225.28
+          },
+          "last_lru_done": {
+            "min_us": 214.016,
+            "max_us": 249.856
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 444,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 129.024
+          },
+          "resolve_done": {
+            "min_us": 152.576,
+            "max_us": 193.536
+          },
+          "before_fetch_barrier": {
+            "min_us": 153.6,
+            "max_us": 193.536
+          },
+          "fetch_start": {
+            "min_us": 194.56,
+            "max_us": 195.584
+          },
+          "fetch_done": {
+            "min_us": 195.584,
+            "max_us": 3712.0
+          },
+          "attention_done": {
+            "min_us": 3602.432,
+            "max_us": 3953.664
+          },
+          "merge_barrier_done": {
+            "min_us": 3954.688,
+            "max_us": 3954.688
+          },
+          "merge_done": {
+            "min_us": 4068.352,
+            "max_us": 4125.696
+          },
+          "last_lru_start": {
+            "min_us": 197.632,
+            "max_us": 222.208
+          },
+          "last_lru_done": {
+            "min_us": 211.968,
+            "max_us": 245.76
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 445,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 200.704
+          },
+          "before_fetch_barrier": {
+            "min_us": 154.624,
+            "max_us": 201.728
+          },
+          "fetch_start": {
+            "min_us": 202.752,
+            "max_us": 202.752
+          },
+          "fetch_done": {
+            "min_us": 202.752,
+            "max_us": 3798.016
+          },
+          "attention_done": {
+            "min_us": 3630.08,
+            "max_us": 3963.904
+          },
+          "merge_barrier_done": {
+            "min_us": 3964.928,
+            "max_us": 3964.928
+          },
+          "merge_done": {
+            "min_us": 4094.976,
+            "max_us": 4140.032
+          },
+          "last_lru_start": {
+            "min_us": 204.8,
+            "max_us": 230.4
+          },
+          "last_lru_done": {
+            "min_us": 219.136,
+            "max_us": 257.024
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 446,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 105.472,
+            "max_us": 125.952
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 129.024
+          },
+          "resolve_done": {
+            "min_us": 151.552,
+            "max_us": 195.584
+          },
+          "before_fetch_barrier": {
+            "min_us": 151.552,
+            "max_us": 195.584
+          },
+          "fetch_start": {
+            "min_us": 197.632,
+            "max_us": 197.632
+          },
+          "fetch_done": {
+            "min_us": 197.632,
+            "max_us": 3432.448
+          },
+          "attention_done": {
+            "min_us": 3441.664,
+            "max_us": 3838.976
+          },
+          "merge_barrier_done": {
+            "min_us": 3841.024,
+            "max_us": 3841.024
+          },
+          "merge_done": {
+            "min_us": 3962.88,
+            "max_us": 4011.008
+          },
+          "last_lru_start": {
+            "min_us": 199.68,
+            "max_us": 225.28
+          },
+          "last_lru_done": {
+            "min_us": 214.016,
+            "max_us": 250.88
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 447,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 152.576,
+            "max_us": 193.536
+          },
+          "before_fetch_barrier": {
+            "min_us": 152.576,
+            "max_us": 193.536
+          },
+          "fetch_start": {
+            "min_us": 195.584,
+            "max_us": 195.584
+          },
+          "fetch_done": {
+            "min_us": 195.584,
+            "max_us": 3425.28
+          },
+          "attention_done": {
+            "min_us": 3394.56,
+            "max_us": 3816.448
+          },
+          "merge_barrier_done": {
+            "min_us": 3818.496,
+            "max_us": 3818.496
+          },
+          "merge_done": {
+            "min_us": 3936.256,
+            "max_us": 3985.408
+          },
+          "last_lru_start": {
+            "min_us": 197.632,
+            "max_us": 223.232
+          },
+          "last_lru_done": {
+            "min_us": 211.968,
+            "max_us": 250.88
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 448,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 126.976
+          },
+          "prepare_barrier_done": {
+            "min_us": 128.0,
+            "max_us": 129.024
+          },
+          "resolve_done": {
+            "min_us": 150.528,
+            "max_us": 192.512
+          },
+          "before_fetch_barrier": {
+            "min_us": 151.552,
+            "max_us": 192.512
+          },
+          "fetch_start": {
+            "min_us": 194.56,
+            "max_us": 194.56
+          },
+          "fetch_done": {
+            "min_us": 194.56,
+            "max_us": 3709.952
+          },
+          "attention_done": {
+            "min_us": 3484.672,
+            "max_us": 3900.416
+          },
+          "merge_barrier_done": {
+            "min_us": 3902.464,
+            "max_us": 3902.464
+          },
+          "merge_done": {
+            "min_us": 4029.44,
+            "max_us": 4074.496
+          },
+          "last_lru_start": {
+            "min_us": 196.608,
+            "max_us": 222.208
+          },
+          "last_lru_done": {
+            "min_us": 210.944,
+            "max_us": 247.808
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 449,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 133.12,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 200.704
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 201.728
+          },
+          "fetch_start": {
+            "min_us": 202.752,
+            "max_us": 202.752
+          },
+          "fetch_done": {
+            "min_us": 203.776,
+            "max_us": 3835.904
+          },
+          "attention_done": {
+            "min_us": 3693.568,
+            "max_us": 4177.92
+          },
+          "merge_barrier_done": {
+            "min_us": 4179.968,
+            "max_us": 4179.968
+          },
+          "merge_done": {
+            "min_us": 4297.728,
+            "max_us": 4347.904
+          },
+          "last_lru_start": {
+            "min_us": 205.824,
+            "max_us": 230.4
+          },
+          "last_lru_done": {
+            "min_us": 220.16,
+            "max_us": 254.976
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 450,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 109.568,
+            "max_us": 132.096
+          },
+          "prepare_barrier_done": {
+            "min_us": 133.12,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 155.648,
+            "max_us": 185.344
+          },
+          "before_fetch_barrier": {
+            "min_us": 155.648,
+            "max_us": 186.368
+          },
+          "fetch_start": {
+            "min_us": 187.392,
+            "max_us": 187.392
+          },
+          "fetch_done": {
+            "min_us": 187.392,
+            "max_us": 4166.656
+          },
+          "attention_done": {
+            "min_us": 3896.32,
+            "max_us": 4263.936
+          },
+          "merge_barrier_done": {
+            "min_us": 4264.96,
+            "max_us": 4265.984
+          },
+          "merge_done": {
+            "min_us": 4391.936,
+            "max_us": 4433.92
+          },
+          "last_lru_start": {
+            "min_us": 189.44,
+            "max_us": 215.04
+          },
+          "last_lru_done": {
+            "min_us": 204.8,
+            "max_us": 240.64
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 451,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 156.672,
+            "max_us": 207.872
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 207.872
+          },
+          "fetch_start": {
+            "min_us": 209.92,
+            "max_us": 209.92
+          },
+          "fetch_done": {
+            "min_us": 209.92,
+            "max_us": 3890.176
+          },
+          "attention_done": {
+            "min_us": 3719.168,
+            "max_us": 4151.296
+          },
+          "merge_barrier_done": {
+            "min_us": 4152.32,
+            "max_us": 4153.344
+          },
+          "merge_done": {
+            "min_us": 4277.248,
+            "max_us": 4323.328
+          },
+          "last_lru_start": {
+            "min_us": 211.968,
+            "max_us": 238.592
+          },
+          "last_lru_done": {
+            "min_us": 226.304,
+            "max_us": 261.12
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 452,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 155.648,
+            "max_us": 194.56
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 194.56
+          },
+          "fetch_start": {
+            "min_us": 196.608,
+            "max_us": 196.608
+          },
+          "fetch_done": {
+            "min_us": 196.608,
+            "max_us": 3811.328
+          },
+          "attention_done": {
+            "min_us": 3710.976,
+            "max_us": 3952.64
+          },
+          "merge_barrier_done": {
+            "min_us": 3953.664,
+            "max_us": 3953.664
+          },
+          "merge_done": {
+            "min_us": 4072.448,
+            "max_us": 4118.528
+          },
+          "last_lru_start": {
+            "min_us": 198.656,
+            "max_us": 224.256
+          },
+          "last_lru_done": {
+            "min_us": 212.992,
+            "max_us": 248.832
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 453,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 105.472,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 130.048
+          },
+          "resolve_done": {
+            "min_us": 152.576,
+            "max_us": 200.704
+          },
+          "before_fetch_barrier": {
+            "min_us": 153.6,
+            "max_us": 201.728
+          },
+          "fetch_start": {
+            "min_us": 202.752,
+            "max_us": 203.776
+          },
+          "fetch_done": {
+            "min_us": 203.776,
+            "max_us": 3924.992
+          },
+          "attention_done": {
+            "min_us": 3701.76,
+            "max_us": 4021.248
+          },
+          "merge_barrier_done": {
+            "min_us": 4022.272,
+            "max_us": 4023.296
+          },
+          "merge_done": {
+            "min_us": 4144.128,
+            "max_us": 4189.184
+          },
+          "last_lru_start": {
+            "min_us": 205.824,
+            "max_us": 229.376
+          },
+          "last_lru_done": {
+            "min_us": 220.16,
+            "max_us": 256.0
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 454,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 133.12
+          },
+          "prepare_barrier_done": {
+            "min_us": 135.168,
+            "max_us": 135.168
+          },
+          "resolve_done": {
+            "min_us": 159.744,
+            "max_us": 198.656
+          },
+          "before_fetch_barrier": {
+            "min_us": 160.768,
+            "max_us": 199.68
+          },
+          "fetch_start": {
+            "min_us": 200.704,
+            "max_us": 201.728
+          },
+          "fetch_done": {
+            "min_us": 201.728,
+            "max_us": 4172.8
+          },
+          "attention_done": {
+            "min_us": 3865.6,
+            "max_us": 4323.328
+          },
+          "merge_barrier_done": {
+            "min_us": 4324.352,
+            "max_us": 4325.376
+          },
+          "merge_done": {
+            "min_us": 4448.256,
+            "max_us": 4496.384
+          },
+          "last_lru_start": {
+            "min_us": 203.776,
+            "max_us": 229.376
+          },
+          "last_lru_done": {
+            "min_us": 218.112,
+            "max_us": 256.0
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 455,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 155.648,
+            "max_us": 194.56
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 195.584
+          },
+          "fetch_start": {
+            "min_us": 196.608,
+            "max_us": 196.608
+          },
+          "fetch_done": {
+            "min_us": 196.608,
+            "max_us": 3856.384
+          },
+          "attention_done": {
+            "min_us": 3630.08,
+            "max_us": 3979.264
+          },
+          "merge_barrier_done": {
+            "min_us": 3981.312,
+            "max_us": 3981.312
+          },
+          "merge_done": {
+            "min_us": 4109.312,
+            "max_us": 4151.296
+          },
+          "last_lru_start": {
+            "min_us": 198.656,
+            "max_us": 224.256
+          },
+          "last_lru_done": {
+            "min_us": 214.016,
+            "max_us": 250.88
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 456,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 130.048
+          },
+          "resolve_done": {
+            "min_us": 153.6,
+            "max_us": 197.632
+          },
+          "before_fetch_barrier": {
+            "min_us": 153.6,
+            "max_us": 197.632
+          },
+          "fetch_start": {
+            "min_us": 198.656,
+            "max_us": 199.68
+          },
+          "fetch_done": {
+            "min_us": 199.68,
+            "max_us": 3824.64
+          },
+          "attention_done": {
+            "min_us": 3681.28,
+            "max_us": 3957.76
+          },
+          "merge_barrier_done": {
+            "min_us": 3959.808,
+            "max_us": 3959.808
+          },
+          "merge_done": {
+            "min_us": 4082.688,
+            "max_us": 4124.672
+          },
+          "last_lru_start": {
+            "min_us": 201.728,
+            "max_us": 226.304
+          },
+          "last_lru_done": {
+            "min_us": 216.064,
+            "max_us": 252.928
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 457,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 130.048
+          },
+          "resolve_done": {
+            "min_us": 149.504,
+            "max_us": 184.32
+          },
+          "before_fetch_barrier": {
+            "min_us": 150.528,
+            "max_us": 185.344
+          },
+          "fetch_start": {
+            "min_us": 186.368,
+            "max_us": 187.392
+          },
+          "fetch_done": {
+            "min_us": 187.392,
+            "max_us": 3745.792
+          },
+          "attention_done": {
+            "min_us": 3606.528,
+            "max_us": 3892.224
+          },
+          "merge_barrier_done": {
+            "min_us": 3893.248,
+            "max_us": 3894.272
+          },
+          "merge_done": {
+            "min_us": 4012.032,
+            "max_us": 4056.064
+          },
+          "last_lru_start": {
+            "min_us": 188.416,
+            "max_us": 214.016
+          },
+          "last_lru_done": {
+            "min_us": 203.776,
+            "max_us": 241.664
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 458,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 105.472,
+            "max_us": 124.928
+          },
+          "prepare_barrier_done": {
+            "min_us": 128.0,
+            "max_us": 128.0
+          },
+          "resolve_done": {
+            "min_us": 151.552,
+            "max_us": 190.464
+          },
+          "before_fetch_barrier": {
+            "min_us": 151.552,
+            "max_us": 191.488
+          },
+          "fetch_start": {
+            "min_us": 192.512,
+            "max_us": 192.512
+          },
+          "fetch_done": {
+            "min_us": 192.512,
+            "max_us": 3197.952
+          },
+          "attention_done": {
+            "min_us": 3409.92,
+            "max_us": 3805.184
+          },
+          "merge_barrier_done": {
+            "min_us": 3807.232,
+            "max_us": 3807.232
+          },
+          "merge_done": {
+            "min_us": 3919.872,
+            "max_us": 3972.096
+          },
+          "last_lru_start": {
+            "min_us": 194.56,
+            "max_us": 219.136
+          },
+          "last_lru_done": {
+            "min_us": 209.92,
+            "max_us": 243.712
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 459,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 105.472,
+            "max_us": 126.976
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 129.024
+          },
+          "resolve_done": {
+            "min_us": 150.528,
+            "max_us": 187.392
+          },
+          "before_fetch_barrier": {
+            "min_us": 151.552,
+            "max_us": 188.416
+          },
+          "fetch_start": {
+            "min_us": 189.44,
+            "max_us": 189.44
+          },
+          "fetch_done": {
+            "min_us": 189.44,
+            "max_us": 2933.76
+          },
+          "attention_done": {
+            "min_us": 3323.904,
+            "max_us": 3748.864
+          },
+          "merge_barrier_done": {
+            "min_us": 3749.888,
+            "max_us": 3750.912
+          },
+          "merge_done": {
+            "min_us": 3871.744,
+            "max_us": 3918.848
+          },
+          "last_lru_start": {
+            "min_us": 191.488,
+            "max_us": 217.088
+          },
+          "last_lru_done": {
+            "min_us": 205.824,
+            "max_us": 242.688
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 460,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 124.928
+          },
+          "prepare_barrier_done": {
+            "min_us": 126.976,
+            "max_us": 126.976
+          },
+          "resolve_done": {
+            "min_us": 150.528,
+            "max_us": 185.344
+          },
+          "before_fetch_barrier": {
+            "min_us": 150.528,
+            "max_us": 186.368
+          },
+          "fetch_start": {
+            "min_us": 187.392,
+            "max_us": 188.416
+          },
+          "fetch_done": {
+            "min_us": 188.416,
+            "max_us": 3221.504
+          },
+          "attention_done": {
+            "min_us": 3358.72,
+            "max_us": 3778.56
+          },
+          "merge_barrier_done": {
+            "min_us": 3779.584,
+            "max_us": 3780.608
+          },
+          "merge_done": {
+            "min_us": 3904.512,
+            "max_us": 3957.76
+          },
+          "last_lru_start": {
+            "min_us": 190.464,
+            "max_us": 215.04
+          },
+          "last_lru_done": {
+            "min_us": 204.8,
+            "max_us": 241.664
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 461,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 105.472,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 153.6,
+            "max_us": 199.68
+          },
+          "before_fetch_barrier": {
+            "min_us": 153.6,
+            "max_us": 199.68
+          },
+          "fetch_start": {
+            "min_us": 200.704,
+            "max_us": 201.728
+          },
+          "fetch_done": {
+            "min_us": 201.728,
+            "max_us": 3432.448
+          },
+          "attention_done": {
+            "min_us": 3458.048,
+            "max_us": 3898.368
+          },
+          "merge_barrier_done": {
+            "min_us": 3900.416,
+            "max_us": 3900.416
+          },
+          "merge_done": {
+            "min_us": 4025.344,
+            "max_us": 4073.472
+          },
+          "last_lru_start": {
+            "min_us": 203.776,
+            "max_us": 228.352
+          },
+          "last_lru_done": {
+            "min_us": 218.112,
+            "max_us": 257.024
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 462,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 132.096
+          },
+          "prepare_barrier_done": {
+            "min_us": 133.12,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 155.648,
+            "max_us": 197.632
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 197.632
+          },
+          "fetch_start": {
+            "min_us": 199.68,
+            "max_us": 199.68
+          },
+          "fetch_done": {
+            "min_us": 199.68,
+            "max_us": 3555.328
+          },
+          "attention_done": {
+            "min_us": 3429.376,
+            "max_us": 3897.344
+          },
+          "merge_barrier_done": {
+            "min_us": 3898.368,
+            "max_us": 3899.392
+          },
+          "merge_done": {
+            "min_us": 4024.32,
+            "max_us": 4069.376
+          },
+          "last_lru_start": {
+            "min_us": 201.728,
+            "max_us": 226.304
+          },
+          "last_lru_done": {
+            "min_us": 216.064,
+            "max_us": 252.928
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 463,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 131.072
+          },
+          "prepare_barrier_done": {
+            "min_us": 134.144,
+            "max_us": 134.144
+          },
+          "resolve_done": {
+            "min_us": 156.672,
+            "max_us": 197.632
+          },
+          "before_fetch_barrier": {
+            "min_us": 157.696,
+            "max_us": 197.632
+          },
+          "fetch_start": {
+            "min_us": 198.656,
+            "max_us": 199.68
+          },
+          "fetch_done": {
+            "min_us": 199.68,
+            "max_us": 4320.256
+          },
+          "attention_done": {
+            "min_us": 4059.136,
+            "max_us": 4377.6
+          },
+          "merge_barrier_done": {
+            "min_us": 4378.624,
+            "max_us": 4379.648
+          },
+          "merge_done": {
+            "min_us": 4498.432,
+            "max_us": 4553.728
+          },
+          "last_lru_start": {
+            "min_us": 201.728,
+            "max_us": 227.328
+          },
+          "last_lru_done": {
+            "min_us": 216.064,
+            "max_us": 251.904
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 464,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 152.576,
+            "max_us": 194.56
+          },
+          "before_fetch_barrier": {
+            "min_us": 153.6,
+            "max_us": 195.584
+          },
+          "fetch_start": {
+            "min_us": 196.608,
+            "max_us": 197.632
+          },
+          "fetch_done": {
+            "min_us": 197.632,
+            "max_us": 3660.8
+          },
+          "attention_done": {
+            "min_us": 3562.496,
+            "max_us": 3892.224
+          },
+          "merge_barrier_done": {
+            "min_us": 3893.248,
+            "max_us": 3893.248
+          },
+          "merge_done": {
+            "min_us": 4019.2,
+            "max_us": 4065.28
+          },
+          "last_lru_start": {
+            "min_us": 198.656,
+            "max_us": 225.28
+          },
+          "last_lru_done": {
+            "min_us": 214.016,
+            "max_us": 249.856
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 465,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 155.648,
+            "max_us": 199.68
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 200.704
+          },
+          "fetch_start": {
+            "min_us": 201.728,
+            "max_us": 201.728
+          },
+          "fetch_done": {
+            "min_us": 202.752,
+            "max_us": 3776.512
+          },
+          "attention_done": {
+            "min_us": 3607.552,
+            "max_us": 4153.344
+          },
+          "merge_barrier_done": {
+            "min_us": 4155.392,
+            "max_us": 4155.392
+          },
+          "merge_done": {
+            "min_us": 4276.224,
+            "max_us": 4326.4
+          },
+          "last_lru_start": {
+            "min_us": 203.776,
+            "max_us": 229.376
+          },
+          "last_lru_done": {
+            "min_us": 219.136,
+            "max_us": 254.976
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 466,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 105.472,
+            "max_us": 132.096
+          },
+          "prepare_barrier_done": {
+            "min_us": 133.12,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 202.752
+          },
+          "before_fetch_barrier": {
+            "min_us": 157.696,
+            "max_us": 202.752
+          },
+          "fetch_start": {
+            "min_us": 204.8,
+            "max_us": 204.8
+          },
+          "fetch_done": {
+            "min_us": 204.8,
+            "max_us": 3666.944
+          },
+          "attention_done": {
+            "min_us": 3528.704,
+            "max_us": 3894.272
+          },
+          "merge_barrier_done": {
+            "min_us": 3895.296,
+            "max_us": 3896.32
+          },
+          "merge_done": {
+            "min_us": 4019.2,
+            "max_us": 4074.496
+          },
+          "last_lru_start": {
+            "min_us": 206.848,
+            "max_us": 232.448
+          },
+          "last_lru_done": {
+            "min_us": 222.208,
+            "max_us": 259.072
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 467,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 156.672,
+            "max_us": 195.584
+          },
+          "before_fetch_barrier": {
+            "min_us": 157.696,
+            "max_us": 196.608
+          },
+          "fetch_start": {
+            "min_us": 197.632,
+            "max_us": 197.632
+          },
+          "fetch_done": {
+            "min_us": 198.656,
+            "max_us": 3623.936
+          },
+          "attention_done": {
+            "min_us": 3493.888,
+            "max_us": 3867.648
+          },
+          "merge_barrier_done": {
+            "min_us": 3868.672,
+            "max_us": 3868.672
+          },
+          "merge_done": {
+            "min_us": 3995.648,
+            "max_us": 4044.8
+          },
+          "last_lru_start": {
+            "min_us": 200.704,
+            "max_us": 225.28
+          },
+          "last_lru_done": {
+            "min_us": 215.04,
+            "max_us": 251.904
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 468,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 130.048
+          },
+          "resolve_done": {
+            "min_us": 152.576,
+            "max_us": 197.632
+          },
+          "before_fetch_barrier": {
+            "min_us": 152.576,
+            "max_us": 197.632
+          },
+          "fetch_start": {
+            "min_us": 198.656,
+            "max_us": 199.68
+          },
+          "fetch_done": {
+            "min_us": 199.68,
+            "max_us": 3524.608
+          },
+          "attention_done": {
+            "min_us": 3485.696,
+            "max_us": 3833.856
+          },
+          "merge_barrier_done": {
+            "min_us": 3834.88,
+            "max_us": 3835.904
+          },
+          "merge_done": {
+            "min_us": 3955.712,
+            "max_us": 4000.768
+          },
+          "last_lru_start": {
+            "min_us": 201.728,
+            "max_us": 226.304
+          },
+          "last_lru_done": {
+            "min_us": 216.064,
+            "max_us": 253.952
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 469,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 151.552,
+            "max_us": 195.584
+          },
+          "before_fetch_barrier": {
+            "min_us": 152.576,
+            "max_us": 196.608
+          },
+          "fetch_start": {
+            "min_us": 197.632,
+            "max_us": 197.632
+          },
+          "fetch_done": {
+            "min_us": 198.656,
+            "max_us": 3337.216
+          },
+          "attention_done": {
+            "min_us": 3449.856,
+            "max_us": 3841.024
+          },
+          "merge_barrier_done": {
+            "min_us": 3842.048,
+            "max_us": 3842.048
+          },
+          "merge_done": {
+            "min_us": 3962.88,
+            "max_us": 4007.936
+          },
+          "last_lru_start": {
+            "min_us": 199.68,
+            "max_us": 225.28
+          },
+          "last_lru_done": {
+            "min_us": 215.04,
+            "max_us": 250.88
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 470,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 126.976
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 130.048
+          },
+          "resolve_done": {
+            "min_us": 153.6,
+            "max_us": 187.392
+          },
+          "before_fetch_barrier": {
+            "min_us": 153.6,
+            "max_us": 188.416
+          },
+          "fetch_start": {
+            "min_us": 189.44,
+            "max_us": 190.464
+          },
+          "fetch_done": {
+            "min_us": 190.464,
+            "max_us": 3512.32
+          },
+          "attention_done": {
+            "min_us": 3450.88,
+            "max_us": 3867.648
+          },
+          "merge_barrier_done": {
+            "min_us": 3868.672,
+            "max_us": 3869.696
+          },
+          "merge_done": {
+            "min_us": 3989.504,
+            "max_us": 4034.56
+          },
+          "last_lru_start": {
+            "min_us": 191.488,
+            "max_us": 218.112
+          },
+          "last_lru_done": {
+            "min_us": 206.848,
+            "max_us": 243.712
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 471,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 131.072
+          },
+          "prepare_barrier_done": {
+            "min_us": 133.12,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 156.672,
+            "max_us": 196.608
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 196.608
+          },
+          "fetch_start": {
+            "min_us": 197.632,
+            "max_us": 198.656
+          },
+          "fetch_done": {
+            "min_us": 198.656,
+            "max_us": 3729.408
+          },
+          "attention_done": {
+            "min_us": 3557.376,
+            "max_us": 4000.768
+          },
+          "merge_barrier_done": {
+            "min_us": 4001.792,
+            "max_us": 4002.816
+          },
+          "merge_done": {
+            "min_us": 4122.624,
+            "max_us": 4176.896
+          },
+          "last_lru_start": {
+            "min_us": 200.704,
+            "max_us": 226.304
+          },
+          "last_lru_done": {
+            "min_us": 215.04,
+            "max_us": 249.856
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 472,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 155.648,
+            "max_us": 202.752
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 202.752
+          },
+          "fetch_start": {
+            "min_us": 204.8,
+            "max_us": 204.8
+          },
+          "fetch_done": {
+            "min_us": 204.8,
+            "max_us": 3942.4
+          },
+          "attention_done": {
+            "min_us": 3735.552,
+            "max_us": 4048.896
+          },
+          "merge_barrier_done": {
+            "min_us": 4049.92,
+            "max_us": 4050.944
+          },
+          "merge_done": {
+            "min_us": 4173.824,
+            "max_us": 4216.832
+          },
+          "last_lru_start": {
+            "min_us": 206.848,
+            "max_us": 233.472
+          },
+          "last_lru_done": {
+            "min_us": 221.184,
+            "max_us": 258.048
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 473,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 193.536
+          },
+          "before_fetch_barrier": {
+            "min_us": 154.624,
+            "max_us": 193.536
+          },
+          "fetch_start": {
+            "min_us": 194.56,
+            "max_us": 195.584
+          },
+          "fetch_done": {
+            "min_us": 195.584,
+            "max_us": 3559.424
+          },
+          "attention_done": {
+            "min_us": 3481.6,
+            "max_us": 3871.744
+          },
+          "merge_barrier_done": {
+            "min_us": 3872.768,
+            "max_us": 3873.792
+          },
+          "merge_done": {
+            "min_us": 3990.528,
+            "max_us": 4042.752
+          },
+          "last_lru_start": {
+            "min_us": 197.632,
+            "max_us": 222.208
+          },
+          "last_lru_done": {
+            "min_us": 211.968,
+            "max_us": 246.784
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 474,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 131.072
+          },
+          "prepare_barrier_done": {
+            "min_us": 133.12,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 199.68
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 199.68
+          },
+          "fetch_start": {
+            "min_us": 201.728,
+            "max_us": 201.728
+          },
+          "fetch_done": {
+            "min_us": 201.728,
+            "max_us": 4379.648
+          },
+          "attention_done": {
+            "min_us": 4143.104,
+            "max_us": 4424.704
+          },
+          "merge_barrier_done": {
+            "min_us": 4426.752,
+            "max_us": 4426.752
+          },
+          "merge_done": {
+            "min_us": 4560.896,
+            "max_us": 4599.808
+          },
+          "last_lru_start": {
+            "min_us": 203.776,
+            "max_us": 229.376
+          },
+          "last_lru_done": {
+            "min_us": 218.112,
+            "max_us": 254.976
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 475,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 131.072
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 200.704
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 201.728
+          },
+          "fetch_start": {
+            "min_us": 202.752,
+            "max_us": 202.752
+          },
+          "fetch_done": {
+            "min_us": 203.776,
+            "max_us": 4246.528
+          },
+          "attention_done": {
+            "min_us": 4026.368,
+            "max_us": 4304.896
+          },
+          "merge_barrier_done": {
+            "min_us": 4306.944,
+            "max_us": 4306.944
+          },
+          "merge_done": {
+            "min_us": 4435.968,
+            "max_us": 4484.096
+          },
+          "last_lru_start": {
+            "min_us": 204.8,
+            "max_us": 231.424
+          },
+          "last_lru_done": {
+            "min_us": 220.16,
+            "max_us": 256.0
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 476,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 155.648,
+            "max_us": 199.68
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 200.704
+          },
+          "fetch_start": {
+            "min_us": 201.728,
+            "max_us": 201.728
+          },
+          "fetch_done": {
+            "min_us": 201.728,
+            "max_us": 3590.144
+          },
+          "attention_done": {
+            "min_us": 3452.928,
+            "max_us": 3917.824
+          },
+          "merge_barrier_done": {
+            "min_us": 3919.872,
+            "max_us": 3919.872
+          },
+          "merge_done": {
+            "min_us": 4036.608,
+            "max_us": 4089.856
+          },
+          "last_lru_start": {
+            "min_us": 203.776,
+            "max_us": 229.376
+          },
+          "last_lru_done": {
+            "min_us": 218.112,
+            "max_us": 254.976
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 477,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 131.072
+          },
+          "prepare_barrier_done": {
+            "min_us": 135.168,
+            "max_us": 135.168
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 200.704
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 201.728
+          },
+          "fetch_start": {
+            "min_us": 202.752,
+            "max_us": 202.752
+          },
+          "fetch_done": {
+            "min_us": 203.776,
+            "max_us": 3780.608
+          },
+          "attention_done": {
+            "min_us": 3539.968,
+            "max_us": 3962.88
+          },
+          "merge_barrier_done": {
+            "min_us": 3964.928,
+            "max_us": 3964.928
+          },
+          "merge_done": {
+            "min_us": 4084.736,
+            "max_us": 4141.056
+          },
+          "last_lru_start": {
+            "min_us": 204.8,
+            "max_us": 231.424
+          },
+          "last_lru_done": {
+            "min_us": 220.16,
+            "max_us": 258.048
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 478,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 156.672,
+            "max_us": 203.776
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 203.776
+          },
+          "fetch_start": {
+            "min_us": 205.824,
+            "max_us": 205.824
+          },
+          "fetch_done": {
+            "min_us": 205.824,
+            "max_us": 4093.952
+          },
+          "attention_done": {
+            "min_us": 3814.4,
+            "max_us": 4171.776
+          },
+          "merge_barrier_done": {
+            "min_us": 4172.8,
+            "max_us": 4173.824
+          },
+          "merge_done": {
+            "min_us": 4294.656,
+            "max_us": 4344.832
+          },
+          "last_lru_start": {
+            "min_us": 207.872,
+            "max_us": 233.472
+          },
+          "last_lru_done": {
+            "min_us": 222.208,
+            "max_us": 258.048
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 479,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 135.168
+          },
+          "prepare_barrier_done": {
+            "min_us": 137.216,
+            "max_us": 137.216
+          },
+          "resolve_done": {
+            "min_us": 163.84,
+            "max_us": 203.776
+          },
+          "before_fetch_barrier": {
+            "min_us": 163.84,
+            "max_us": 204.8
+          },
+          "fetch_start": {
+            "min_us": 205.824,
+            "max_us": 205.824
+          },
+          "fetch_done": {
+            "min_us": 206.848,
+            "max_us": 4539.392
+          },
+          "attention_done": {
+            "min_us": 4199.424,
+            "max_us": 4613.12
+          },
+          "merge_barrier_done": {
+            "min_us": 4614.144,
+            "max_us": 4615.168
+          },
+          "merge_done": {
+            "min_us": 4734.976,
+            "max_us": 4784.128
+          },
+          "last_lru_start": {
+            "min_us": 207.872,
+            "max_us": 234.496
+          },
+          "last_lru_done": {
+            "min_us": 223.232,
+            "max_us": 261.12
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 480,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 133.12
+          },
+          "prepare_barrier_done": {
+            "min_us": 136.192,
+            "max_us": 137.216
+          },
+          "resolve_done": {
+            "min_us": 158.72,
+            "max_us": 214.016
+          },
+          "before_fetch_barrier": {
+            "min_us": 159.744,
+            "max_us": 215.04
+          },
+          "fetch_start": {
+            "min_us": 216.064,
+            "max_us": 216.064
+          },
+          "fetch_done": {
+            "min_us": 216.064,
+            "max_us": 4148.224
+          },
+          "attention_done": {
+            "min_us": 3859.456,
+            "max_us": 4286.464
+          },
+          "merge_barrier_done": {
+            "min_us": 4288.512,
+            "max_us": 4288.512
+          },
+          "merge_done": {
+            "min_us": 4414.464,
+            "max_us": 4460.544
+          },
+          "last_lru_start": {
+            "min_us": 218.112,
+            "max_us": 243.712
+          },
+          "last_lru_done": {
+            "min_us": 232.448,
+            "max_us": 268.288
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 481,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 135.168
+          },
+          "prepare_barrier_done": {
+            "min_us": 137.216,
+            "max_us": 137.216
+          },
+          "resolve_done": {
+            "min_us": 161.792,
+            "max_us": 201.728
+          },
+          "before_fetch_barrier": {
+            "min_us": 162.816,
+            "max_us": 202.752
+          },
+          "fetch_start": {
+            "min_us": 203.776,
+            "max_us": 204.8
+          },
+          "fetch_done": {
+            "min_us": 204.8,
+            "max_us": 4464.64
+          },
+          "attention_done": {
+            "min_us": 4184.064,
+            "max_us": 4547.584
+          },
+          "merge_barrier_done": {
+            "min_us": 4549.632,
+            "max_us": 4549.632
+          },
+          "merge_done": {
+            "min_us": 4685.824,
+            "max_us": 4731.904
+          },
+          "last_lru_start": {
+            "min_us": 205.824,
+            "max_us": 232.448
+          },
+          "last_lru_done": {
+            "min_us": 221.184,
+            "max_us": 256.0
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 482,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 110.592,
+            "max_us": 138.24
+          },
+          "prepare_barrier_done": {
+            "min_us": 139.264,
+            "max_us": 140.288
+          },
+          "resolve_done": {
+            "min_us": 168.96,
+            "max_us": 208.896
+          },
+          "before_fetch_barrier": {
+            "min_us": 169.984,
+            "max_us": 209.92
+          },
+          "fetch_start": {
+            "min_us": 210.944,
+            "max_us": 210.944
+          },
+          "fetch_done": {
+            "min_us": 210.944,
+            "max_us": 5314.56
+          },
+          "attention_done": {
+            "min_us": 4924.416,
+            "max_us": 5419.008
+          },
+          "merge_barrier_done": {
+            "min_us": 5421.056,
+            "max_us": 5421.056
+          },
+          "merge_done": {
+            "min_us": 5545.984,
+            "max_us": 5592.064
+          },
+          "last_lru_start": {
+            "min_us": 212.992,
+            "max_us": 239.616
+          },
+          "last_lru_done": {
+            "min_us": 227.328,
+            "max_us": 264.192
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 483,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 111.616,
+            "max_us": 135.168
+          },
+          "prepare_barrier_done": {
+            "min_us": 139.264,
+            "max_us": 139.264
+          },
+          "resolve_done": {
+            "min_us": 167.936,
+            "max_us": 205.824
+          },
+          "before_fetch_barrier": {
+            "min_us": 167.936,
+            "max_us": 205.824
+          },
+          "fetch_start": {
+            "min_us": 207.872,
+            "max_us": 207.872
+          },
+          "fetch_done": {
+            "min_us": 207.872,
+            "max_us": 5337.088
+          },
+          "attention_done": {
+            "min_us": 4977.664,
+            "max_us": 5419.008
+          },
+          "merge_barrier_done": {
+            "min_us": 5421.056,
+            "max_us": 5421.056
+          },
+          "merge_done": {
+            "min_us": 5555.2,
+            "max_us": 5596.16
+          },
+          "last_lru_start": {
+            "min_us": 209.92,
+            "max_us": 235.52
+          },
+          "last_lru_done": {
+            "min_us": 224.256,
+            "max_us": 258.048
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 484,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 109.568,
+            "max_us": 133.12
+          },
+          "prepare_barrier_done": {
+            "min_us": 134.144,
+            "max_us": 135.168
+          },
+          "resolve_done": {
+            "min_us": 163.84,
+            "max_us": 210.944
+          },
+          "before_fetch_barrier": {
+            "min_us": 164.864,
+            "max_us": 210.944
+          },
+          "fetch_start": {
+            "min_us": 211.968,
+            "max_us": 212.992
+          },
+          "fetch_done": {
+            "min_us": 212.992,
+            "max_us": 4776.96
+          },
+          "attention_done": {
+            "min_us": 4456.448,
+            "max_us": 4861.952
+          },
+          "merge_barrier_done": {
+            "min_us": 4862.976,
+            "max_us": 4864.0
+          },
+          "merge_done": {
+            "min_us": 4982.784,
+            "max_us": 5036.032
+          },
+          "last_lru_start": {
+            "min_us": 215.04,
+            "max_us": 240.64
+          },
+          "last_lru_done": {
+            "min_us": 229.376,
+            "max_us": 263.168
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 485,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 132.096
+          },
+          "prepare_barrier_done": {
+            "min_us": 134.144,
+            "max_us": 134.144
+          },
+          "resolve_done": {
+            "min_us": 160.768,
+            "max_us": 204.8
+          },
+          "before_fetch_barrier": {
+            "min_us": 161.792,
+            "max_us": 205.824
+          },
+          "fetch_start": {
+            "min_us": 206.848,
+            "max_us": 207.872
+          },
+          "fetch_done": {
+            "min_us": 207.872,
+            "max_us": 4702.208
+          },
+          "attention_done": {
+            "min_us": 4377.6,
+            "max_us": 4771.84
+          },
+          "merge_barrier_done": {
+            "min_us": 4773.888,
+            "max_us": 4773.888
+          },
+          "merge_done": {
+            "min_us": 4898.816,
+            "max_us": 4940.8
+          },
+          "last_lru_start": {
+            "min_us": 208.896,
+            "max_us": 235.52
+          },
+          "last_lru_done": {
+            "min_us": 224.256,
+            "max_us": 260.096
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 486,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 134.144
+          },
+          "prepare_barrier_done": {
+            "min_us": 135.168,
+            "max_us": 136.192
+          },
+          "resolve_done": {
+            "min_us": 160.768,
+            "max_us": 210.944
+          },
+          "before_fetch_barrier": {
+            "min_us": 160.768,
+            "max_us": 211.968
+          },
+          "fetch_start": {
+            "min_us": 212.992,
+            "max_us": 214.016
+          },
+          "fetch_done": {
+            "min_us": 214.016,
+            "max_us": 4558.848
+          },
+          "attention_done": {
+            "min_us": 4287.488,
+            "max_us": 4662.272
+          },
+          "merge_barrier_done": {
+            "min_us": 4664.32,
+            "max_us": 4664.32
+          },
+          "merge_done": {
+            "min_us": 4794.368,
+            "max_us": 4831.232
+          },
+          "last_lru_start": {
+            "min_us": 215.04,
+            "max_us": 240.64
+          },
+          "last_lru_done": {
+            "min_us": 230.4,
+            "max_us": 265.216
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 487,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 132.096
+          },
+          "prepare_barrier_done": {
+            "min_us": 134.144,
+            "max_us": 134.144
+          },
+          "resolve_done": {
+            "min_us": 160.768,
+            "max_us": 201.728
+          },
+          "before_fetch_barrier": {
+            "min_us": 160.768,
+            "max_us": 202.752
+          },
+          "fetch_start": {
+            "min_us": 203.776,
+            "max_us": 203.776
+          },
+          "fetch_done": {
+            "min_us": 204.8,
+            "max_us": 5043.2
+          },
+          "attention_done": {
+            "min_us": 4719.616,
+            "max_us": 5149.696
+          },
+          "merge_barrier_done": {
+            "min_us": 5151.744,
+            "max_us": 5151.744
+          },
+          "merge_done": {
+            "min_us": 5279.744,
+            "max_us": 5320.704
+          },
+          "last_lru_start": {
+            "min_us": 206.848,
+            "max_us": 232.448
+          },
+          "last_lru_done": {
+            "min_us": 220.16,
+            "max_us": 254.976
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 488,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 131.072
+          },
+          "prepare_barrier_done": {
+            "min_us": 134.144,
+            "max_us": 134.144
+          },
+          "resolve_done": {
+            "min_us": 159.744,
+            "max_us": 208.896
+          },
+          "before_fetch_barrier": {
+            "min_us": 159.744,
+            "max_us": 208.896
+          },
+          "fetch_start": {
+            "min_us": 209.92,
+            "max_us": 210.944
+          },
+          "fetch_done": {
+            "min_us": 210.944,
+            "max_us": 4759.552
+          },
+          "attention_done": {
+            "min_us": 4492.288,
+            "max_us": 4850.688
+          },
+          "merge_barrier_done": {
+            "min_us": 4851.712,
+            "max_us": 4852.736
+          },
+          "merge_done": {
+            "min_us": 4971.52,
+            "max_us": 5014.528
+          },
+          "last_lru_start": {
+            "min_us": 212.992,
+            "max_us": 237.568
+          },
+          "last_lru_done": {
+            "min_us": 227.328,
+            "max_us": 262.144
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 489,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 131.072
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 155.648,
+            "max_us": 193.536
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 194.56
+          },
+          "fetch_start": {
+            "min_us": 195.584,
+            "max_us": 196.608
+          },
+          "fetch_done": {
+            "min_us": 196.608,
+            "max_us": 4708.352
+          },
+          "attention_done": {
+            "min_us": 4398.08,
+            "max_us": 4809.728
+          },
+          "merge_barrier_done": {
+            "min_us": 4811.776,
+            "max_us": 4811.776
+          },
+          "merge_done": {
+            "min_us": 4932.608,
+            "max_us": 4982.784
+          },
+          "last_lru_start": {
+            "min_us": 197.632,
+            "max_us": 223.232
+          },
+          "last_lru_done": {
+            "min_us": 211.968,
+            "max_us": 246.784
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 490,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 135.168
+          },
+          "prepare_barrier_done": {
+            "min_us": 136.192,
+            "max_us": 136.192
+          },
+          "resolve_done": {
+            "min_us": 161.792,
+            "max_us": 202.752
+          },
+          "before_fetch_barrier": {
+            "min_us": 161.792,
+            "max_us": 203.776
+          },
+          "fetch_start": {
+            "min_us": 204.8,
+            "max_us": 205.824
+          },
+          "fetch_done": {
+            "min_us": 205.824,
+            "max_us": 4807.68
+          },
+          "attention_done": {
+            "min_us": 4531.2,
+            "max_us": 4879.36
+          },
+          "merge_barrier_done": {
+            "min_us": 4881.408,
+            "max_us": 4881.408
+          },
+          "merge_done": {
+            "min_us": 5009.408,
+            "max_us": 5057.536
+          },
+          "last_lru_start": {
+            "min_us": 206.848,
+            "max_us": 233.472
+          },
+          "last_lru_done": {
+            "min_us": 222.208,
+            "max_us": 256.0
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 491,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 203.776
+          },
+          "before_fetch_barrier": {
+            "min_us": 154.624,
+            "max_us": 204.8
+          },
+          "fetch_start": {
+            "min_us": 205.824,
+            "max_us": 205.824
+          },
+          "fetch_done": {
+            "min_us": 206.848,
+            "max_us": 4582.4
+          },
+          "attention_done": {
+            "min_us": 4319.232,
+            "max_us": 4671.488
+          },
+          "merge_barrier_done": {
+            "min_us": 4672.512,
+            "max_us": 4672.512
+          },
+          "merge_done": {
+            "min_us": 4786.176,
+            "max_us": 4841.472
+          },
+          "last_lru_start": {
+            "min_us": 207.872,
+            "max_us": 233.472
+          },
+          "last_lru_done": {
+            "min_us": 222.208,
+            "max_us": 257.024
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 492,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 197.632
+          },
+          "before_fetch_barrier": {
+            "min_us": 155.648,
+            "max_us": 197.632
+          },
+          "fetch_start": {
+            "min_us": 198.656,
+            "max_us": 199.68
+          },
+          "fetch_done": {
+            "min_us": 199.68,
+            "max_us": 4255.744
+          },
+          "attention_done": {
+            "min_us": 3999.744,
+            "max_us": 4326.4
+          },
+          "merge_barrier_done": {
+            "min_us": 4328.448,
+            "max_us": 4328.448
+          },
+          "merge_done": {
+            "min_us": 4450.304,
+            "max_us": 4491.264
+          },
+          "last_lru_start": {
+            "min_us": 201.728,
+            "max_us": 226.304
+          },
+          "last_lru_done": {
+            "min_us": 216.064,
+            "max_us": 251.904
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 493,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 103.424,
+            "max_us": 126.976
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 129.024
+          },
+          "resolve_done": {
+            "min_us": 151.552,
+            "max_us": 201.728
+          },
+          "before_fetch_barrier": {
+            "min_us": 152.576,
+            "max_us": 202.752
+          },
+          "fetch_start": {
+            "min_us": 203.776,
+            "max_us": 203.776
+          },
+          "fetch_done": {
+            "min_us": 204.8,
+            "max_us": 4102.144
+          },
+          "attention_done": {
+            "min_us": 3858.432,
+            "max_us": 4200.448
+          },
+          "merge_barrier_done": {
+            "min_us": 4201.472,
+            "max_us": 4202.496
+          },
+          "merge_done": {
+            "min_us": 4322.304,
+            "max_us": 4364.288
+          },
+          "last_lru_start": {
+            "min_us": 205.824,
+            "max_us": 231.424
+          },
+          "last_lru_done": {
+            "min_us": 221.184,
+            "max_us": 253.952
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 494,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 156.672,
+            "max_us": 193.536
+          },
+          "before_fetch_barrier": {
+            "min_us": 157.696,
+            "max_us": 193.536
+          },
+          "fetch_start": {
+            "min_us": 194.56,
+            "max_us": 195.584
+          },
+          "fetch_done": {
+            "min_us": 195.584,
+            "max_us": 3834.88
+          },
+          "attention_done": {
+            "min_us": 3623.936,
+            "max_us": 3987.456
+          },
+          "merge_barrier_done": {
+            "min_us": 3989.504,
+            "max_us": 3989.504
+          },
+          "merge_done": {
+            "min_us": 4109.312,
+            "max_us": 4153.344
+          },
+          "last_lru_start": {
+            "min_us": 197.632,
+            "max_us": 222.208
+          },
+          "last_lru_done": {
+            "min_us": 211.968,
+            "max_us": 245.76
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 495,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 130.048
+          },
+          "resolve_done": {
+            "min_us": 154.624,
+            "max_us": 198.656
+          },
+          "before_fetch_barrier": {
+            "min_us": 154.624,
+            "max_us": 198.656
+          },
+          "fetch_start": {
+            "min_us": 200.704,
+            "max_us": 200.704
+          },
+          "fetch_done": {
+            "min_us": 200.704,
+            "max_us": 4165.632
+          },
+          "attention_done": {
+            "min_us": 3879.936,
+            "max_us": 4254.72
+          },
+          "merge_barrier_done": {
+            "min_us": 4255.744,
+            "max_us": 4256.768
+          },
+          "merge_done": {
+            "min_us": 4374.528,
+            "max_us": 4425.728
+          },
+          "last_lru_start": {
+            "min_us": 202.752,
+            "max_us": 228.352
+          },
+          "last_lru_done": {
+            "min_us": 217.088,
+            "max_us": 250.88
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 496,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 105.472,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 133.12,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 204.8
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 205.824
+          },
+          "fetch_start": {
+            "min_us": 206.848,
+            "max_us": 206.848
+          },
+          "fetch_done": {
+            "min_us": 207.872,
+            "max_us": 4557.824
+          },
+          "attention_done": {
+            "min_us": 4251.648,
+            "max_us": 4624.384
+          },
+          "merge_barrier_done": {
+            "min_us": 4625.408,
+            "max_us": 4626.432
+          },
+          "merge_done": {
+            "min_us": 4745.216,
+            "max_us": 4798.464
+          },
+          "last_lru_start": {
+            "min_us": 208.896,
+            "max_us": 234.496
+          },
+          "last_lru_done": {
+            "min_us": 223.232,
+            "max_us": 259.072
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 497,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 158.72,
+            "max_us": 198.656
+          },
+          "before_fetch_barrier": {
+            "min_us": 159.744,
+            "max_us": 198.656
+          },
+          "fetch_start": {
+            "min_us": 200.704,
+            "max_us": 200.704
+          },
+          "fetch_done": {
+            "min_us": 200.704,
+            "max_us": 4395.008
+          },
+          "attention_done": {
+            "min_us": 4145.152,
+            "max_us": 4476.928
+          },
+          "merge_barrier_done": {
+            "min_us": 4478.976,
+            "max_us": 4478.976
+          },
+          "merge_done": {
+            "min_us": 4600.832,
+            "max_us": 4648.96
+          },
+          "last_lru_start": {
+            "min_us": 202.752,
+            "max_us": 227.328
+          },
+          "last_lru_done": {
+            "min_us": 217.088,
+            "max_us": 250.88
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 498,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 131.072
+          },
+          "resolve_done": {
+            "min_us": 156.672,
+            "max_us": 198.656
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 199.68
+          },
+          "fetch_start": {
+            "min_us": 200.704,
+            "max_us": 200.704
+          },
+          "fetch_done": {
+            "min_us": 200.704,
+            "max_us": 4458.496
+          },
+          "attention_done": {
+            "min_us": 4200.448,
+            "max_us": 4532.224
+          },
+          "merge_barrier_done": {
+            "min_us": 4534.272,
+            "max_us": 4534.272
+          },
+          "merge_done": {
+            "min_us": 4662.272,
+            "max_us": 4704.256
+          },
+          "last_lru_start": {
+            "min_us": 202.752,
+            "max_us": 228.352
+          },
+          "last_lru_done": {
+            "min_us": 217.088,
+            "max_us": 253.952
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 499,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 103.424,
+            "max_us": 131.072
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 197.632
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 198.656
+          },
+          "fetch_start": {
+            "min_us": 199.68,
+            "max_us": 199.68
+          },
+          "fetch_done": {
+            "min_us": 199.68,
+            "max_us": 4663.296
+          },
+          "attention_done": {
+            "min_us": 4361.216,
+            "max_us": 4751.36
+          },
+          "merge_barrier_done": {
+            "min_us": 4753.408,
+            "max_us": 4753.408
+          },
+          "merge_done": {
+            "min_us": 4880.384,
+            "max_us": 4936.704
+          },
+          "last_lru_start": {
+            "min_us": 201.728,
+            "max_us": 227.328
+          },
+          "last_lru_done": {
+            "min_us": 216.064,
+            "max_us": 251.904
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 500,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 130.048
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 155.648,
+            "max_us": 208.896
+          },
+          "before_fetch_barrier": {
+            "min_us": 155.648,
+            "max_us": 208.896
+          },
+          "fetch_start": {
+            "min_us": 209.92,
+            "max_us": 210.944
+          },
+          "fetch_done": {
+            "min_us": 210.944,
+            "max_us": 4879.36
+          },
+          "attention_done": {
+            "min_us": 4516.864,
+            "max_us": 4969.472
+          },
+          "merge_barrier_done": {
+            "min_us": 4970.496,
+            "max_us": 4971.52
+          },
+          "merge_done": {
+            "min_us": 5094.4,
+            "max_us": 5131.264
+          },
+          "last_lru_start": {
+            "min_us": 212.992,
+            "max_us": 237.568
+          },
+          "last_lru_done": {
+            "min_us": 227.328,
+            "max_us": 260.096
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 501,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 133.12
+          },
+          "prepare_barrier_done": {
+            "min_us": 135.168,
+            "max_us": 135.168
+          },
+          "resolve_done": {
+            "min_us": 160.768,
+            "max_us": 196.608
+          },
+          "before_fetch_barrier": {
+            "min_us": 161.792,
+            "max_us": 197.632
+          },
+          "fetch_start": {
+            "min_us": 198.656,
+            "max_us": 198.656
+          },
+          "fetch_done": {
+            "min_us": 198.656,
+            "max_us": 4832.256
+          },
+          "attention_done": {
+            "min_us": 4502.528,
+            "max_us": 4899.84
+          },
+          "merge_barrier_done": {
+            "min_us": 4900.864,
+            "max_us": 4900.864
+          },
+          "merge_done": {
+            "min_us": 5013.504,
+            "max_us": 5067.776
+          },
+          "last_lru_start": {
+            "min_us": 200.704,
+            "max_us": 226.304
+          },
+          "last_lru_done": {
+            "min_us": 215.04,
+            "max_us": 248.832
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 502,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 103.424,
+            "max_us": 131.072
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 156.672,
+            "max_us": 194.56
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 195.584
+          },
+          "fetch_start": {
+            "min_us": 196.608,
+            "max_us": 196.608
+          },
+          "fetch_done": {
+            "min_us": 197.632,
+            "max_us": 4237.312
+          },
+          "attention_done": {
+            "min_us": 3969.024,
+            "max_us": 4290.56
+          },
+          "merge_barrier_done": {
+            "min_us": 4291.584,
+            "max_us": 4291.584
+          },
+          "merge_done": {
+            "min_us": 4417.536,
+            "max_us": 4459.52
+          },
+          "last_lru_start": {
+            "min_us": 198.656,
+            "max_us": 224.256
+          },
+          "last_lru_done": {
+            "min_us": 212.992,
+            "max_us": 247.808
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 503,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 131.072,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 155.648,
+            "max_us": 202.752
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 203.776
+          },
+          "fetch_start": {
+            "min_us": 204.8,
+            "max_us": 204.8
+          },
+          "fetch_done": {
+            "min_us": 205.824,
+            "max_us": 4744.192
+          },
+          "attention_done": {
+            "min_us": 4445.184,
+            "max_us": 4797.44
+          },
+          "merge_barrier_done": {
+            "min_us": 4798.464,
+            "max_us": 4799.488
+          },
+          "merge_done": {
+            "min_us": 4923.392,
+            "max_us": 4967.424
+          },
+          "last_lru_start": {
+            "min_us": 206.848,
+            "max_us": 232.448
+          },
+          "last_lru_done": {
+            "min_us": 221.184,
+            "max_us": 257.024
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 504,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 135.168
+          },
+          "prepare_barrier_done": {
+            "min_us": 137.216,
+            "max_us": 137.216
+          },
+          "resolve_done": {
+            "min_us": 163.84,
+            "max_us": 212.992
+          },
+          "before_fetch_barrier": {
+            "min_us": 164.864,
+            "max_us": 212.992
+          },
+          "fetch_start": {
+            "min_us": 215.04,
+            "max_us": 215.04
+          },
+          "fetch_done": {
+            "min_us": 215.04,
+            "max_us": 4966.4
+          },
+          "attention_done": {
+            "min_us": 4623.36,
+            "max_us": 5063.68
+          },
+          "merge_barrier_done": {
+            "min_us": 5065.728,
+            "max_us": 5065.728
+          },
+          "merge_done": {
+            "min_us": 5188.608,
+            "max_us": 5227.52
+          },
+          "last_lru_start": {
+            "min_us": 217.088,
+            "max_us": 242.688
+          },
+          "last_lru_done": {
+            "min_us": 231.424,
+            "max_us": 265.216
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 505,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 105.472,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 130.048,
+            "max_us": 130.048
+          },
+          "resolve_done": {
+            "min_us": 153.6,
+            "max_us": 200.704
+          },
+          "before_fetch_barrier": {
+            "min_us": 154.624,
+            "max_us": 201.728
+          },
+          "fetch_start": {
+            "min_us": 202.752,
+            "max_us": 202.752
+          },
+          "fetch_done": {
+            "min_us": 202.752,
+            "max_us": 4354.048
+          },
+          "attention_done": {
+            "min_us": 4111.36,
+            "max_us": 4442.112
+          },
+          "merge_barrier_done": {
+            "min_us": 4444.16,
+            "max_us": 4444.16
+          },
+          "merge_done": {
+            "min_us": 4567.04,
+            "max_us": 4614.144
+          },
+          "last_lru_start": {
+            "min_us": 204.8,
+            "max_us": 230.4
+          },
+          "last_lru_done": {
+            "min_us": 219.136,
+            "max_us": 253.952
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 506,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 104.448,
+            "max_us": 131.072
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 133.12
+          },
+          "resolve_done": {
+            "min_us": 157.696,
+            "max_us": 202.752
+          },
+          "before_fetch_barrier": {
+            "min_us": 157.696,
+            "max_us": 202.752
+          },
+          "fetch_start": {
+            "min_us": 204.8,
+            "max_us": 204.8
+          },
+          "fetch_done": {
+            "min_us": 204.8,
+            "max_us": 4391.936
+          },
+          "attention_done": {
+            "min_us": 4167.68,
+            "max_us": 4464.64
+          },
+          "merge_barrier_done": {
+            "min_us": 4465.664,
+            "max_us": 4466.688
+          },
+          "merge_done": {
+            "min_us": 4588.544,
+            "max_us": 4636.672
+          },
+          "last_lru_start": {
+            "min_us": 206.848,
+            "max_us": 231.424
+          },
+          "last_lru_done": {
+            "min_us": 221.184,
+            "max_us": 254.976
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 507,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 103.424,
+            "max_us": 132.096
+          },
+          "prepare_barrier_done": {
+            "min_us": 133.12,
+            "max_us": 134.144
+          },
+          "resolve_done": {
+            "min_us": 156.672,
+            "max_us": 205.824
+          },
+          "before_fetch_barrier": {
+            "min_us": 156.672,
+            "max_us": 205.824
+          },
+          "fetch_start": {
+            "min_us": 207.872,
+            "max_us": 207.872
+          },
+          "fetch_done": {
+            "min_us": 207.872,
+            "max_us": 4499.456
+          },
+          "attention_done": {
+            "min_us": 4187.136,
+            "max_us": 4592.64
+          },
+          "merge_barrier_done": {
+            "min_us": 4593.664,
+            "max_us": 4593.664
+          },
+          "merge_done": {
+            "min_us": 4715.52,
+            "max_us": 4759.552
+          },
+          "last_lru_start": {
+            "min_us": 209.92,
+            "max_us": 235.52
+          },
+          "last_lru_done": {
+            "min_us": 224.256,
+            "max_us": 261.12
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 508,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 105.472,
+            "max_us": 128.0
+          },
+          "prepare_barrier_done": {
+            "min_us": 129.024,
+            "max_us": 130.048
+          },
+          "resolve_done": {
+            "min_us": 152.576,
+            "max_us": 194.56
+          },
+          "before_fetch_barrier": {
+            "min_us": 153.6,
+            "max_us": 194.56
+          },
+          "fetch_start": {
+            "min_us": 195.584,
+            "max_us": 196.608
+          },
+          "fetch_done": {
+            "min_us": 196.608,
+            "max_us": 4177.92
+          },
+          "attention_done": {
+            "min_us": 3903.488,
+            "max_us": 4276.224
+          },
+          "merge_barrier_done": {
+            "min_us": 4278.272,
+            "max_us": 4278.272
+          },
+          "merge_done": {
+            "min_us": 4398.08,
+            "max_us": 4445.184
+          },
+          "last_lru_start": {
+            "min_us": 198.656,
+            "max_us": 223.232
+          },
+          "last_lru_done": {
+            "min_us": 212.992,
+            "max_us": 248.832
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 509,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 102.4,
+            "max_us": 129.024
+          },
+          "prepare_barrier_done": {
+            "min_us": 132.096,
+            "max_us": 132.096
+          },
+          "resolve_done": {
+            "min_us": 156.672,
+            "max_us": 203.776
+          },
+          "before_fetch_barrier": {
+            "min_us": 157.696,
+            "max_us": 203.776
+          },
+          "fetch_start": {
+            "min_us": 205.824,
+            "max_us": 205.824
+          },
+          "fetch_done": {
+            "min_us": 205.824,
+            "max_us": 4593.664
+          },
+          "attention_done": {
+            "min_us": 4254.72,
+            "max_us": 4676.608
+          },
+          "merge_barrier_done": {
+            "min_us": 4677.632,
+            "max_us": 4677.632
+          },
+          "merge_done": {
+            "min_us": 4799.488,
+            "max_us": 4845.568
+          },
+          "last_lru_start": {
+            "min_us": 207.872,
+            "max_us": 232.448
+          },
+          "last_lru_done": {
+            "min_us": 222.208,
+            "max_us": 258.048
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 510,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 105.472,
+            "max_us": 132.096
+          },
+          "prepare_barrier_done": {
+            "min_us": 135.168,
+            "max_us": 135.168
+          },
+          "resolve_done": {
+            "min_us": 158.72,
+            "max_us": 206.848
+          },
+          "before_fetch_barrier": {
+            "min_us": 158.72,
+            "max_us": 206.848
+          },
+          "fetch_start": {
+            "min_us": 207.872,
+            "max_us": 208.896
+          },
+          "fetch_done": {
+            "min_us": 208.896,
+            "max_us": 4872.192
+          },
+          "attention_done": {
+            "min_us": 4560.896,
+            "max_us": 4975.616
+          },
+          "merge_barrier_done": {
+            "min_us": 4977.664,
+            "max_us": 4977.664
+          },
+          "merge_done": {
+            "min_us": 5104.64,
+            "max_us": 5146.624
+          },
+          "last_lru_start": {
+            "min_us": 210.944,
+            "max_us": 236.544
+          },
+          "last_lru_done": {
+            "min_us": 224.256,
+            "max_us": 259.072
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 511,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 106.496,
+            "max_us": 133.12
+          },
+          "prepare_barrier_done": {
+            "min_us": 134.144,
+            "max_us": 134.144
+          },
+          "resolve_done": {
+            "min_us": 159.744,
+            "max_us": 215.04
+          },
+          "before_fetch_barrier": {
+            "min_us": 160.768,
+            "max_us": 216.064
+          },
+          "fetch_start": {
+            "min_us": 217.088,
+            "max_us": 217.088
+          },
+          "fetch_done": {
+            "min_us": 218.112,
+            "max_us": 5079.04
+          },
+          "attention_done": {
+            "min_us": 4741.12,
+            "max_us": 5181.44
+          },
+          "merge_barrier_done": {
+            "min_us": 5183.488,
+            "max_us": 5183.488
+          },
+          "merge_done": {
+            "min_us": 5311.488,
+            "max_us": 5359.616
+          },
+          "last_lru_start": {
+            "min_us": 219.136,
+            "max_us": 244.736
+          },
+          "last_lru_done": {
+            "min_us": 233.472,
+            "max_us": 268.288
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 512,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 1.024
+          },
+          "prepare_done": {
+            "min_us": 107.52,
+            "max_us": 132.096
+          },
+          "prepare_barrier_done": {
+            "min_us": 134.144,
+            "max_us": 134.144
+          },
+          "resolve_done": {
+            "min_us": 160.768,
+            "max_us": 207.872
+          },
+          "before_fetch_barrier": {
+            "min_us": 160.768,
+            "max_us": 208.896
+          },
+          "fetch_start": {
+            "min_us": 209.92,
+            "max_us": 209.92
+          },
+          "fetch_done": {
+            "min_us": 209.92,
+            "max_us": 5083.136
+          },
+          "attention_done": {
+            "min_us": 4733.952,
+            "max_us": 5175.296
+          },
+          "merge_barrier_done": {
+            "min_us": 5176.32,
+            "max_us": 5177.344
+          },
+          "merge_done": {
+            "min_us": 5300.224,
+            "max_us": 5346.304
+          },
+          "last_lru_start": {
+            "min_us": 211.968,
+            "max_us": 245.76
+          },
+          "last_lru_done": {
+            "min_us": 226.304,
+            "max_us": 278.528
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      },
+      {
+        "epoch": 513,
+        "phases": {
+          "start": {
+            "min_us": 0.0,
+            "max_us": 0.0
+          },
+          "prepare_done": {
+            "min_us": 108.544,
+            "max_us": 137.216
+          },
+          "prepare_barrier_done": {
+            "min_us": 138.24,
+            "max_us": 138.24
+          },
+          "resolve_done": {
+            "min_us": 164.864,
+            "max_us": 221.184
+          },
+          "before_fetch_barrier": {
+            "min_us": 164.864,
+            "max_us": 221.184
+          },
+          "fetch_start": {
+            "min_us": 222.208,
+            "max_us": 223.232
+          },
+          "fetch_done": {
+            "min_us": 223.232,
+            "max_us": 5542.912
+          },
+          "attention_done": {
+            "min_us": 5156.864,
+            "max_us": 5621.76
+          },
+          "merge_barrier_done": {
+            "min_us": 5623.808,
+            "max_us": 5623.808
+          },
+          "merge_done": {
+            "min_us": 5741.568,
+            "max_us": 5791.744
+          },
+          "last_lru_start": {
+            "min_us": 224.256,
+            "max_us": 258.048
+          },
+          "last_lru_done": {
+            "min_us": 238.592,
+            "max_us": 290.816
+          }
+        },
+        "full_rows": 736,
+        "chunks": 1
+      }
+    ]
+  }
+]

@@ -248,6 +248,11 @@ def document():
     near_trace=row("lru","nvlink",8,14)
     yield "# 远端 KV 稀疏 MLA 融合算子性能汇报\n"
     yield "**基于 GLM-5.3 真实访问 trace｜A100-SXM4｜单算子 GPU 实测｜2026 年 10 月 30 日**\n"
+    optimization_file=ROOT/"temp/glm_trace/tune_100gb_20261030/summary.json"
+    optimization=load(optimization_file) if optimization_file.exists() else None
+    if optimization and optimization.get("complete"):
+        yield ("**最新更新**：100 GB/s的大batch已加入整行staged优化，最终实现、全形状回测及5pass确认见§7.6。"
+               "图1–6和原5304格主矩阵保留优化前的固定fetch16/split on配置，作为统一覆盖的基准；新实现另列，避免混用。\n")
     yield "## 1. 工作成果与核心结论\n"
     yield ("本阶段完成了远端 KV sparse MLA decode 的单 kernel 融合方案，将**跨 query 去重、跨步 LRU、"
            "远端取数、attention 计算及结果合并**放入同一次 cooperative kernel 启动。目标是在 KV 放到"
@@ -284,7 +289,7 @@ def document():
     yield ""
     yield ("**结论的适用范围**：中大 batch、有限带宽场景已体现稳定且可观的融合收益；低远端比例或较快链路"
            "可以接近纯 device 计算。原始远端流量较高时，物理传输预算会高于纯 device 时间，此时应考察"
-           "与计算/传输共同决定的理想重叠下限的距离。100 GB/s的128请求、MTP8、staged＋LRU仍高于参考65.3%，"
+           "与计算/传输共同决定的理想重叠下限的距离。主矩阵原固定配置中，100 GB/s的128请求、MTP8、staged＋LRU高于参考65.3%，"
            "不能概括为所有链路都接近极限；小batch和部分NVLink参数也仍有改进空间，完整汇总见第8节。\n")
     yield "## 2. Kernel 设计与本次启用配置\n"
     yield ("Memcpy 方案先把所需远端页搬到本地，再执行 attention；搬运和计算在依赖关系上串行。本文先统一解析"
@@ -560,6 +565,30 @@ def document():
     yield ("因此，100 GB/s接下来的优化应先定位prepare/resolve、fetch完成和attention尾部的时间，"
            "再调整取数资源分配、先到数据的消费顺序及staging写回；不应假定现有差距已不可缩小。"
            "[全部24格、逐pass数据及审计](../temp/glm_trace/100gb_review_20261030/README.md)。\n")
+    if optimization and optimization.get("complete"):
+        yield "### 7.6 最新实现：大batch整行staged路径\n"
+        yield ("**本节全部数据：完整GLM-5.3 trace、LRU4096槽/请求、staged、100 GB/s＋20 µs，5次冷启动pass全部步骤平均。**"
+               "新路径使每行直接完成attention并写最终输出，省去尾部分片及merge；编译期排除原地读写回和零远端模拟检查。"
+               "实际fetch处仍使用原带宽/延迟模拟规则，staging就绪等待保留。仍为单个cooperative kernel，缓存容量和计算不变。\n")
+        yield ("启用条件为64 heads、staged、host_split=False、query行数≥4×SM数且staging能容纳全部选中条目。"
+               "A100-SXM4的100 GB/s大形状推荐fetch24/split off；较小形状沿用fetch16/split on。"
+               "六个原通用kernel的反汇编指令文本及资源与旧构建一致。完整195格100 GB/s trace矩阵、无LRU对照与物理链路回测另见优化记录。\n")
+        yield "| 新实现确认：MTP | 请求 | 旧默认 µs | 旧同参数 µs | 新实现 µs | Memcpy µs | 纯device µs | 重叠参考 µs | 较旧默认降低 | 高于参考 |"
+        yield "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"
+        for m,b in ((1,512),(8,64),(8,128)):
+            selected=[r for r in optimization["rows"] if r["confirmation"] and r["kind"]=="lru" and
+                      r["setting"]=="g100_l20000" and r["mtp"]==m and r["requests"]==b]
+            default=next(r for r in selected if r["variant"]=="base" and r["fetch_ctas"]==16)
+            control=next(r for r in selected if r["variant"]=="base" and r["fetch_ctas"]==24)
+            new=next(r for r in selected if r["variant"]=="final")
+            yield (f"| {m} | {b} | {default['ours_us']:.2f} | {control['ours_us']:.2f} | {new['ours_us']:.2f} | "
+                   f"{new['memcpy_us']:.2f} | {new['local_us']:.2f} | {new['reference_us']:.2f} | "
+                   f"{(1-new['ours_us']/default['ours_us'])*100:.1f}% | {new['ours_over_reference']*100:.1f}% |")
+        yield ""
+        yield ("旧默认为fetch16/split on，旧同参数与新实现均为fetch24/split off。整体收益包含参数和代码改进，"
+               "同参数控制用于核对代码本身的贡献；没有用搜索结果替换原主矩阵。剩余差距继续按实测呈现，"
+               "不把大batch收益推广至全部小形状，也不宣称所有100 GB/s格子均已在参考10%以内。"
+               "[完整优化结果、验证和新旧对照](mla_host_a100_100gb_optimization_20261030.md)。\n")
     yield "## 8. 全参数汇总、计时口径与结论边界\n"
     yield "### 8.1 全部17种链路汇总\n"
     yield "**全部主矩阵采用staged；无LRU列为真实trace四快照，LRU列为真实trace完整1024位置、4096槽/请求。**\n"
@@ -607,7 +636,7 @@ def document():
            "后续主要空间集中在小batch固定成本、staged内部调度和更充分的链路利用，以及继续减少必需远端字节数。"
            "补充路径对照表明，所测100/50 GB/s条件保留staged，物理NVLink采用原地读更合适。"
            "100 GB/s＋20 µs、128请求的现有参数补测确认仍能再降约4.6%，但仍高于重叠参考约57%，"
-           "这一格需要继续定位和优化，不能宣称已达到接近极限的水平。\n")
+           "这是§7.5中代码优化前的参数核查。若采用最新整行实现，应以§7.6的确认数据评价改进和剩余差距。\n")
     yield "---\n"
     yield ("数据来源：[完整5304格实验报告](mla_host_glm53_kernel_matrix_20261029.md)、"
            "[全量CSV](../temp/glm_trace/kernel_report_20261029/matrix.csv)、"
@@ -632,6 +661,8 @@ manifest=dict(timestamp=time.strftime("%FT%T%z"),source_commit="8c624445",
                   (DEST/"build_report.py",DEST/"references.py",DEST/"verify_sources.py",DEST/"probe_physical.py")},
               route_comparison_sha256=digest(ROOT/"temp/glm_trace/route_compare_20261030/summary.json"),
               parameter_review_sha256=digest(ROOT/"temp/glm_trace/100gb_review_20261030/summary.json"),
+              optimization_audit_sha256=(digest(ROOT/"temp/glm_trace/tune_100gb_20261030/audit.json")
+                  if load(ROOT/"temp/glm_trace/tune_100gb_20261030/summary.json").get("complete") else None),
               figure_count=len(FIGURES),figure_cells={k:len(v["rows"]) for k,v in FIGURES.items()},
               artifact_sha256={str(p.relative_to(ROOT)):digest(p) for p in [DOC,*sorted(ASSETS.glob("*.png"))]})
 (DEST/"manifest.json").write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+"\n")
