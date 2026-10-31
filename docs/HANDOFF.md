@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-01 01:22 协作/辅助取数四版本完整拒绝检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-01 02:34 特征分工与单位重缩放五版拒绝检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -14,9 +14,17 @@
 
 ## 2. 当前运行状态与新一轮进度
 
-### 2.0 最新生产：共享页号已保留；协作与辅助取数候选均拒绝
+### 2.0 最新生产：共享页号已保留；特征分工与重缩放均拒绝
 
 **当前生产header是cached_ids，SHA=`b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a`，不再是52919。下文§2.1–2.6保留各阶段历史，冲突时以本节及实际文件为准。** 单kernel、数学、精确LRU/真实cache载荷、模拟器和原5304矩阵不变；只在已有whole CTA32且启用LRU的路径共享块页号，未改路径原9EMU/18normal kernel指令与资源完全相同。基线52919保存在W/base.cuh及其他独立实验树。
+
+**本轮最新F=`temp/glm_trace/tune_feature_qk_20261101/`已完成，两版拒绝。** dim_split使用两个32-head item、128线程、2stage/16KV，两warp group分别计算PE和CKV各半、交换4096B score再相加；全576特征保留，FP32归约顺序变化。duplicate_control保留相同布局/padding但重复完整QK。新REG231/255、stack/local0，正常实际单kernel216CTA/128线程、dynamic78080B/static2176B、active2；EMU静态HMMA207/315。每版105+4正常/长序列全cache载荷测试，共218；原34EMU/68normal实例全等价，审计核验私有math e5968及68证明后才沿用canonical参考。f24的100GB0/20µs dim慢9.605%/27.923%。唯一追加的f48在途容量等价控制（48×32×2=24×64×2）仍比同参base慢2.408%/3.276%，约4ms不能替代原推荐f24约3.5ms；50GB正负差均保留，不再扫参数。18格/12配对、3456计时launch/216segment、两参考无缺失。[报告](mla_host_a100_feature_qk_20261101.md)。初次generator断言在生成候选前失败的原件保留，性能前已修复私有math provenance，未混入错误SHA格。
+
+**后继S=`temp/glm_trace/tune_unit_scale_20261101/`三版也全部结束并拒绝。** 原布局64head/256thread、CTA32/2stage、108CTA/active1、dynamic147968B/static2304B、f24和LRU保持。unit_scale先算原scale，仅精确!=1才乘d/O；stable_scale保留原scale但检查max变化/非finite；early_stable在有限max不变时直接跳过rescale指数和d/O。后两版数学恒等式相同但FP32舍入改变，无逐位相同声明。三版各105+4通过，共327项；各原34EMU/68normal实例全等价，实际单108CTA新kernel，REG244/242/242、stack/local0。100GB0/20µs分别慢7.651%/6.646%、4.411%/5.069%、4.137%/4.161%；50GB全部略慢。三独立同轮cohort共18格/9配对、3456计时launch/216segment、两参考完整，不扩大full/native/跨形状，也不继续调整此条件。[报告](mla_host_a100_unit_scale_20261101.md)。primary SASS证实FMUL→FFMA→EX2→unit比较/真实BRA；独立相同max浮点表达式65536对中26440个scale非精确1、最大误差3.5763e-7。它不是实际attention分支频率或性能因果证据，独立源码/SASS/日志保留。
+
+F/S全部自有进程已terminal；early105/stress原handles24991/28346已exit0，96149在最终查询时已不保留，完整compile log及后续代码生成/测试/benchmark均成功，不能重启。F/S各checkpoint_audit.py均通过，总545项测试/36格/21配对/6912计时launch/432segment；生产b6、root math34af、模拟器和原5304格SHA不变。GPU3现有外部PID1460325，不动，后续GPU工作继续共享锁/空闲等待。H80002:30:16只读复查仍五任务Priority/Dependency、原两个watcher活，AGENTS/MEMORY哈希与已读快照相同，详见S/h800_queue.txt；无新提交或源码写入。
+
+**大batch100GB约32%–34%主差距仍未解决，goal active。** 下一步审查真正空间warp角色隔离：同256线程CTA，128线程取数、128线程32head计算，独立named barrier和不重叠shared，保持全CTA prepare/LRU及最终grid同步。它区别于C/HC的整CTA时间交替service，尚无实现/性能结论；先验证host/math helper的threadIdx.z虚拟偏移、barrier成员及shared预算，不可直接将主prepare的NUM_THREADS改128。旧重复QK、feature分工、重缩放、时间交替cofetch/hybrid均不重做。所有新候选仍须原实例等价、实际路径/全cache载荷测试，再同参性能；不能凭更多CTA可计算宣称收益。
 
 **最新C=`temp/glm_trace/tune_cofetch_20261101/`已完成并拒绝。** 原型af610…bf6f将attention减为1stage，腾出2×16行service buffer，所有CTA计算中/等待时推进取数，所有pool先做LRU再grid barrier；独立控制020b…0b41只减attention stage、用padding保留原64行fetch双缓冲。两版均105正常+2长队列/全cache载荷测试（共214项），34EMU/68normal原库内实例全等价，实际单kernel/108CTA/256线程/1CTA驻留已核实。cofetch静态38272B+动态111104B、REG244EMU/242normal；control静态2304+动态147968、REG240，均stack/local0。GPU3同参256×3pass的100GB0/20µs原型慢38.940%/53.030%，control慢11.794%/12.284%，50GB慢15.761%/0.470%。9格/6配对、1728计时launch/108segment、两参考完整。原control preflight外部counter失败及仅补缺失候选的重试保留；全部C runner已terminal。见[报告](mla_host_a100_cofetch_20261101.md)。
 
@@ -38,7 +46,7 @@ SXM正常构建、MTP8/R128、full1024×5pass、f24/off：真实NVLink3349.277�
 
 上一轮本机GPU/CPU调度器均已terminal：W原矩阵92282、完整确认86595、慢格夹测82401、补小参考28183、生产编译37851和生产测试28695全部exit0；R的四确认和三版诊断也均exit0；H/Q/U拒绝候选无活动任务。**不要再poll或重复启动这些handle。** 最终audit83501和coverage/report已成功。41741初次将生产测试记录当候选记录而缺compile_exit_code，失败日志audit_production_record_schema_failure.log保留，已显式区分两种记录并复核通过。旧审计98052因单请求floor缺mathSHA而失败的日志保留；新同硬件normal小参考已补齐，没有覆盖原floor。
 
-H800五个旧Slurm作业11/01 01:20:24仍Priority/Dependency，两个watcher活，保存HC/h800_queue.txt；没有覆盖排队源或重复提交。所有自有本机runner已结束，不必等待其他用户任务。下一步在b6上继续新机制推进大100GB目标；不要重复ready/prebind/scatter/四缓冲/tail/半head双驻留/重复QK/配对QK/warp按行取数/本轮单stage或hybrid辅助取数，或只扫cadence/unroll/fetch参数。已完成等待/CTA预算诊断支持查共享资源，但这些拒绝证据说明不能只凭更多CTA参与搬运推断收益。可重新检查attention计算效率的新机制；若研究更小KV tile，先审查现有低shared路径是否重复QK，并核算feature-shard/score交换的数学与shared/register预算。此方向尚未实现，不能宣称新收益，也不能重做已拒绝的32head/1stage方案。勿改模拟器/参考。
+H800五个旧Slurm作业11/01 01:20:24仍Priority/Dependency，两个watcher活，保存HC/h800_queue.txt；没有覆盖排队源或重复提交。所有自有本机runner已结束，不必等待其他用户任务。下一步在b6上继续新机制推进大100GB目标；不要重复ready/prebind/scatter/四缓冲/tail/半head双驻留/重复QK/配对QK/warp按行取数/本轮单stage或hybrid辅助取数，或只扫cadence/unroll/fetch参数。已完成等待/CTA预算诊断支持查共享资源，但这些拒绝证据说明不能只凭更多CTA参与搬运推断收益。特征分工和单位重缩放已按本节开头实现并拒绝；后续方向以上述空间warp角色隔离的待验证设计为准。勿改模拟器/参考。
 
 ### 2.1 最新续接：中等 batch 派发修正已保留，继续大 batch 主目标
 

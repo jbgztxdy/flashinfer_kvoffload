@@ -1,0 +1,10 @@
+{
+  "predecessor_host_sha256": "de3659aefaef3664fafad2e56d0bb52d2eaf7c08689615d3b2ddc23391f914cf",
+  "predecessor_math_sha256": "ace386627cf39b1fcc1ff7112a642ada2a7f56a1d4d9fec504432478dda30ae8",
+  "candidate_sha256": "c469f7750987ba8360cc989b44ce326cb48aa83e78136f9dccbf6f29de8b99aa",
+  "candidate_math_sha256": "a33aacba4cb43fc02c8cf3badc56cdb5cca9e8143ae883b593e7e2d512978565",
+  "mechanism": "Same native QK/P/PV/layout/fetch/LRU. On unchanged finite maximum, skip o_scale exponent and d/O scaling. Compute original rescale only on changed/nonfinite maximum. Finite-state attention equation unchanged; FP32 rescale rounding differs.",
+  "evidence": "stable_scale keeps exponent/finite-scale dependency before its guard and remains slower than base. This changes the guard dependency and removes unused SFU work; no geometry/cadence/unroll sweep.",
+  "candidate_adopted": false,
+  "goal_complete": false
+}

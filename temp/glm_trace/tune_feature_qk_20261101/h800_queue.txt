@@ -1,0 +1,22 @@
+Disk quotas for usr luyouy (uid 32230):
+     Filesystem  kbytes   quota   limit   grace   files   quota   limit   grace
+          /WORK 1651267536  5000000000       0       -  561819       0       0       -
+Disk quotas for usr luyouy (uid 32230):
+     Filesystem  kbytes   quota   limit   grace   files   quota   limit   grace
+      /home/fit 382454244* 200000000       0    none   30527       0       0       -
+2026-11-01T01:34:48+08:00
+             JOBID                     NAME      STATE               NODELIST(REASON)           START_TIME
+           1004362             fi-tune-host    PENDING                     (Priority)  2026-11-02T02:34:29
+           1004363             fi-tune-peer    PENDING                     (Priority)  2026-11-02T02:34:29
+           1040680                fi-bulkbw    PENDING                     (Priority)  2026-11-02T02:34:29
+           1089380     fi-tuned-assist-peer    PENDING                   (Dependency)                  N/A
+           1089379     fi-tuned-assist-host    PENDING                   (Dependency)                  N/A
+JobID|State|ExitCode|Start|End
+1004362|PENDING|0:0|Unknown|Unknown
+1004363|PENDING|0:0|Unknown|Unknown
+1040680|PENDING|0:0|Unknown|Unknown
+1089379|PENDING|0:0|Unknown|Unknown
+1089380|PENDING|0:0|Unknown|Unknown
+    PID ELAPSED COMMAND
+1174145  222924 bash /WORK/PUBLIC/luyouy_work/rtx/yjw/test/glm_trace/watch_jobs.sh 1089379 1089380
+4160646  310493 bash /WORK/PUBLIC/luyouy_work/rtx/yjw/test/glm_trace/watch_jobs.sh 1004362 1004363 1040680 1040816

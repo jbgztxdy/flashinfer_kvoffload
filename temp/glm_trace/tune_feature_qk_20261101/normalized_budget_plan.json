@@ -1,0 +1,21 @@
+{
+  "recorded_before_launch": "2026-11-01T01:44:51+0800",
+  "reason": "Normalize in-flight payload: new2residentCTA/32-rowfetchblock uses half the original64-rowblock. f48*32rows*2buffers equals productionf24*64rows*2buffers=3072rows. This is one budget control for the newfeature mechanism, not a sweep.",
+  "variants": [
+    "dim_split",
+    "duplicate_control",
+    "base"
+  ],
+  "fetch_ctas": 48,
+  "positions": 256,
+  "passes": 3,
+  "mtp": 8,
+  "requests": 128,
+  "settings": [
+    "g100_l0",
+    "g100_l20000",
+    "g50_l20000"
+  ],
+  "decision_rule": "Require replacement of existingf24base, not merely an improvement over slower same-f48base. Preserve f24 negatives and all f48 cells; no more numeric scans without newmechanism/evidence.",
+  "candidate_adopted": false
+}

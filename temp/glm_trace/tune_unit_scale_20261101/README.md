@@ -1,0 +1,9 @@
+# Online-softmax unit rescale, 2026-11-01
+
+All three candidates rejected; production remains b6eea095…e72a / 0f82e9de, goal active. See [report](../../../docs/mla_host_a100_unit_scale_20261101.md), decisions.json and performance_audit.json.
+
+unit_scale checks the original computed scale against1; stable_scale checks unchanged maxima after computing scale; early_stable checks unchanged finite maxima before computing scale. QK/P/PV/layout/fetch/LRU stay native. The latter two use the mathematical unit-scale identity but change FP32 rescale rounding; no bitwise equivalence claim. All variants passed105 normal+4 BF16/FP16 long/cache-payload/Graph cases,327 total. Each has34EMU/68normal original instances exactly equal and one actual108CTA/256-thread kernel with dynamic147968B/static2304B and one resident CTA/SM. New REG244/242/242, STACK0/LOCAL0.
+
+Three independent short same-parameter cohorts contain18cells/9pairs,3456 timed launches/216segments and both references. At100GB0/20us the candidates slow6.6–7.7%,4.4–5.1%,4.1–4.2%; all50GB results are retained too. No adoption, full-window/native-link/cross-shape expansion or further parameter sweep. Private math/host source snapshots and matching68-instance proofs are required by the auditor before reusing canonical same-hardware references.
+
+scale_expression_sass_trace.json and probe_scale_roundoff.cu/.py show a static FMA dependency and an independent equal-max floating-point counterexample. They do not measure actual attention branch frequency or establish performance causality. The executable is ignored, with rebuild source/flags/logs/SASS/results retained. restore_includes.py validates or reconstructs all private host/math pairs without overwriting. Baselines reuse W/jit_cached_ids and W/jit_retained_normal. All runners are terminal; the early build handle96149 is no longer retained by the execution service, while its complete log/codegen/test/benchmark gates prove successful downstream use.

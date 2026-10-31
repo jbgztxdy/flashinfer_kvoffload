@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-11-01T02:01:50+0800",
+  "values": {
+    "count": 65536,
+    "equal_max_count": 65536,
+    "nonunit_scale_count": 26440,
+    "max_abs_scale_error": 3.57627868652e-07
+  },
+  "resources_start": {
+    "timestamp": "2026-11-01T02:01:50+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "resources_end": {
+    "timestamp": "2026-11-01T02:01:51+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "source_sha256": "cd76a009ba9af75142817363bd3d76d3ffa30f1cb5f37a4541dd709d44376539",
+  "binary_sha256": "c9d632a283ff23270778a518958547d8551fa0ad9c9f6791d6977fc09f1c84f1",
+  "complete": true,
+  "performance_claim": false,
+  "reference_claim": false,
+  "compiler_flags": "nvcc13.1 -O3 --use_fast_math -arch=sm_80 -std=c++17",
+  "limitation": "Isolated equal-max expression shows possible contraction roundoff; it does not measure real attention max-stability or branch frequencies. Primary kernel SASS must separately establish its arithmetic pattern."
+}

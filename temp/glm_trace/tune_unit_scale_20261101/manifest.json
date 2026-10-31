@@ -1,0 +1,11 @@
+{
+  "base_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "candidate_sha256": "b8bc7b16c7583697d1afa5697e87fd732e082b8503388646059a351c7a314593",
+  "base_math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "candidate_math_sha256": "a95a8f467bc3da4d52fd30125026e786f499bd20ee16356dcd8d4e209bf6e528",
+  "mechanism": "Same cached whole-row >=4SM,CTA32/2stages/64heads/256threads and fetch/LRU. Compute original o_scale exactly; when it equals1 skip d/O multiplication only. All QK, score exponentials, m, P, PV, normalization and tile order remain native. No QK partition/reduction change.",
+  "baseline_control": "Detection trait false for every original KTraits; require all34EMU/68normaloriginalkernel instructions/resources unchanged. Originalcachedkernel remains compiled as the unguarded control.",
+  "tradeoff": "Warp divergence/predicate cost may exceed skipped unit multiplications; test rather than infer runtime gain.",
+  "candidate_adopted": false,
+  "goal_complete": false
+}

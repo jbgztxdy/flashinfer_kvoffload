@@ -1,0 +1,24 @@
+{
+  "primary_kernel": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_19UnitScaleHostTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS0_24UnitScaleHostBatchParamsINS_18MLAHostBatchParamsIS4_S4_S4_iEEEELb0EEEvT0_",
+  "build": "EMU BF16",
+  "trace": [
+    {
+      "address": "fbd0",
+      "instruction": "FSETP.NEU.FTZ.AND P1, PT, R147, 1, PT"
+    },
+    {
+      "address": "fb30",
+      "instruction": "MUFU.EX2 R147, R4"
+    },
+    {
+      "address": "fb10",
+      "instruction": "FFMA.FTZ R4, R218.reuse, R31, -R5.reuse"
+    },
+    {
+      "address": "faf0",
+      "instruction": "FMUL.FTZ R5, R218, R235"
+    }
+  ],
+  "source": "compiler_unit_scale_summary.json and matching gz SASS",
+  "limitation": "One static scale-expression dependency chain, not runtime skip-frequency or performance causality."
+}
