@@ -1,0 +1,11 @@
+{
+  "complete": true,
+  "performance_claim": false,
+  "source_header_sha256": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
+  "sass_path": "temp/glm_trace/tune_joint_qk_20261101/joint_qk_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+  "sass_sha256": "c45ee90d48325b72cc2ea4a099f4fd9bd5c471cab71d1385e7da603237e41788",
+  "kernel": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI13__nv_bfloat16S3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+  "excerpt_sha256": "720cc72dad19fec64a3d6aa28aaa4f8f1a9b8aa2f722fde0a1e2bcddc3d21818",
+  "finding": "CKVunrollbody:K_Aat0xe310,Qat0xe340,K_Bat0xe360,thenfirstA-MMA0xe3c0andB-MMA0xe400. CompileralreadyissuesbothKloads beforefirstMMA,andalsohoistsnextdimensionloads. Simpleq/ka/kbsourcegroupingisnotnewlatencyhidingevidence.",
+  "decision": "Do not prototype this redundant source reorder or sweep unroll. Independent new candidate changes denominator reduction only."
+}

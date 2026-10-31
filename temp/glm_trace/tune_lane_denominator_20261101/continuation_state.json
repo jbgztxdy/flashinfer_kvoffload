@@ -1,0 +1,26 @@
+{
+  "recorded_at": "2026-11-01T05:31:52+08:00",
+  "goal_status": "active",
+  "candidate_adopted": false,
+  "manifest": {
+    "base_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+    "joint_qk_control_sha256": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
+    "candidate_sha256": "b5a960e02fdea86834bf23a63b8681d7d6909421f7739bb9b58ceb18683239cd",
+    "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+    "candidate_adopted": false,
+    "goal_complete": false,
+    "mechanism": "Replace only per-tile quantized-P MMA rowsum with lane-private FP32 sums of identical BF16/FP16 probabilities; final quad shuffles combine once before native cross-warpgroup normalize. Same jointMDO/PV/refill/barriers/fetch/LRU/32KV/2stage/f24.",
+    "equation": "For each query, P columns split across four lanes. Joint max/rescale factor is identical across that quad, so summing lane-private d at item end gives the same softmax denominator in real arithmetic. FP32 sum/rescale grouping differs. d starts1/4 perlane to preserve native empty-item d=1 perwarpgroup. P quantization and PV are unchanged.",
+    "tradeoff": "Removes one TensorCore denominator instruction per32KV tile/warp, adds probability decode and scalar adds plus four final shuffles. No assumed gain; registers or scalar work may dominate.",
+    "excluded": "No delayed/upper-bound softmax anchor, no probability shift, no P publication/barrier changes, no parameter sweep."
+  },
+  "active_runners": [],
+  "completed_handles": {
+    "99321": 0,
+    "1359": 0,
+    "92142": 0,
+    "22672": 0
+  },
+  "next_action": "Stop this lane-denominator mechanism; all original handles terminal. No reduction-interval/tile/unroll sweep or full/native expansion. Continue original JQ72075/1398 when GPU01 users naturally leave; inspect live processes before any restart. Overall goal active.",
+  "results": "Rejected,109newtests includinglongLSE/cachepayload/Graph,34/68machinewordsexact,actualonekernel,BF16REG252/FP16REG253STACK0.9cells6basepairs3threewaypoints,1728launch108segments,tworeferencescomplete.100GBvsJQ-0.275/-0.723%,50GB-0.039%."
+}

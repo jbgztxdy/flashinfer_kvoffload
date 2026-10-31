@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-11-01T05:31:52+08:00",
+  "goal_status": "active",
+  "candidate_adopted": false,
+  "decision": "Reject: all3points slower than frozenJQcontrol; no full/native/crossshape or reduction-interval sweep.",
+  "triples": [
+    {
+      "setting": "g100_l0",
+      "base_us": 3581.386667986711,
+      "joint_qk_us": 3471.231992046038,
+      "lane_d_us": 3480.789336065451,
+      "reduction_vs_joint_qk": -0.0027533002810853358,
+      "reduction_vs_base": 0.028088933490616586,
+      "raw_paths": [
+        "temp/glm_trace/tune_lane_denominator_20261101/gpu3/raw/lane256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+        "temp/glm_trace/tune_lane_denominator_20261101/gpu3/raw/lane256_f24_joint_qk_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+        "temp/glm_trace/tune_lane_denominator_20261101/gpu3/raw/lane256_f24_lane_d_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json"
+      ]
+    },
+    {
+      "setting": "g100_l20000",
+      "base_us": 3588.4479930003486,
+      "joint_qk_us": 3464.693322777748,
+      "lane_d_us": 3489.749327301979,
+      "reduction_vs_joint_qk": -0.007231810203664146,
+      "reduction_vs_base": 0.027504555142192855,
+      "raw_paths": [
+        "temp/glm_trace/tune_lane_denominator_20261101/gpu3/raw/lane256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+        "temp/glm_trace/tune_lane_denominator_20261101/gpu3/raw/lane256_f24_joint_qk_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+        "temp/glm_trace/tune_lane_denominator_20261101/gpu3/raw/lane256_f24_lane_d_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json"
+      ]
+    },
+    {
+      "setting": "g50_l20000",
+      "base_us": 5284.9706535538035,
+      "joint_qk_us": 5272.767985860507,
+      "lane_d_us": 5274.805344641209,
+      "reduction_vs_joint_qk": -0.00038639264730888634,
+      "reduction_vs_base": 0.0019234371539526007,
+      "raw_paths": [
+        "temp/glm_trace/tune_lane_denominator_20261101/gpu3/raw/lane256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+        "temp/glm_trace/tune_lane_denominator_20261101/gpu3/raw/lane256_f24_joint_qk_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+        "temp/glm_trace/tune_lane_denominator_20261101/gpu3/raw/lane256_f24_lane_d_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json"
+      ]
+    }
+  ],
+  "tests": 109,
+  "audit_sha256": "3c6cd155f378838d4c9ff101d49605ea2f86735057a0631ac3847c8a0e8aca82",
+  "manifest": {
+    "base_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+    "joint_qk_control_sha256": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
+    "candidate_sha256": "b5a960e02fdea86834bf23a63b8681d7d6909421f7739bb9b58ceb18683239cd",
+    "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+    "candidate_adopted": false,
+    "goal_complete": false,
+    "mechanism": "Replace only per-tile quantized-P MMA rowsum with lane-private FP32 sums of identical BF16/FP16 probabilities; final quad shuffles combine once before native cross-warpgroup normalize. Same jointMDO/PV/refill/barriers/fetch/LRU/32KV/2stage/f24.",
+    "equation": "For each query, P columns split across four lanes. Joint max/rescale factor is identical across that quad, so summing lane-private d at item end gives the same softmax denominator in real arithmetic. FP32 sum/rescale grouping differs. d starts1/4 perlane to preserve native empty-item d=1 perwarpgroup. P quantization and PV are unchanged.",
+    "tradeoff": "Removes one TensorCore denominator instruction per32KV tile/warp, adds probability decode and scalar adds plus four final shuffles. No assumed gain; registers or scalar work may dominate.",
+    "excluded": "No delayed/upper-bound softmax anchor, no probability shift, no P publication/barrier changes, no parameter sweep."
+  }
+}

@@ -25,7 +25,7 @@ for r in rows:
     table.append(f"| {r['mtp']}/{r['requests']} | {r['passes']} | {r['setting']} | {r['old_us']:.3f} | {r['new_us']:.3f} | {100*r['reduction']:+.3f}% | {r['memcpy_us']:.3f} | {r['local_us']:.3f} | {r['reference_us']:.3f} | {100*r['over_reference']:.2f}% |")
 section = '''### 7.9 最新候选：联合softmax重缩放与Q片段复用
 
-11月1日05:11检查点：**尚未安装，生产仍是§7.8的b6版本。** JQ候选让两个32KV tile共享一次在线softmax的max和d/O重缩放，并共用Q片段读取；保持完整576特征、各score的PE→CKV累加顺序、精确LRU/真实cache载荷和单cooperative kernel。在线归约分组变化，数学方程不变；canonical数学头、链路模拟器、两参考公式及原5304格矩阵均保持原件。
+11月1日05:33检查点：**尚未安装，生产仍是§7.8的b6版本。** JQ候选让两个32KV tile共享一次在线softmax的max和d/O重缩放，并共用Q片段读取；保持完整576特征、各score的PE→CKV累加顺序、精确LRU/真实cache载荷和单cooperative kernel。在线归约分组变化，数学方程不变；canonical数学头、链路模拟器、两参考公式及原5304格矩阵均保持原件。
 
 新增GPU3/SXM的156格矩阵已经完整审计；60个改变路径配对的未加权耗时降低均值1.602%、范围−0.188%至+5.253%。小/中batch、有/无LRU原路径控制及所有负差保留。两项超过1%的原路径测量负差经完整5pass前/候选/后夹测未复现，原样本不删除。下面均为A100-SXM4/NUMA0、真实GLM-5.3 trace完整1024位置、LRU4096/请求、fetch24/split off，与同轮b6同参数比较。3pass矩阵点和5pass确认分别标注，不能混为同一测量轮次。
 
@@ -35,7 +35,7 @@ section = '''### 7.9 最新候选：联合softmax重缩放与Q片段复用
 
 JQ已通过105＋4正常BF16/FP16与长cache载荷/Graph测试；仅清理host局部名称的保留源码又独立通过105＋4。原34EMU/68normal实例机器字含控制字完全相同，清理源全部36/72实例亦完全相同；实际仍单108CTA/256线程kernel。现有完整反向确认、正常NVLink/PCIe三方确认和正向b6三格均完成，正向JM/JQ六格因其他用户占用GPU0/1等待，原自动保留流程继续等待门槛；通过全部确认后仍须从生产root独立新JIT编译和109测试，不能把候选短测或矩阵完成写成已安装。
 
-独立追加的“联合发布两个P tile以减少PV barrier”候选通过109测试、机器码等价和同步/race诊断，但在100GB0/20µs较JQ慢0.182%/1.115%，已拒绝；50GB约0.05%正差也保留。[实现、失败与审计](mla_host_a100_joint_pv_20261101.md)。整体优化目标继续active；本节补充结果没有改写主矩阵或图1–6。
+独立追加的“联合发布两个P tile以减少PV barrier”候选通过109测试、机器码等价和同步/race诊断，但在100GB0/20µs较JQ慢0.182%/1.115%，已拒绝；50GB约0.05%正差也保留。[实现、失败与审计](mla_host_a100_joint_pv_20261101.md)。另一个lane私有分母候选使用相同量化P、只在item末归约，通过109项测试（含长序列LSE），但100GB0/20µs较JQ慢0.275%/0.723%、50GB慢0.039%，也已拒绝。[分母实验与审计](mla_host_a100_lane_denominator_20261101.md)。整体优化目标继续active；本节补充结果没有改写主矩阵或图1–6。
 
 '''.replace('{table}', '\n'.join(table))
 f = root / 'docs/mla_host_glm53_report.md'

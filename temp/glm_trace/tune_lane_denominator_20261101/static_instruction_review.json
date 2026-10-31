@@ -1,0 +1,45 @@
+{
+  "complete": true,
+  "performance_claim": false,
+  "scope": "EMU BF16 targetkernel staticSASS,notdynamicwork/stall/time decomposition",
+  "kernels": [
+    {
+      "variant": "joint_qk",
+      "source": "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_qk_20261101/joint_qk_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+      "sha256": "c45ee90d48325b72cc2ea4a099f4fd9bd5c471cab71d1385e7da603237e41788",
+      "symbol": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI13__nv_bfloat16S3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "static_instructions": 6952,
+      "static_opcode_counts": {
+        "HMMA": 299,
+        "LDSM": 198,
+        "BAR": 58,
+        "FADD": 4,
+        "F2F": 0,
+        "SHFL": 53,
+        "FMUL": 397,
+        "FFMA": 28,
+        "STL": 0,
+        "LDL": 0
+      }
+    },
+    {
+      "variant": "lane_d",
+      "source": "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_lane_denominator_20261101/lane_d_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+      "sha256": "f9ed95b0011933f22b31ed30941698ee001713d163cc2a1246c687b9ff38d22a",
+      "symbol": "_ZN10flashinfer3mla29BatchMLALaneDenominatorKernelINS0_21LaneDenominatorTraitsI13__nv_bfloat16S3_S3_iEENS0_25LaneDenominatorHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "static_instructions": 6992,
+      "static_opcode_counts": {
+        "HMMA": 296,
+        "LDSM": 198,
+        "BAR": 58,
+        "FADD": 28,
+        "F2F": 0,
+        "SHFL": 57,
+        "FMUL": 393,
+        "FFMA": 32,
+        "STL": 0,
+        "LDL": 0
+      }
+    }
+  ]
+}

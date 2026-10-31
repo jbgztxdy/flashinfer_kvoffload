@@ -1,0 +1,23 @@
+{
+  "positions": 256,
+  "passes": 3,
+  "mtp": 8,
+  "requests": 128,
+  "fetch_ctas": 24,
+  "settings": [
+    "g100_l0",
+    "g100_l20000",
+    "g50_l20000"
+  ],
+  "order": [
+    "joint_qk",
+    "lane_d",
+    "base"
+  ],
+  "headers": {
+    "base": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+    "joint_qk": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
+    "lane_d": "b5a960e02fdea86834bf23a63b8681d7d6909421f7739bb9b58ceb18683239cd"
+  },
+  "mechanism": "Replace only per-tile quantized-P MMA rowsum with lane-private FP32 sums of identical BF16/FP16 probabilities; final quad shuffles combine once before native cross-warpgroup normalize. Same jointMDO/PV/refill/barriers/fetch/LRU/32KV/2stage/f24."
+}

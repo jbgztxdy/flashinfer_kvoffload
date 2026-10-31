@@ -1,0 +1,84 @@
+{
+  "start": "2026-11-01T05:23:26+0800",
+  "phase": "short_screen_complete",
+  "complete": true,
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_lane_denominator_20261101/compiler_lane_d.py"
+      ],
+      "start": "2026-11-01T05:26:17+0800",
+      "log": "compiler_lane_d.log",
+      "pid": 1746865,
+      "exit_code": 0,
+      "end": "2026-11-01T05:26:43+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_lane_denominator_20261101/compiler_lane_d.py",
+        "--normal"
+      ],
+      "start": "2026-11-01T05:26:43+0800",
+      "log": "compiler_lane_d_normal.log",
+      "pid": 1747314,
+      "exit_code": 0,
+      "end": "2026-11-01T05:27:26+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_lane_denominator_20261101/stress_candidate.py",
+        "--variant",
+        "lane_d"
+      ],
+      "start": "2026-11-01T05:27:26+0800",
+      "log": "stress_lane_d.log",
+      "pid": 1748134,
+      "exit_code": 0,
+      "end": "2026-11-01T05:27:33+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_lane_denominator_20261101/probe_lane_d.py"
+      ],
+      "start": "2026-11-01T05:27:33+0800",
+      "log": "probe_lane_d.log",
+      "pid": 1748429,
+      "exit_code": 0,
+      "end": "2026-11-01T05:27:47+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_lane_denominator_20261101/screen.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "lane_d",
+        "--variants",
+        "joint_qk",
+        "lane_d",
+        "base",
+        "--tag",
+        "lane256_f24_"
+      ],
+      "start": "2026-11-01T05:27:47+0800",
+      "log": "screen_gpu3.log",
+      "pid": 1748757,
+      "exit_code": 0,
+      "end": "2026-11-01T05:29:36+0800"
+    }
+  ],
+  "end": "2026-11-01T05:29:36+0800"
+}
