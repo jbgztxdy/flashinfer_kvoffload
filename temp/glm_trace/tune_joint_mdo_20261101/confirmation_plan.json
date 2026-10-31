@@ -1,0 +1,36 @@
+{
+  "recorded_at": "2026-11-01T03:21:56+08:00",
+  "reason": "Short100GB positive0.653/2.700%; full reverse confirmation required, noadoption.",
+  "short_audit_sha256": "bb36e532a200a7dbc459b65345ea78fcdf8a7c44beb1826181b1fa4759aeff54",
+  "cohorts": [
+    {
+      "tag": "typedfull1024_f24_",
+      "positions": 1024,
+      "passes": 5,
+      "order": [
+        "joint_mdo_typed",
+        "base"
+      ],
+      "settings": [
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ]
+    },
+    {
+      "tag": "typednative1024_f24_",
+      "positions": 1024,
+      "passes": 5,
+      "order": [
+        "base",
+        "joint_mdo_typed"
+      ],
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "native": true
+    }
+  ],
+  "candidate_adopted": false
+}

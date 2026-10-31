@@ -1,0 +1,12 @@
+{
+  "base_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "candidate_sha256": "2f90439ff42395b7a9a02d75947285f13a8a21cbd2c4b12c14e3b5382b2bb293",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "mechanism": "Native64head/256thread32KV/2stage. TwoQK scoretiles share one joint maximum and d/O rescale; native PV per tile in descending order. Refill first stage between PVs so future firstKV overlaps secondPV. Exact originalfetch/LRU/layout/147968B retained. Canonical math header untouched; new host helper changes FP32 online grouping.",
+  "distinction": "Earlier QKpair retained separate MDO updates. KV64/1stage reduces update frequency but loses double buffering, measured100GB1.576/1.795% slower. This tests joint MDO while retaining native two-stage storage and partial refill overlap; not a cadence/unroll/fetch scan.",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "candidate_math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "predecessor_host_sha256": "16d405d79c44842416c02295fa749a5071f83cc4cb437d2c3cf3df33b52d2a33",
+  "correction": "Original helper definitions already literal, but inserting new kernel before originals changes original instruction hints. Move identical new helper/kernel definitions after original host kernels without algorithm edits; strict codegen gate remains, preserve first build. No first-version performance."
+}

@@ -1,0 +1,92 @@
+{
+  "cohort": "limited",
+  "hardware": "GPU3A100PCIE",
+  "base_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "candidate_sha256": "1190d4fd5f85d38a489ae67f0fc7e7ad5fdd567f39829eb218e1fb26ef52aa59",
+  "positions": 1024,
+  "passes": 3,
+  "tasks": [
+    {
+      "variant": "joint_mdo_typed",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 64,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 64,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 128,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "fractions": null
+    },
+    {
+      "variant": "joint_mdo_typed",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 128,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "fractions": null
+    }
+  ],
+  "expected_cells": 40,
+  "limitation": "MTP1R512 independentHBM exceeds GPU3 memory and stays on pending SXM gate. PhysicalNVLink requires GPU0/1 and is not simulated by GPU3. All unmodified34EMU/68normal kernels exact. No new source or parameter scan."
+}

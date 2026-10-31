@@ -1,0 +1,61 @@
+{
+  "recorded_at": "2026-11-01T03:34:28+08:00",
+  "goal_status": "active",
+  "candidate_adopted": false,
+  "manifest": {
+    "base_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+    "candidate_sha256": "16d405d79c44842416c02295fa749a5071f83cc4cb437d2c3cf3df33b52d2a33",
+    "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+    "mechanism": "Native64head/256thread32KV/2stage. TwoQK scoretiles share one joint maximum and d/O rescale; native PV per tile in descending order. Refill first stage between PVs so future firstKV overlaps secondPV. Exact originalfetch/LRU/layout/147968B retained. Canonical math header untouched; new host helper changes FP32 online grouping.",
+    "distinction": "Earlier QKpair retained separate MDO updates. KV64/1stage reduces update frequency but loses double buffering, measured100GB1.576/1.795% slower. This tests joint MDO while retaining native two-stage storage and partial refill overlap; not a cadence/unroll/fetch scan.",
+    "candidate_adopted": false,
+    "goal_complete": false
+  },
+  "active_runners": [
+    {
+      "session_id": 61915,
+      "command": "GPU3limited40cellmatrix"
+    },
+    {
+      "session_id": 12133,
+      "command": "GPU3native36cellmatrix"
+    },
+    {
+      "session_id": 30328,
+      "command": "SXMlimited60cellmatrix waitsGPU01idle"
+    },
+    {
+      "session_id": 98811,
+      "command": "SXMnative20cellmatrix waitsGPU01idle"
+    }
+  ],
+  "next_action": "Inspect4existingmatrixhandles, no duplicates. Finish/audit all validraw, preserve raw failures. Retryonlymissingresourcefailedtaskswithappendlogs. SXM60limited+20native waitbothGPU0/1idle; no signals. After matrices need full5passSXMactualNVLink/PCIe changedpath confirmation before anyinstallation. Main100GB32-34%historicalgap notsolved. Productionb6unchanged.",
+  "completed_handles": {
+    "10463": 0,
+    "98842": 0,
+    "34748": 1,
+    "73945": 1,
+    "43793": 0,
+    "22974": 0,
+    "46858": 1,
+    "5342": 0,
+    "21987": 0,
+    "64089": 1,
+    "20067": 1,
+    "44342": 0,
+    "66782": 0,
+    "38165": 1,
+    "28817": 0,
+    "83569": 0,
+    "66293": 0,
+    "85004": 0,
+    "16839": 0,
+    "55959": 0,
+    "36912": 0,
+    "12594": 0,
+    "83243": 0,
+    "16920": 0
+  },
+  "first_version": "109tests+actual108CTApass;4/34EMU,8/68normal original instruction text changed,puredevice exact. strict gate rejected,0performance. after is identical algorithm definition-order control in private tree.",
+  "results": "327tests. Fullreverse100GB0/20fast2.677/2.902%; fullforwardfast2.134/1.881%; normalindependentHBMfast3.002%,PCIeflat. R64all10limitedpointspositive1.079-2.063%at100GB,~0.05-0.11%at50GB. No adoption; crossshape/nativecontrols/SXM pending."
+}

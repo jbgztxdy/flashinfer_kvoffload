@@ -1,0 +1,116 @@
+{
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "pairs": [
+    {
+      "hardware": "GPU3",
+      "cohort": "typed256_f24_",
+      "variant": "joint_mdo_typed",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l0",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3502.495984236399,
+      "new_us": 3479.6373322606087,
+      "reduction": 0.006526389203205363,
+      "old_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/typed256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/typed256_f24_joint_mdo_typed_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "memcpy_us": 6059.989343086879,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.865321141097,
+      "over_reference": 0.2888188551530939
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "typed256_f24_",
+      "variant": "joint_mdo_typed",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3570.68798939387,
+      "new_us": 3474.2933412392936,
+      "reduction": 0.026996099474639212,
+      "old_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/typed256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/typed256_f24_joint_mdo_typed_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "memcpy_us": 6085.93067030112,
+      "local_us": 2556.959974269072,
+      "reference_us": 2700.0095611410966,
+      "over_reference": 0.286770754904647
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "typed256_f24_",
+      "variant": "joint_mdo_typed",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g50_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 5287.552013993263,
+      "new_us": 5278.250652054946,
+      "reduction": 0.0017591055206079842,
+      "old_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/typed256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/typed256_f24_joint_mdo_typed_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "memcpy_us": 8482.474674781164,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.6816,
+      "over_reference": 0.06423175472694576
+    }
+  ],
+  "tests": [
+    {
+      "variant": "joint_mdo_after",
+      "tests": 105,
+      "sha256": "48050a4043c6bdf88137cb451b2a627269fd42fd5a3f944ba5a22e3042077339"
+    },
+    {
+      "variant": "joint_mdo",
+      "tests": 105,
+      "sha256": "0a4245db0503a437696e153415673be02c058bfb2a2c50032f6176f5b4f9facf"
+    },
+    {
+      "variant": "joint_mdo_typed",
+      "tests": 105,
+      "sha256": "9070f3b3fc5ae63a393d0f9a18895753f14e0fa7917b38ba4acb9d71ebf19265"
+    }
+  ],
+  "stress_tests": [
+    {
+      "variant": "joint_mdo_after",
+      "tests": 4,
+      "sha256": "22c4502dad3065fb8042804348242a85547dd36c6fdee8fba70d5e6a608da015",
+      "scope": "BF16/FP16, 128 pools >108 SMs, K2048, capacities512/4096, eviction/zero-miss/Graph, all filled cache payloads"
+    },
+    {
+      "variant": "joint_mdo",
+      "tests": 4,
+      "sha256": "e95375eef7e31d4b1fce971438596806c92a35e139688ccfc079bff741595830",
+      "scope": "BF16/FP16, 128 pools >108 SMs, K2048, capacities512/4096, eviction/zero-miss/Graph, all filled cache payloads"
+    },
+    {
+      "variant": "joint_mdo_typed",
+      "tests": 4,
+      "sha256": "fd956f5ac7c37223eb5b64e6a16641ad7a8a849e0ce9165be3212069ae92cce6",
+      "scope": "BF16/FP16, 128 pools >108 SMs, K2048, capacities512/4096, eviction/zero-miss/Graph, all filled cache payloads"
+    }
+  ],
+  "pending_references": [],
+  "pending_reference_pairs": [],
+  "timed_launches": 1152,
+  "accepted_segments": 72,
+  "incomplete": [],
+  "production_header_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "original_matrix_sha256": "e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99"
+}

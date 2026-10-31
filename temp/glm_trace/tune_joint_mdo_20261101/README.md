@@ -1,0 +1,9 @@
+# Joint online MDO over two32KV score tiles, 2026-11-01
+
+Not adopted; productionb6eea095…e72a/0f82e9de, goal active. Short100GB0/20us positive0.653/2.700%; full reverse/native/cross-shape gates required. See [report](../../../docs/mla_host_a100_joint_mdo_20261101.md), confirmation_plan.json and performance_audit.json.
+
+Original64head/256thread32KV/2stage/shared147968B/fetch/LRU remain. Two native QK score tiles share one max/d/O rescale; original PV runs per tile descending, refill first stage during secondPV. Same equation, different FP32 online grouping; canonical math header untouched. Distinct from paired-QK-only and64KV/one-stage, no parameter sweep.
+
+First joint_mdo and definition-order control joint_mdo_after each pass109tests/actual108CTA but fail strict old-codegen gate(4/34EMU,8/68normal changed,puredevice exact); zero performance launches. joint_mdo_typed only uses a dedicated inherited traits type to isolate template helper usage: same fields/layout/algorithm, old34/68 exact proof then109tests/actualGraph. Three variants327tests total, frozen independently. TypedREG255/STACK16/LOCAL0,static2304B,one108CTA/block32x4x2kernel,active1. No stack-zero claim.
+
+short_performance_audit.json freezes first6cells/3pairs,1152timedlaunches/72segments with both references. confirmation_plan.json predefines reverse full1024x5 and normal physicalPCIe/independentHBM1024x5. performance_audit.json aggregates completed valid raw, never discards negative points. Read continuation_state.json and actual originalhandles; do not duplicate or overwrite. Allstrict-gatefailures,SASS/resources,source snapshots,raw,cachepayload/Graphtests retained. restore_includes.py never overwrites different inputs. make_candidate.py/make_after.py/make_typed.py reproduce inputs. Original5304matrix untouched. H800queue03:18:48 stillfivepending,twowatchers,estimated11/05,no new submission/source change.

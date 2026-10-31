@@ -1,0 +1,1323 @@
+{
+  "complete": true,
+  "performance_authorized": false,
+  "builds": {
+    "emu": {
+      "original_count": 34,
+      "equal_count": 30,
+      "changed_count": 4,
+      "pure_device_exact": true,
+      "original_records": [
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7352,
+          "new_count": 7352,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 13136,
+          "new_count": 13136,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": true,
+          "old_count": 13272,
+          "new_count": 13272,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7888,
+          "new_count": 7888,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7784,
+          "new_count": 7784,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 13544,
+          "new_count": 13544,
+          "different_positions": 38,
+          "examples": [
+            {
+              "index": 1439,
+              "old": "@!P2 STS [0x2c], RZ",
+              "new": "@!P2 STS [0x12c], RZ"
+            },
+            {
+              "index": 1489,
+              "old": "@!P4 STS [R6.X4+0xc], R15",
+              "new": "@!P4 STS [R6.X4+0x10c], R15"
+            },
+            {
+              "index": 1491,
+              "old": "LDS R5, [0x2c]",
+              "new": "LDS R5, [0x12c]"
+            },
+            {
+              "index": 1507,
+              "old": "LDS R12, [R10.X4+0xc]",
+              "new": "LDS R12, [R10.X4+0x10c]"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 13688,
+          "new_count": 13688,
+          "different_positions": 38,
+          "examples": [
+            {
+              "index": 1438,
+              "old": "@!P1 STS [0x2c], RZ",
+              "new": "@!P1 STS [0x12c], RZ"
+            },
+            {
+              "index": 1488,
+              "old": "@!P5 STS [R3.X4+0xc], R32",
+              "new": "@!P5 STS [R3.X4+0x10c], R32"
+            },
+            {
+              "index": 1490,
+              "old": "LDS R5, [0x2c]",
+              "new": "LDS R5, [0x12c]"
+            },
+            {
+              "index": 1506,
+              "old": "LDS R12, [R8.X4+0xc]",
+              "new": "LDS R12, [R8.X4+0x10c]"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 9320,
+          "new_count": 9320,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 15480,
+          "new_count": 15480,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": true,
+          "old_count": 15608,
+          "new_count": 15608,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4480,
+          "new_count": 4480,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4968,
+          "new_count": 4968,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 6496,
+          "new_count": 6496,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4432,
+          "new_count": 4432,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4880,
+          "new_count": 4880,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 6416,
+          "new_count": 6416,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "equal": true,
+          "old_count": 9536,
+          "new_count": 9536,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7352,
+          "new_count": 7352,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 13136,
+          "new_count": 13136,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": true,
+          "old_count": 13272,
+          "new_count": 13272,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7888,
+          "new_count": 7888,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7784,
+          "new_count": 7784,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 13544,
+          "new_count": 13544,
+          "different_positions": 38,
+          "examples": [
+            {
+              "index": 1439,
+              "old": "@!P2 STS [0x2c], RZ",
+              "new": "@!P2 STS [0x12c], RZ"
+            },
+            {
+              "index": 1489,
+              "old": "@!P4 STS [R6.X4+0xc], R15",
+              "new": "@!P4 STS [R6.X4+0x10c], R15"
+            },
+            {
+              "index": 1491,
+              "old": "LDS R5, [0x2c]",
+              "new": "LDS R5, [0x12c]"
+            },
+            {
+              "index": 1507,
+              "old": "LDS R12, [R10.X4+0xc]",
+              "new": "LDS R12, [R10.X4+0x10c]"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 13688,
+          "new_count": 13688,
+          "different_positions": 38,
+          "examples": [
+            {
+              "index": 1438,
+              "old": "@!P1 STS [0x2c], RZ",
+              "new": "@!P1 STS [0x12c], RZ"
+            },
+            {
+              "index": 1488,
+              "old": "@!P5 STS [R3.X4+0xc], R32",
+              "new": "@!P5 STS [R3.X4+0x10c], R32"
+            },
+            {
+              "index": 1490,
+              "old": "LDS R5, [0x2c]",
+              "new": "LDS R5, [0x12c]"
+            },
+            {
+              "index": 1506,
+              "old": "LDS R12, [R8.X4+0xc]",
+              "new": "LDS R12, [R8.X4+0x10c]"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 9320,
+          "new_count": 9320,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 15480,
+          "new_count": 15480,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": true,
+          "old_count": 15608,
+          "new_count": 15608,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4480,
+          "new_count": 4480,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4968,
+          "new_count": 4968,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 6496,
+          "new_count": 6496,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4432,
+          "new_count": 4432,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4880,
+          "new_count": 4880,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 6416,
+          "new_count": 6416,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "equal": true,
+          "old_count": 9536,
+          "new_count": 9536,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        }
+      ],
+      "new_instances": [
+        {
+          "archive": "joint_mdo_after_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla22BatchMLAJointMDOKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_18JointMDOHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+        },
+        {
+          "archive": "joint_mdo_after_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla22BatchMLAJointMDOKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_18JointMDOHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+        }
+      ]
+    },
+    "_normal": {
+      "original_count": 68,
+      "equal_count": 60,
+      "changed_count": 8,
+      "pure_device_exact": true,
+      "original_records": [
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7152,
+          "new_count": 7152,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 12320,
+          "new_count": 12320,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": true,
+          "old_count": 12464,
+          "new_count": 12464,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7712,
+          "new_count": 7712,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7600,
+          "new_count": 7600,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 12688,
+          "new_count": 12688,
+          "different_positions": 38,
+          "examples": [
+            {
+              "index": 1439,
+              "old": "@!P2 STS [0x2c], RZ",
+              "new": "@!P2 STS [0x12c], RZ"
+            },
+            {
+              "index": 1489,
+              "old": "@!P4 STS [R6.X4+0xc], R15",
+              "new": "@!P4 STS [R6.X4+0x10c], R15"
+            },
+            {
+              "index": 1491,
+              "old": "LDS R5, [0x2c]",
+              "new": "LDS R5, [0x12c]"
+            },
+            {
+              "index": 1507,
+              "old": "LDS R12, [R10.X4+0xc]",
+              "new": "LDS R12, [R10.X4+0x10c]"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 12824,
+          "new_count": 12824,
+          "different_positions": 38,
+          "examples": [
+            {
+              "index": 1435,
+              "old": "@!P1 STS [0x2c], RZ",
+              "new": "@!P1 STS [0x12c], RZ"
+            },
+            {
+              "index": 1485,
+              "old": "@!P5 STS [R6.X4+0xc], R15",
+              "new": "@!P5 STS [R6.X4+0x10c], R15"
+            },
+            {
+              "index": 1487,
+              "old": "LDS R5, [0x2c]",
+              "new": "LDS R5, [0x12c]"
+            },
+            {
+              "index": 1503,
+              "old": "LDS R12, [R10.X4+0xc]",
+              "new": "LDS R12, [R10.X4+0x10c]"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 9144,
+          "new_count": 9144,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 14344,
+          "new_count": 14344,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": true,
+          "old_count": 14480,
+          "new_count": 14480,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3888,
+          "new_count": 3888,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4176,
+          "new_count": 4176,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5608,
+          "new_count": 5608,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3768,
+          "new_count": 3768,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4096,
+          "new_count": 4096,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5504,
+          "new_count": 5504,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "equal": true,
+          "old_count": 9256,
+          "new_count": 9256,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7152,
+          "new_count": 7152,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 12320,
+          "new_count": 12320,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": true,
+          "old_count": 12464,
+          "new_count": 12464,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7712,
+          "new_count": 7712,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7600,
+          "new_count": 7600,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 12688,
+          "new_count": 12688,
+          "different_positions": 38,
+          "examples": [
+            {
+              "index": 1439,
+              "old": "@!P2 STS [0x2c], RZ",
+              "new": "@!P2 STS [0x12c], RZ"
+            },
+            {
+              "index": 1489,
+              "old": "@!P4 STS [R6.X4+0xc], R15",
+              "new": "@!P4 STS [R6.X4+0x10c], R15"
+            },
+            {
+              "index": 1491,
+              "old": "LDS R5, [0x2c]",
+              "new": "LDS R5, [0x12c]"
+            },
+            {
+              "index": 1507,
+              "old": "LDS R12, [R10.X4+0xc]",
+              "new": "LDS R12, [R10.X4+0x10c]"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 12824,
+          "new_count": 12824,
+          "different_positions": 38,
+          "examples": [
+            {
+              "index": 1435,
+              "old": "@!P1 STS [0x2c], RZ",
+              "new": "@!P1 STS [0x12c], RZ"
+            },
+            {
+              "index": 1485,
+              "old": "@!P5 STS [R6.X4+0xc], R15",
+              "new": "@!P5 STS [R6.X4+0x10c], R15"
+            },
+            {
+              "index": 1487,
+              "old": "LDS R5, [0x2c]",
+              "new": "LDS R5, [0x12c]"
+            },
+            {
+              "index": 1503,
+              "old": "LDS R12, [R10.X4+0xc]",
+              "new": "LDS R12, [R10.X4+0x10c]"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 9144,
+          "new_count": 9144,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 14344,
+          "new_count": 14344,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": true,
+          "old_count": 14480,
+          "new_count": 14480,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3888,
+          "new_count": 3888,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4176,
+          "new_count": 4176,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5608,
+          "new_count": 5608,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3768,
+          "new_count": 3768,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4096,
+          "new_count": 4096,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5504,
+          "new_count": 5504,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "equal": true,
+          "old_count": 9256,
+          "new_count": 9256,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7152,
+          "new_count": 7152,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 12320,
+          "new_count": 12320,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": true,
+          "old_count": 12464,
+          "new_count": 12464,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7712,
+          "new_count": 7712,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7600,
+          "new_count": 7600,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 12688,
+          "new_count": 12688,
+          "different_positions": 38,
+          "examples": [
+            {
+              "index": 1439,
+              "old": "@!P2 STS [0x2c], RZ",
+              "new": "@!P2 STS [0x12c], RZ"
+            },
+            {
+              "index": 1489,
+              "old": "@!P4 STS [R6.X4+0xc], R15",
+              "new": "@!P4 STS [R6.X4+0x10c], R15"
+            },
+            {
+              "index": 1491,
+              "old": "LDS R5, [0x2c]",
+              "new": "LDS R5, [0x12c]"
+            },
+            {
+              "index": 1507,
+              "old": "LDS R12, [R10.X4+0xc]",
+              "new": "LDS R12, [R10.X4+0x10c]"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 12824,
+          "new_count": 12824,
+          "different_positions": 38,
+          "examples": [
+            {
+              "index": 1435,
+              "old": "@!P1 STS [0x2c], RZ",
+              "new": "@!P1 STS [0x12c], RZ"
+            },
+            {
+              "index": 1485,
+              "old": "@!P5 STS [R6.X4+0xc], R15",
+              "new": "@!P5 STS [R6.X4+0x10c], R15"
+            },
+            {
+              "index": 1487,
+              "old": "LDS R5, [0x2c]",
+              "new": "LDS R5, [0x12c]"
+            },
+            {
+              "index": 1503,
+              "old": "LDS R12, [R10.X4+0xc]",
+              "new": "LDS R12, [R10.X4+0x10c]"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 9144,
+          "new_count": 9144,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 14344,
+          "new_count": 14344,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": true,
+          "old_count": 14480,
+          "new_count": 14480,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3888,
+          "new_count": 3888,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4176,
+          "new_count": 4176,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5608,
+          "new_count": 5608,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3768,
+          "new_count": 3768,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4096,
+          "new_count": 4096,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5504,
+          "new_count": 5504,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "equal": true,
+          "old_count": 9256,
+          "new_count": 9256,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7152,
+          "new_count": 7152,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 12320,
+          "new_count": 12320,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": true,
+          "old_count": 12464,
+          "new_count": 12464,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7712,
+          "new_count": 7712,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 7600,
+          "new_count": 7600,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": false,
+          "old_count": 12688,
+          "new_count": 12688,
+          "different_positions": 38,
+          "examples": [
+            {
+              "index": 1439,
+              "old": "@!P2 STS [0x2c], RZ",
+              "new": "@!P2 STS [0x12c], RZ"
+            },
+            {
+              "index": 1489,
+              "old": "@!P4 STS [R6.X4+0xc], R15",
+              "new": "@!P4 STS [R6.X4+0x10c], R15"
+            },
+            {
+              "index": 1491,
+              "old": "LDS R5, [0x2c]",
+              "new": "LDS R5, [0x12c]"
+            },
+            {
+              "index": 1507,
+              "old": "LDS R12, [R10.X4+0xc]",
+              "new": "LDS R12, [R10.X4+0x10c]"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": false,
+          "old_count": 12824,
+          "new_count": 12824,
+          "different_positions": 38,
+          "examples": [
+            {
+              "index": 1435,
+              "old": "@!P1 STS [0x2c], RZ",
+              "new": "@!P1 STS [0x12c], RZ"
+            },
+            {
+              "index": 1485,
+              "old": "@!P5 STS [R6.X4+0xc], R15",
+              "new": "@!P5 STS [R6.X4+0x10c], R15"
+            },
+            {
+              "index": 1487,
+              "old": "LDS R5, [0x2c]",
+              "new": "LDS R5, [0x12c]"
+            },
+            {
+              "index": 1503,
+              "old": "LDS R12, [R10.X4+0xc]",
+              "new": "LDS R12, [R10.X4+0x10c]"
+            }
+          ],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 9144,
+          "new_count": 9144,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "equal": true,
+          "old_count": 14344,
+          "new_count": 14344,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "equal": true,
+          "old_count": 14480,
+          "new_count": 14480,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3888,
+          "new_count": 3888,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4176,
+          "new_count": 4176,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5608,
+          "new_count": 5608,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 3768,
+          "new_count": 3768,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 4096,
+          "new_count": 4096,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "equal": true,
+          "old_count": 5504,
+          "new_count": 5504,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": true
+        },
+        {
+          "archive": "base_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "equal": true,
+          "old_count": 9256,
+          "new_count": 9256,
+          "different_positions": 0,
+          "examples": [],
+          "pure_device": false
+        }
+      ],
+      "new_instances": [
+        {
+          "archive": "joint_mdo_after_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla22BatchMLAJointMDOKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_18JointMDOHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+        },
+        {
+          "archive": "joint_mdo_after_normal_batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla22BatchMLAJointMDOKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_18JointMDOHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+        },
+        {
+          "archive": "joint_mdo_after_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla22BatchMLAJointMDOKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_18JointMDOHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+        },
+        {
+          "archive": "joint_mdo_after_normal_batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_sass.txt.gz",
+          "symbol": "_ZN10flashinfer3mla22BatchMLAJointMDOKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_18JointMDOHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+        }
+      ]
+    }
+  },
+  "limitation": "Observed commuted logical operands and register-reuse hints do not establish equivalent performance. No first-version benchmark launch; strict original34/68 gate remains required for the definition-order control."
+}

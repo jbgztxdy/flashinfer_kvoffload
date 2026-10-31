@@ -1,0 +1,132 @@
+{
+  "cohort": "native",
+  "hardware": "SXM0/1A100NV12",
+  "base_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "candidate_sha256": "1190d4fd5f85d38a489ae67f0fc7e7ad5fdd567f39829eb218e1fb26ef52aa59",
+  "positions": 1024,
+  "passes": 3,
+  "tasks": [
+    {
+      "variant": "joint_mdo_typed",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 64,
+      "settings": [
+        "nvlink",
+        "pcie"
+      ],
+      "fetch_ctas": 24,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 64,
+      "settings": [
+        "nvlink",
+        "pcie"
+      ],
+      "fetch_ctas": 24,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 128,
+      "settings": [
+        "nvlink",
+        "pcie"
+      ],
+      "fetch_ctas": 24,
+      "fractions": null
+    },
+    {
+      "variant": "joint_mdo_typed",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 128,
+      "settings": [
+        "nvlink",
+        "pcie"
+      ],
+      "fetch_ctas": 24,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 1,
+      "requests": 512,
+      "settings": [
+        "nvlink",
+        "pcie"
+      ],
+      "fetch_ctas": 24,
+      "fractions": null
+    },
+    {
+      "variant": "joint_mdo_typed",
+      "kind": "lru",
+      "mtp": 1,
+      "requests": 512,
+      "settings": [
+        "nvlink",
+        "pcie"
+      ],
+      "fetch_ctas": 24,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 1,
+      "requests": 1,
+      "settings": [
+        "nvlink",
+        "pcie"
+      ],
+      "fetch_ctas": 16,
+      "fractions": null
+    },
+    {
+      "variant": "joint_mdo_typed",
+      "kind": "lru",
+      "mtp": 1,
+      "requests": 1,
+      "settings": [
+        "nvlink",
+        "pcie"
+      ],
+      "fetch_ctas": 16,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 32,
+      "settings": [
+        "nvlink",
+        "pcie"
+      ],
+      "fetch_ctas": 16,
+      "fractions": null
+    },
+    {
+      "variant": "joint_mdo_typed",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 32,
+      "settings": [
+        "nvlink",
+        "pcie"
+      ],
+      "fetch_ctas": 16,
+      "fractions": null
+    }
+  ],
+  "expected_cells": 20,
+  "limitation": "Real peer source on physicalGPU1, attentionGPU0,NUMA0,NV12. Only run when bothGPU0/1 idle and shared gpu01.lock permits. No H800 submission/source change. Exact original34/68 proof and local109tests already passed; no installation from partial matrix."
+}
