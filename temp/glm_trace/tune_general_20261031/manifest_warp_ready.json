@@ -1,0 +1,5 @@
+{
+  "base_sha256": "81891229df298b90219410b5a4df1e6c20dc4cb1ee9c0233bd17ad383b29225b",
+  "candidate_sha256": "0be44a5bc5edd86cb1560eacb6821ededc36ba2bf368dca3e498b1f1f649da75",
+  "change": "Whole-row only: reuse per-thread page ids; 8-lane row leaders acquire staging flags, syncwarp before cp.async; remove duplicate warp0 waits. Generic path unchanged."
+}

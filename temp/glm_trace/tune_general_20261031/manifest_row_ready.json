@@ -1,0 +1,5 @@
+{
+  "base_sha256": "81891229df298b90219410b5a4df1e6c20dc4cb1ee9c0233bd17ad383b29225b",
+  "candidate_sha256": "b8107d4856af1178c871b1305903b46f04045faaff4187b2fd3dff2ef9ccfc5a",
+  "change": "Whole-row only: acquire every Host tile publication once before attend_host_batch_tiles; remove per-tile waits from the compute pipeline. May lose resident-prefix overlap; benchmark before adoption."
+}

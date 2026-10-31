@@ -1,0 +1,83 @@
+{
+  "updated_at": "2026-10-31T17:32:38+0800",
+  "warp_ready": {
+    "status": "not_adopted_after_screen",
+    "reason": "256-position 3-pass screen: 100 GB/s and NVLink slower; 50 GB/s essentially unchanged. Full validation not justified without a performance signal.",
+    "rows": [
+      {
+        "setting": "g100_l0",
+        "base_us": 3427.776016294956,
+        "candidate_us": 3489.397332072258,
+        "slower_fraction": 0.01797705435955166,
+        "base_raw": "temp/glm_trace/tune_general_20261031/raw/screen256_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+        "candidate_raw": "temp/glm_trace/tune_general_20261031/raw/screen256_warp_ready_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json"
+      },
+      {
+        "setting": "g100_l20000",
+        "base_us": 3458.6666574080787,
+        "candidate_us": 3521.0773423314095,
+        "slower_fraction": 0.018044723908172466,
+        "base_raw": "temp/glm_trace/tune_general_20261031/raw/screen256_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+        "candidate_raw": "temp/glm_trace/tune_general_20261031/raw/screen256_warp_ready_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json"
+      },
+      {
+        "setting": "g50_l20000",
+        "base_us": 5311.62666529417,
+        "candidate_us": 5305.930649240811,
+        "slower_fraction": -0.0010723675461937754,
+        "base_raw": "temp/glm_trace/tune_general_20261031/raw/screen256_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+        "candidate_raw": "temp/glm_trace/tune_general_20261031/raw/screen256_warp_ready_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json"
+      },
+      {
+        "setting": "nvlink",
+        "base_us": 3344.4373309612274,
+        "candidate_us": 3386.399991810322,
+        "slower_fraction": 0.01254700169162204,
+        "base_raw": "temp/glm_trace/tune_general_20261031/raw/screen256_base_staged_f24_i64_soff_lru_nvlink_mtp8_b128.json",
+        "candidate_raw": "temp/glm_trace/tune_general_20261031/raw/screen256_warp_ready_staged_f24_i64_soff_lru_nvlink_mtp8_b128.json"
+      }
+    ]
+  },
+  "row_ready": {
+    "status": "not_adopted_after_screen",
+    "reason": "256-position 3-pass candidate-then-base screen slower on all four links. Removing per-tile waits did not repay lost resident-prefix overlap.",
+    "rows": [
+      {
+        "setting": "g100_l0",
+        "base_us": 3420.575993756453,
+        "candidate_us": 3488.2133454084396,
+        "slower_fraction": 0.01977367314026779,
+        "base_raw": "temp/glm_trace/tune_general_20261031/raw/screenrow256_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+        "candidate_raw": "temp/glm_trace/tune_general_20261031/raw/screenrow256_row_ready_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json"
+      },
+      {
+        "setting": "g100_l20000",
+        "base_us": 3442.8479994336763,
+        "candidate_us": 3533.1199963887534,
+        "slower_fraction": 0.02622015173772585,
+        "base_raw": "temp/glm_trace/tune_general_20261031/raw/screenrow256_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+        "candidate_raw": "temp/glm_trace/tune_general_20261031/raw/screenrow256_row_ready_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json"
+      },
+      {
+        "setting": "g50_l20000",
+        "base_us": 5300.885339577992,
+        "candidate_us": 5414.026672641437,
+        "slower_fraction": 0.021343855943967815,
+        "base_raw": "temp/glm_trace/tune_general_20261031/raw/screenrow256_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+        "candidate_raw": "temp/glm_trace/tune_general_20261031/raw/screenrow256_row_ready_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json"
+      },
+      {
+        "setting": "nvlink",
+        "base_us": 3282.18666712443,
+        "candidate_us": 3317.3333381613097,
+        "slower_fraction": 0.010708309612284195,
+        "base_raw": "temp/glm_trace/tune_general_20261031/raw/screenrow256_base_staged_f24_i64_soff_lru_nvlink_mtp8_b128.json",
+        "candidate_raw": "temp/glm_trace/tune_general_20261031/raw/screenrow256_row_ready_staged_f24_i64_soff_lru_nvlink_mtp8_b128.json"
+      }
+    ]
+  },
+  "defer_cache": {
+    "status": "awaiting_screen",
+    "reason": "Keep immediate staging publications; defer whole-row cache binding/scatter until after the remote fetch loop. Test at identical fetch16 first. Adds one HBM read per inserted page and a cache-fill tail, so no adoption without full evidence."
+  }
+}

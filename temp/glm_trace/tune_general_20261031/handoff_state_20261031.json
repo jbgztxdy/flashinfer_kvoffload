@@ -1,0 +1,67 @@
+{
+  "checked_at": "2026-10-31T16:29:22.220151+08:00",
+  "repository": "/mnt/data/rtx/projects/flashinfer",
+  "git_head": "d80eff02",
+  "production_kernel_sha256": "81891229df298b90219410b5a4df1e6c20dc4cb1ee9c0233bd17ad383b29225b",
+  "new_profiling_complete": true,
+  "project_gpu_processes_running": false,
+  "local_free_gpus": [
+    0,
+    1,
+    3
+  ],
+  "other_gpu_services": [
+    {
+      "gpu": 2,
+      "pids": [
+        3370906,
+        3370927
+      ],
+      "service": "VLLM"
+    }
+  ],
+  "profiles": [
+    {
+      "path": "temp/glm_trace/tune_general_20261031/raw/profile_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "dfac783ab712f09285c9cb34278c5c64f52ee061540a098e9379d0c2249a5a4c",
+      "complete": true,
+      "variant": "profile",
+      "steps": 128,
+      "passes": 1,
+      "no_foreign_processes": true
+    },
+    {
+      "path": "temp/glm_trace/tune_general_20261031/raw/profile_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "sha256": "5a7c25fe1b4994f2007fd6b1631e222ef127d483d7e10b0af028a9c235f820b9",
+      "complete": true,
+      "variant": "profile",
+      "steps": 128,
+      "passes": 1,
+      "no_foreign_processes": true
+    },
+    {
+      "path": "temp/glm_trace/tune_general_20261031/raw/profile_staged_f24_i64_soff_lru_nvlink_mtp8_b128.json",
+      "sha256": "a6c1ba10bd30ed02f3b3a1b4bcd61c6f54ba8db4b0dbdb820adc096de0d8052a",
+      "complete": true,
+      "variant": "profile",
+      "steps": 128,
+      "passes": 1,
+      "no_foreign_processes": true
+    }
+  ],
+  "queue_snapshot": "temp/glm_trace/tune_general_20261031/h800_queue_20261031.txt",
+  "slurm_pending_jobs": [
+    1004362,
+    1004363,
+    1040680,
+    1089379,
+    1089380
+  ],
+  "watchers": [
+    4160646,
+    1174145
+  ],
+  "previous_round_summary": "temp/glm_trace/tune_100gb_20261030/summary.json",
+  "previous_round_audited_cells": 577,
+  "production_change_uncommitted": true
+}

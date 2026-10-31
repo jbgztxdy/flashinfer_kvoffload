@@ -1,0 +1,36 @@
+{
+  "recorded_at": "2026-10-31T17:35:17+0800",
+  "goal_status": "active",
+  "turn_classification": "progress and verified wait",
+  "previous_round_commit": "5157ff83",
+  "production_header_sha256": "81891229df298b90219410b5a4df1e6c20dc4cb1ee9c0233bd17ad383b29225b",
+  "completed_screening_sessions": [
+    3077,
+    56700
+  ],
+  "active_runner": {
+    "session_id": 49726,
+    "command": "/mnt/data/mhy-vllm-venv/bin/python -u temp/glm_trace/tune_general_20261031/run_readiness.py --variants defer_cache base --tag screencache16_ --fetch-ctas 16",
+    "last_direct_tool_observation": "2026-10-31T17:34:33+0800 WAITING; GPU0/1 foreign PIDs 246102 and 246103",
+    "revalidate": "Poll the same unified-exec handle. A stale state file, temporary observation failure or time elapsed is not terminal; inspect actual process if the handle is unavailable."
+  },
+  "candidate_header_sha256": {
+    "base": "81891229df298b90219410b5a4df1e6c20dc4cb1ee9c0233bd17ad383b29225b",
+    "warp_ready": "0be44a5bc5edd86cb1560eacb6821ededc36ba2bf368dca3e498b1f1f649da75",
+    "row_ready": "b8107d4856af1178c871b1305903b46f04045faaff4187b2fd3dff2ef9ccfc5a",
+    "defer_cache": "562fba07a3ce5ad5eeadf4ec817f779c512cb11b0bf783474ca2468ab1310cba"
+  },
+  "no_new_candidate_adopted": true,
+  "full_trace_performance_confirmation_pending": true,
+  "cross_scenario_regression_pending": true,
+  "normal_candidate_gpu_correctness_pending": true,
+  "h800_snapshot": "temp/glm_trace/tune_general_20261031/h800_queue_resume_20261031.txt",
+  "h800_existing_jobs": [
+    1004362,
+    1004363,
+    1040680,
+    1089379,
+    1089380
+  ],
+  "note": "Do not rerun rejected readiness screens or duplicate the active runner. If defer_cache has no signal, reject it and continue investigating compute/fetch resource contention. If it has a signal, extend identical-parameter confirmation, not production adoption."
+}

@@ -1,0 +1,291 @@
+# 交接：远端 KV 稀疏 MLA 算子项目（2026-10-29）
+
+**10/30 100GB实际kernel优化已完成一轮（最新）**：用户要求100GB/s优化并逼近参考。最终头文件`include/flashinfer/attention/mla_host_batch.cuh`新增受保护的整行staged编译期路径，SHA81891229df298b90219410b5a4df1e6c20dc4cb1ee9c0233bd17ad383b29225b。每行直接输出，省尾部partial与merge，并去掉不可能发生的原地读写回和零远端模拟检查；实际fetch处的原带宽/延迟模拟完全保留。派发条件：stage=True、host_split=False、64 heads、query行数>=4*SM数、staging>=rows*max_kv_len。A100-SXM4推荐432+行fetch24/split off；小形状仍fetch16/on。仍单cooperative kernel，API/workspace/缓存政策不变。六个原generic BF16 kernel的指令文本与资源完全一致（compiler_summary.json/gzip SASS）。新增2个整行Graph/padding/payload/全本地切换测试，完整103项全部通过（pytest_final.log，12.96秒）。
+
+**最终实测与剩余差距**：完整GLM53 assistant trace、staged＋LRU4096、100GB20us、5pass冷启动全步确认：MTP1/512请求2885.27→2193.83us（−24.0%），MTP8/64为2462.30→1833.68（−25.5%），MTP8/128为4388.65→3560.53（−18.9%）。同fetch24/split off旧代码2521.29/2180.34/4160.36us，代码本身下降13.0%/15.9%/14.4%。Memcpy加速1.625/1.756/1.770倍；仍高逐步max参考31.8%/34.1%/32.3%，**100GB全部逼近10%以内的目标尚未达成，不要宣称已最优**。50GB20us三个确认格距参考7.3%/9.9%/6.7%。fetch20/28邻近参数均未超过24 CTA；追加隔离重测因include目录未创建在GPU分配前失败，原始neighbor结果和源码SHA保留。原5304矩阵不改，新结果单列。
+
+**全量证据与文档**：`temp/glm_trace/tune_100gb_20261030/`保留所有候选、raw、源码snapshot、逐步/逐pass、CSV、SHA、signal和失败日志。final所有39形状×100GB五档延迟=195格；其他链路33格；最终无LRU84格+旧同轮84格；旧默认3大形状24格；5pass默认/同参/新三方36格。连同候选总审计569格、937920计时launch、59376有效队列、maxabs0.00692034，audit/summary complete=true。新报告`docs/mla_host_a100_100gb_optimization_20261030.md`附图`docs/assets/glm53_100gb_optimization_20261030/trace_optimization.png`；主汇报生成器新增§7.6与最新提示，旧图1–6/5304格仍明确为旧固定配置。原100gb_review审计改为核对执行时snapshot而不要求后续生产文件仍相同，历史复建可运行。
+
+**候选与诊断**：原fetch16 phase显示prepare/resolve约0.20ms、fetch最晚4.01ms、attention4.234ms、merge4.406ms；LRU通常0.254ms前完成。主要差距不是LRU单项。未采用fastpipe4/tile64/queue/local_loop/fetch128/regpipe3，全部保留候选表。寄存器三级流水无spill但12/16/20fetch为5.121/4.128/3.631ms，未优于最终。一次早期插队尝试在前一基准进程退出时require_exclusive拒绝（未分配数据），日志保留，正式候选由监督器串行完成。此前其他用户GPU作业占用时只等待，不杀进程；GPU2/3未碰。
+
+**运行全部结束，别重复启动**：signal_validation/tests/confirmation/regpipe3等记录exit0、signals=[]；最后regpipe3结束19:02:16。GPU0/1已无本任务进程。所有脚本共享原gpu01.lock；未改集群H800生产/排队树，没有本轮H800结果。后续应继续解决100GB下fetch占用SM与计算资源的取舍、prepare和流水尾部，而不是把当前31%剩余开销视作已不可缩小。
+
+**10/30 汇报重命名与100GB核查（最新）**：用户将汇报重命名为`docs/mla_host_glm53_report.md`，已同步生成器/校验器路径，保留重命名。新增实验口径总表、各节与六幅图的trace快照/完整回放、staged/原地读、LRU关闭/4096槽标注，补充A800逐层prefill teacher-forcing采集及同容量基线LRU不保证同stamp淘汰并列次序一致。全部主图依旧来自原5304格矩阵；原始矩阵SHA未变。已核对报告数字/537个图源及逐步max，原26比较/17链路/6参考/12路径对之外新增4链路诊断行和4参数行。
+
+**100GB参数补测**：`temp/glm_trace/100gb_review_20261030/`，A100 GPU0/1独占串行、真实assistant完整1024位置、128请求×MTP8、staged＋LRU4096；只调整现有fetch8/16/32/64、item64/256、host_split的10套组合×100GB/s 0/20us，共20格3pass，再倒序确认默认/候选各0/20us四格5pass。未修改生产kernel。含原始样本、逐pass、源码快照、CSV、README、summary/audit、退出信号记录；审计complete=true。主扫描20us默认4400.24→候选4230.80us（3.85%），倒序确认4428.17→4222.93us（4.63%），候选fetch32/item64/split off仍是staged，并非原地读，仍高于逐步重叠参考56.9%。0us扫描最低fetch16/item64/split off3894.31us。fetch8严重回退，fetch64也回退。原矩阵4450.15us仍保留，不逐格替换。
+
+**100GB解释边界**：原矩阵100GB0us4099.12、20us4450.15、不限速零附加延迟模拟4056.09、本地2467.18us；即去掉20us不足以解决。无LRU快照staged 128请求远端30%也高重叠参考48.3%，不能归因于LRU唯一开销（两输入不能相减当消融）。共享SM/HBM、staging、工作项尾部/等待是待定位候选；本次未做内部阶段计时，不精确分摊。结果支持有限带宽中大batch优于Memcpy和50GB/PCIe接近参考，不支持100GB普遍接近下限。生产kernel未改，无GPU任务留跑；supervise记录扫描与确认均exit0。
+
+**10/30 12:18 当前任务已完成**：用户要求的kernel-only全矩阵已收齐并审计通过：无LRU4641/4641、完整trace＋LRU663/663、本地参考312/312；5304比较格无缺失，1955940次计时launch、143745段有效队列，采样数学校验最大绝对误差0.00692034。15组链路校准、11组波动复测完成。此任务只评估现有kernel，没有修改生产kernel/csrc/Python API；不等于H800调优目标已达成。
+
+**产物与验证**：实验目录`temp/glm_trace/kernel_report_20261029/`；完整报告`docs/mla_host_glm53_kernel_matrix_20261029.md`及同名自包含HTML（筛选/导出CSV、内嵌图）；平面表`matrix.csv/json`、每步样本`raw/`、失败历史`failures/`、SHA源码快照均保留。`audit.json: complete=true`；`check_report.py`核对MD/CSV/JSON/HTML全部5304格，并实际用禁用GPU的Chrome验证筛选和CSV下载，结果与报告产物SHA见`report_check.json`。新报告是A100-SXM4实测，不是H800实测。
+
+**10/30 汇报版与下限复核**：用户要突出相对Memcpy收益及接近极限，明确只写Markdown自行导出PDF。报告`docs/mla_host_glm53_report_external.md`，六图在`docs/assets/glm53_briefing_20261030/`，旧external未改。随后要求柱图增加max(计算,搬运)、问原始本地是否0、追问历史1%–10%差距。已给三组柱图加参考线，修正衍生下限为逐步取max再平均：100GB/s20us MTP8/128请求由2595.96→2691.45us，高出71.4%→65.3%；原5304格矩阵不修改，汇报derived在references.py。图3原始本地0.0475%–0.0488%，历史KV远端/最新token本地，已标数值并放大；LRU后本地78.95%另计。
+
+**最新复核证据**：`temp/glm_trace/briefing_report_20261030/`含537个图源格及逐步参考、26对比/17链路/6参考/4本地占比/2复测/2物理带宽验证。GPU0/1当时空闲，独立复测同kernel SHA、绑定、完整1024位置3pass：100GB/s20us4450.15→4376.00us（−1.67%），50GB/s20us5679.23→5682.67（+0.06%），本地2467.18→2457.21（−0.40%），正确性/guard通过；recheck/raw和源码快照保留。物理带宽补测PCIe27.039965/NVLink281.123759GB/s，取9次中位数max(DMA,gather)，physical_bandwidth.json。当前trace PCIe MTP8的32/64/128请求距逐步重叠参考8.8%/8.4%/4.8%；50GB/s128请求9.4%。旧代理PCIe112请求/25%约1.01来自较大索引组bytes，均值预算重算1.036；旧100GB/s20us128请求也高55.8%，不能外推所有场景10%内。verification_notes.md/json与verify_sources.py记录全部依据。复测/探针已结束，无GPU任务；不自动重跑矩阵或改kernel。
+
+**10/30 路径对照完成（新于上段）**：用户问100GB/s换原地读是否更好，已独立测试同trace/seed/MTP8/4096槽、16/64/128请求、100GB/s0/20us＋50GB/s20us＋物理NVLink，24格＋2短校验，3pass完整1024位置。全部通过正确性/均值/队列/源码快照审计；原矩阵不改，kernel未改。报告`docs/mla_host_glm53_route_comparison.md`，数据`temp/glm_trace/route_compare_20261030/`；汇报版新增§7.4单独列表，不把可选路由混入原staged全矩阵。
+
+**路径结论**：100/50GB/s九个batch/链路对均staged更快；物理NVLink三对均原地读更快。128请求staged/原地读us：100GB0us4058.97/5763.21、100GB20us4361.09/11956.27、50GB20us5661.50/13248.88、NVLink3744.73/3290.95。原地读miss引用约509MB/步、staged unique约260MB，重复1.96倍；命中约78.9%接近，非未开LRU。原地读附加高延迟多轮等待的具体成本未消融，不精确归因。NVLink16请求原地读557.74us/本地502.99us（1.11），128为3290.95/2467.18（1.33），仍需按形状表述。
+
+**路径执行证据**：同GPU0/1串行；起初另一mozi profiler在占用，第一smoke因require_exclusive在分配数据前拒绝，失败归档，随后等其控制器和GPU空闲续跑。原地读post-event诊断遮掉ownerbit再数正远端page；raw staging_rows沿用公共VMM/基线缓冲计划，内部host_stage=False实际staging_capacity=0，派生列effective_kernel_staging_rows明确。supervise记录14:35:47 exit0、signals=[]，任务已结束；报告source/mean/guard/hash校验齐全。不要重复启动或杀其他GPU服务。
+
+**运行已结束，不要重复启动**：监督器`supervise.py`所记录的run.py PID1217424于12:17:11正常exit0，`signal_matrix_run11.json` signals为空；session26797已返回0。日志`run_resume11.log`含ALL_MATRIX_COMPLETE，report watcher已输出REPORT_AND_AUDIT_COMPLETE并退出。旧PID/锁文件不是活进程证据，后续仍先ps核实。GPU2其他VLLM始终未碰，GPU0/1各组均检查独占。
+
+**主要结果**：无LRU2643/4641格严格快于Memcpy；LRU538/663。按±3%阅读阈值，无LRU快2368/近535/慢1738，LRU快512/近45/慢106。LRU100GB/s＋20us快36/39、几何平均1.217倍，50GB/s＋20us快39/39、1.374倍。MTP8 128请求：100GB/s20us本文4450.15/Memcpy6287.30/纯本地2467.18us；50GB/s20us5679.23/8968.73/2467.18us，理想传输5191.78us，距理想重叠约9.4%。仍有小batch/NVLink输的场景，不宣称普遍胜出。本文统一staged，不逐格挑最优实现。
+
+**实验口径与范围限制**：39个batch形状×17链路（不限/100/50GB/s×0/2/5/10/20us＋NVLink/PCIe）；无LRU再×7个Host比例0–30%。3pass算术平均，LRU完整1024位置含冷启动、4096槽/请求；无LRU四个间隔位置。本文batched staged/fetch16/item64，单行也走该实现，SMALL_PREPARE关闭，header SHA354f0204…。Memcpy真实cache payload＋离线精确LRU，CPU oracle及真实trace逐数组/payload校验通过；H2D/gather、必要scatter和完整attention计时，CPU规划/packing/索引上传在外。无LRU直接写连续staging（path_version2），继承的ours样本来源SHA留档。CUDA event guarded队列或16步CUDA Graph，诊断在事件外，每pass冷缓存。
+
+**trace与中断记录**：4个assistant 1024窗口×21层共84组；>84重复capture但远端/LRU独立，near超过128请求物理alias以适配40GB；Q/KV seeded BF16。MTP8连续8位置组合，不含生成接受率。LRU引用命中率67.44%–87.37%，是指定驻留策略下的回放值，非生产直接采集。无LRU与LRU原始远端规则不同，不直接相减当cache收益。512 Host预打包已限8GiB、按16步独立pinned源缓冲；该最大配置本次已成功。历史session23217 exit143来源未确定，不能归因OOM；诊断和遵从信号的监督器证据保留。
+
+**备份与后续硬件任务**：完整结果独立归档到集群`/WORK/PUBLIC/luyouy_work/rtx/yjw/test/glm_trace/kernel_matrix_final_20261030/`，压缩包SHA及提交号见远端`rtx/MEMORY.md`最终条目。原H800生产树、排队脚本、独立第三轮快照2b782ed3保持。10/30 11:51查原三作业1004362/1004363/1040680仍Priority、1089379/1089380仍Dependency；无新H800计时。后续若继续优化，先读本次完整矩阵及H800作业结果，不重跑本矩阵或覆盖排队源码。
+
+给下一个 agent：这份文档记录项目状态和文件指针，细节请读引用的文件。第 3 节（正在跑的作业）和第 4 节（下一步）最要紧。
+
+**10/29 第六轮最终方案：显式小batch准备优化**：用户“请做吧”批准继续我们kernel优化；此前“不用”表示暂不补Memcpy基线，HiSparse仍原生。GPU0/1被其他服务占用，未干预，本轮仅GPU3 A100-PCIE；far是同卡独立HBM，经未改模拟器限制50/100GB/s＋20us，另测零延迟和物理Host。不是物理NVLink，不与SXM绝对时间拼接。最终增加FLASHINFER_HOST_BATCH_SMALL_PREPARE编译选项，默认关闭、默认调用原函数；开启后小staged实例prepare每线程1条＋单warp scan。开启选项101项测试通过，175.76秒。单kernel/LRU/容量/top-k/workspace/API保持。
+
+**第六轮重要取舍**：32行四缓冲在高延迟快2%–6%，但零延迟慢15.4%，只留实验补丁、不在最终kernel中。中间版Host MTP1 16请求原地读多次慢约6%，一次恢复324.74us后完整矩阵又345us；隔离前后SASS指令文本相同，不能声称隔离修复。因此准备优化显式启用，默认保持原实现，并最终同源码开/关对照。enabled_*/default_*才是最终版本；retained_*/accepted_*是中间候选，final_*是流水候选。结果/两下限/源码恢复patch/压缩SASS/guard见temp/sim_link/tune_prepare及docs/mla_host_a100_prepare_tuning.md。当前header SHA354f0204195a4a6b8d2a4b7c954cc8fcccd0f65baf0213eac4f9fcb582d1c13c。H800排队树不覆盖，尚未实测该选项。
+
+**第六轮最终证据**：同源码开/关44配置/88模式格，100GB/s20us真实assistant MTP1单/四请求61.89→60.15、82.34→80.55us（2.8%/2.2%）；MTP8单/四请求100.51→98.03、249.58→246.10us（2.5%/1.4%），16请求约+0.2%。默认模拟/正常构建六个主kernel的反汇编指令文本均与f78基线一致。大batch28格最大+0.55%；全部最慢格原地读+1.85%，不称全面加速。107份timing JSON/372配置/34146段guard/1009764次计时launch，采样行max abs0.006855。默认关闭，需显式宏与独立JIT目录；最新完整迁移补丁tune_prepare/guarded_full.patch基于ac507996（kernel与f78相同），仍需先移植第四轮workspace＋第五轮。
+
+**10/29 H800 比较口径审计**：用户再次明确不优化HiSparse，按简单打开开关的默认原生路径比较。已核对当前SGLang faafa9810：生产coordinator仍调用单步load_cache_to_device_buffer_mla，srt没有独立spec API引用；该独立2–4步接口存在但不能当默认已接入。默认没有显式跨MTP批量去重，但有LRU，重复引用命中后不会重读。不要替它接多步接口。旧MTP8是8次单步swap-in/attention串行适配。Memcpy/Direct是CPU oracle LRU＋不检查完整输出的计时替身；PCIe CPU gather不计时，NVLink GPU gather计时但CPU/缓存维护仍缺项，不能直接称完整方案胜负。HiSparse适配器元数据/最新token搬运在计时内，我们索引copy在外；旧guard未记录acceptance，不能保证无CPU间隙，也未证实受污染。NVLink已核对NV8和远端GPU1物理分配。19配置证据temp/h800/audit_20261029，详见docs/mla_host_h800_benchmark_audit.md；没有新H800计时、未改排队源码。后续先补公平口径和完整正确Memcpy，再解读性能差距。
+
+**10/29 第五轮：大 batch 回退已修复（优先于下文第四轮）**：用户要求解决第四轮约3%回退。将ROW_MERGE变为编译期参数，launcher按形状选择一个cooperative kernel；大batch完全去除逐行计数/fence/等待和小batch取数阈值，仍单kernel。模拟构建2-stage/32-KV指令数13800→13544，与109b1c76相同，REG246且无spill；不宣称SASS逐字节一致。93项测试通过，新增持久缓存48→24→48行跨实例切换。100GB/s20us MTP8 128请求同参：优化前5543.94/回退5690.88/修复5541.38us；再次测修复5529.60/回退5688.83us。单/四请求相对优化前仍快11%/6%；真实assistant MTP1单/四请求快5.1%/7.4%。完整旧新55配置/110模式格，>32行的30格最慢约+0.47%（PCIe原地读），原3%回退消除。44份JSON/152配置，13552段guard、411712次计时launch，采样行max abs0.006596。见docs/mla_host_a100_regression_fix.md和temp/sim_link/fix_large（含audit/源码恢复补丁/压缩SASS/完整两下限）。H800生产header和第三轮快照2b782ed3保持，五个作业仍排队；移植时先应用第四轮workspace/csrc/Python完整补丁，再应用fix_large/fixed.patch，不能只覆盖header。后续继续压低小batch准备/等待成本，仍有距纯device约1.8–2倍的格子。
+
+**10/29 第四轮已完成常规对照（新于以下第三轮）**：用户继续授权在50/100GB/s及高延迟条件逼近纯device。保留单kernel，新增小staged batch的逐行完成计数/提前merge，以及fetch>8时超过一轮16行块即切换64行块，规则限制在至多32 query/head tiles。内部workspace每行增加一int32，必须连同Python/csrc一起移植，不能只覆盖header。91项测试通过。100GB/s20µs代理反向复测：MTP1四请求94.14→77.38us（约18%）、MTP8单请求101.89→90.11us（约12%）；真实assistant MTP1单/四请求约快5%/8%，MTP8四请求约快3%。详见docs/mla_host_a100_latency_tuning.md和temp/sim_link/tune_latency。
+
+**第四轮当时未解决项（大batch现已由第五轮修复）**：较大batch不启用新规则，但100GB/s20µs代理MTP8 16/128请求仍约慢1.7%/2.9%，当时待检查代码生成；50GB/s128请求近似不变。f32单请求约慢1%，不能把f16收益当相对旧版所有参数最优的改善。这里f16/f32指fetch CTA数，数据为BF16。原H800独立快照2b782ed3与1089379/1089380仍为第三轮、没有覆盖，需先读原实验后再移植第四/五轮。所有回退与参数筛选保留。
+
+**10/29 最新状态优先于下文历史记录**：第三轮单 query 合并已通过87项测试；修正1024步一次入队的计时污染，最终旧新对照用分段入队。GLM四篇采集1079524完成（23分44秒），四篇数据/assistant loss gate通过、全位置block gate仍失败；四个完整assistant窗口loss0.123/0.300/0.190/0.269。正式A100 assistant回放已完成6份JSON/15配置/7pass，7980段入队检查全部通过，14592次launch逐步采样行max abs0.007131。100GB/s20µs MTP8 16请求staged667.10µs，Memcpy867.70µs，下限494.59µs（1.35倍）；真实NVLink原地读531.46µs（下限1.07倍）。小batch仍有输的格子，见docs/mla_host_glm53_trace.md。
+
+**接续入口**：本机 `temp/sim_link/tune_small/` 保存第三轮全部候选/失败/最终对照和manifest，最终仅单query启用新合并。旧 `temp/glm_trace/results/a100_64k_doc0/` 的混合角色长trace未验证入队条件，部分绝对计时污染，保留原件但不作为最终结论；正式结果在 `a100_64k_assistant_20261029/`。H800独立worktree `rtx/yjw/flashinfer_tuned_20261029` 从dbbc02c6仅移植三轮性能补丁，无模拟钩子，且独立移植/去钩子两条推导逐行一致，manifest在temp/h800/tuned_20261029_manifest.json。1089379（1卡/20分钟，87项测试+PCIe）依赖原三个作业afterany，1089380（2卡/20分钟，NVLink）依赖1089379成功，均回放assistant的MTP1/8、1/4/16请求，含HiSparse及两下限。原生产header未改变。先查队列/日志，不重复提交。
+
+## 1. 项目目标
+
+做一个 FlashInfer 里的 **远端 KV 稀疏 MLA decode 算子**，面向 DeepSeek/GLM 的 DSA：每个 query 只读 indexer 选出的 top-k 2048 个 KV 行，每行 576 个 bf16（1152 字节）。KV 放在远端，远端是 Host DRAM（走 PCIe）或另一张 GPU 的 HBM（走 NVLink）。**跨 decode 的 LRU 缓存融合在同一个 cooperative kernel 里**，不拆成两个 kernel。
+
+**用户的核心目的**：这个带 LRU 的 DSA kernel 本身的性能，要明显优于两种朴素方法和 SGLang HiSparse，并且逼近理论下限。
+
+用户提出的目标，以及各自的状态：
+1. 把算子和项目迁移到集群 `kaituo1000_login21`，路径 `/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer`。**已完成。**
+2. 适配 H 卡（H800），LRU 融合进同一个算子，性能逼近理论极限。**算子已完成；H800 上还没达标**（§4.1）。
+3. 分别在 PCIe 和 NVLink（用 GPU 间 NVLink 模拟）下测试，batch 尽量多（MTP8 和 MTP1，1～1024 行）。**A100 全量已完成；H800 全量已跑，但默认配置表现差。**
+4. 与 SGLang HiSparse 做单层 decode 对比，不跑端到端，目的是体现本文 kernel 的优势。HiSparse 要按它实际的方式运行，不要替它优化。**H800 已有数据，部分场景输。**
+5. 在 A100 上模拟 50 和 100 GB/s 的带宽，以及更高的访问延迟（≤ 20 µs）。**已完成**，见 `docs/mla_host_link_emulation.md`。
+6. 用 GLM-5.3 的真实 trace 跑多步，记录 LRU 命中率，以及与纯本地 HBM 的差距。**进行中**（§4.2）。
+   - 用户 10/28 明确：trace 的用途是测本文 LRU DSA kernel 与其他方式的对比。所以需要一份**能记录每个 decode step 的 top-k** 的 trace，最重要的是 index score 和 top-k。
+   - 实现必须正确，但不需要和 SGLang 对比。
+   - 数据集可以换成更合适的，可以自己从 hf-mirror 或 modelscope 下载。
+
+## 2. 已完成工作的文档和数据
+
+| 内容 | 位置 |
+|---|---|
+| 汇总报告（带图，面向汇报） | `docs/mla_host_lru_report.md`（工作区有非本 agent 的改动，见 §6） |
+| A100 全量测试和方法定义 | `docs/mla_host_a100_full.md`，数据在 `temp/a100_full/` |
+| 开发过程、方案取舍、失败的尝试 | `docs/mla_host_a100_lru.md` |
+| H800 结果（验证、HiSparse 对比、全量） | `docs/mla_host_h800_lru.md`，数据在 `temp/h800/results/`，汇总在 `temp/h800/results/summary.md` |
+| 链路带宽和延迟模拟（A100） | `docs/mla_host_link_emulation.md`，数据在 `temp/sim_link/`，模拟器在 `include/flashinfer/attention/far_link_emu.cuh`（只在 `-DFLASHINFER_FAR_EMU` 下编入） |
+| A100 100 GB/s 高延迟与小 batch 新调优（10/28） | `docs/mla_host_a100_100gb_tuning.md`；对照数据/源码哈希/未采用补丁在 `temp/sim_link/tune_100/`，75 项测试通过 |
+| A100 第四轮：高延迟等待轮数 | `docs/mla_host_a100_latency_tuning.md`；`temp/sim_link/tune_latency/` |
+| A100 第三轮：单 query 合并 | `docs/mla_host_a100_single_query_tuning.md`；`temp/sim_link/tune_small/results.md` |
+| A100 第二轮：LRU 更新重叠与小 batch 分块 | `docs/mla_host_a100_lru_tuning.md`；正向/反向和原推荐参数对照在 `temp/sim_link/tune_lru/` |
+| kernel | `include/flashinfer/attention/mla_host_batch.cuh`（约 1700 行；主体是 `BatchMLAHostBatchKernel`，在约 1505 行） |
+| launcher | `csrc/batch_mla_run.cu` |
+| Python 接口 | `flashinfer/mla/_core.py`（`host_stage`、`host_fetch_ctas`、`set_host_cache`、`_run_host_batch`） |
+| 测试 | `tests/attention/test_mla_host_batch.py`（101 项） |
+| 跨 decode 测试脚本（含 HiSparse 和各下限） | `temp/h800/bench_rounds.py` |
+| GLM-5.3 新语料验证、真实 top-k 回放接入及未完成项 | `docs/mla_host_glm53_trace.md`；8K 接入结果 `temp/glm_trace/results/a100_8k_smoke.md`（尚非正式 64K/1024 结果） |
+| 单步测试脚本 | `temp/h800/bench_sweep.py` |
+| VMM 远端映射 | `temp/h800/tiers.py` |
+| H800 作业模板 | `temp/h800/job.sbatch`，环境 `temp/h800/env_job.sh` |
+| 早期的 fetch 带宽微基准 | `temp/fetch_bw/fetch_bw.cu` |
+
+**kernel 设计要点**
+- 两种模式共用一个 cooperative kernel：
+  - **PCIe 用 staged**：fetch CTA 对全 batch 去重后搬运，同时写入 LRU。
+  - **NVLink 用原地读**：attention CTA 直接读远端，并把未命中的页写回缓存。
+- 地址用 UVA + VMM 统一。
+- LRU 是每个请求一个池，加一张全局 `resident` 表；victim 用 radix select 选。
+- 阶段顺序：prepare → grid.sync → resolve/LRU → grid.sync → fetch + attention items → 可选 merge。
+
+## 3. 集群上正在跑和排队的作业（2026-10-28 晚）
+
+查看命令：`ssh kaituo1000_login21 'bash -lc "squeue -u luyouy"'`。登录节点要用 `bash -lc` 才能找到 Slurm 命令。
+
+| 作业 | 分区 | 内容 | 状态 | 结果在哪里 |
+|---|---|---|---|---|
+| **1004362** `fi-tune-host` | h01，1 张 H800，40 分钟 | PCIe 调优：staged 的 fetch CTA 取 8/16/32/64，另测原地读和 HiSparse。脚本 `temp/h800/tune_host.sh` | PENDING，调度器估计 11/02 02:34 开始 | 集群 `rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/`，日志在 `temp/h800/logs/` |
+| **1004363** `fi-tune-peer` | h01，2 张 H800，30 分钟 | NVLink 调优：staged（16/32/64 个 fetch CTA，去重）对比原地读。脚本 `temp/h800/tune_peer.sh` | PENDING，估计 11/02 | 同上，目录 `fi-tune-peer-1004363/` |
+| **1040680** `fi-bulkbw` | h01，1 张 H800，10 分钟 | **关键实验**：Hopper 的 `cp.async.bulk`（1-D TMA）读 Host 随机行，能否快于 SM cp.async（约 33 GB/s），接近 DMA 的 55 GB/s。同时校验拷贝内容是否正确（`bulk copy check: 0 bad vectors`）。源码 `temp/fetch_bw/bulk_bw.cu` | PENDING，估计 11/02 | 同上，目录 `fi-bulkbw-1040680/host.txt` |
+| **1040732** `glm-corpus` | a01，只用 CPU，1 小时 | 用新数据集构建 4 × 64K 的语料 `corpus_swe.pt` | **COMPLETED，0:0，12 分 25 秒** | 集群 `rtx/yjw/test/glm_trace/corpus_swe.pt`，日志 `rtx/yjw/test/glm_trace/logs/glm-corpus-1040732.out` |
+| **1040816** `glm-swe-check` | a01，2 张 A800，90 分钟 | 新语料 loss + top-k 验证：原语料第 2 篇，8K，`--groups 2 --span 256 --loss-all --check` | **COMPLETED，0:0，19 分 15 秒** | 集群 `rtx/yjw/test/glm_trace/traces/swe_check_20261028/`，日志 `logs/glm-swe-check-1040816.out` |
+| **1040870** `glm-swe-inspect` | a01，只用 CPU，4 核 / 8G / 10 分钟 | `05_inspect_trace.py` 检查保存的全部 top-k/分数，并按目标 token 角色统计完整 loss | **FAILED，1:0：仅一块 system 文本 loss 6.30 超阈值；数据/assistant 检查通过** | 集群 `rtx/yjw/test/glm_trace/results/swe_check_20261028.json`，日志 `logs/glm-swe-inspect-1040870.out` |
+| **1040875** `glm-swe-64k1` | a01，8 张 A800，2 小时 | 第 1 篇 64K，16×1024 记录窗口，保留完整 loss | **COMPLETED，0:0，17 分 59 秒，g08** | 集群 `rtx/yjw/test/glm_trace/traces/swe64k_doc0_20261028/` |
+| **1079470** `glm-swe64k-inspect` | a01，CPU 4 核 / 16G | 全行数据和角色 loss 检查 | **FAILED，1:0，49 秒**；数据/assistant gate 通过，全位置 block gate 失败，见 §4.2 | `results/swe64k_doc0_inspection_20261028.json` |
+| **1079523** `glm-swe64k-export` | a01，只用 CPU | 导出全部未改动 top-k，scores 保留原始 trace | **COMPLETED，0:0，13 秒** | `replay/swe64k_doc0_20261028.pt`；本机 `temp/glm_trace/replay64k/doc0.pt`，未纳入 git |
+| **1079524** `glm-swe64k-full` | a01，8 张 A800，90 分钟 | 全 4 篇 64K，带窗口计划，16×1024，完整 loss | **COMPLETED，0:0，23:44，g03** | `traces/swe64k_full_20261028/` |
+| **1079527** `glm-swe64k-fullcheck` | a01，只用 CPU，16G / 15 分钟 | 逐篇严格检查 | **FAILED，1:0，2:38；四篇数据/assistant通过，block gate失败** | `results/swe64k_full_inspection_20261028_doc{0..3}.json` |
+
+- 1040816 已完成全部 78 层；第 0 层 top-k 重合率 mean/min 均 1.0000，记录分数最大相对误差 5.21e-07，排序/有效数/补位检查均通过；absorbed vs expanded attention 最大相对误差 4.27e-03。最终数据和角色 loss 见 §4.2。H800 新调优顺序仍待用户确认。
+- h01 的两个节点 g40、g44，16 张 H800 一直被别人占满，作业只能排队，没有办法加速。重新提交也一样，不要重复提交。
+- 上一次语料作业 1040688 立即失败，退出码 127。原因是用 `--wrap` 时节点上的 sh 没有执行 `source`。已改为用 bash 写的 `04_corpus.sbatch` 重新提交。
+- 10/28 11:07 再查：三个 H800 作业仍为 Priority 排队，预计 11/02 02:34:29，无结果目录；没有重复提交。
+- 静默轮询脚本：`temp/glm_trace/watch_jobs.sh`，每 600 秒查一次，查询失败继续重试。10/28 11:19 已在集群 nohup 启动，PID `4160646`，观察三个 H800 作业和 `1040816`；日志和 PID 文件在 `rtx/yjw/test/glm_trace/logs/watch_20261028.{log,pid}`。继续工作前先用 `ps -p 4160646 -o pid,etime,args` 核查进程，避免重复启动。
+- 旧trace轮询65160及full轮询1788755已退出；H800原轮询4160646仍存活。新H8001089379/1089380的静默轮询日志/PID为 `logs/watch_tuned_20261029.{log,pid}`，每600秒检查，续接先核实进程。
+- 两地 `mla_host_batch.cuh` 的哈希不同：本机除 `FAR_EMU_*` 钩子外已有两轮性能改动；集群 H800 排队作业保留原基线。后续以已存补丁移植并实测，不能直接覆盖。
+
+## 4. 未完成的任务和下一步
+
+### 4.1 H800 kernel 性能：最优先，这是用户的核心目的
+
+**10/28 后续用户授权持续调优，目标是逐步逼近理论下限。无需对同范围的常规优化反复确认；保留单 kernel 融合，涉及拆 kernel 的架构取舍仍需询问。** 已做第二轮：staged LRU 映射绑定放到 fetch、空 miss 池快速返回、LRU 双计数前缀合并、小 batch HBM 分块预留 Host 并行空间。相对 d92e7e83，同参数反向顺序重测：100GB/s无附加延迟 MTP8 1/2请求快10%–11%，MTP1四请求快9%；GLM8K四请求快约12%。完整结果和局限在 `docs/mla_host_a100_lru_tuning.md`。保持实测下限和所有更慢的格子，不把不同参数的收益混作单个代码改动；H800未验证。
+
+**10/28 用户后续明确认可在本机 A100 优化 100 GB/s＋高延迟，以及单独优化小 batch，已执行，不再等待这两项确认。** 保留单 kernel 融合 LRU。新结果见 `docs/mla_host_a100_100gb_tuning.md`：kernel 调整 fetch CTA>8 时的搬运块切换阈值；100 GB/s＋20 µs，MTP8 单请求 f16 同参数 125.95→101.89 µs（−19.1%），128 请求结合 f24 调参 5609.98→4444.16 µs（−20.8%）；MTP1 四请求结合 f32 为 101.18→79.36 µs（−21.6%）。这是相对旧版固定 f16/h64 基线，不能称为相对旧版所有最优配置。75 项完整测试通过，最终 7-pass 对照每步采样行 max abs 0.006007。模拟器未修改。更深流水、单 warp 扫描、缩 grid 的候选未采用，补丁与数据保留。H800 原排队作业源码未改，本轮 H800 性能尚未验证；涉及拆 kernel 的架构决策仍需用户确认。
+
+**现状**：H800 默认配置下，大部分场景输给 Memcpy+LRU；PCIe MTP1 ≥ 64 请求和 NVLink MTP8 128 请求输给 HiSparse。数据在 `docs/mla_host_h800_lru.md` §2。
+
+**10/28 对已有数据做的时间分解**（各 mode 取后一半 step 的中位数，单位 µs）：
+
+| 场景 | 本文 | 每步未命中量 | 按 SM gather 实测速率算的传输时间 | FA2 下限 → FlashMLA 下限 | HiSparse | Memcpy+LRU |
+|---|---:|---:|---:|---:|---:|---:|
+| PCIe MTP8，128 请求 | 11849 | 311K 页（358 MB） | 10690（33.5 GB/s） | 1209 → 573 | 14553 | 8495 |
+| PCIe MTP1，512 请求 | 7104 | 181K 页 | 6726（31 GB/s） | 626 → 446 | 6395 | 4810 |
+| NVLink MTP8，128 请求（原地读） | 4582 | 312K 页 | 2148（167 GB/s） | 1202 → 568 | 4367 | 3450 |
+| NVLink MTP1，256 请求 | 794 | 89K 页 | 612 | 321 → 232 | 908 | 938 |
+
+**结论：主要问题在传输，不在 attention。**
+- **PCIe**：本文受 SM 读 Host 的上限（约 33 GB/s）限制。Memcpy+LRU 用 DMA，速率 55 GB/s，而且**它的 CPU gather 不计时**，这个基线偏宽松。即使换成 FlashMLA，PCIe 大 batch 也最多省约 5%。
+- **NVLink**：原地读时每个未命中页平均被读约 2.1 次，link 接近饱和。改成 staged 去重，理论上能省 2 ms 以上，远大于 FlashMLA 能省的 0.6 ms。
+
+用户先批准了「方案 A：attention 改接 FlashMLA sparse decode + TMA 带宽测试 + 4 层共用 prepare」。看到上面的分解后，我向用户提出了新顺序，用户随后要求交接，**还没有明确回复同意新顺序**。新顺序如下，下一个 agent 应先和用户确认：
+
+1. **PCIe 传输路径**：看 1040680 的结果。
+   - 如果 bulk copy 接近 50 GB/s，就把 fetch CTA 的搬运改用 `cp.async.bulk` 加 mbarrier。位置在 `fetch_host_batch_pages`，约 623 行；现在是 cp.async 16 B 加分块的 ready flag。这样仍在单 kernel 内。
+   - 如果 bulk copy 也只有约 33 GB/s，说明这台 H800 上只有拷贝引擎能达到 DMA 速率。需要让用户选：(a) 接受这个上限，改变对比的表述；(b) 把搬运交给 CPU gather + DMA，这就不再是单 kernel。**不要替用户做这个决定。**
+2. **NVLink 改用 staged 去重**：
+   - 先在本机 A100 上用链路模拟器把带宽限到约 167 GB/s（H800 NVLink 的 SM gather 实测值）。方法见 `docs/mla_host_link_emulation.md`，用 `--emu` 参数。
+   - 比较 staged 16/32/64 个 fetch CTA 和原地读，提前定好配置。1004363 会在 H800 上确认。
+3. **让 Memcpy+LRU 基线公平**：给 CPU gather 计时。在 `temp/h800/bench_rounds.py` 的 `load()` 里，`torch.index_select(far_cpu, ...)` 目前不计时。报告里同时给出计时和不计时两种结果，并如实说明。
+4. **FlashMLA attention**：仍值得做，主要帮 NVLink 去重之后的场景和小 batch，但属于第二位。
+   - 方案 A 的定义：去重、搬运、LRU 保留在本文 kernel，attention 改用 FlashMLA 的 `flash_mla_with_kvcache(indices=...)` sparse decode。
+   - 集群上的 sgl_kernel：`rtx/.venv/lib/python3.12/site-packages/sgl_kernel/flash_mla.py`。接口有 `get_mla_metadata(cache_seqlens, num_q_tokens_per_head_k, num_heads_k, num_heads_q, is_fp8_kvcache, topk)`、`flash_mla_with_kvcache(q, k_cache, block_table, cache_seqlens, head_dim_v, tile_scheduler_metadata, num_splits, softmax_scale, indices=...)`、`flash_mla_sparse_fwd(q, kv, indices, sm_scale, d_v)`。
+   - 要点：本文 kernel 的 `remap` 编码规则见 `resolve_host_batch_row`，约 786 行。非负值是原 KV 页；负值 -1-row 是 staging 或缓存槽。要接 FlashMLA，需要输出一个统一的 KV 视图加 indices，比如把 staging 和缓存放到和 KV 同一 VA 段之后的连续区域。
+   - 这样「单 kernel 全融合」的说法会弱化，报告里要如实写。
+5. **4 层共用一次 prepare 和 LRU**（用户要求在合适的时候提醒他）。共享同一份 top-k 的层可以复用去重和 LRU 的结果，小 batch 每层能省约 20～30 µs。比如 PCIe MTP8 1 请求，本文 134 µs，而 FA2 下限只有 34 µs。
+6. 选好参数后在 H800 上重测 HiSparse 对比和全量 batch，并更新 `docs/mla_host_h800_lru.md` 和报告 §6。
+
+### 4.2 GLM-5.3 trace 采集
+
+**模型**：`/WORK/PUBLIC/luyouy_work/rtx/models/zai-org--GLM-5.3`，FP8，141 个分片，已校验。只有 21 个层跑 indexer：第 0、1、2 层，以及之后每隔 4 层一个（6、10、…、74）。其余层复用上一层的 top-k。
+
+**采集脚本**：`temp/glm_trace/02_prefill_trace.py`，集群副本在 `rtx/yjw/test/glm_trace/`，两边一致。在 A800 上用 BF16 逐层 prefill。SGLang 的 DSA 只支持 SM90，A800 跑不了。
+
+脚本在这个 session 里的改动：
+- **修复了一个致命 bug**：原来的记录代码缩进在 `--check` 分支下，正式采集会只记录第 0 层，最后在 `torch.stack([])` 处崩溃。已修复，commit `b9f0f02d`。
+- **输出的 `doc<i>.pt` 包含**：
+  - `selections [indexer 层, groups, span, 2048]` int32：文档内位置，按分数降序，-1 补位；
+  - `scores`：形状同上，fp32 index score，补位处为 -inf；
+  - `row_stats [.., 5]`：n_valid、sum、sumsq、max、topk_sum；
+  - 可选 `full_rows`（`--full-rows`，每组最后一个位置的整行分数）；
+  - 元数据：`positions`、`group_starts`、`layers`、`source_layer`（78 层各自用哪个 indexer 层）、`members`、`meta`、`role`（每个位置的角色：system/user/assistant/tool）、`loss`、`config`。
+- **诊断参数**：
+  - `--check`：分块与不分块对比，分数对比稠密参考，absorbed 与展开形式对比；
+  - `--dense`：全因果 attention；
+  - `--loss-all`：每个位置的 loss 和 top-5 预测，写到 `<out>/loss.pt`；
+  - `--ref-layers`：逐层与 transformers 5.12.1 的 `GlmMoeDsaDecoderLayer` 对比，需要单卡加 `--dense`；
+  - `--pos-offset`、`--indexer-interleave`。
+- **未提交**：`role`、`meta` 两个输出字段（工作区改动，见 §6）。
+
+**正确性诊断的结论：采集实现是正确的，不要再查实现。**
+
+| 检查 | 结果 |
+|---|---|
+| 分块 vs 不分块 top-k | 重合率 1.0000 |
+| 记录的分数 vs 稠密计算 | 最大相对误差 4.76e-07 |
+| 78 层逐层对比 transformers | 整体相对误差 1～4%，bf16 加 MoE 路由翻转的正常量级 |
+| 稀疏 vs 稠密 attention | loss 曲线几乎重合 |
+| 同一段重复两遍 | 第二遍 loss 0.05～0.09 |
+| 位置偏移 0 / 1792 / 16384 | loss 不变 |
+
+- indexer RoPE 用交错排布（config `indexer_rope_interleave: True`），和 SGLang 一致，见 `deepseek_v2.py:1828`。transformers 写死为非交错，不必理会。
+- 唯一的问题在**旧语料格式**。旧语料 `corpus_64k.pt` 由 `01_build_corpus.py` 生成：
+  - 工具 JSON 被直接塞进 system，没有用 GLM 原生的 `tools=` 模板；
+  - 工具调用写成 `<tool_call>{json}`，不是原生格式；
+  - 多个会话拼接在一篇文档里。
+- 这导致某些段落 loss 6～10。同一段文本单独输入时 loss 约 2。**旧语料作废**，原始的 claudecode-trace 也不在这台机器和集群上。
+
+**新数据集**：`nebius/SWE-rebench-openhands-trajectories`，CC-BY-4.0，从 hf-mirror 下载到集群 `rtx/data/swe-rebench-oh/`。
+- `trajectories.parquet` 共 2079503354 字节，sha256 `14048dd1…efa1`，与上游 x-linked-etag 一致。另有 `tools.json` 和 README。
+- 内容是 OpenHands 修 GitHub issue 的多轮 agent 轨迹，平均 64 轮，使用 OpenAI 格式的 tool_calls。
+- 新的语料构建脚本 `temp/glm_trace/01b_build_corpus_swe.py`（**未提交**）：
+  - 每篇文档只用一条轨迹，不拼接；只取 resolved 的轨迹，取最长的几条截断到 64K；
+  - 用 GLM-5.3 原生模板渲染（`apply_chat_template(msgs, tools=tools)`）；
+  - 记录每个位置的角色。
+  - 已在合成对话上验证：格式正确，前缀一致，只有一个 `[gMASK]`。
+- 作业脚本 `temp/glm_trace/04_corpus.sbatch`（**未提交**）。
+
+**后续步骤**：
+1. **语料构建和格式检查已完成（10/28）**：4 篇原长 122916 / 121172 / 119659 / 118550，均截到 65536；单条轨迹/文档，角色字段齐全。文档 0 仅有一个 `[gMASK]`，50 个原生 `<tool_call>`、49 个 `<tool_response>`；已检查 user / assistant / tool 的渲染片段。CPU 检查记录见 `temp/glm_trace/results/corpus_swe_inspection_20261028.json`（集群原件为 `corpus_swe_inspection.json`）。
+2. **验证作业 1040816 已完成**：`NPROC=2 sbatch --job-name=glm-swe-check --time=01:30:00 --gres=gpu:a800:2 03_trace.sbatch --corpus corpus_swe_check.pt --docs 1 --tokens 8192 --groups 2 --span 256 --loss-all --check --out traces/swe_check_20261028`。
+   - `corpus_swe_check.pt` 保留原语料第 2 篇（索引 1）及其角色、元数据，用于本次短验证，不替换正式的 4 篇语料。
+   - **不要使用原建议的 4K 前缀**：4 篇的前 5675 token 全为 system，4K 验证没有 assistant；所选 8K 前缀含 793 个 assistant token（第 1 篇只有 121 个）。
+   - 判据：按 `role` 分开统计 loss，assistant token 应 ≤ 约 1.5；除第一块外，没有 ≥ 约 6 的 256 位置块；tool 输出可以在 3～5。
+   - 注意：现在的 `loss` 字段只统计记录窗口，请看 `--loss-all` 的全位置统计。
+   - `loss.pt` 中 `loss[r]` 预测 `tokens[r+1]`，按角色统计时要用目标 token 的 `role[r+1]`，不能直接用 `role[r]`。
+   - CPU 检查脚本 `temp/glm_trace/05_inspect_trace.py` 和 `05_inspect.sbatch`：输出 JSON，只有数据完整性、assistant mean ≤ 1.5、首块之后所有 256-token 块 mean < 6 均通过才返回 0。
+   - **结果**：全部 21 层的 `[21,2,256,2048]` selections/scores、78 层复用映射、每行因果范围/无重复/分数排序/有效数/统计一致性通过。按目标角色的 mean loss：system 4.224，user 2.843，**assistant 0.827（793 token）**，tool 4.367。唯一超阈值块 `[1536,1792)` mean 6.3025，全是 system 工具描述中的转义 JSON 文本。严格 gate 返回失败，未把它写成完全达标。
+   - **复核决定（11:39）**：assistant/tool 达到预期，唯一高块已定位为原始 system 工具描述，格式和采集实现无异常；按已授权的 trace 流程继续单篇 64K，保留严格失败与复核原因，不改语料或阈值。已用 `scontrol update JobId=1040875 Dependency=""` 解锁原作业，未重提交。证据：`temp/glm_trace/results/swe_check_20261028.json`、`swe_check_with_roles_20261028.json`、`swe_check_decision_20261028.json`、`glm-swe-check-1040816.out`（集群原件同名/对应日志）。
+3. **正式采集**：单篇 1040875 已完成，17 分 59 秒、GPU 计算 952 秒、峰值每卡 8.7 GiB。21 个 indexer 层的 `[21,16,1024,2048]` selections/scores 及 78 层映射、全部保存行检查均通过。
+   - **64K 严格 gate 仍失败**：assistant 7635 token mean 0.550，通过；tool 51272 token mean 9.842。154 个首块之后的高块含 1 个纯 system、138 个纯 tool（含最后不足一块），没有 assistant 占多数的高块。不能说语料所有位置达标，也不能把工具窗口当 assistant decode。保留失败记录，未改阈值/语料；继续已授权的四篇采集以取得计划内的完整 assistant 窗口。证据 `swe64k_doc0_{inspection,roles,decision}_20261028.json`，CPU 检查作业 1079470 返回 1。
+   - 全量 **1079524** 已提交：`NPROC=8`，8×A800，90 分钟，`--docs 4 --tokens 65536 --groups 16 --span 1024 --loss-all --window-plan results/swe_windows_64k.json`；输出 `traces/swe64k_full_20261028`。1079527 在成功采集后逐篇检查。源码哈希、原依赖及当前状态在 `temp/glm_trace/results/swe_pipeline_20261028.json`。
+   - 记录窗口：现在是在文档后半段均匀取 `--groups 16` 组、每组 `--span 1024` 个连续位置。
+   - 可以考虑只取 assistant 段作为 decode 位置，因为真实 decode 只生成 assistant token；或者保留全部位置，回放时用 `role` 过滤。
+   - **窗口覆盖准备已完成**：原均匀 16×1024 窗口没有一个全为 assistant；已生成 `temp/glm_trace/results/swe_windows_64k.json`。文档 1 将最近的 3 个窗口起点移至 35184 / 41887 / 48296，文档 3 移至 50621，共覆盖 4 段完整的 1024 连续 assistant token；其余窗口保持，文档 0/2 不变。没有拼接或跳过中间 token。
+   - `02_prefill_trace.py` 新增可选 `--window-plan`，复用 CPU 模块 `trace_windows.py`，核对语料 SHA-256、文档 members、长度、窗口顺序/范围/不重叠；输出新增 `source_sha256` / `window_plan_sha256`。默认窗口经 CPU 检查与原 64K/8K/4K 版本完全一致。1040875 用默认窗口；1079524 带计划，新可选路径尚待 GPU 全流程验证。
+4. 在本机 A100 上做多步回放（span 1024）。原始格式已兼容；`08_export_replay.py` 可仅导出未改动的 top-k 和出处以减少传输量，scores/row_stats 保存在集群原件，`--assistant-only` 仅保留完整窗口，不拼接 token。
+   - **64K/1024 混合角色回放已完成**：第一篇全部 21 层、16 窗口的 2.7 GiB top-k 已下载并核对 SHA-256。`run_64k_replay.py` 串行覆盖真实 NVLink、PCIe MTP1，以及 50/100 GB/s＋20 µs，6 份 JSON / 15 个配置、7 pass。两模式共 14592 次 launch 的逐步采样行校验通过，max abs 0.004352。100GB/s20µs MTP8 16请求 staged 685.25µs，Memcpy 867.33µs，纯 HBM 下限494.59µs（1.39倍）；单/四请求仍有输给Memcpy的场景。真实NVLink同批次原地读543.15µs（下限1.10倍）。完整表、实际窗口/角色出处、逐步命中率及两下限在 `temp/glm_trace/results/a100_64k_doc0/` 和 `docs/mla_host_glm53_trace.md`。**第 0 篇为混合角色窗口，不能替代完整 assistant 窗口的结果；这组不是旧/新 kernel 对照。**
+   - **8K/256 位置接入检查已完成**：实际无需转换，`tiers.py` 可直接读取 GLM 的保存格式。A100 PCIe MTP1（1/4 请求，256 步）和 NVLink MTP8（1/4/16 请求，32 步）每步采样行校验通过，max abs ≤0.006066；完整逐步耗时/未命中/去重页命中率/两下限及比值在 `temp/glm_trace/results/a100_8k_smoke.md`，复现 `bash temp/glm_trace/run_8k_smoke.sh`。这是短上下文接入检查，包含 system/user/tool，不能替代 64K/1024 正式结果。
+   - 8K MTP8 的 16 请求原地读测得 496.2 µs；原生纯本地初测最好样本 496.6 µs，出现比值略低于 1，已另测 0% 远端的 attention（原生 + 本文无缓存）CUDA graph，最好为 435.5 µs；报告取该最好实测值并保留补测原始数据，没有截断比值。
+   - 记录每步命中率，以及本文 ÷ 纯本地，还有两个下限（见 §5）。
+   - 真实 trace 的未命中量会改变传输和计算的比例，这也会影响 §4.1 的结论。最后在 H800 上也跑一遍。
+
+## 5. 环境和规则
+
+- **集群**：`ssh kaituo1000_login21`，即 luyouy@166.111.143.25，Slurm 登录节点，没有 GPU。
+  - 所有 GPU 工作都通过 Slurm。
+  - **H800** 在 partition `h01`（g40、g44，各 8 张）：每个作业**最多 4 卡，尽量 1～2 卡，时限要短**。不要提交 8 卡作业。
+  - **A800** 在 partition `a01`（27 个节点）：用于 trace 采集，**最多 8 卡**。
+  - 所有文件放在 `/WORK/PUBLIC/luyouy_work`（即 `~/WORK`）下；`/home/fit` 已超配额。
+  - 远端约定见 `rtx/AGENTS.md`，项目说明在 `rtx/MEMORY.md`。
+  - Python 环境：`source rtx/env.sh`，用 `rtx/.venv`（transformers 5.12.1、torch cu130）。
+  - 网络：hf-mirror 能访问，huggingface.co 不能。
+  - ssh 后台命令要加 `-n`。用 pkill 时注意别匹配到自己的命令，上次就因此误杀并导致重复下载。
+- **本机**：路径 `/home/rtx/projects/flashinfer`（= `/mnt/data/rtx/projects/flashinfer`），10/28 接续检查时实际分支为 `codex/mla-host-overlap`。
+  - GPU：GPU0、GPU1 是 A100-SXM4-40GB，两者之间是 NV12；GPU3 是 A100-PCIE。
+  - GPU0 作近端，GPU1 经 NVLink 作远端；Host 内存在 NUMA0。
+  - 常用环境：`CUDA_DEVICE_ORDER=PCI_BUS_ID PYTHONPATH=. FLASHINFER_WORKSPACE_BASE=$PWD/temp/jit_a100_final FLASHINFER_CUDA_ARCH_LIST=8.0 CUDA_VISIBLE_DEVICES=0,1 numactl -N0 -m0 /mnt/data/mhy-vllm-venv/bin/python ...`。
+  - 链路模拟构建另加 `FLASHINFER_EXTRA_CUDAFLAGS=-DFLASHINFER_FAR_EMU`，并用 `FLASHINFER_WORKSPACE_BASE=temp/jit_emu`。
+  - 本机 nvcc：`/usr/local/cuda-13.1/bin/nvcc`，可以编 sm_90a，但不能运行。
+- **同步代码**：本机改动后用 scp 同步到集群对应路径。先传到 `.new` 再 mv，避免正在运行的作业读到写了一半的文件。kernel 代码以集群上 `rtx/yjw/flashinfer` 的 git 为准（作业会记录 commit 和 dirty）。
+
+**用户偏好**：
+- 结果表要同时给出两个下限：(a) max(纯本地计算, 去重后未命中字节 ÷ 链路带宽)；(b) 纯本地计算。下限用实测最好值，保证比值 ≥ 1。
+- 数据保存到文件并提交。
+- 报告要自包含，突出本文 kernel 的优势，但**不能隐瞒输的场景**。
+- 与 HiSparse 对比时，按它实际的方式运行（每请求 swap-in 加 FlashMLA，没有跨行去重）。不要说它被低估，也不要替它优化。
+- **讨论方案时先给推荐方案，用户确认后再执行**；涉及表述或架构取舍的决定（比如放弃单 kernel）必须问用户。
+- 节省 token：长时间等待时用**静默的后台轮询脚本**（`while squeue ...; do sleep 600; done; cat 日志`，用 run_in_background），不要用频繁的 cron。
+- 模拟和实验代码要简洁，不影响正常构建，后期会删除。
+- 用中文和用户交流。
+
+## 6. 工作区状态（提交时只 `git add` 自己改的文件）
+
+- **非本 agent 的改动，不要回滚、不要提交**：`docs/mla_host_lru_report.md`、`temp/report_lru/plot.py` 及两张 png、`include/flashinfer/attention/decode.cuh`（一个行尾空格）；未跟踪文件有 `docs/mla_host_lru_report_external.md`、各种 pdf、`package*.json`、`temp/hb_regs/`、`temp/*.nsys-rep` 等。
+- **本 agent 最后一批改动已提交**（commit 见 git log）：
+  - `temp/glm_trace/02_prefill_trace.py`（新增 `role`、`meta` 输出）；
+  - `temp/glm_trace/01b_build_corpus_swe.py`；
+  - `temp/glm_trace/04_corpus.sbatch`；
+  - 本文档 `docs/HANDOFF.md`。
+- `temp/glm_trace/ref/` 下的参考文件（transformers 建模代码、config）是诊断用的，未跟踪，可以不提交。
+- 本 session 的 commit：`b9f0f02d`（index score 和 bug 修复）、`c9d07220`、`461d14ba`、`a78d1d9c`（诊断参数）、`250304dc`（bulk 带宽微基准）。
