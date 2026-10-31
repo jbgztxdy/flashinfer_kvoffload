@@ -1,0 +1,94 @@
+{
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "pairs": [
+    {
+      "hardware": "GPU3",
+      "cohort": "kv64256_f24_",
+      "variant": "kv64",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l0",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3572.9280014832816,
+      "new_us": 3629.248023033142,
+      "reduction": -0.015762988094492725,
+      "old_raw": "temp/glm_trace/tune_kv64_20261101/gpu3/raw/kv64256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_kv64_20261101/gpu3/raw/kv64256_f24_kv64_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "memcpy_us": 6063.775971531868,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.7285211410967,
+      "over_reference": 0.344301100874826
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "kv64256_f24_",
+      "variant": "kv64",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3575.1680036385856,
+      "new_us": 3639.3386696775756,
+      "reduction": -0.017948993158833693,
+      "old_raw": "temp/glm_trace/tune_kv64_20261101/gpu3/raw/kv64256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_kv64_20261101/gpu3/raw/kv64256_f24_kv64_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "memcpy_us": 6070.261339346568,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.8274011410967,
+      "over_reference": 0.34798938189137174
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "kv64256_f24_",
+      "variant": "kv64",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g50_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 5285.279979308446,
+      "new_us": 5284.000006814797,
+      "reduction": 0.00024217685698002533,
+      "old_raw": "temp/glm_trace/tune_kv64_20261101/gpu3/raw/kv64256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_kv64_20261101/gpu3/raw/kv64256_f24_kv64_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "memcpy_us": 8484.032024939856,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.34488,
+      "over_reference": 0.06546330910037401
+    }
+  ],
+  "tests": [
+    {
+      "variant": "kv64",
+      "tests": 105,
+      "sha256": "e3cbd3fd76df22179f33cfeaa6e5c14d69679caa0409d0669ee4e3917d2aa1f6"
+    }
+  ],
+  "stress_tests": [
+    {
+      "variant": "kv64",
+      "tests": 4,
+      "sha256": "69539be1e0e98613a50e10d8f25abeca66eb39b90de3a08ea7a8eee11c1317d1",
+      "scope": "BF16/FP16, 128 pools >108 SMs, K2048, capacities512/4096, eviction/zero-miss/Graph, all filled cache payloads"
+    }
+  ],
+  "pending_references": [],
+  "pending_reference_pairs": [],
+  "timed_launches": 1152,
+  "accepted_segments": 72,
+  "incomplete": [],
+  "production_header_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "original_matrix_sha256": "e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99"
+}

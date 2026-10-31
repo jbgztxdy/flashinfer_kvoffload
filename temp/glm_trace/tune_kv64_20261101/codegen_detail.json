@@ -1,0 +1,26 @@
+{
+  "variant": "kv64",
+  "build": "EMU",
+  "instructions": 9320,
+  "hmma": 822,
+  "ldsm": 528,
+  "barriers": {
+    "BAR.SYNC 0x0": 5,
+    "BAR.SYNC.DEFER_BLOCKING 0x0": 54
+  },
+  "local_ops": [
+    "STL [R1+0x4], R3",
+    "LDL R6, [R1+0x4]",
+    "LDL R0, [R1+0x4]",
+    "LDL R0, [R1+0x4]",
+    "LDL R2, [R1+0x4]",
+    "LDL R6, [R1+0x4]",
+    "STL [R1], R0",
+    "LDL R12, [R1]",
+    "LDL R136, [R1]",
+    "LDL R136, [R1]",
+    "LDL R10, [R1+0x4]"
+  ],
+  "resource": "REG:255 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+  "limitation": "Static codegen evidence, not runtime cost attribution."
+}

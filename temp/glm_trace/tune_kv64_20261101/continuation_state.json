@@ -1,0 +1,27 @@
+{
+  "recorded_at": "2026-11-01T03:11:22+08:00",
+  "goal_status": "active",
+  "candidate_adopted": false,
+  "manifest": {
+    "base_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+    "candidate_sha256": "8a0ec97c91563151eab4e4fcd2be3394a16930b1e2c66cd36ca0d69e3db9c2d2",
+    "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+    "mechanism": "Original64head/256thread attention with native sharded64KV/1stage, same147968B as baseline32KV/2stage. Half as many online MDO updates/barriers, larger native Qfragment reuse, but one-stage load latency and extra score registers may offset savings. Original fetch64row double buffer/f24,metadata,LRU,SMbudget preserved.",
+    "distinction": "Stage1/32KV allocation control was rejected in C; pairedQK grouped two32KV QK calculations but retained two separate MDO/PV updates. This uses one native64KV max/denominator update and PV region. No private math edits; FP32 online-reduction grouping differs, no bitwise claim.",
+    "candidate_adopted": false,
+    "goal_complete": false
+  },
+  "active_runners": [],
+  "next_action": "AllKV64runnersterminal/rejected. Continue independentjoint_mdo; do not sweep KV/stage/fetch/cadence.",
+  "previous": "WR complete and rejected, see its report/checkpoint; F/S committed1e9356ca.",
+  "completed_handles": {
+    "34389": 0,
+    "54291": 0,
+    "62484": 0,
+    "40753": 0,
+    "86019": 0,
+    "21765": 0,
+    "92528": 0
+  },
+  "results": "109tests,6cells/3pairs,1152launches/72segments,two references complete;100GBslower,50GBflat."
+}
