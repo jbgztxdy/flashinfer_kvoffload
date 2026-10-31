@@ -1,0 +1,69 @@
+[
+  {
+    "fetch": 16,
+    "command": [
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_scatter_20261031/screen.py",
+      "--hardware",
+      "gpu3",
+      "--candidate",
+      "whole_pipe4",
+      "--variants",
+      "whole_pipe4",
+      "base",
+      "--fetch-ctas",
+      "16",
+      "--tag",
+      "pipe4_f16_"
+    ],
+    "start": "2026-10-31T20:23:51+0800",
+    "pid": 510119,
+    "exit_code": 0,
+    "end": "2026-10-31T20:28:24+0800"
+  },
+  {
+    "fetch": 12,
+    "command": [
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_scatter_20261031/screen.py",
+      "--hardware",
+      "gpu3",
+      "--candidate",
+      "whole_pipe4",
+      "--variants",
+      "whole_pipe4",
+      "base",
+      "--fetch-ctas",
+      "12",
+      "--tag",
+      "pipe4_f12_"
+    ],
+    "start": "2026-10-31T20:28:24+0800",
+    "pid": 516702,
+    "exit_code": 0,
+    "end": "2026-10-31T20:29:55+0800"
+  },
+  {
+    "fetch": 8,
+    "command": [
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_scatter_20261031/screen.py",
+      "--hardware",
+      "gpu3",
+      "--candidate",
+      "whole_pipe4",
+      "--variants",
+      "whole_pipe4",
+      "base",
+      "--fetch-ctas",
+      "8",
+      "--tag",
+      "pipe4_f8_"
+    ],
+    "start": "2026-10-31T20:29:55+0800",
+    "pid": 518863
+  }
+]

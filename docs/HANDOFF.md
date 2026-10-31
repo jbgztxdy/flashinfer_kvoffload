@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-10-31 19:50保留检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-10-31 20:25大batch实验检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -26,13 +26,33 @@
 
 统一threshold2/threshold2_sm80仍已拒绝：224行正常构建、无LRU低远端比例慢3.2%–4.4%。它的110格LRU、330格无LRU、18控制、6确认及80正常构建均完整保留，不能冒称最终修正版重跑了全部原范围。`defer_cache`四链路慢29%–35%，warp_ready/row_ready也已拒绝，不重复无新机制筛选。
 
-本机前一轮runner已全部结束：SXM91049 exit0（120格），SXM41792 exit0（4格正常），GPU3原43216末检因外部PID435854进入而exit1，补齐缺项的31760 exit0。失败未完成raw保存在 `gpu3/rejected/`，追加日志和state未覆盖；重启只跳过完成格。**没有活动GPU runner需要继续poll或重复启动。**
+本机前一轮runner已全部结束：SXM91049 exit0（120格），SXM41792 exit0（4格正常），GPU3原43216末检因外部PID435854进入而exit1，补齐缺项的31760 exit0。失败未完成raw保存在 `gpu3/rejected/`，追加日志和state未覆盖；重启只跳过完成格。**上述中等batch验证没有活动runner；新大batch实验见§2.2。**
 
 GPU3是A100-PCIE/NUMA1，同卡独立HBM不是NVLink，物理PCIe和Memcpy pinned源都绑NUMA1；参考在本GPU正常构建重测，PCIe约27.04GB/s、HBM约689GB/s。SXM0/1是NUMA0实际NV12，绝对时间不拼接。其他用户任务随时可能进入，继续资源预检/末检、共享锁，不终止其他人进程。
 
 **大batch 100GB/s约32%–34%差距未改善，整体goal仍active。** 下一步读真实fetch/attention/LRU代码，在独立include/JIT实现新机制，优先研究fetch的cache scatter占用和attention计算尾部；从attention共享KV tile写回缓存是尚未实现的可选方向，不能视为收益。单kernel和精确LRU/载荷要求不变。
 
-### 2.2 已完成阶段诊断（不重复启动）
+### 2.2 新大batch实验：共享tile缓存写回未保留，整行四缓冲待性能结果
+
+新目录 `temp/glm_trace/tune_scatter_20261031/`（下称Q），基线为已保留的52919…ff2c5，生产未再改变。当前新实验及失败记录见[fetch资源报告](mla_host_a100_fetch_resources_20261031.md)和Q的`audit.json`/`decisions.json`/`continuation_state.json`。
+
+- `attention_cache`从attention共享KV tile写LRU缓存，以原子victim认领去重；105正常测试通过，但GPU3 fetch24同参数100GB两格慢约12%、50GB慢1.2%，拒绝。
+- `owner_cache`保留prepare CAS所有者避免新原子，105测试通过；静态审查发现临时bit30可能与大源页号冲突，被`owner_complement`取代，原始源冻结。第三个短筛选格因外部PID486390进入而末检失败，未纳入有效结果，没有完整配对声明。
+- `owner_complement`改为临时补码标记，恢复完整源ID，只在容量受限的负staging索引使用所有者位；105测试通过。fetch24/16/8同参对照已完整完成：24慢约11%–13%；16在100GB+20µs快1.5%但0µs慢9%，50GB略慢；8虽比同参base快11%–22%，仍不及现有fetch24推荐。当前不采用缓存写回迁移。
+- `whole_pipe4`保留fetch内即时cache fill，仅整行CTA_TILE_KV=32使用32行/四缓冲。**历史fastpipe4源码没有WholeRowHostBatchParams，没有测过这一组合**，因此这不是重复其原筛选。六个通用及另两个整行配置指令/资源相同；目标CTA32由7784降为7664条、244寄存器、stack/local0。105项正常测试已通过。最终源SHA=`e0ec1012ed7b29237fbaeca2e7985f15d0247dc06ede40903283134373112bb7`。
+
+当前只剩83402在验证，75786已exit0；下表保留原命令供核对，不重复启动：
+
+| handle | 命令 | 最近状态 |
+|---|---|---|
+| **75786** | `screen.py --hardware gpu3 --candidate whole_pipe4 --variants whole_pipe4 base --tag pipe4256_` | fetch24三格新旧对照均已完成，exit0；256位置、3pass |
+| **83402** | `fetch_tradeoff.py --candidate whole_pipe4 --fetch-ctas 16 12 8` | 配套新旧同参数，等待GPU3；状态`fetch_tradeoff_whole_pipe4_state.json`，最新normal代码生成18项已核对（16个未改配置相同） |
+
+Q的`continuation_state.json`按真实handle继续刷新。84718（whole_pipe4正常105）、34123（共享tile版参数对照）、25115（补码版24CTA对照）均已exit0；不要重做。正常BF16/FP16编译提前在CPU完成，缩短持有GPU测试锁的时间。Q的所有GPU3任务和P共用`P/gpu3_correctness.lock`。GPU0/1仍有其他用户任务；不抢占、不终止其他人。
+
+下一步先检查两个screen，完成Q审计及normal代码生成检查。如果新四缓冲没有跨场景信号就拒绝；若有信号，必须先SXM同参筛选、完整1024位置正反向多pass以及大小batch/MTP1/8/LRU无LRU/全带宽延迟/物理链路回归，再考虑保留。全部当前数据为GPU3同卡独立HBM模拟，不能冒称真实NVLink或SXM收益。**大batch主目标仍未完成。**
+
+### 2.3 已完成阶段诊断（不重复启动）
 
 目录：`temp/glm_trace/tune_general_20261031/`。`base.cuh`为上轮已验证生产kernel，SHA256：
 
@@ -61,7 +81,7 @@ GPU3是A100-PCIE/NUMA1，同卡独立HBM不是NVLink，物理PCIe和Memcpy pinne
 
 旧主汇报所说“最终路径阶段计时未取得”已被本次诊断补上；主汇报§7.6和本轮Markdown已同步。`audit_general.py`独立重解raw的128步×108CTA；审计现有数据不等于全目标完成。
 
-### 2.3 脚本注意事项
+### 2.4 脚本注意事项
 
 `bench_glm52_host_batch`的传递导入会重设源码路径，独立实验需在它导入**后**再次设置`jit_env.FLASHINFER_INCLUDE_DIR`；新bench已处理。更改头文件要独立JIT，核实执行header SHA，避免旧缓存。
 

@@ -1,0 +1,7 @@
+{
+  "base_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "candidate_sha256": "e0ec1012ed7b29237fbaeca2e7985f15d0247dc06ede40903283134373112bb7",
+  "historical_helper_sha256": "0ae536a91d7d127c5c3eb8e87d6ea7e1c1444d1be12852b136bc16c0fc42877e",
+  "historical_helper_path": "temp/glm_trace/tune_100gb_20261030/fastpipe4.cuh",
+  "mechanism": "Only whole-row CTA_TILE_KV=32 uses 32-row/four-buffer fetch; immediate cache fill stays in fetch. Math, retained dispatch, generic kernels and emulator source unchanged. Historical fastpipe4 lacked whole-row specialization; this combination is unmeasured."
+}

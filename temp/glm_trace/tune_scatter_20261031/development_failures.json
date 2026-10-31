@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-10-31T20:09:10+0800",
+  "failures": [
+    {
+      "step": "compiler comparison",
+      "error": "Singleton tuple missing comma; fixed, exact failure log retained."
+    },
+    {
+      "step": "conservative zero-stack gate",
+      "error": "attention_cache CTA64 has STACK:8 and LOCAL:0; generic six kernels equal. Resource audit now records the stack explicitly without calling it a measured gain."
+    },
+    {
+      "step": "make_owner",
+      "error": "Include-disabled duplicate small-prepare resolve anchor caused an assertion before writing a header. Dependent test invocation then failed to find header, CPU compile missing-header log retained. Generator scoped to main resolve and dependencies rerun."
+    },
+    {
+      "step": "owner_cache static review",
+      "error": "Temporary bit30 may alias large staged source page IDs; superseded with complement marker. GPU test started naturally while this review was in progress; leave frozen inputs and let valid-range test finish. No production adoption."
+    },
+    {
+      "step": "cancel check",
+      "error": "Read-only precondition detected the test had started; no signal was sent to any process."
+    }
+  ]
+}

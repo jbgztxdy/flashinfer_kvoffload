@@ -1,0 +1,48 @@
+[
+  {
+    "fetch": 16,
+    "command": [
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_scatter_20261031/screen.py",
+      "--hardware",
+      "gpu3",
+      "--candidate",
+      "owner_complement",
+      "--variants",
+      "owner_complement",
+      "base",
+      "--fetch-ctas",
+      "16",
+      "--tag",
+      "complement_f16_"
+    ],
+    "start": "2026-10-31T20:14:40+0800",
+    "pid": 495422,
+    "exit_code": 0,
+    "end": "2026-10-31T20:18:44+0800"
+  },
+  {
+    "fetch": 8,
+    "command": [
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_scatter_20261031/screen.py",
+      "--hardware",
+      "gpu3",
+      "--candidate",
+      "owner_complement",
+      "--variants",
+      "owner_complement",
+      "base",
+      "--fetch-ctas",
+      "8",
+      "--tag",
+      "complement_f8_"
+    ],
+    "start": "2026-10-31T20:18:44+0800",
+    "pid": 502105,
+    "exit_code": 0,
+    "end": "2026-10-31T20:21:52+0800"
+  }
+]

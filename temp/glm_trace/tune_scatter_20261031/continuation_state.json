@@ -1,0 +1,38 @@
+{
+  "recorded_at": "2026-10-31T20:30:53+0800",
+  "goal_status": "active",
+  "retained_commit": "ce341a02",
+  "production_header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "candidate_adopted": false,
+  "active_runners": [
+    {
+      "session_id": 83402,
+      "command": "fetch_tradeoff.py --candidate whole_pipe4 --fetch-ctas16 12 8",
+      "phase": "paired parameter tradeoff after105 normal tests, waiting GPU3",
+      "state": "fetch_tradeoff_whole_pipe4_state.json"
+    }
+  ],
+  "completed_handles": {
+    "24273": 0,
+    "3468": 0,
+    "24705": 0,
+    "26199": 0,
+    "91789": 0,
+    "18547": 0,
+    "16984": 0,
+    "4924": 0,
+    "81266": 1,
+    "26769": 0,
+    "71162": 0,
+    "25115": 0,
+    "66477": 0,
+    "34123": 0,
+    "84718": 0,
+    "75786": 0,
+    "21264": 0
+  },
+  "results": "Three shared-tile cache variants passed105 normal tests. Atomic and complement default f24 screens regress100GB11\u201313%; complement f16 wins100GB20us1.5% but loses0us9% and50GB1%. No adoption. Original owner_cache input superseded after static bit30 source-ID review; two screen files complete, third rejected for contention. whole_pipe4 normal105 also passed; f24 candidate times3587/3622/5298us, controls pending. All six generic and other two whole configurations instruction/resources identical, CTA32 7664instructions/244registers/stack0/local0.",
+  "remaining": "Large-batch100GB32\u201334% gap not reduced. No new H800 data. Do not repeat completed medium gates or first scatter screen.",
+  "h800_snapshot": "h800_queue_20261031_2018.txt",
+  "current_candidate": "whole_pipe4 e0ec1012ed7b29237fbaeca2e7985f15d0247dc06ede40903283134373112bb7; historical fastpipe4 did not contain WholeRowHostBatchParams. This is a new combination."
+}

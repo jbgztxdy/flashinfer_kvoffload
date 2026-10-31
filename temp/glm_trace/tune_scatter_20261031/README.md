@@ -1,0 +1,20 @@
+# A100 fetch/cache resource experiments, 2026-10-31
+
+The frozen `base.cuh` is production SHA `52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5`, retained in `ce341a02`. This round keeps one cooperative kernel, original attention math, exact cross-step LRU and actual cache payloads. It changes neither the emulator nor either reference. The original 5304-cell matrix is immutable.
+
+`continuation_state.json` identifies live handles; verify their actual processes before restarting anything. `decisions.json`, `audit.json`, `results.csv` and [the Markdown report](../../../docs/mla_host_a100_fetch_resources_20261031.md) keep negative results and reference/source provenance.
+
+- `attention_cache`: whole-row attention copies missed pages from its shared KV tile into the LRU cache. Atomic victim claims arbitrate duplicate references. Normal 105 tests pass, but the GPU3 fetch24 screen regresses 100GB/s by about12% and50GB/s by1.2%; rejected.
+- `owner_cache`: preserves the prepare CAS owner instead of claiming each reference again. Normal105 tests on the existing bounded pages pass, but static review found temporary bit30 can alias a legal large source page ID. Superseded; inputs frozen. Its third screen cell failed a foreign-process end check and is not accepted.
+- `owner_complement`: uses a complemented temporary source ID and a separately bounded negative staging owner marker. Normal105 tests pass. Fetch24/16/8 paired screens completed; some same-parameter gains at8 CTAs do not beat the existing recommended24-CTA configuration, and16 CTAs regress zero-latency compute. No adoption.
+- `whole_pipe4`: immediate cache fill stays in fetch; only whole-row CTA_TILE_KV=32 uses32-row/four-buffer fetch. The historical fastpipe4 source lacks WholeRowHostBatchParams and did not test this combination. Normal105 tests pass; current performance/parameter checks are recorded separately. Six generic kernels and the two unaffected whole-row configurations have identical instructions/resources; CTA32 stays244 registers with no stack/local usage.
+
+GPU3 is physical A100-PCIE/NUMA1. Emulated far data is a separate allocation on that same GPU, never physical NVLink. Its normal-build compute reference was independently measured on the same GPU/full trace. SXM0/1 measurements, when available, use a distinct source path and the existing shared gpu01 lock; absolute timings are not mixed.
+
+Benchmarks use CUDA events/Graphs, cold passes including the first step, independent sampled attention checks, actual cache state and strict process checks at both ends. The short256-position screens need full1024-position forward/reverse multi-pass confirmation and scenario regressions before adoption. A positive code or parameter screen alone does not close the large-batch32–34% gap.
+
+`make_*.py` freezes variants and refuses to overwrite inputs. Ignored include trees can be reconstructed with `restore_include.py <variant>`; each variant/build has an independent JIT workspace. Normal compilation prebuilds BF16 and FP16 without allocating a GPU before taking the GPU test lock. GPU3 correctness, references and performance all share the previous round's `gpu3_correctness.lock`.
+
+`audit.py` verifies timing means, queue coverage, cold misses, resource exclusivity and executed source snapshots. It computes `mean_t(max(C_t, unique_miss_t*1152/(1000*BW)))`, never max of means. `compiler.py` archives emulated SASS/resources; `compiler_normal.py` verifies normal BF16/FP16 unaffected configurations against the frozen retained build. Nonzero stack usage is recorded rather than hidden.
+
+Failure logs and static-review limitations are retained in `development_failures.json` and raw logs. Do not modify a running/queued include, reuse a completed raw filename for different inputs, kill other users' tasks or repeat rejected experiments without a new mechanism. Existing H800 jobs/watchers only: the20:18 snapshot shows the same five pending jobs and two live watchers; no new submission or source overwrite.
