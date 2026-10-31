@@ -1,0 +1,9 @@
+{
+  "base_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "candidate_sha256": "a1566bf9cc2c959aa61bd5c157ce33fc20d2fee23bfc568e560cc80cccae404e",
+  "mechanism": "Only large cached whole-row CTA32 fetch issue/staging store/cache store use one warp per row, reusing its page/victim base across 72 vectors. Attention math/loop, double buffers, original chunk size/flags/fences, far-byte reservation hooks, LRU selection/binding, deferred copies unchanged.",
+  "tradeoff": "72 vectors require three warp instructions with 8/32 lanes in the final instruction, versus contiguous-vector native mapping. Address reuse may not compensate for the extra issued instructions.",
+  "historical_difference": "Not readiness waiting, extra fetch buffers, row/head repartition, or paired/duplicate QK. Source review found no previous per-warp row transfer candidate.",
+  "candidate_adopted": false,
+  "goal_complete": false
+}

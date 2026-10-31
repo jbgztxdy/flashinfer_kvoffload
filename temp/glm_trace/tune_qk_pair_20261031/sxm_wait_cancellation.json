@@ -1,0 +1,7 @@
+{
+  "timestamp": "2026-11-01T00:21:07+0800",
+  "pid": 1126964,
+  "command": "/mnt/data/mhy-vllm-venv/bin/python -u temp/glm_trace/tune_qk_pair_20261031/screen.py --hardware sxm --candidate qk_pair --variants base qk_pair --tag pair256_f24_ --fetch-ctas 24 ",
+  "reason": "Cancel own still-waiting short SXM screen after completed GPU3 pair/prefetch screens show no adoption signal. No SXM launch or result. GPU0/1 occupied by other users; their processes untouched.",
+  "signal": "SIGTERM"
+}

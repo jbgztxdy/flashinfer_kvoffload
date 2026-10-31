@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-10-31 23:47共享页号正式保留与生产回归检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-01 00:34 QK配对与warp按行取数检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -14,9 +14,15 @@
 
 ## 2. 当前运行状态与新一轮进度
 
-### 2.0 最新生产：缓存限定共享页号已保留；所有本机runner结束
+### 2.0 最新生产：共享页号已保留；本轮三项新候选未采用
 
 **当前生产header是cached_ids，SHA=`b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a`，不再是52919。下文§2.1–2.6保留各阶段历史，冲突时以本节及实际文件为准。** 单kernel、数学、精确LRU/真实cache载荷、模拟器和原5304矩阵不变；只在已有whole CTA32且启用LRU的路径共享块页号，未改路径原9EMU/18normal kernel指令与资源完全相同。基线52919保存在W/base.cuh及其他独立实验树。
+
+生产提交为 **0f82e9de**。本轮P=`temp/glm_trace/tune_qk_pair_20261031/`实现不同KV tile共享Q fragment，确认历史regpipe3只改fetch buffer而未覆盖该机制；第一版75ea…d6f9f正常105测试通过、34EMU/68normal原实例相同、新REG255/STACK0，但GPU3同参256×3pass的100GB慢8.1%–8.5%。独立提前页号版adc6…f155fb同样105通过、原实例相同，新STACK8；三链路耗时降低−0.130%/+0.115%/+0.067%，没有稳定收益。两版均实际Graph确认单个新PairedQK kernel、108CTA/256线程、147968B dynamic shared、1CTA/SM。12格/6配对、2304计时launch、两参考完整，均拒绝。[报告](mla_host_a100_qk_pair_20261101.md)。首次base因外部counter_payload进入而preflight失败，原日志/state及仅重试base保留；SXM始终等待外部GPU0/1进程，取消自己的未启动runner，无SXM性能结果。
+
+F=`temp/glm_trace/tune_fetch_warp_20261101/`的新warp_rows仅将大cached whole-row fetch读/staging写/cache写按每warp一行布局，复用72向量的地址，保留64行双缓冲/数学/LRU/模拟器。源码a156…404e；105正常测试、34EMU/68normal原实例等价、实际单新WarpRows kernel均通过；新REG244/STACK0，目标静态指令7888→7744。GPU3同参256×3pass，100GB0/20µs慢0.764%/0.030%，50GB20µs慢0.088%，无采用信号，6格/3配对与两参考完整。[报告](mla_host_a100_fetch_warp_20261101.md)。三候选均不扩展完整窗口/正常物理链路/全形状矩阵；原负差和全部源快照保留。
+
+P/F所有CPU/GPU runner已terminal；P/continuation_state.json与F/continuation_state.json记录全部handle，不重启旧runner。新增restore_includes.py会核验既有树或从冻结host/math恢复缺失树，不覆盖既有include。此次不是blocked：已实现三个独立调度候选并完成315项正常测试、完整原实例等价和9个短窗口配对，但没有新增生产改进，历史100GB约32%–34%主差距仍未解决，goal继续active。
 
 W补充矩阵896格/448配对的测量与两参考审计均完整，cached_planned_complete=true、pending_references=0。96个改变的LRU配对原矩阵耗时降低未加权均值2.028%、最大11.603%，最初四个大形状100GB负差仍保留；完整5pass前后夹测后最差−0.357%。未改路径R40PCIe0.3原−2.849%在夹测中+0.004%，其余原路径由代码身份和已有夹测/实际不同函数的同分配证据核对，原负差未删。保留标准明确不承诺每次独立内存分配都更快。
 
@@ -24,9 +30,9 @@ SXM正常构建、MTP8/R128、full1024×5pass、f24/off：真实NVLink3349.277�
 
 `retain_cached_ids.py --install`已实际通过门槛并逐字节安装已测b6原件；W/cached_ids_retention.json及retention_snapshot冻结完整审计/覆盖/编译/测试/慢格理由。生产root/include、独立jit_retained_normal、正常BF16/FP16 CPU编译及105项测试再次通过，记录tests_production_gpu3.json（13.16s）。测试source5845…保持不变。
 
-所有本机GPU/CPU调度器均已terminal：W原矩阵92282、完整确认86595、慢格夹测82401、补小参考28183、生产编译37851和生产测试28695全部exit0；R的四确认和三版诊断也均exit0；H/Q/U拒绝候选无活动任务。**不要再poll或重复启动这些handle。** 最终audit83501和coverage/report已成功。41741初次将生产测试记录当候选记录而缺compile_exit_code，失败日志audit_production_record_schema_failure.log保留，已显式区分两种记录并复核通过。旧审计98052因单请求floor缺mathSHA而失败的日志保留；新同硬件normal小参考已补齐，没有覆盖原floor。
+上一轮本机GPU/CPU调度器均已terminal：W原矩阵92282、完整确认86595、慢格夹测82401、补小参考28183、生产编译37851和生产测试28695全部exit0；R的四确认和三版诊断也均exit0；H/Q/U拒绝候选无活动任务。**不要再poll或重复启动这些handle。** 最终audit83501和coverage/report已成功。41741初次将生产测试记录当候选记录而缺compile_exit_code，失败日志audit_production_record_schema_failure.log保留，已显式区分两种记录并复核通过。旧审计98052因单请求floor缺mathSHA而失败的日志保留；新同硬件normal小参考已补齐，没有覆盖原floor。
 
-H800五个旧Slurm作业23:13仍Priority/Dependency，两个watcher活，没有覆盖排队源。当前所有自有本机GPU任务结束，不必等待其他用户任务。下一步在b6上提出新机制推进大100GB目标；不要重复无收益的ready/prebind/scatter/四缓冲/tail/半head双驻留/重复QK或unroll扫描。一个可能的新方向是研究两个不同KV tile的QK在寄存器中交错，而不是重复同一QK；**仅为未实现想法，先检查历史regpipe3是否已覆盖，不能直接宣称新机制或收益。**
+H800五个旧Slurm作业11/01 00:29:43仍Priority/Dependency，两个watcher活，保存F/h800_queue.txt；没有覆盖排队源或重复提交。当前所有自有本机GPU任务结束，不必等待其他用户任务。下一步在b6上提出新机制推进大100GB目标；不要重复ready/prebind/scatter/四缓冲/tail/半head双驻留/重复QK/本轮配对QK/warp按行取数或纯参数扫描。已完成等待/CTA预算诊断支持关注fetch占据的SM，但不能将全部差距单因归因。若探索同CTA内取数与attention重叠，先核算shared/register、cp.async group及进度保证，保留独立控制，勿改模拟器/参考以制造收益。
 
 ### 2.1 最新续接：中等 batch 派发修正已保留，继续大 batch 主目标
 

@@ -1,0 +1,10 @@
+{
+  "base_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "candidate_sha256": "75ea7044f3ba677b1dc67b828651c8cb013dfd6bb88a7d2ff43a3f81922d6f9f",
+  "mechanism": "Two different KV tiles share each Q fragment and independent score accumulators; PE then CKV MMA order per score and descending softmax/PV order retained. Full-staging cachedwholeCTA32>=4SMrows only; samefetch/LRU/simulator/singlekernel.",
+  "historical_regpipe3_sha256": "382111def93350b0870a3887dfb0c5ac25ca7286935e90ae9fab84a3c703a020",
+  "historical_difference": "regpipe3 adds a third register fetch buffer; its attention QK remains one tile at a time. This changes attention QK, not fetch buffering.",
+  "unroll": 4,
+  "candidate_adopted": false,
+  "goal_complete": false
+}

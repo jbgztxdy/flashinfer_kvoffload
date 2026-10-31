@@ -1,0 +1,7 @@
+{
+  "predecessor_sha256": "75ea7044f3ba677b1dc67b828651c8cb013dfd6bb88a7d2ff43a3f81922d6f9f",
+  "candidate_sha256": "adc6aef1541bc46699771e823e8da75d9dbcd00861435cede95534a7d7f155fb",
+  "mechanism": "Only hoist the next two remap/page-ID reads before the paired QK/PV work, as the native one-tile loop does. Same pair helper/unroll4/math/fetch/cache; do not conflate with first late-ID schedule.",
+  "candidate_adopted": false,
+  "goal_complete": false
+}

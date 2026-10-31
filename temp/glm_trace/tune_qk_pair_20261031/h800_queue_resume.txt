@@ -1,0 +1,106 @@
+Disk quotas for usr luyouy (uid 32230):
+     Filesystem  kbytes   quota   limit   grace   files   quota   limit   grace
+          /WORK 1651267536  5000000000       0       -  561819       0       0       -
+Disk quotas for usr luyouy (uid 32230):
+     Filesystem  kbytes   quota   limit   grace   files   quota   limit   grace
+      /home/fit 382454244* 200000000       0    none   30527       0       0       -
+# rtx 工作目录约定
+
+本文件适用于本目录及其所有子目录。
+
+## 项目记忆
+
+- 项目记忆统一存放在本目录的 `MEMORY.md`（`/WORK/PUBLIC/luyouy_work/rtx/MEMORY.md`）。
+- 开始本目录下的工作前，先阅读 `MEMORY.md`；后续将需要跨会话保留的用户偏好、关键决策、已验证结论和待办更新到该文件。
+- 不将项目记忆写入用户主目录或 `~/WORK` 根目录，也不在这些位置创建记忆副本。
+- 记忆保持简洁，注明重要结论的日期和验证依据；更新或删除过时内容，避免重复堆积会话记录。当前用户指令优先于历史记忆。
+
+## GPU 任务
+
+- 所有 GPU 任务必须通过 Slurm 调度，遵守集群的 Slurm 使用规范。
+- 批处理任务使用 `sbatch` 提交；交互式任务通过 `salloc` / `srun` 申请并使用资源。仅在 Slurm 分配的 GPU 资源内运行 GPU 程序，禁止绕过调度直接占用 GPU 或在登录节点运行 GPU 任务。
+- 按实际需求声明 GPU、CPU、内存和运行时限；分区、账户、QoS 及 GPU 申请方式以集群配置为准，不猜测配置。
+- 提交前检查任务的工作目录、环境和日志路径，确保符合下述存储要求。
+
+## 文件存储
+
+- `~/WORK` 是分布式文件系统，所有文件必须存储在该目录下。本目录是 rtx 的工作目录，相关文件默认存储在本目录及其子目录中。
+- 代码、数据集、模型权重、检查点、实验结果、日志、下载文件、环境、缓存和临时文件均须遵守上述要求。
+- 不将文件写入 `~/WORK` 之外的路径，例如节点本地磁盘、`/tmp`、`/var/tmp` 或主目录中的默认缓存目录。
+- 运行工具或任务前，将其输出、缓存和临时目录显式配置到 `~/WORK` 下；必要时设置 `TMPDIR`、`XDG_CACHE_HOME` 以及工具专用的缓存变量。
+- Slurm 脚本中的工作目录和标准输出、标准错误日志路径也必须位于 `~/WORK` 下；运行前创建所需目录，确保计算节点可访问。
+
+## 当前 Slurm 资源（检查于 2026-09-18）
+
+- 当前可见分区及 GPU 资源如下：
+  - `a01`：27 个节点，每节点 `gpu:a800:8(S:0-1)`
+  - `a02`：10 个节点，每节点 `gpu:a800:8`
+  - `a03`、`a04`、`a05`：各 1 个节点，每节点 `gpu:a800:8(S:0-1)`
+  - `j01`：8 个节点，每节点 `gpu:a800:8(S:0-1)`
+  - `j02`：4 个节点，每节点 `gpu:a800:8(S:0-1)`
+  - `j03`：4 个节点，每节点 `gpu:a800:8(S:0-1)`
+  - `j04`：1 个节点，每节点 `gpu:a800:8(S:0-1)`
+  - `j05`：28 个节点，每节点 `gpu:a800:8(S:0-1)`
+  - `h01`：1 个节点，每节点 `gpu:h800:8(S:0-1)`
+  - `h02`：2 个节点，每节点 `gpu:h800:8(S:0-1)`
+  - `h03`：1 个节点，每节点 `gpu:h800:8(S:0-1)`
+- 所有上述分区当前状态为 `up`，时间限制显示为 `infinite`。资源实际可用性仍以提交时调度器状态为准。
+- H800 节点映射：`h01` → `g40`；`h02` → `g42,g46`；`h03` → `g44`。当前账户关联为 `users`，可用 QoS 查询结果为 `normal`。
+
+- 分区可见不等于有权限使用：当前 `users` 账户优先使用 `a01`、`a02`（A800）或 `h01`（H800），这三个分区的 `AllowAccounts=ALL`。
+- 专用分区账户限制：`a03=lujiw`、`a04=sheke`、`a05=yangtao`、`j01=test07`、`j02=test16`、`j03=test17`、`j04=yyk`、`j05=shiqi`、`h02/h03=baoyue`。不要向无权使用的分区提交；本次 `users` 向 `h02` 提交后处于 `PENDING (PartitionConfig)`。
+
+## Slurm 查询与提交
+
+- 查看分区和 GPU：`sinfo -o '%P %a %l %D %G'`
+- 查看自己的任务：`squeue -u "$USER"`
+- 查看账户、分区和 QoS：`sacctmgr show assoc where user="$USER"`
+- 示例（按实际账户、QoS 和分区调整）：
+
+  ```bash
+  mkdir -p "$HOME/WORK/rtx/logs"
+  sbatch --partition=h01 --gres=gpu:h800:1 --cpus-per-task=4 --mem=32G --time=00:10:00 \
+    --output="$HOME/WORK/rtx/logs/%x-%j.out" --wrap='cd "$HOME/WORK/rtx" && nvidia-smi'
+  ```
+
+- `S:0-1` 表示 GPU 关联的 CPU socket 编号为 0–1，不代表 GPU 共享配置。
+- 上述资源清单可直接用于选择分区，无需每次重复全量查询；排队、提交失败或需要确认空闲资源时再查询实时状态。
+- CUDA 编译器：`/usr/local/cuda/bin/nvcc`，当前版本 12.4。
+
+## INT4 验证记录
+
+- H800 最小验证脚本：`checks/int4/run.sbatch`；通过 Slurm 提交，输出写入 `logs/`，缓存和临时文件写入 `checks/int4/`。
+- 已于 2026-09-18 在 `h01/g40` 的 NVIDIA H800（SM 9.0，驱动 610.43.02）通过验证，作业 `543589`：INT4 打包权重解量化后矩阵向量乘法的 16 个结果与 CPU 完全一致；带负数的 INT4 PTX MMA 的 128 个结果全部正确。
+- 反汇编显示 INT4 PTX MMA 被转换为 `IMMA.16832.S8.S8` 指令。因此确认的是 INT4 量化计算可以执行，不能把 PTX 支持等同于原生 INT4 Tensor Core 加速；本测试不评估模型推理性能。
+- 复现：在本目录执行 `sbatch --output="$PWD/logs/%x-%j.out" checks/int4/run.sbatch`。日志见 `logs/h800-int4-check-543589.out`，反汇编见 `checks/int4/native.sass`。
+
+## SGLang 开发环境
+
+- 使用本目录的 uv 环境 `.venv`；先 `source env.sh`，同时设置工作区内的缓存、临时目录及工具链路径。
+- 源码位置 `src/sglang`，editable 安装目标为 `src/sglang/python`。首次安装版本为 `0.5.20.dev859+g826d5170a`（2026-09-18 的 main）。Python 3.12.14，PyTorch 2.13.0，依赖快照见 `requirements.snapshot.txt`。
+- 修改 Python 源码后重启服务即可；修改 Rust/C++/CUDA 扩展需要按相应构建流程重编译。
+- 安装命令及 Slurm 环境检查脚本见根目录 `README.md`。不要未经验证把宿主机 CUDA 12.4 工具链用于最新 CUDA 13 依赖的扩展编译。
+- 安装后验证：`uv pip check` 全部通过；Slurm 作业 `543724` 在 H800 上通过 editable 路径、CUDA 矩阵乘法、FlashInfer 导入和启动命令帮助检查，日志 `logs/sglang-env-check-543724.out`。尚未验证完整模型推理。
+
+## 当前目标模型：GLM 5.2 FP8
+
+- 2026-09-18 用户取消 DeepSeek V3.2，随后取消 GLM 5.2 BF16；两者模型数据已删除。当前目标是官方 `zai-org/GLM-5.2-FP8`。
+- config 已核实 FP8 E4M3、动态激活、128×128 权重块；本地目录 `models/zai-org--GLM-5.2-FP8`，仓库约 756 GB，仍超过单机八卡 H800 显存总量。
+- 下载使用 `checks/download_glm52.sh`，hf-mirror.com、无代理、禁用 Xet；tmux 会话 `glm52`，socket `tmp/tmux/download.sock`，日志 `logs/glm-5.2-fp8-download.log`。
+- 推理框架保持 SGLang，允许接入第三方算子库；尚未验证完整模型推理。
+2026-10-31T23:56:29+08:00
+             JOBID                     NAME     STATE               NODELIST(REASON)           START_TIME
+           1004362             fi-tune-host   PENDING                     (Priority)  2026-11-02T02:34:29
+           1004363             fi-tune-peer   PENDING                     (Priority)  2026-11-02T02:34:29
+           1040680                fi-bulkbw   PENDING                     (Priority)  2026-11-02T02:34:29
+           1089380     fi-tuned-assist-peer   PENDING                   (Dependency)                  N/A
+           1089379     fi-tuned-assist-host   PENDING                   (Dependency)                  N/A
+JobID|State|ExitCode|Start|End
+1004362|PENDING|0:0|Unknown|Unknown
+1004363|PENDING|0:0|Unknown|Unknown
+1040680|PENDING|0:0|Unknown|Unknown
+1089379|PENDING|0:0|Unknown|Unknown
+1089380|PENDING|0:0|Unknown|Unknown
+    PID ELAPSED COMMAND
+1174145  217026 bash /WORK/PUBLIC/luyouy_work/rtx/yjw/test/glm_trace/watch_jobs.sh 1089379 1089380
+4160646  304595 bash /WORK/PUBLIC/luyouy_work/rtx/yjw/test/glm_trace/watch_jobs.sh 1004362 1004363 1040680 1040816

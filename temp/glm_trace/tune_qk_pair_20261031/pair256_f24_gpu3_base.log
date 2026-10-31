@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_pair_20261031/bench_gpu3_native.py", line 488, in <module>
+    for setting in SETTINGS:run_setting(setting)
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_pair_20261031/bench_gpu3_native.py", line 219, in run_setting
+    require_exclusive()
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_pair_20261031/resources_gpu3.py", line 15, in require_exclusive
+    if state['foreign']:raise RuntimeError('Other physical GPU3 process: '+str(state['foreign']))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Other physical GPU3 process: [{'gpu_uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'pid': 944560, 'process': '/home/lyy/project/fast27/cuda_checkpoint_hack_20261031/build/counter_payload', 'used_mib': '8612'}]
+start pair256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128
+pair256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128 cached GPU metadata bytes 649802000
+pair256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128 fraction 1.0 mean_us {'ours': 3544.085, 'memcpy': 6060.405}
+complete pair256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128
+start pair256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128
+pair256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128 cached GPU metadata bytes 649802000
+pair256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128 fraction 1.0 mean_us {'ours': 3550.539, 'memcpy': 6072.821}
+complete pair256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128
+start pair256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128
+pair256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128 cached GPU metadata bytes 649802000
+pair256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128 fraction 1.0 mean_us {'ours': 5283.595, 'memcpy': 8496.917}
+complete pair256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128

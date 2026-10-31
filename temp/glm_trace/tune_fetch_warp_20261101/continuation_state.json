@@ -1,0 +1,23 @@
+{
+  "recorded_at": "2026-11-01T00:35:41+0800",
+  "goal_status": "active",
+  "candidate_adopted": false,
+  "header_sha256": "a1566bf9cc2c959aa61bd5c157ce33fc20d2fee23bfc568e560cc80cccae404e",
+  "production_header_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "completed_handles": {
+    "92563": 0,
+    "74717": 0,
+    "85768": 0,
+    "97636": 0,
+    "27709": 0,
+    "77782": 0
+  },
+  "active_runners": [],
+  "tests": "105 normal CUDA passed",
+  "codegen": "Original34EMU/68normal instances equal; newREG244 STACK0 LOCAL0 SHARED2304",
+  "dispatch": "One actual WarpRowsHostBatchParams kernel,108CTA x256threads,147968dynamicshared,1block/SM",
+  "next_action": "Continue new resource-sharing mechanism on retained b6. Do not rerun warp_rows/paired QK or scan only unroll/fetch parameters. Main 100GB gap unresolved.",
+  "h800": "00:30 query h800_queue.txt: all five prior Slurm jobs pending, two watchers alive. No mutation.",
+  "classification": "progress:implemented_and_rejected_per_warp_row_fetch_with_payload_correctness_codegen_and_three_negative_pairs",
+  "results": "6 cells/3 pairs complete with references; rejected"
+}
