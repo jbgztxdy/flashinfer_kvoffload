@@ -1,0 +1,196 @@
+{
+  "batches": {
+    "1": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      48,
+      64,
+      96,
+      128,
+      192,
+      256,
+      384,
+      512
+    ],
+    "8": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      10,
+      12,
+      14,
+      16,
+      20,
+      24,
+      28,
+      32,
+      40,
+      48,
+      56,
+      64,
+      72,
+      80,
+      96,
+      112,
+      128
+    ]
+  },
+  "mtp": [
+    1,
+    8
+  ],
+  "host_fractions": [
+    0,
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.25,
+    0.3
+  ],
+  "settings": [
+    {
+      "name": "g0_l0",
+      "bandwidth_GBps": 0,
+      "latency_ns": 0,
+      "tier": "peer",
+      "emulated": true
+    },
+    {
+      "name": "g0_l2000",
+      "bandwidth_GBps": 0,
+      "latency_ns": 2000,
+      "tier": "peer",
+      "emulated": true
+    },
+    {
+      "name": "g0_l5000",
+      "bandwidth_GBps": 0,
+      "latency_ns": 5000,
+      "tier": "peer",
+      "emulated": true
+    },
+    {
+      "name": "g0_l10000",
+      "bandwidth_GBps": 0,
+      "latency_ns": 10000,
+      "tier": "peer",
+      "emulated": true
+    },
+    {
+      "name": "g0_l20000",
+      "bandwidth_GBps": 0,
+      "latency_ns": 20000,
+      "tier": "peer",
+      "emulated": true
+    },
+    {
+      "name": "g100_l0",
+      "bandwidth_GBps": 100,
+      "latency_ns": 0,
+      "tier": "peer",
+      "emulated": true
+    },
+    {
+      "name": "g100_l2000",
+      "bandwidth_GBps": 100,
+      "latency_ns": 2000,
+      "tier": "peer",
+      "emulated": true
+    },
+    {
+      "name": "g100_l5000",
+      "bandwidth_GBps": 100,
+      "latency_ns": 5000,
+      "tier": "peer",
+      "emulated": true
+    },
+    {
+      "name": "g100_l10000",
+      "bandwidth_GBps": 100,
+      "latency_ns": 10000,
+      "tier": "peer",
+      "emulated": true
+    },
+    {
+      "name": "g100_l20000",
+      "bandwidth_GBps": 100,
+      "latency_ns": 20000,
+      "tier": "peer",
+      "emulated": true
+    },
+    {
+      "name": "g50_l0",
+      "bandwidth_GBps": 50,
+      "latency_ns": 0,
+      "tier": "peer",
+      "emulated": true
+    },
+    {
+      "name": "g50_l2000",
+      "bandwidth_GBps": 50,
+      "latency_ns": 2000,
+      "tier": "peer",
+      "emulated": true
+    },
+    {
+      "name": "g50_l5000",
+      "bandwidth_GBps": 50,
+      "latency_ns": 5000,
+      "tier": "peer",
+      "emulated": true
+    },
+    {
+      "name": "g50_l10000",
+      "bandwidth_GBps": 50,
+      "latency_ns": 10000,
+      "tier": "peer",
+      "emulated": true
+    },
+    {
+      "name": "g50_l20000",
+      "bandwidth_GBps": 50,
+      "latency_ns": 20000,
+      "tier": "peer",
+      "emulated": true
+    },
+    {
+      "name": "nvlink",
+      "tier": "peer",
+      "emulated": false
+    },
+    {
+      "name": "pcie",
+      "tier": "host",
+      "emulated": false
+    }
+  ],
+  "passes": 3,
+  "trace_positions": 1024,
+  "capacity": 4096,
+  "heads": 64,
+  "dtype": "bfloat16",
+  "topk": 2048,
+  "seed": 42,
+  "ours_fetch_ctas": 24,
+  "ours_host_item_entries": 64,
+  "optional_small_prepare": false,
+  "aggregation": "arithmetic mean of all measured steps and all passes, including cold first step",
+  "no_lru_snapshots": [
+    0,
+    256,
+    512,
+    768
+  ],
+  "status": "candidate_in_progress",
+  "candidate": "joint_qk"
+}

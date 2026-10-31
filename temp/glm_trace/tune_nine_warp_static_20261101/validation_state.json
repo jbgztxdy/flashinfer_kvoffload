@@ -1,0 +1,122 @@
+{
+  "start": "2026-11-01T05:59:54+0800",
+  "phase": "short_screen_complete",
+  "complete": true,
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_nine_warp_static_20261101/compiler_nine_warp_static.py",
+        "--normal"
+      ],
+      "start": "2026-11-01T06:02:54+0800",
+      "log": "compiler_nine_warp_static_normal.log",
+      "pid": 1791509,
+      "exit_code": 0,
+      "end": "2026-11-01T06:03:43+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_nine_warp_static_20261101/stress_candidate.py",
+        "--variant",
+        "nine_warp_static"
+      ],
+      "start": "2026-11-01T06:03:43+0800",
+      "log": "stress_nine_warp_static.log",
+      "pid": 1792531,
+      "exit_code": 0,
+      "end": "2026-11-01T06:03:49+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_nine_warp_static_20261101/probe_nine_warp_static.py"
+      ],
+      "start": "2026-11-01T06:03:49+0800",
+      "log": "probe_nine_warp_static.log",
+      "pid": 1792769,
+      "exit_code": 0,
+      "end": "2026-11-01T06:04:04+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "synccheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_nine_warp_static_20261101/probe_synccheck_nine_warp_static.py"
+      ],
+      "start": "2026-11-01T06:04:04+0800",
+      "log": "synccheck_nine_warp_static.log",
+      "pid": 1793102,
+      "exit_code": 0,
+      "end": "2026-11-01T06:04:09+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "racecheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLANineStaticWarpKernel",
+        "--launch-count",
+        "1",
+        "--racecheck-num-workers",
+        "8",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_nine_warp_static_20261101/probe_racecheck_nine_warp_static.py"
+      ],
+      "start": "2026-11-01T06:04:09+0800",
+      "log": "racecheck_nine_warp_static.log",
+      "pid": 1793307,
+      "exit_code": 0,
+      "end": "2026-11-01T06:04:25+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_nine_warp_static_20261101/screen.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "nine_warp_static",
+        "--variants",
+        "base",
+        "nine_warp_static",
+        "--tag",
+        "nine_static256_f24_"
+      ],
+      "start": "2026-11-01T06:04:25+0800",
+      "log": "screen_gpu3.log",
+      "pid": 1793670,
+      "exit_code": 0,
+      "end": "2026-11-01T06:05:58+0800"
+    }
+  ],
+  "end": "2026-11-01T06:05:58+0800"
+}

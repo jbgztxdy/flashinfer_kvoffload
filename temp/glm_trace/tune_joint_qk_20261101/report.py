@@ -41,7 +41,7 @@ for k,v in [('rows',len(a['rows'])),('pairs',len(a['pairs'])),('launches',a['tim
 (p/'composition_comparisons.json').write_text(json.dumps(dict(candidate_adopted=False,goal_status='active',triples=triples),indent=2)+'\n')
 (p/'README.md').write_text('''# JointMDO plus paired-QK fragment reuse, 2026-11-01
 
-Not adopted; productionb6/0f82e9de, goal active. See [report](../../../docs/mla_host_a100_joint_qk_20261101.md), confirmation_plan.json and composition_comparisons.json. All156plannedmatrixcellscomplete,204currentrows104pairs;fullreverseandnormalnativecomplete,forwardremainingJM/JQ6settingswaitexternalGPU01users. NormalNVLinkJQ+3.683%vsbasebut-1.530%vsJM,preserved;no claimofuniformcompositiongain.
+Not adopted; productionb6/0f82e9de, goal active. See [report](../../../docs/mla_host_a100_joint_qk_20261101.md), confirmation_plan.json and composition_comparisons.json. All156plannedmatrixcellscomplete;readperformance_audit.jsonforcurrentrow/paircounts. Fullreverseandnormalnativecomplete;forwardbase+JMcomplete,lastJQ3settingswaitexternalGPU01users. NormalNVLinkJQ+3.683%vsbasebut-1.530%vsJM,preserved;no claimofuniformcompositiongain.
 
 SameJMjointmax/rescale/PV/refill, add frozenPpairedQKhelper/unroll4. Same per-scorePE->CKV order, sameJMFP32online grouping, canonicalmath unchanged. Pairrequiresbothstagesready, trading firstQK/load overlap for Qreuse. Originalfetch/LRU/cachepayload/singlecooperative contract preserved. NewREG251STACK0 versusJM255STACK16,actualone108CTA/block32x4x2kernel,active1,dynamic147968/static2304. Original34EMU/68normal exact.109newtests pass;JMcontrol reuses frozen binary/gates with manifest SHA,zero newcontroltests claimed.
 

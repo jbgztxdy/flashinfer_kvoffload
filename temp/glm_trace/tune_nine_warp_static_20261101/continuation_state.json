@@ -1,0 +1,44 @@
+{
+  "recorded_at": "2026-11-01T06:11:10+08:00",
+  "goal_status": "active",
+  "candidate_adopted": false,
+  "manifest": {
+    "base_sha256": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
+    "candidate_sha256": "cc3f42212f4de1b827aede853966447fa5eeed88b3ca601e58d20a49acf30cb1",
+    "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+    "candidate_adopted": false,
+    "goal_complete": false,
+    "mechanism": "One288threadCTA,warp0service and8compute warps retain64heads. Virtualmathcoordinates/namedbarrier256,all288threads prepare and exit. RemoveunusedsharedQPE8KBvia directglobalMMA-fragment loads. Two8rowcp.asyncbuffers and one8rowregisterbuffer, sameFARmodel/post-readhook,64rowreadyflags,immediate/deferredLRUcachefill.",
+    "policy_change": "All108CTAservicewarps,24rowsinflight/CTA=2592rows versusold24fetchCTA*128rows=3072. Hostfetch_ctas parameter24 retained as input but dedicatedCTA partition replaced. No claimofsameproducerpolicy. QKfeatureunroll1 fixed by288threadregisterbudget<=227,notasweep.",
+    "budgets": {
+      "dynamic_shared": 158336,
+      "compute_shared": 139904,
+      "service_shared": 18432,
+      "service_register_payload_bytes_per_warp": 9216,
+      "block": [
+        32,
+        9,
+        1
+      ],
+      "grid": [
+        1,
+        108,
+        1
+      ]
+    },
+    "risks": "Registercap may spill;globalQPE/L1traffic,more8rowemulatorreservations,andservicewarpbandwidth may offsetSMsharing. Physicalresources/codegen/numerics/cachepayload/synchronization/performance needverification.",
+    "variant": "nine_warp_static",
+    "predecessor_sha256": "36fde9d70bdaa6a1f61aff87d6dba41be1a4402afed3461b8761a73049ecd22b",
+    "correction": "OriginalREG168STACK248withLDL/STL. Replacepayloadarraywith18nameduint4scalars,explicitfixedstageissue/consume/refillwithoutcaptureofpayloadaddress. Samejobs,3buffers(2shared+1registerintent),FARpost-readhook,64rowflags,cachedefer/QPE/math/288threads. No buffersize/warpcount/unroll/pacing sweep."
+  },
+  "active_runners": [],
+  "completed_handles": {
+    "88439": 0,
+    "76252": 0,
+    "10004": 0,
+    "96169": 0,
+    "73043": 0
+  },
+  "next_action": "Both9warpversionsrejected;nomorewarp/buffer/unroll/stagelayoutsearch. Combinedreport docs/mla_host_a100_nine_warp_20261101.md. Allhandles terminal0;originalJQ72075/1398stillwaitlast3SXMforwardsettings,newGPU01users1780064/1780065. Rootb6,goalactive.",
+  "results": "109tests+LSE/payload/Graphperversion,36/72exact,CS0,actualone108CTA/288threadkernel. REG168STACK248both;staticstage/scalarsdidnotremovestack. V1all5settingsslowincludingnormalHBM/PCIe;staticall3simsettingsslow. Combined16cells8pairs3072launch192segments,218newtests,two references complete."
+}
