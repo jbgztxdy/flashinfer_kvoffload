@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-01 03:34 联合MDO正反完整窗口均有收益，跨场景运行中，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-01 04:00 联合MDO本机98格完成；组合QK完整确认有额外收益，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -14,7 +14,7 @@
 
 ## 2. 当前运行状态与新一轮进度
 
-### 2.0 最新生产：共享页号已保留；特征分工与重缩放均拒绝
+### 2.0 最新生产：共享页号已保留；联合MDO候选待SXM验证
 
 **当前生产header是cached_ids，SHA=`b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a`，不再是52919。下文§2.1–2.6保留各阶段历史，冲突时以本节及实际文件为准。** 单kernel、数学、精确LRU/真实cache载荷、模拟器和原5304矩阵不变；只在已有whole CTA32且启用LRU的路径共享块页号，未改路径原9EMU/18normal kernel指令与资源完全相同。基线52919保存在W/base.cuh及其他独立实验树。
 
@@ -26,17 +26,23 @@ WR首次生成在编译前静查发现插入索引错误，错误generator/heade
 
 **KV64=`temp/glm_trace/tune_kv64_20261101/`已完成拒绝。** 原64head/256thread使用native sharded64KV/1stage、shared147968B、原fetch64row双buffer/f24及精确LRU。原math canonical34af完全不改，FP32在线分组不同。原34EMU/68normal实例精确等价，109正常/长cache-payload测试通过；实际单108CTA/block32x4x2/active1、dynamic147968B/static2304B。新REG255/STACK8/LOCAL0，有STL/LDL，不得称stack0。三链路256×3pass、candidate→base：100GB0/20慢1.576%/1.795%，50GB快0.024%近乎持平；6格/3配对、1152计时launch/72segment、两参考完整。全部34389/54291/62484/40753/86019/21765/92528已terminal0；checkpoint通过。[报告](mla_host_a100_kv64_20261101.md)。不再扫KV/stage/fetch/cadence。本轮F/S/WR/KV64共872测试、48格/27配对、9216计时launch/576segment，无生产收益。
 
+**本轮新JQ=`temp/glm_trace/tune_joint_qk_20261101/`已完成109项测试及完整反向三方确认，正常/跨形状验证中。** 以JM typed1190…aa59为算法控制，复用旧P冻结的paired-QK helper（原unroll4，不扫数字），两score tile共用Q fragment后沿用相同joint max/d/O和逐tile PV/refill。它要求两stage都ready，失去JM首QK与第二tile加载的重叠，可能抵消Q读取复用；方程及各score的PE→CKV MMA次序不改，仍单cooperative/原147968B/f24/精确LRU。原P配对QK单独失败不能外推这个组合收益；JM所有固定源/SXM队列继续原样验证。
+
+JQ新REG251/STACK0/LOCAL0/static2304B，原34EMU/68normal实例精确相同，实际单108CTA/block32x4x2/dynamic147968/active1；正常105+4长cache载荷/Graph测试通过。新SASS6952条/HMMA299/LDSM198是unroll4静态数，不等同动态work/带宽/性能。冻结JM控制复用原binary及109测试证据，不算本轮新增测试；reused_joint_control.json列原件SHA，benchmark记录实际同字节host/math。
+
+JQ短256×3pass、base→JM→JQ：100GB0µs生产3553.003、JM3464.789、JQ3433.067（JQ较生产快3.376%、较JM0.916%）；100GB20µs3554.848/3466.709/3452.907（2.868%/0.398%）；50GB20µs5285.024/5277.195/5273.344（0.221%/0.073%）。9格/6配对/1728launch108segment，两参考完整。短审计冻结short_performance_audit.json，不安装。full反向三方runner **75294**已terminal0：JQ→JM→base、1024位置×5pass、三设置，固定confirmation_plan.json。100GB0µs生产3620.643、JM3520.424、JQ3484.302，JQ较生产快3.766%、较JM1.026%；20µs3651.909/3540.707/3511.080，快3.856%/0.837%；50GB5521.166/5514.400/5506.459，快0.266%/0.144%。短+full18格/12对生产配对、13248launch/828segment，两参考完整；composition_comparisons.json另列6个三方点，不能混淆额外JM收益和对生产总收益。原88681/28946/71720/94692/81003/95130/52989全部terminal0，不poll/restart。当前JQ三个GPU3 runner：**69652**正常1024×5pass三方2链路（base→JM→JQ）；**63115**changedR64/R128×50/100×五延迟40格；**74895**正常改变形状/小中形状/无LRU控制36格。均在共享锁下串行，不重复启动。R64limited已配对10点，100GB快2.664%–3.335%，50GB0.211%–0.379%；nativeR64 HBM快2.923%、PCIe慢0.188%保留。两轮源和参数固定，无数字扫描。生产b6保持。后续候选选择须看全部结果及真实SXM，不因栈消失或短筛选采用。
+
 **当前JM=`temp/glm_trace/tune_joint_mdo_20261101/`联合重缩放初测有收益，尚未采用。** 保持原32KV/2stage/64head/256thread/147968B、fetch64行双缓冲/f24/精确LRU。两个score tile共用一次max和d/O重缩放，原PV仍逐tile降序，第一个stage在第二PV时补future tile。区别于旧配对QK两次MDO及KV64单stage等待；方程相同、FP32在线归约分组变化。root/private math canonical34af完全不改。新host helper与单cooperative kernel保持原退出协议。
 
 首版joint_mdo和joint_mdo_after定义顺序控制均105+4/实际单108CTA通过，但4/34EMU、8/68normal原实例指令文本改变，puredevice精确相同；strict gate拦截，二者无性能launch。after只移动相同新增helper/kernel不能消除差异，全部失败/source/SASS保留。第三版joint_mdo_typed用专属继承traits隔离helper模板实例，字段/布局/算法与after逐字重建断言相同，原34EMU/68normal全精确等价后才进入性能。三版共327正常/长cachepayload/Graph测试；实际单108CTA/block[32,4,2]/active1，dynamic147968/static2304B，最大绝对误差0.004128。新REG255/STACK16/LOCAL0，不能称stack0，未放宽等价或正确性门槛。
 
 JM短256×3pass、base→typed，100GB0/20快0.653%/2.700%、50GB20快0.176%；已冻结short_performance_audit.json，6格3对/1152launch72segment。按预先confirmation_plan完整1024×5pass反向typed→base，100GB0/20快2.677%/2.902%，50GB快0.146%。正常1024×5pass的独立同卡HBM快3.002%，物理PCIe快0.0045%近乎持平。GPU3 HBM不是NVLink。纯device及逐步max均按原同硬件参考/公式，保留所有正负格与每步/每pass，尚无安装。
 
-上述首三组已完整，12594/83243均terminal0。第二组完整正向base→typed的16920也已terminal0，100GB0/20快2.134%/1.881%、50GB快0.103%，保留独立cohort/forward_confirmation_plan.json。跨形状GPU3两runner：61915 limited，MTP8/R64及R128×50/100GB×0/2/5/10/20µs×新旧，共40格；12133 native，R64/R128两链路改变路径、MTP1/R1/R256和MTP8/R28/R32原路径控制、有/无LRU及0/.1/.3远端，共36格。全LRU1024位置×3冷pass，无LRU四快照×3比例。固定源无fetch/cadence扫描，runner可跳完成格/只补缺项，state/log追加不覆盖。全部GPU3共享锁，等待日志的其他python也可能是本任务其他串行runner，以pid/command区分，不误称外部冲突。
+上述首三组已完整，12594/83243均terminal0。第二组完整正向base→typed的16920也已terminal0，100GB0/20快2.134%/1.881%、50GB快0.103%，保留独立cohort/forward_confirmation_plan.json。GPU3跨形状两矩阵现已全部完成，61915/12133均terminal0：61915 limited，MTP8/R64及R128×50/100GB×0/2/5/10/20µs×新旧，共40格；12133 native，R64/R128两链路改变路径、MTP1/R1/R256和MTP8/R28/R32原路径控制、有/无LRU及0/.1/.3远端，共36格。全LRU1024位置×3冷pass，无LRU四快照×3比例。固定源无fetch/cadence扫描，runner可跳完成格/只补缺项，state/log追加不覆盖。全部GPU3共享锁，等待日志的其他python也可能是本任务其他串行runner，以pid/command区分，不误称外部冲突。
 
-JM/audit_performance.py对W的fresh小参考只填缺失键、不改变已有参考选择；原每步max公式与reference时间不改。当前report/checkpoint是进度快照，列活动runner及未完成raw，不代表candidate通过全部gate。先查61915/12133原handles和实际raw，不重复启动；若资源门槛失败保留日志并只补缺失任务。SXM已有两CPU验证器30328（limited60格）/98811（native20格）等待GPU0/1同时空闲、共用gpu01锁；源和计划固定，无新远端Slurm提交，不能重复启动。SXM改变形状MTP8/R64/R128及MTP1/R512、五档延迟，正常实际NVLink/PCIe另含小/中控制。GPU0/1仍其他用户占用，真实SXM/NVLink及全覆盖仍待，矩阵后还需实际SXM大形状完整5pass确认，**不得仅凭GPU3这几格安装**。
+JM/audit_performance.py对W的fresh小参考只填缺失键、不改变已有参考选择；原每步max公式与reference时间不改。当前report/checkpoint是进度快照，列活动runner及未完成raw，不代表candidate通过全部gate。GPU3合计98格/49配对、114080计时launch/7184segment、两参考无缺失、raw无未完成；coverage.json核验40/40limited与36/36native计划完整。改变的十个100GB配对快1.079%–3.633%，50GB快0.049%–0.174%；最大负差为未改无LRU HBM远端0.3慢0.646%，其余负差全部保留，无>1%负差。不要再poll/restart61915/12133。SXM已有两CPU验证器30328（limited60格）/98811（native20格）等待GPU0/1同时空闲、共用gpu01锁；源和计划固定，无新远端Slurm提交，不能重复启动。SXM改变形状MTP8/R64/R128及MTP1/R512、五档延迟，正常实际NVLink/PCIe另含小/中控制。GPU0/1仍其他用户占用，真实SXM/NVLink及全覆盖仍待，矩阵后还需实际SXM大形状完整5pass确认，**不得仅凭GPU3这几格安装**。
 
-JM旧所有build/test/codegen/stress/probe/screen handles已terminal，详见continuation_state.json，不再poll。最新H80003:18:48五原作业仍Priority/Dependency，但调度估计已推迟11/05，两个watcher活；hash核对AGENTS/MEMORY与已读快照完全相同，无新提交/源码写入。当前[JM报告](mla_host_a100_joint_mdo_20261101.md)、continuation和实际进程为准。此前F/S/WR/KV64全部拒绝，已保全872测试/48格27对；JM327测试与正向信号单列，主目标仍active，大100GB约32%–34%历史差距未解决。
+JM旧所有build/test/codegen/stress/probe/screen handles已terminal，详见continuation_state.json，不再poll。最新H80003:38:29五原作业仍Priority/Dependency，但调度估计已推迟11/05，两个watcher活；hash核对AGENTS/MEMORY与已读快照完全相同，无新提交/源码写入。当前[JM报告](mla_host_a100_joint_mdo_20261101.md)、continuation和实际进程为准。此前F/S/WR/KV64全部拒绝，已保全872测试/48格27对；JM327测试与正向信号单列，主目标仍active，大100GB约32%–34%历史差距未解决。
 
 **本轮最新F=`temp/glm_trace/tune_feature_qk_20261101/`已完成，两版拒绝。** dim_split使用两个32-head item、128线程、2stage/16KV，两warp group分别计算PE和CKV各半、交换4096B score再相加；全576特征保留，FP32归约顺序变化。duplicate_control保留相同布局/padding但重复完整QK。新REG231/255、stack/local0，正常实际单kernel216CTA/128线程、dynamic78080B/static2176B、active2；EMU静态HMMA207/315。每版105+4正常/长序列全cache载荷测试，共218；原34EMU/68normal实例全等价，审计核验私有math e5968及68证明后才沿用canonical参考。f24的100GB0/20µs dim慢9.605%/27.923%。唯一追加的f48在途容量等价控制（48×32×2=24×64×2）仍比同参base慢2.408%/3.276%，约4ms不能替代原推荐f24约3.5ms；50GB正负差均保留，不再扫参数。18格/12配对、3456计时launch/216segment、两参考无缺失。[报告](mla_host_a100_feature_qk_20261101.md)。初次generator断言在生成候选前失败的原件保留，性能前已修复私有math provenance，未混入错误SHA格。
 
@@ -44,7 +50,7 @@ JM旧所有build/test/codegen/stress/probe/screen handles已terminal，详见con
 
 F/S全部自有进程已terminal；early105/stress原handles24991/28346已exit0，96149在最终查询时已不保留，完整compile log及后续代码生成/测试/benchmark均成功，不能重启。F/S各checkpoint_audit.py均通过，总545项测试/36格/21配对/6912计时launch/432segment；生产b6、root math34af、模拟器和原5304格SHA不变。GPU3现有外部PID1460325，不动，后续GPU工作继续共享锁/空闲等待。H80002:30:16只读复查仍五任务Priority/Dependency、原两个watcher活，AGENTS/MEMORY哈希与已读快照相同，详见S/h800_queue.txt；无新提交或源码写入。
 
-**大batch100GB约32%–34%主差距仍未解决，goal active。** 空间warp角色隔离已按本节开头实现、通过正确性但无性能收益，不能重做；当前按JM联合MDO的GPU3/SXM跨形状runner继续。旧重复QK、feature分工、重缩放、时间交替cofetch/hybrid及空间warp分工均不重做；所有新候选仍须旧实例等价、实际路径/全cache载荷测试，再同参性能。
+**大batch100GB约32%–34%主差距仍未解决，goal active。** 空间warp角色隔离已按本节开头实现、通过正确性但无性能收益，不能重做；当前按JM的SXM跨形状及JQ的正常/跨形状验证继续。旧重复QK、feature分工、重缩放、时间交替cofetch/hybrid及空间warp分工均不重做；所有新候选仍须旧实例等价、实际路径/全cache载荷测试，再同参性能。
 
 **最新C=`temp/glm_trace/tune_cofetch_20261101/`已完成并拒绝。** 原型af610…bf6f将attention减为1stage，腾出2×16行service buffer，所有CTA计算中/等待时推进取数，所有pool先做LRU再grid barrier；独立控制020b…0b41只减attention stage、用padding保留原64行fetch双缓冲。两版均105正常+2长队列/全cache载荷测试（共214项），34EMU/68normal原库内实例全等价，实际单kernel/108CTA/256线程/1CTA驻留已核实。cofetch静态38272B+动态111104B、REG244EMU/242normal；control静态2304+动态147968、REG240，均stack/local0。GPU3同参256×3pass的100GB0/20µs原型慢38.940%/53.030%，control慢11.794%/12.284%，50GB慢15.761%/0.470%。9格/6配对、1728计时launch/108segment、两参考完整。原control preflight外部counter失败及仅补缺失候选的重试保留；全部C runner已terminal。见[报告](mla_host_a100_cofetch_20261101.md)。
 

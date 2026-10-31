@@ -1,0 +1,84 @@
+{
+  "candidate_adopted": false,
+  "goal_status": "active",
+  "triples": [
+    {
+      "cohort": "composition256_f24_",
+      "setting": "g100_l0",
+      "positions": 256,
+      "passes": 3,
+      "base_us": 3553.0026629567146,
+      "joint_mdo_us": 3464.7893235087395,
+      "joint_qk_us": 3433.0666586756706,
+      "over_base_reduction": 0.03375623821830642,
+      "over_joint_reduction": 0.00915572690605726,
+      "memcpy_us": 6051.029319564502,
+      "reference_us": 2699.652441141097
+    },
+    {
+      "cohort": "composition256_f24_",
+      "setting": "g100_l20000",
+      "positions": 256,
+      "passes": 3,
+      "base_us": 3554.847997923692,
+      "joint_mdo_us": 3466.7093232274055,
+      "joint_qk_us": 3452.906660735607,
+      "over_base_reduction": 0.028676707765740383,
+      "over_joint_reduction": 0.003981488265923705,
+      "memcpy_us": 6064.41601117452,
+      "reference_us": 2699.895801141097
+    },
+    {
+      "cohort": "composition256_f24_",
+      "setting": "g50_l20000",
+      "positions": 256,
+      "passes": 3,
+      "base_us": 5285.023987293243,
+      "joint_mdo_us": 5277.194661398728,
+      "joint_qk_us": 5273.344000180562,
+      "over_base_reduction": 0.0022100159130333807,
+      "over_joint_reduction": 0.0007296795864539796,
+      "memcpy_us": 8487.616012493769,
+      "reference_us": 4960.29768
+    },
+    {
+      "cohort": "compositionfull1024_f24_",
+      "setting": "g100_l0",
+      "positions": 1024,
+      "passes": 5,
+      "base_us": 3620.6431977450848,
+      "joint_mdo_us": 3520.424000546336,
+      "joint_qk_us": 3484.302396699786,
+      "over_base_reduction": 0.037656513939349434,
+      "over_joint_reduction": 0.010260583339093299,
+      "memcpy_us": 6267.044792324305,
+      "reference_us": 2744.776325644738
+    },
+    {
+      "cohort": "compositionfull1024_f24_",
+      "setting": "g100_l20000",
+      "positions": 1024,
+      "passes": 5,
+      "base_us": 3651.908800378442,
+      "joint_mdo_us": 3540.7071951776743,
+      "joint_qk_us": 3511.0799983143806,
+      "over_base_reduction": 0.038563066539193724,
+      "over_joint_reduction": 0.008367593034421139,
+      "memcpy_us": 6298.947206884623,
+      "reference_us": 2745.475175644738
+    },
+    {
+      "cohort": "compositionfull1024_f24_",
+      "setting": "g50_l20000",
+      "positions": 1024,
+      "passes": 5,
+      "base_us": 5521.166395023465,
+      "joint_mdo_us": 5514.399997889996,
+      "joint_qk_us": 5506.459193304181,
+      "over_base_reduction": 0.0026637852705436726,
+      "over_joint_reduction": 0.0014400124381351853,
+      "memcpy_us": 8887.652795761824,
+      "reference_us": 5189.513724
+    }
+  ]
+}

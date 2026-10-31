@@ -1,0 +1,908 @@
+{
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "groups": [
+    {
+      "hardware": "gpu3",
+      "cohort": "limited",
+      "tag": "joint_shapes_gpu3_limited_",
+      "expected_cells": 40,
+      "completed_audited_cells": 40,
+      "missing_cells": [],
+      "complete": true,
+      "plan_sha256": "9b54b370ef7ccef98556020a257ccdace88b39173610bec557ab5e1ad6626979"
+    },
+    {
+      "hardware": "gpu3",
+      "cohort": "native",
+      "tag": "joint_shapes_gpu3_native_",
+      "expected_cells": 36,
+      "completed_audited_cells": 36,
+      "missing_cells": [],
+      "complete": true,
+      "plan_sha256": "d4c615e4b3f9fe66fb51cd6c40415d2d8678671bef164bc7edeec0bbd7f4afaa"
+    },
+    {
+      "hardware": "sxm",
+      "cohort": "limited",
+      "tag": "joint_shapes_sxm_limited_",
+      "expected_cells": 60,
+      "completed_audited_cells": 0,
+      "missing_cells": [
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          64,
+          "g100_l0",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          64,
+          "g100_l2000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          64,
+          "g100_l5000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          64,
+          "g100_l10000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          64,
+          "g100_l20000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          64,
+          "g50_l0",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          64,
+          "g50_l2000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          64,
+          "g50_l5000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          64,
+          "g50_l10000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          64,
+          "g50_l20000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          64,
+          "g100_l0",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          64,
+          "g100_l2000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          64,
+          "g100_l5000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          64,
+          "g100_l10000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          64,
+          "g100_l20000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          64,
+          "g50_l0",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          64,
+          "g50_l2000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          64,
+          "g50_l5000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          64,
+          "g50_l10000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          64,
+          "g50_l20000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          128,
+          "g100_l0",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          128,
+          "g100_l2000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          128,
+          "g100_l5000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          128,
+          "g100_l10000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          128,
+          "g100_l20000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          128,
+          "g50_l0",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          128,
+          "g50_l2000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          128,
+          "g50_l5000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          128,
+          "g50_l10000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          128,
+          "g50_l20000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          128,
+          "g100_l0",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          128,
+          "g100_l2000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          128,
+          "g100_l5000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          128,
+          "g100_l10000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          128,
+          "g100_l20000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          128,
+          "g50_l0",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          128,
+          "g50_l2000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          128,
+          "g50_l5000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          128,
+          "g50_l10000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          128,
+          "g50_l20000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          1,
+          512,
+          "g100_l0",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          1,
+          512,
+          "g100_l2000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          1,
+          512,
+          "g100_l5000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          1,
+          512,
+          "g100_l10000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          1,
+          512,
+          "g100_l20000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          1,
+          512,
+          "g50_l0",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          1,
+          512,
+          "g50_l2000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          1,
+          512,
+          "g50_l5000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          1,
+          512,
+          "g50_l10000",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          1,
+          512,
+          "g50_l20000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          1,
+          512,
+          "g100_l0",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          1,
+          512,
+          "g100_l2000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          1,
+          512,
+          "g100_l5000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          1,
+          512,
+          "g100_l10000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          1,
+          512,
+          "g100_l20000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          1,
+          512,
+          "g50_l0",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          1,
+          512,
+          "g50_l2000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          1,
+          512,
+          "g50_l5000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          1,
+          512,
+          "g50_l10000",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          1,
+          512,
+          "g50_l20000",
+          null
+        ]
+      ],
+      "complete": false,
+      "plan_sha256": "e26ddced61311c4f40aecc6ff70b70666d9a20757632444b648ccaafe4e16d50"
+    },
+    {
+      "hardware": "sxm",
+      "cohort": "native",
+      "tag": "joint_shapes_sxm_native_",
+      "expected_cells": 20,
+      "completed_audited_cells": 0,
+      "missing_cells": [
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          64,
+          "nvlink",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          64,
+          "pcie",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          64,
+          "nvlink",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          64,
+          "pcie",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          128,
+          "nvlink",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          128,
+          "pcie",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          128,
+          "nvlink",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          128,
+          "pcie",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          1,
+          512,
+          "nvlink",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          1,
+          512,
+          "pcie",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          1,
+          512,
+          "nvlink",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          1,
+          512,
+          "pcie",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          1,
+          1,
+          "nvlink",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          1,
+          1,
+          "pcie",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          1,
+          1,
+          "nvlink",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          1,
+          1,
+          "pcie",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          32,
+          "nvlink",
+          null
+        ],
+        [
+          "base",
+          "lru",
+          8,
+          32,
+          "pcie",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          32,
+          "nvlink",
+          null
+        ],
+        [
+          "joint_mdo_typed",
+          "lru",
+          8,
+          32,
+          "pcie",
+          null
+        ]
+      ],
+      "complete": false,
+      "plan_sha256": "5f93037eced900b26d20429ba57636a80d10337b0ea097051e4140902e3933f1"
+    }
+  ],
+  "gpu3_matrix_complete": true,
+  "sxm_matrix_complete": false,
+  "gpu3_completed_rows": 76,
+  "total_rows": 98,
+  "total_pairs": 49,
+  "pending_references": 0,
+  "incomplete_raw": 0,
+  "changed_gpu3_100GB_pairs": 10,
+  "changed_gpu3_100GB_reduction_range": [
+    0.010792904982308005,
+    0.03632815443757964
+  ],
+  "negative_pairs": [
+    {
+      "hardware": "GPU3",
+      "cohort": "joint_shapes_gpu3_native_",
+      "variant": "joint_mdo_typed",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 1,
+      "requests": 256,
+      "fetch_ctas": 16,
+      "setting": "native_hbm",
+      "positions": 1024,
+      "passes": 3,
+      "old_us": 1049.3743349604,
+      "new_us": 1054.674001216578,
+      "reduction": -0.005050310532302316,
+      "old_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_base_staged_f16_i64_soff_lru_native_hbm_mtp1_b256.json",
+      "new_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_joint_mdo_typed_staged_f16_i64_soff_lru_native_hbm_mtp1_b256.json",
+      "memcpy_us": 1227.5630006333813,
+      "local_us": 770.6229979715621,
+      "reference_us": 770.721599592233,
+      "over_reference": 0.36842408695250817
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "joint_shapes_gpu3_native_",
+      "variant": "joint_mdo_typed",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 1,
+      "requests": 256,
+      "fetch_ctas": 16,
+      "setting": "pcie",
+      "positions": 1024,
+      "passes": 3,
+      "old_us": 3201.8453339502835,
+      "new_us": 3201.8489997135475,
+      "reduction": -1.1448907994981994e-06,
+      "old_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_base_staged_f16_i64_soff_lru_pcie_mtp1_b256.json",
+      "new_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_joint_mdo_typed_staged_f16_i64_soff_lru_pcie_mtp1_b256.json",
+      "memcpy_us": 4031.2640020468584,
+      "local_us": 770.6229979715621,
+      "reference_us": 3026.0855330857576,
+      "over_reference": 0.05808278209788753
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "joint_shapes_gpu3_native_",
+      "variant": "joint_mdo_typed",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 28,
+      "fetch_ctas": 16,
+      "setting": "pcie",
+      "positions": 1024,
+      "passes": 3,
+      "old_us": 2401.3840053230524,
+      "new_us": 2402.181334172686,
+      "reduction": -0.00033202888328820457,
+      "old_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_base_staged_f16_i64_soff_lru_pcie_mtp8_b28.json",
+      "new_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_joint_mdo_typed_staged_f16_i64_soff_lru_pcie_mtp8_b28.json",
+      "memcpy_us": 3206.661337365707,
+      "local_us": 750.8133330071965,
+      "reference_us": 2170.4053407792685,
+      "over_reference": 0.10678926605949113
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "joint_shapes_gpu3_native_",
+      "variant": "joint_mdo_typed",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 64,
+      "fetch_ctas": 24,
+      "setting": "pcie",
+      "positions": 1024,
+      "passes": 3,
+      "old_us": 5163.27199836572,
+      "new_us": 5172.909338027239,
+      "reduction": -0.0018665179104586649,
+      "old_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_base_staged_f24_i64_soff_lru_pcie_mtp8_b64.json",
+      "new_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_joint_mdo_typed_staged_f24_i64_soff_lru_pcie_mtp8_b64.json",
+      "memcpy_us": 6779.730668912332,
+      "local_us": 1248.0160190413396,
+      "reference_us": 4896.678492643559,
+      "over_reference": 0.05641188119633944
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "joint_shapes_gpu3_native_",
+      "variant": "joint_mdo_typed",
+      "kind": "nocache",
+      "fraction": 0.0,
+      "mtp": 8,
+      "requests": 64,
+      "fetch_ctas": 24,
+      "setting": "native_hbm",
+      "positions": 1024,
+      "passes": 3,
+      "old_us": 1201.7493049303691,
+      "new_us": 1202.3466328779857,
+      "reduction": -0.0004970487148741043,
+      "old_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_base_staged_f24_i64_soff_nocache_native_hbm_mtp8_b64.json",
+      "new_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_joint_mdo_typed_staged_f24_i64_soff_nocache_native_hbm_mtp8_b64.json",
+      "memcpy_us": 1239.6373550097148,
+      "local_us": 1239.0400171279907,
+      "reference_us": 1239.0400171279907,
+      "over_reference": -0.029614365753139915
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "joint_shapes_gpu3_native_",
+      "variant": "joint_mdo_typed",
+      "kind": "nocache",
+      "fraction": 0.3,
+      "mtp": 8,
+      "requests": 64,
+      "fetch_ctas": 24,
+      "setting": "native_hbm",
+      "positions": 1024,
+      "passes": 3,
+      "old_us": 1452.9706637064617,
+      "new_us": 1462.3573422431946,
+      "reduction": -0.006460335897483294,
+      "old_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_base_staged_f24_i64_soff_nocache_native_hbm_mtp8_b64.json",
+      "new_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_joint_mdo_typed_staged_f24_i64_soff_nocache_native_hbm_mtp8_b64.json",
+      "memcpy_us": 1408.6826741695404,
+      "local_us": 1241.5146927038827,
+      "reference_us": 1241.5146927038827,
+      "over_reference": 0.17788162382383144
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "joint_shapes_gpu3_native_",
+      "variant": "joint_mdo_typed",
+      "kind": "nocache",
+      "fraction": 0.0,
+      "mtp": 8,
+      "requests": 64,
+      "fetch_ctas": 24,
+      "setting": "pcie",
+      "positions": 1024,
+      "passes": 3,
+      "old_us": 1202.0053267478943,
+      "new_us": 1202.1759748458862,
+      "reduction": -0.00014196950229306005,
+      "old_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_base_staged_f24_i64_soff_nocache_pcie_mtp8_b64.json",
+      "new_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_joint_mdo_typed_staged_f24_i64_soff_nocache_pcie_mtp8_b64.json",
+      "memcpy_us": 1242.794692516327,
+      "local_us": 1239.0400171279907,
+      "reference_us": 1239.0400171279907,
+      "over_reference": -0.02975209982931204
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "joint_shapes_gpu3_native_",
+      "variant": "joint_mdo_typed",
+      "kind": "nocache",
+      "fraction": 0.1,
+      "mtp": 8,
+      "requests": 64,
+      "fetch_ctas": 24,
+      "setting": "pcie",
+      "positions": 1024,
+      "passes": 3,
+      "old_us": 1584.4693680604298,
+      "new_us": 1591.8080012003581,
+      "reduction": -0.004631603038758536,
+      "old_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_base_staged_f24_i64_soff_nocache_pcie_mtp8_b64.json",
+      "new_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_joint_mdo_typed_staged_f24_i64_soff_nocache_pcie_mtp8_b64.json",
+      "memcpy_us": 2538.154681523641,
+      "local_us": 1241.8560286362965,
+      "reference_us": 1321.0490684753797,
+      "over_reference": 0.20495751383214
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "joint_shapes_gpu3_native_",
+      "variant": "joint_mdo_typed",
+      "kind": "nocache",
+      "fraction": 0.3,
+      "mtp": 8,
+      "requests": 64,
+      "fetch_ctas": 24,
+      "setting": "pcie",
+      "positions": 1024,
+      "passes": 3,
+      "old_us": 3971.5840220451355,
+      "new_us": 3971.669336160024,
+      "reduction": -2.148113055522316e-05,
+      "old_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_base_staged_f24_i64_soff_nocache_pcie_mtp8_b64.json",
+      "new_raw": "temp/glm_trace/tune_joint_mdo_20261101/gpu3/raw/joint_shapes_gpu3_native_joint_mdo_typed_staged_f24_i64_soff_nocache_pcie_mtp8_b64.json",
+      "memcpy_us": 5074.602683385213,
+      "local_us": 1241.5146927038827,
+      "reference_us": 3815.6513793273916,
+      "over_reference": 0.04088894433016432
+    }
+  ],
+  "over_one_percent_slow": [],
+  "remaining_retention_gates": [
+    "Complete80SXMmatrixcellsincludingMTP1R512andactualNVLink/PCIe",
+    "ChangedSXMlargefull1024x5passnormal+simulatedconfirmation",
+    "Anyover1%negativepointneedsforward/reversecontrolandpreservedreason",
+    "Onlythenfrozenretentionaudit/install+freshrootnormalcompile/tests"
+  ],
+  "audit_sha256": "319e0a8888fce71d72c80acf53eabd172ed95a9e87d894ba9c2ba622f8d06adb"
+}

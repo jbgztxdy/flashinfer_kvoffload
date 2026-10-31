@@ -1,0 +1,188 @@
+{
+  "cohort": "native",
+  "hardware": "GPU3A100PCIE",
+  "base_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "candidate_sha256": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
+  "positions": 1024,
+  "passes": 3,
+  "tasks": [
+    {
+      "variant": "joint_qk",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 64,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "fetch_ctas": 24,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 64,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "fetch_ctas": 24,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 128,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "fetch_ctas": 24,
+      "fractions": null
+    },
+    {
+      "variant": "joint_qk",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 128,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "fetch_ctas": 24,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 1,
+      "requests": 1,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "fetch_ctas": 16,
+      "fractions": null
+    },
+    {
+      "variant": "joint_qk",
+      "kind": "lru",
+      "mtp": 1,
+      "requests": 1,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "fetch_ctas": 16,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 28,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "fetch_ctas": 16,
+      "fractions": null
+    },
+    {
+      "variant": "joint_qk",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 28,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "fetch_ctas": 16,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 32,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "fetch_ctas": 16,
+      "fractions": null
+    },
+    {
+      "variant": "joint_qk",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 32,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "fetch_ctas": 16,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 1,
+      "requests": 256,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "fetch_ctas": 16,
+      "fractions": null
+    },
+    {
+      "variant": "joint_qk",
+      "kind": "lru",
+      "mtp": 1,
+      "requests": 256,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "fetch_ctas": 16,
+      "fractions": null
+    },
+    {
+      "variant": "joint_qk",
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 64,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "fetch_ctas": 24,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "base",
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 64,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "fetch_ctas": 24,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    }
+  ],
+  "expected_cells": 36,
+  "limitation": "MTP1R512 independentHBM exceeds GPU3 memory and stays on pending SXM gate. PhysicalNVLink requires GPU0/1 and is not simulated by GPU3. All unmodified34EMU/68normal kernels exact. No new source or parameter scan."
+}

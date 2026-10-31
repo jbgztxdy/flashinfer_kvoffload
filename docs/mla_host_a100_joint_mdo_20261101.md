@@ -1,6 +1,6 @@
 # A100：双32KV tile共用在线softmax重缩放（2026-11-01）
 
-候选尚未采用，生产仍为0f82e9de / b6eea095…e72a。短窗口100GB0/20µs初测快0.653%/2.700%；第一组完整1024×5pass反向快2.677%/2.902%，正常独立HBM快3.002%、物理PCIe基本持平。第二组完整正向及跨形状/真实NVLink确认仍待。100GB大batch历史约32%–34%主差距尚未解决，goal active。
+候选尚未采用，生产仍为0f82e9de / b6eea095…e72a。短窗口100GB0/20µs初测快0.653%/2.700%；第一组完整1024×5pass反向快2.677%/2.902%，正常独立HBM快3.002%、物理PCIe基本持平。第二组完整正向也已完成（快2.134%/1.881%），GPU3跨形状两矩阵全部完成；真实SXM/NVLink确认仍待。100GB大batch历史约32%–34%主差距尚未解决，goal active。
 
 保留64head/256线程、32KV/2stage、dynamic147968B、原fetch64行双buffer/f24、精确跨步LRU和真实缓存载荷。两个降序tile先分别计算原native QK，再对两个score fragment共同求max，只计算一次d/O重缩放；各自的P指数和native PV仍按原tile降序执行。第一个stage在第一个PV结束后补下一tile，让其加载与第二个PV重叠，随后补第二个stage。原PE→CKV dot次序不改，完整576特征保留，attention方程相同但FP32在线归约分组不同，不承诺逐位相同。canonical数学头34af、模拟器及原5304矩阵均未改；新联合状态更新仅在私有host头内。派发仅原cached whole-row、至少4×SM行、完整staging的SM80路径，仍单cooperative kernel。
 
@@ -24,13 +24,34 @@ GPU3为A100-PCIE/NUMA1，far模拟源是同卡独立HBM，不是真实NVLink。�
 | joint_shapes_gpu3_limited_ | 1024/3 | g100_l2000 | 1828.115 | 1808.384 | +1.079% | 3189.365 | 1373.027 |
 | joint_shapes_gpu3_limited_ | 1024/3 | g100_l5000 | 3630.229 | 3530.597 | +2.745% | 6282.779 | 2745.240 |
 | joint_shapes_gpu3_limited_ | 1024/3 | g100_l5000 | 1853.317 | 1815.075 | +2.063% | 3195.824 | 1372.471 |
+| joint_shapes_gpu3_limited_ | 1024/3 | g50_l0 | 5497.451 | 5489.221 | +0.150% | 8880.432 | 5187.551 |
 | joint_shapes_gpu3_limited_ | 1024/3 | g50_l0 | 2879.221 | 2876.093 | +0.109% | 4490.165 | 2648.242 |
+| joint_shapes_gpu3_limited_ | 1024/3 | g50_l10000 | 5507.904 | 5502.752 | +0.094% | 8876.651 | 5189.636 |
 | joint_shapes_gpu3_limited_ | 1024/3 | g50_l10000 | 2885.416 | 2884.011 | +0.049% | 4509.565 | 2648.438 |
+| joint_shapes_gpu3_limited_ | 1024/3 | g50_l20000 | 5517.592 | 5509.160 | +0.153% | 8899.715 | 5187.320 |
 | joint_shapes_gpu3_limited_ | 1024/3 | g50_l20000 | 2896.653 | 2894.080 | +0.089% | 4512.507 | 2648.593 |
+| joint_shapes_gpu3_limited_ | 1024/3 | g50_l2000 | 5499.805 | 5493.811 | +0.109% | 8870.515 | 5189.811 |
 | joint_shapes_gpu3_limited_ | 1024/3 | g50_l2000 | 2878.312 | 2876.016 | +0.080% | 4506.312 | 2648.459 |
+| joint_shapes_gpu3_limited_ | 1024/3 | g50_l5000 | 5504.368 | 5494.811 | +0.174% | 8885.725 | 5187.628 |
 | joint_shapes_gpu3_limited_ | 1024/3 | g50_l5000 | 2881.117 | 2877.872 | +0.113% | 4502.235 | 2648.636 |
+| joint_shapes_gpu3_native_ | 1024/3 | native_hbm | 42.668 | 42.176 | +1.155% | 39.074 | 32.295 |
+| joint_shapes_gpu3_native_ | 1024/3 | native_hbm | 1049.374 | 1054.674 | -0.505% | 1227.563 | 770.722 |
+| joint_shapes_gpu3_native_ | 1024/3 | native_hbm | 920.053 | 914.939 | +0.556% | 1051.288 | 750.813 |
+| joint_shapes_gpu3_native_ | 1024/3 | native_hbm | 885.843 | 884.725 | +0.126% | 1129.477 | 751.733 |
+| joint_shapes_gpu3_native_ | 1024/3 | pcie | 53.934 | 53.722 | +0.394% | 61.899 | 32.453 |
+| joint_shapes_gpu3_native_ | 1024/3 | pcie | 3201.845 | 3201.849 | -0.000% | 4031.264 | 3026.086 |
+| joint_shapes_gpu3_native_ | 1024/3 | pcie | 2401.384 | 2402.181 | -0.033% | 3206.661 | 2170.405 |
+| joint_shapes_gpu3_native_ | 1024/3 | pcie | 2792.765 | 2786.339 | +0.230% | 3695.747 | 2596.837 |
+| joint_shapes_gpu3_native_ | 1024/3 | native_hbm | 3378.088 | 3273.859 | +3.085% | 4056.536 | 2561.848 |
 | joint_shapes_gpu3_native_ | 1024/3 | native_hbm | 1770.957 | 1719.307 | +2.917% | 2033.621 | 1248.016 |
+| joint_shapes_gpu3_native_ | 1024/3 | pcie | 9961.509 | 9958.528 | +0.030% | 13305.459 | 9594.769 |
 | joint_shapes_gpu3_native_ | 1024/3 | pcie | 5163.272 | 5172.909 | -0.187% | 6779.731 | 4896.678 |
+| joint_shapes_gpu3_native_ | 1024/3 | native_hbm | 1201.749 | 1202.347 | -0.050% | 1239.637 | 1239.040 |
+| joint_shapes_gpu3_native_ | 1024/3 | native_hbm | 1240.320 | 1227.947 | +0.998% | 1299.115 | 1241.856 |
+| joint_shapes_gpu3_native_ | 1024/3 | native_hbm | 1452.971 | 1462.357 | -0.646% | 1408.683 | 1241.515 |
+| joint_shapes_gpu3_native_ | 1024/3 | pcie | 1202.005 | 1202.176 | -0.014% | 1242.795 | 1239.040 |
+| joint_shapes_gpu3_native_ | 1024/3 | pcie | 1584.469 | 1591.808 | -0.463% | 2538.155 | 1321.049 |
+| joint_shapes_gpu3_native_ | 1024/3 | pcie | 3971.584 | 3971.669 | -0.002% | 5074.603 | 3815.651 |
 | typed256_f24_ | 256/3 | g100_l0 | 3502.496 | 3479.637 | +0.653% | 6059.989 | 2699.865 |
 | typed256_f24_ | 256/3 | g100_l20000 | 3570.688 | 3474.293 | +2.700% | 6085.931 | 2700.010 |
 | typed256_f24_ | 256/3 | g50_l20000 | 5287.552 | 5278.251 | +0.176% | 8482.475 | 4959.682 |
@@ -43,6 +64,6 @@ GPU3为A100-PCIE/NUMA1，far模拟源是同卡独立HBM，不是真实NVLink。�
 | typednative1024_f24_ | 1024/5 | native_hbm | 3399.480 | 3297.413 | +3.002% | 4065.243 | 2561.848 |
 | typednative1024_f24_ | 1024/5 | pcie | 9961.226 | 9960.776 | +0.005% | 13300.317 | 9594.757 |
 
-[完整审计](../temp/glm_trace/tune_joint_mdo_20261101/performance_audit.json)当前63格/28配对、53120计时launch/3320segment，保存每步/每pass/命中率/unique miss/guard/两参考/源码快照；所有正负差保留。原short_performance_audit.json冻结首次6格3对，不被full追加覆盖。活动runner可能仍有未完成raw（当前0份），未纳入表格与收益声明。327测试的通过不等于跨形状/完整链路性能gate已完成；只有全门槛完成才可能安装。
+[完整审计](../temp/glm_trace/tune_joint_mdo_20261101/performance_audit.json)当前98格/49配对、114080计时launch/7184segment，保存每步/每pass/命中率/unique miss/guard/两参考/源码快照；所有正负差保留。原short_performance_audit.json冻结首次6格3对，不被full追加覆盖。GPU3两矩阵按冻结计划完成76格，合计当前98格/49对、114080次计时launch/7184segment。100GB十个改变路径配对快1.079%–3.633%；所有负差保留，最大为未改无LRU HBM远端0.3慢0.646%。coverage.json明确GPU3完整、SXM80格仍待。活动runner可能仍有未完成raw（当前0份），未纳入表格与收益声明。327测试的通过不等于跨形状/完整链路性能gate已完成；只有全门槛完成才可能安装。
 
-H80003:18:48只读复查五个原任务仍Priority/Dependency，调度估计推迟到11/05；两个原watcher仍活，AGENTS/MEMORY哈希与已读快照相同，无源码写入或重复提交。当前runner和接续任务以continuation_state.json及实际进程为准，不因本报告启动重复任务。此前F/S/WR/KV64已拒绝872项测试、48格/27配对；本候选的正向信号必须单独核实，不覆盖负差。
+H80003:38:29只读复查五个原任务仍Priority/Dependency，调度估计推迟到11/05；两个原watcher仍活，AGENTS/MEMORY哈希与已读快照相同，无源码写入或重复提交。当前runner和接续任务以continuation_state.json及实际进程为准，不因本报告启动重复任务。此前F/S/WR/KV64已拒绝872项测试、48格/27配对；本候选的正向信号必须单独核实，不覆盖负差。

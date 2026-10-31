@@ -1,0 +1,23 @@
+{
+  "recorded_at": "2026-11-01T03:48:35+08:00",
+  "candidate_adopted": false,
+  "short_audit_sha256": "81cfafe709fada77467841d8310b3967b169da7e0f35d6b23fc3e7fe8874653d",
+  "reason": "Short3way newvsproduction+2.868/+3.376%,vsjointcontrol+0.398/+0.916%; reverse full3way needed, notadoption.",
+  "cohorts": [
+    {
+      "tag": "compositionfull1024_f24_",
+      "positions": 1024,
+      "passes": 5,
+      "settings": [
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ],
+      "order": [
+        "joint_qk",
+        "joint_mdo_typed",
+        "base"
+      ]
+    }
+  ]
+}

@@ -32,3 +32,33 @@ WAITING_GPU {'timestamp': '2026-11-01T03:35:12+0800', 'gpus': [{'index': 3, 'uui
 WAITING_GPU {'timestamp': '2026-11-01T03:35:22+0800', 'gpus': [{'index': 3, 'uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'used_mib': 30829, 'total_mib': 40960, 'utilization': 100}], 'foreign': [{'gpu_uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'pid': 1579390, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '30822'}], 'available': False}
 WAITING_GPU {'timestamp': '2026-11-01T03:35:32+0800', 'gpus': [{'index': 3, 'uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'used_mib': 30651, 'total_mib': 40960, 'utilization': 99}], 'foreign': [{'gpu_uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'pid': 1579390, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '30646'}], 'available': False}
 WAITING_GPU {'timestamp': '2026-11-01T03:35:43+0800', 'gpus': [{'index': 3, 'uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'used_mib': 30829, 'total_mib': 40960, 'utilization': 100}], 'foreign': [{'gpu_uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'pid': 1579390, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '30822'}], 'available': False}
+WAITING_GPU {'timestamp': '2026-11-01T03:35:53+0800', 'gpus': [{'index': 3, 'uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'used_mib': 30829, 'total_mib': 40960, 'utilization': 100}], 'foreign': [{'gpu_uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'pid': 1579390, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '30822'}], 'available': False}
+WAITING_GPU {'timestamp': '2026-11-01T03:36:03+0800', 'gpus': [{'index': 3, 'uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'used_mib': 25127, 'total_mib': 40960, 'utilization': 100}], 'foreign': [{'gpu_uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'pid': 1579390, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '25540'}], 'available': False}
+WAITING_GPU {'timestamp': '2026-11-01T03:36:14+0800', 'gpus': [{'index': 3, 'uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'used_mib': 30653, 'total_mib': 40960, 'utilization': 100}], 'foreign': [{'gpu_uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'pid': 1579390, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '30646'}], 'available': False}
+WAITING_GPU {'timestamp': '2026-11-01T03:36:24+0800', 'gpus': [{'index': 3, 'uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'used_mib': 30695, 'total_mib': 40960, 'utilization': 97}], 'foreign': [{'gpu_uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'pid': 1579390, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '30710'}], 'available': False}
+START_SHAPE {'variant': 'joint_mdo_typed', 'kind': 'lru', 'mtp': 8, 'requests': 128, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 24, 'fractions': None}
+DONE_SHAPE {'variant': 'joint_mdo_typed', 'kind': 'lru', 'mtp': 8, 'requests': 128, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 24, 'fractions': None}
+WAITING_GPU {'timestamp': '2026-11-01T03:37:41+0800', 'gpus': [{'index': 3, 'uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'used_mib': 0, 'total_mib': 40960, 'utilization': 95}], 'foreign': [], 'available': False}
+START_SHAPE {'variant': 'base', 'kind': 'lru', 'mtp': 1, 'requests': 1, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+DONE_SHAPE {'variant': 'base', 'kind': 'lru', 'mtp': 1, 'requests': 1, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+START_SHAPE {'variant': 'joint_mdo_typed', 'kind': 'lru', 'mtp': 1, 'requests': 1, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+DONE_SHAPE {'variant': 'joint_mdo_typed', 'kind': 'lru', 'mtp': 1, 'requests': 1, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+START_SHAPE {'variant': 'base', 'kind': 'lru', 'mtp': 8, 'requests': 28, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+DONE_SHAPE {'variant': 'base', 'kind': 'lru', 'mtp': 8, 'requests': 28, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+START_SHAPE {'variant': 'joint_mdo_typed', 'kind': 'lru', 'mtp': 8, 'requests': 28, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+DONE_SHAPE {'variant': 'joint_mdo_typed', 'kind': 'lru', 'mtp': 8, 'requests': 28, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+START_SHAPE {'variant': 'base', 'kind': 'lru', 'mtp': 8, 'requests': 32, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+DONE_SHAPE {'variant': 'base', 'kind': 'lru', 'mtp': 8, 'requests': 32, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+START_SHAPE {'variant': 'joint_mdo_typed', 'kind': 'lru', 'mtp': 8, 'requests': 32, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+DONE_SHAPE {'variant': 'joint_mdo_typed', 'kind': 'lru', 'mtp': 8, 'requests': 32, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+START_SHAPE {'variant': 'base', 'kind': 'lru', 'mtp': 1, 'requests': 256, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+DONE_SHAPE {'variant': 'base', 'kind': 'lru', 'mtp': 1, 'requests': 256, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+WAITING_GPU {'timestamp': '2026-11-01T03:41:28+0800', 'gpus': [{'index': 3, 'uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'used_mib': 0, 'total_mib': 40960, 'utilization': 57}], 'foreign': [], 'available': False}
+START_SHAPE {'variant': 'joint_mdo_typed', 'kind': 'lru', 'mtp': 1, 'requests': 256, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+DONE_SHAPE {'variant': 'joint_mdo_typed', 'kind': 'lru', 'mtp': 1, 'requests': 256, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 16, 'fractions': None}
+WAITING_GPU {'timestamp': '2026-11-01T03:43:27+0800', 'gpus': [{'index': 3, 'uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'used_mib': 0, 'total_mib': 40960, 'utilization': 52}], 'foreign': [], 'available': False}
+START_SHAPE {'variant': 'joint_mdo_typed', 'kind': 'nocache', 'mtp': 8, 'requests': 64, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 24, 'fractions': [0.0, 0.1, 0.3]}
+DONE_SHAPE {'variant': 'joint_mdo_typed', 'kind': 'nocache', 'mtp': 8, 'requests': 64, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 24, 'fractions': [0.0, 0.1, 0.3]}
+START_SHAPE {'variant': 'base', 'kind': 'nocache', 'mtp': 8, 'requests': 64, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 24, 'fractions': [0.0, 0.1, 0.3]}
+DONE_SHAPE {'variant': 'base', 'kind': 'nocache', 'mtp': 8, 'requests': 64, 'settings': ['native_hbm', 'pcie'], 'fetch_ctas': 24, 'fractions': [0.0, 0.1, 0.3]}
+SHAPES_COMPLETE native

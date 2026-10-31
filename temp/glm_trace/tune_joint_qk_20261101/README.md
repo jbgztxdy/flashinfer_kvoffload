@@ -1,0 +1,7 @@
+# JointMDO plus paired-QK fragment reuse, 2026-11-01
+
+Not adopted; productionb6/0f82e9de, goal active. See [report](../../../docs/mla_host_a100_joint_qk_20261101.md), confirmation_plan.json and composition_comparisons.json. Short3way signals need fullreverse/native/crossshape confirmation.
+
+SameJMjointmax/rescale/PV/refill, add frozenPpairedQKhelper/unroll4. Same per-scorePE->CKV order, sameJMFP32online grouping, canonicalmath unchanged. Pairrequiresbothstagesready, trading firstQK/load overlap for Qreuse. Originalfetch/LRU/cachepayload/singlecooperative contract preserved. NewREG251STACK0 versusJM255STACK16,actualone108CTA/block32x4x2kernel,active1,dynamic147968/static2304. Original34EMU/68normal exact.109newtests pass;JMcontrol reuses frozen binary/gates with manifest SHA,zero newcontroltests claimed.
+
+Short9cells/6productionpairs,1728launches/108segments and bothreferences complete;newvsJM100GBfast0.398/0.916%. Fullreverse3way1024x5preplanned. performance_audit.json pairs all againstproduction; composition_comparisons.json separately computesnewvsJMcontrol. Staticunroll4HMMA/LDSM counts do not represent dynamicwork or causality. Allpositives/negatives/source/raw preserved. BaselineW andcontrolJM libraries reused,sourcebytes verified. restore_includes.py refuses overwrites. Original5304matrix untouched; fixedJM/SXMsource/plan unchanged. Read continuation_state.json and originalhandles before any restart.

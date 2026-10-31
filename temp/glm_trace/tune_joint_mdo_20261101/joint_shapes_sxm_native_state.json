@@ -1,0 +1,135 @@
+[
+  {
+    "variant": "joint_mdo_typed",
+    "kind": "lru",
+    "mtp": 8,
+    "requests": 64,
+    "settings": [
+      "nvlink",
+      "pcie"
+    ],
+    "fetch_ctas": 24,
+    "fractions": null,
+    "start": "2026-11-01T03:56:40+0800",
+    "remaining_settings": [
+      "nvlink",
+      "pcie"
+    ],
+    "command": [
+      "numactl",
+      "-N0",
+      "-m0",
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_mdo_20261101/bench.py",
+      "--kind",
+      "lru",
+      "--mtp",
+      "8",
+      "--requests",
+      "64",
+      "--settings",
+      "nvlink",
+      "pcie",
+      "--passes",
+      "3",
+      "--positions",
+      "1024",
+      "--fetch-ctas",
+      "24",
+      "--host-split",
+      "off"
+    ],
+    "pid": 1620542,
+    "exit_code": 0,
+    "end": "2026-11-01T03:58:19+0800"
+  },
+  {
+    "variant": "base",
+    "kind": "lru",
+    "mtp": 8,
+    "requests": 64,
+    "settings": [
+      "nvlink",
+      "pcie"
+    ],
+    "fetch_ctas": 24,
+    "fractions": null,
+    "start": "2026-11-01T03:58:19+0800",
+    "remaining_settings": [
+      "nvlink",
+      "pcie"
+    ],
+    "command": [
+      "numactl",
+      "-N0",
+      "-m0",
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_mdo_20261101/bench.py",
+      "--kind",
+      "lru",
+      "--mtp",
+      "8",
+      "--requests",
+      "64",
+      "--settings",
+      "nvlink",
+      "pcie",
+      "--passes",
+      "3",
+      "--positions",
+      "1024",
+      "--fetch-ctas",
+      "24",
+      "--host-split",
+      "off"
+    ],
+    "pid": 1622857,
+    "exit_code": 0,
+    "end": "2026-11-01T03:59:55+0800"
+  },
+  {
+    "variant": "base",
+    "kind": "lru",
+    "mtp": 8,
+    "requests": 128,
+    "settings": [
+      "nvlink",
+      "pcie"
+    ],
+    "fetch_ctas": 24,
+    "fractions": null,
+    "start": "2026-11-01T03:59:55+0800",
+    "remaining_settings": [
+      "nvlink",
+      "pcie"
+    ],
+    "command": [
+      "numactl",
+      "-N0",
+      "-m0",
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_mdo_20261101/bench.py",
+      "--kind",
+      "lru",
+      "--mtp",
+      "8",
+      "--requests",
+      "128",
+      "--settings",
+      "nvlink",
+      "pcie",
+      "--passes",
+      "3",
+      "--positions",
+      "1024",
+      "--fetch-ctas",
+      "24",
+      "--host-split",
+      "off"
+    ],
+    "pid": 1625196
+  }
+]
