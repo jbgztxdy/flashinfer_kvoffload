@@ -1,0 +1,123 @@
+{
+  "timestamp": "2026-10-31T23:41:18+0800",
+  "candidate_adopted": true,
+  "goal_complete": false,
+  "base_header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "candidate_header_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "matrix_cells": 896,
+  "matrix_pairs": 448,
+  "changed_lru_pairs": 96,
+  "unchanged_original_kernel_pairs": 352,
+  "changed_matrix_minimum_reduction": -0.017529707518673554,
+  "changed_matrix_mean_reduction": 0.020281678067765558,
+  "changed_matrix_maximum_reduction": 0.11603141942968065,
+  "brackets": [
+    {
+      "setting": "g100_l0",
+      "base_before_us": 3479.90560606122,
+      "candidate_us": 3508.753602206707,
+      "base_after_us": 3538.723196834326,
+      "reduction": 0.00015980307744289934
+    },
+    {
+      "setting": "g100_l2000",
+      "base_before_us": 3492.9760053753853,
+      "candidate_us": 3532.3375899344683,
+      "base_after_us": 3546.553600206971,
+      "reduction": -0.003572053204611736
+    },
+    {
+      "setting": "g100_l5000",
+      "base_before_us": 3516.518399119377,
+      "candidate_us": 3531.814405322075,
+      "base_after_us": 3555.377598851919,
+      "reduction": 0.0011690199247158528
+    },
+    {
+      "setting": "g100_l10000",
+      "base_before_us": 3538.438405096531,
+      "candidate_us": 3527.7536015957594,
+      "base_after_us": 3567.6479909569025,
+      "reduction": 0.0071177283870352825
+    },
+    {
+      "setting": "pcie",
+      "base_before_us": 2498.918354511261,
+      "candidate_us": 2499.020767211914,
+      "base_after_us": 2499.3279695510864,
+      "reduction": 4.0972298130492746e-05
+    }
+  ],
+  "frozen": [
+    {
+      "path": "temp/glm_trace/tune_wait_20261031/performance_audit.json",
+      "sha256": "f7f4883ecbe225649ab2169bdbb1bd44f932d35b58208bc3dbf06a3f7acc2476",
+      "snapshot": "temp/glm_trace/tune_wait_20261031/retention_snapshot/f7f4883ecbe225649ab2169bdbb1bd44f932d35b58208bc3dbf06a3f7acc2476_performance_audit.json"
+    },
+    {
+      "path": "temp/glm_trace/tune_wait_20261031/coverage.json",
+      "sha256": "63dbcaa7956ad44a41c6328d200a9448f1ca6c8b0dedb5ad68cc07e0264942aa",
+      "snapshot": "temp/glm_trace/tune_wait_20261031/retention_snapshot/63dbcaa7956ad44a41c6328d200a9448f1ca6c8b0dedb5ad68cc07e0264942aa_coverage.json"
+    },
+    {
+      "path": "temp/glm_trace/tune_wait_20261031/tests_cached_ids_gpu3.json",
+      "sha256": "df515400f5618fbc25c0487bed7fb2cb709cee132c6a0682cd188417c2190727",
+      "snapshot": "temp/glm_trace/tune_wait_20261031/retention_snapshot/df515400f5618fbc25c0487bed7fb2cb709cee132c6a0682cd188417c2190727_tests_cached_ids_gpu3.json"
+    },
+    {
+      "path": "temp/glm_trace/tune_wait_20261031/compiler_cached_summary.json",
+      "sha256": "d7f3e51fa05b55dc374f229354f13f9cacc97f51e3bd4844cf1e20a9c3d75a87",
+      "snapshot": "temp/glm_trace/tune_wait_20261031/retention_snapshot/d7f3e51fa05b55dc374f229354f13f9cacc97f51e3bd4844cf1e20a9c3d75a87_compiler_cached_summary.json"
+    },
+    {
+      "path": "temp/glm_trace/tune_wait_20261031/compiler_cached_normal_summary.json",
+      "sha256": "aca9e8e6bcaa3ab7b3a449bda6b35e6c067938e9741c3814c2f6542f630aca70",
+      "snapshot": "temp/glm_trace/tune_wait_20261031/retention_snapshot/aca9e8e6bcaa3ab7b3a449bda6b35e6c067938e9741c3814c2f6542f630aca70_compiler_cached_normal_summary.json"
+    },
+    {
+      "path": "temp/glm_trace/tune_wait_20261031/controls_audit.json",
+      "sha256": "77d8539f4ec5313fe782f3baec8528f5e4821df27b84dad01542b97489557006",
+      "snapshot": "temp/glm_trace/tune_wait_20261031/retention_snapshot/77d8539f4ec5313fe782f3baec8528f5e4821df27b84dad01542b97489557006_controls_audit.json"
+    },
+    {
+      "path": "temp/glm_trace/tune_wait_20261031/same_process_dispatch.json",
+      "sha256": "16889d9118aa654a8e8d0b9c61de6cc08a77aeade75fe88e0c70ca62e21db0a7",
+      "snapshot": "temp/glm_trace/tune_wait_20261031/retention_snapshot/16889d9118aa654a8e8d0b9c61de6cc08a77aeade75fe88e0c70ca62e21db0a7_same_process_dispatch.json"
+    },
+    {
+      "path": "temp/glm_trace/tune_wait_20261031/tests_production_gpu3.json",
+      "sha256": "423b849fef97a3ad006ad878a3d2577d2cfd7ca4c872c5a13adf8f624a7ebd29",
+      "snapshot": "temp/glm_trace/tune_wait_20261031/retention_snapshot/423b849fef97a3ad006ad878a3d2577d2cfd7ca4c872c5a13adf8f624a7ebd29_tests_production_gpu3.json"
+    },
+    {
+      "path": "temp/glm_trace/tune_wait_20261031/pytest_production_gpu3.log",
+      "sha256": "29c2cf2f538a1022a6b87c0bfb1b89ac876e6d343b0d02fc2337f2b8716aaa7f",
+      "snapshot": "temp/glm_trace/tune_wait_20261031/retention_snapshot/29c2cf2f538a1022a6b87c0bfb1b89ac876e6d343b0d02fc2337f2b8716aaa7f_pytest_production_gpu3.log"
+    },
+    {
+      "path": "temp/glm_trace/tune_wait_20261031/productionpaths.py",
+      "sha256": "e1480d8884c384265cd2086fc34e087e615171f4ec0a1abbc3eafa91b3805f44",
+      "snapshot": "temp/glm_trace/tune_wait_20261031/retention_snapshot/e1480d8884c384265cd2086fc34e087e615171f4ec0a1abbc3eafa91b3805f44_productionpaths.py"
+    },
+    {
+      "path": "temp/glm_trace/tune_wait_20261031/compile_production.py",
+      "sha256": "29ec0aa8d1f9b383d0dd7dcc52f5fcd95db0659dd36858ec4664f9d498e0b187",
+      "snapshot": "temp/glm_trace/tune_wait_20261031/retention_snapshot/29ec0aa8d1f9b383d0dd7dcc52f5fcd95db0659dd36858ec4664f9d498e0b187_compile_production.py"
+    },
+    {
+      "path": "temp/glm_trace/tune_wait_20261031/test_production.py",
+      "sha256": "6d5fbcdb191bea7d19412e8006712c0e4220f22e6de0e725f737a6e40b7452c1",
+      "snapshot": "temp/glm_trace/tune_wait_20261031/retention_snapshot/6d5fbcdb191bea7d19412e8006712c0e4220f22e6de0e725f737a6e40b7452c1_test_production.py"
+    }
+  ],
+  "slow_cell_policy": "All original negatives remain. Changed-path >1% matrix negatives are bracketed at full5pass within1%; unchanged paths retain identical instructions/resources, with explicit representative controls and distinct-function same-allocation checks. This does not promise every independent allocation/timing sample is faster.",
+  "limitation": "Main100GBhistorical32-34%gap remains; large100GB gains are small, nativeNVLink/medium improvements are the retention basis.",
+  "production_validation": {
+    "path": "tests_production_gpu3.json",
+    "sha256": "423b849fef97a3ad006ad878a3d2577d2cfd7ca4c872c5a13adf8f624a7ebd29",
+    "tests": 105,
+    "compile_exit_code": 0,
+    "exit_code": 0,
+    "fresh_normal_BF16_FP16": true
+  }
+}

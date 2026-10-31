@@ -10,8 +10,19 @@ root = p.parents[2]
 load = lambda f: json.loads(f.read_text())
 sha = lambda f: hashlib.sha256(f.read_bytes()).hexdigest()
 rows, files, incomplete = [], [], []
+pending_references=[]
 launches = segments = 0
 gpu3_floors = {}
+sxm_floors={}
+for refpath in sorted(p.glob('raw/*floor*.json')):
+    ref=load(refpath);cfg=ref['configuration']
+    if not ref.get('complete') or cfg['kind'] not in ['floor','snapshots']:
+        continue
+    assert ref['extra_cuda_flags']=='' and cfg['positions']==1024
+    assert ref['resources_start']['foreign']==ref['resources_end']['foreign']==[]
+    assert ref['source_sha256']['include/flashinfer/attention/mla.cuh']=='34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3'
+    for case in ref['cases']:
+        sxm_floors[cfg['kind'],cfg['mtp'],cfg['requests'],case['host_fraction_requested']]=(refpath,ref,case)
 for directory in [p.parent/'tune_general_20261031/gpu3/raw',p.parent/'tune_scatter_20261031/gpu3/raw',p/'gpu3/raw']:
     for refpath in sorted(set(directory.glob('*floor*.json')) | set(directory.glob('*snapshots*.json'))):
         ref = load(refpath)
@@ -82,11 +93,25 @@ for folder in [p / 'gpu3/raw', p / 'raw']:
             if gpu3:
                 floorpath,floor,fc=gpu3_floors[refkind,cfg['mtp'],cfg['requests'],fraction]
             else:
-                floorpath = root / f"temp/glm_trace/kernel_report_20261029/raw/{refkind}_floor_mtp{cfg['mtp']}_b{cfg['requests']}.json"
-                floor = load(floorpath)
-                fc = next(x for x in floor['cases'] if x['host_fraction_requested']==fraction)
+                fresh=sxm_floors.get((refkind,cfg['mtp'],cfg['requests'],fraction))
+                if fresh:
+                    floorpath,floor,fc=fresh
+                else:
+                    floorpath = root / f"temp/glm_trace/kernel_report_20261029/raw/{refkind}_floor_mtp{cfg['mtp']}_b{cfg['requests']}.json"
+                    floor = load(floorpath)
+                    fc = next(x for x in floor['cases'] if x['host_fraction_requested']==fraction)
             assert floorpath.exists(), 'Missing same-hardware normal compute reference: ' + str(floorpath)
             assert floor['complete'] and floor['bindings'] == d['bindings']
+            if 'include/flashinfer/attention/mla.cuh' not in floor['source_sha256']:
+                pending_references.append(dict(raw=str(f.relative_to(root)),fraction=fraction,
+                    cohort=f.stem.split(cfg['variant']+'_staged_',1)[0],variant=cfg['variant'],
+                    kind=cfg['kind'],mtp=cfg['mtp'],requests=cfg['requests'],fetch_ctas=cfg['fetch_ctas'],
+                    setting=cfg['setting']['name'],positions=cfg['positions'],passes=cfg['passes'],
+                    ours_us=c['timings']['ours']['mean_us'],memcpy_us=c['timings']['memcpy']['mean_us'],
+                    reference_hit_rate=hit,pass_mean_us=c['timings']['ours']['pass_mean_us'],
+                    reference_raw=str(floorpath.relative_to(root)),reference_sha256=sha(floorpath),
+                    reason='Legacy reference lacks math-header SHA; fresh same-hardware normal reference queued. Timings/guards/numerics were validated but reference row is withheld.'))
+                continue
             assert floor['source_sha256']['include/flashinfer/attention/mla.cuh']==d['source_sha256']['include/flashinfer/attention/mla.cuh']
             fullticks=fc['step_indices']
             compute = [statistics.mean(fc['timings']['local']['per_step_samples_us'][fullticks.index(i)]) for i in ticks]
@@ -131,6 +156,19 @@ for f in sorted(p.glob('tests_*_gpu3.json')):
     t = load(f)
     if not t.get('complete'):
         continue
+    if f.name=='tests_production_gpu3.json':
+        assert t['normal_build'] and t['exit_code']==0
+        assert t['resources_start']['foreign']==t['resources_end']['foreign']==[]
+        assert t['production_header_sha256']==sha(p/'cached_ids.cuh')
+        assert t['math_header_sha256']=='34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3'
+        assert t['test_source_sha256']==sha(root/'tests/attention/test_mla_host_batch.py')
+        log=p/'pytest_production_gpu3.log'
+        assert sha(log)==t['log_sha256'] and '105 passed' in log.read_text()
+        assert len(t['libraries'])==4
+        retained=load(p/'cached_ids_retention.json')
+        assert retained['production_validation']['sha256']==sha(f)
+        tests.append(dict(variant='retained_production',tests=105,sha256=sha(f),fresh_root_include=True))
+        continue
     assert t['normal_build'] and t['exit_code'] == t['compile_exit_code'] == 0
     assert t['resources_start']['foreign'] == t['resources_end']['foreign'] == []
     assert t['header_sha256'] == sha(p / (t['variant'] + '.cuh'))
@@ -144,12 +182,32 @@ for f in sorted(p.glob('tests_*_gpu3.json')):
     log = p / ('pytest_' + t['variant'] + '_gpu3.log')
     assert sha(log) == t['log_sha256'] and '105 passed' in log.read_text()
     tests.append(dict(variant=t['variant'], tests=105, sha256=sha(f)))
+pending_index={(r['cohort'],r['kind'],r['mtp'],r['requests'],r['setting'],r['fraction'],r['variant']):r for r in pending_references}
+pending_pairs=[]
+for key,new in pending_index.items():
+    old=pending_index.get((*key[:-1],'base'))
+    if key[-1]!='base' and old:
+        pending_pairs.append(dict(cohort=new['cohort'],mtp=new['mtp'],requests=new['requests'],setting=new['setting'],
+            old_us=old['ours_us'],new_us=new['ours_us'],reduction=1-new['ours_us']/old['ours_us'],
+            old_raw=old['raw'],new_raw=new['raw'],reference_state='pending math-header provenance'))
 audit = dict(goal_complete=False, candidate_adopted=False, rows=rows, pairs=pairs, tests=tests,
+    pending_references=pending_references,
+    pending_reference_pairs=pending_pairs,
     timed_launches=launches, accepted_segments=segments, files=files, incomplete=incomplete,
     production_header_sha256=sha(root / 'include/flashinfer/attention/mla_host_batch.cuh'),
     original_matrix_sha256=sha(root / 'temp/glm_trace/kernel_report_20261029/matrix.json'))
+retention=p/'cached_ids_retention.json'
+if retention.exists():
+    retained=load(retention)
+    audit['candidate_adopted']=bool(retained['candidate_adopted'] and retained['candidate_header_sha256']==audit['production_header_sha256'])
+    audit['retained_variant']='cached_ids' if audit['candidate_adopted'] else None
 assert audit['original_matrix_sha256'] == 'e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99'
 (p / 'performance_audit.json').write_text(json.dumps(audit, indent=2) + '\n')
+pending_fields=['cohort','variant','kind','mtp','requests','fetch_ctas','setting','fraction','positions','passes',
+                'ours_us','memcpy_us','reference_hit_rate','raw','reference_raw','reference_sha256','reason']
+with (p/'pending_reference_timings.csv').open('w',newline='') as f:
+    writer=csv.DictWriter(f,fieldnames=pending_fields,extrasaction='ignore',lineterminator='\n')
+    writer.writeheader();writer.writerows(pending_references)
 if rows:
     with (p / 'results.csv').open('w', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator='\n')

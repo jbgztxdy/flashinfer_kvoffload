@@ -1,6 +1,6 @@
 # A100：CTA等待预算与取数元数据流水（2026-10-31）
 
-整体目标仍未完成。生产保持 `ce341a02` 的中等 batch 派发版，头 SHA 为 `52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5`。本页诊断和候选均没有替换生产或改写原5304格矩阵。
+缓存限定共享页号版已保留，生产头SHA为`b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a`，基线为ce341a02/52919…ff2c5。保持单cooperative kernel、原数学/LRU/模拟器和原5304矩阵。整体100GB大batch目标仍未完成。
 
 ## 新诊断：tile等待与每CTA工作量
 
@@ -81,7 +81,7 @@ prepare在第二个grid barrier前已完成所有resident lookup/stamp；本步�
 | SXM0/1 | prebind/prebind_f20_256_ | LRU4096 | 256/3 | 8/128 | 20 | g50_l20000 | 5312.60 | 5316.31 | -0.07% | 8557.26 | 2458.67 | 4959.90 |
 | SXM0/1 | prebind/prebind_f20_256_ | LRU4096 | 256/3 | 8/128 | 20 | nvlink | 3295.51 | 3303.73 | -0.25% | 4522.03 | 2458.67 | 2458.67 |
 
-性能审计目前1337格/659配对，正常构建测试记录[{'variant': 'cached_ids', 'tests': 105, 'sha256': 'df515400f5618fbc25c0487bed7fb2cb709cee132c6a0682cd188417c2190727'}, {'variant': 'direct_cache', 'tests': 105, 'sha256': 'd5523355a849ef8bead8e113aa413d4d23d089f4992fadd367c55cb08f28c376'}, {'variant': 'fetch_ids', 'tests': 105, 'sha256': '02986d201b75a89dbf91d57af2a0a35c1ee5972645f3b4e05223e1186da2c849'}, {'variant': 'prebind', 'tests': 105, 'sha256': 'adaacef43ff1320fb69ea3fabaad85c300e5836e144bf19cc84577aefdc9c8db'}]。每步/每pass、命中、两参考及SHA另存于[性能审计](../temp/glm_trace/tune_wait_20261031/performance_audit.json)和CSV。
+性能审计目前1405格/686配对，正常构建测试记录[{'variant': 'cached_ids', 'tests': 105, 'sha256': 'df515400f5618fbc25c0487bed7fb2cb709cee132c6a0682cd188417c2190727'}, {'variant': 'direct_cache', 'tests': 105, 'sha256': 'd5523355a849ef8bead8e113aa413d4d23d089f4992fadd367c55cb08f28c376'}, {'variant': 'fetch_ids', 'tests': 105, 'sha256': '02986d201b75a89dbf91d57af2a0a35c1ee5972645f3b4e05223e1186da2c849'}, {'variant': 'prebind', 'tests': 105, 'sha256': 'adaacef43ff1320fb69ea3fabaad85c300e5836e144bf19cc84577aefdc9c8db'}, {'variant': 'retained_production', 'tests': 105, 'sha256': '423b849fef97a3ad006ad878a3d2577d2cfd7ca4c872c5a13adf8f624a7ebd29', 'fresh_root_include': True}]。每步/每pass、命中、两参考及SHA另存于[性能审计](../temp/glm_trace/tune_wait_20261031/performance_audit.json)和CSV。
 
 ## 原共享页号版的真实回退与修正
 
@@ -91,15 +91,15 @@ cached_ids新增独立的缓存实例，只在开启LRU且走整行CTA32时共�
 
 已拒绝的原矩阵在发现回退后停止扩展：只暂停自己的CPU父调度器，等待当前benchmark子进程自然结束，再终止父调度器；没有给GPU benchmark或其他用户任务发信号。原计划、全部完成/失败raw及停止记录保留。正常SXM矩阵还发生一次旧自有CUDA context退出尾声导致的预检失败，GPU计时未开始。修正版使用新cohort，不覆盖这些证据。
 
-| 回归组 | 已审计格 | 预期格 | 完整 |
-|---|---:|---:|---|
-| cached_ids_matrix_gpu3_large_ | 32 | 32 | 是 |
-| cached_ids_matrix_gpu3_native_ | 88 | 88 | 是 |
-| cached_ids_matrix_sxm_limited_ | 640 | 640 | 是 |
-| cached_ids_matrix_sxm_native_ | 83 | 136 | 否 |
-| ids_matrix_gpu3_native_ | 68 | 88 | 否 |
-| ids_matrix_sxm_limited_ | 320 | 640 | 否 |
-| ids_matrix_sxm_native_ | 0 | 136 | 否 |
+| 回归组 | 已测量格 | 已审计格 | 预期格 | 审计完整 |
+|---|---:|---:|---:|---|
+| cached_ids_matrix_gpu3_large_ | 32 | 32 | 32 | 是 |
+| cached_ids_matrix_gpu3_native_ | 88 | 88 | 88 | 是 |
+| cached_ids_matrix_sxm_limited_ | 640 | 640 | 640 | 是 |
+| cached_ids_matrix_sxm_native_ | 136 | 136 | 136 | 是 |
+| ids_matrix_gpu3_native_ | 68 | 68 | 88 | 否 |
+| ids_matrix_sxm_limited_ | 320 | 320 | 640 | 否 |
+| ids_matrix_sxm_native_ | 0 | 0 | 136 | 否 |
 
 原ids_matrix组已因回退停止，预期格数保留，未伪称完成；cached_ids_matrix组才是当前候选的验证计划。所有更慢格仍在审计和CSV中。
 
@@ -122,7 +122,15 @@ R32无LRU的PCIe及R28 LRU的HBM负差没有复现；单请求MTP1 PCIe仍约慢
 
 四个SXM旧runner已exit1：完整确认和正常矩阵的预检遇到前一自有CUDA context退出尾声，模拟矩阵后段遇到外部进程进入，失败日志保留。现已在取得文件锁后等待显存/进程空闲，再打开CUDA；仅恢复缺项，计划和完成raw不覆盖。恢复器及完整确认使用新handle，见continuation_state.json。
 
-短窗口只用于筛选；采用仍需完整1024位置、正反向多pass和全场景回归。模拟构建的真实NVLink关闭runtime hooks，不能替代最终正常构建。整体100GB/s大batch约32%–34%差距仍未改善。
+## 最终保留与验证
+
+896格/448配对的计划已全部测量并带两参考审计。96个改变的LRU whole CTA32配对，原矩阵未加权耗时降低均值2.028%、最大11.603%；不是跨负载总加速。原矩阵最差−1.753%仍保留，其四个R128/100GB负差经完整1024位置×5pass前后base夹测后，较前后base均值最差−0.357%、最好+0.712%。R40无LRU PCIe0.3原−2.849%在夹测中+0.004%；无LRU及其他原kernel352配对的指令/资源不变，全部测量负差继续保留，不承诺每次独立分配都更快。
+
+SXM正常构建、MTP8/R128、完整1024位置×5次冷启动、fetch24/off：真实NVLink3349.277→3229.662µs（3.571%），PCIe9937.678→9957.666µs（慢0.201%）。完整EMU100GB0/20µs仅快0.383%/0.288%，同分配诊断也显示该大形状收益小，没有以它声称解决32%–34%历史差距。
+
+独立候选105项正常测试、模拟9/正常18个原kernel指令资源等价及新缓存实例零stack/local已通过。安装逐字节相同原件后，生产root/include、独立新JIT的正常BF16/FP16编译及105项测试再次通过。新单请求正常纯device参考已补齐math头SHA，原参考未改写，pending_reference为0。保留门槛、完整审计快照及全部慢格理由见[cached_ids_retention.json](../temp/glm_trace/tune_wait_20261031/cached_ids_retention.json)。
+
+短窗口只用于筛选，正式保留依据完整窗口多pass及跨场景数据。模拟构建的真实NVLink关闭runtime hooks，不能替代正常构建。整体100GB/s大batch约32%–34%历史差距尚未解决。
 
 32-head CTA的独立资源方案及失败筛选见[新报告](mla_host_a100_half_heads_20261031.md)。重复QK两版本也已拒绝。缓存运行期判断及三版同分配诊断见[完整报告](mla_host_a100_cached_runtime_20261031.md)，没有稳定100GB大形状优势；所有旧负差保留，生产没有改变。
 

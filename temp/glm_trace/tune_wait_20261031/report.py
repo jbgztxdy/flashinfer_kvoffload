@@ -4,8 +4,11 @@ from pathlib import Path
 p = Path(__file__).resolve().parent
 root = p.parents[2]
 a = json.loads((p / 'audit.json').read_text())
-lines = ['# A100：CTA等待预算与取数元数据流水（2026-10-31）', '',
-    '整体目标仍未完成。生产保持 `ce341a02` 的中等 batch 派发版，头 SHA 为 `52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5`。本页诊断和候选均没有替换生产或改写原5304格矩阵。', '',
+retained_path=p/'cached_ids_retention.json'
+retained=json.loads(retained_path.read_text()) if retained_path.exists() else None
+lead=('缓存限定共享页号版已保留，生产头SHA为`b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a`，基线为ce341a02/52919…ff2c5。保持单cooperative kernel、原数学/LRU/模拟器和原5304矩阵。整体100GB大batch目标仍未完成。'
+      if retained and retained['candidate_adopted'] else '整体目标仍未完成。生产保持ce341a02/52919…ff2c5，本页候选尚未安装；原5304格矩阵保持原件。')
+lines = ['# A100：CTA等待预算与取数元数据流水（2026-10-31）', '',lead, '',
     '## 新诊断：tile等待与每CTA工作量', '',
     '此前阶段计时已经定位到约0.19ms准备和100GB/s约0.41ms的fetch后attention尾部。本次增加每CTA的tile等待调用总时长、实际阻塞调用数、attention/LRU工作项数及时间，以判断剩余工作应集中在哪里；没有重复启动旧插桩。', '',
     '三格均为SXM0/1、MTP8/128请求、完整1024位置、LRU4096、staged、fetch24/split off、1次冷启动插桩pass。固定128步×128CTA容量，只用于实际108CTA的形状。每步核对所有CTA合计恰好1024个attention和128个LRU工作项，128个epoch全部保留。', '',
@@ -44,10 +47,14 @@ if perf.exists():
     cover=p/'coverage.json'
     if cover.exists():
         coverage=json.loads(cover.read_text())['coverage']
-        lines += ['| 回归组 | 已审计格 | 预期格 | 完整 |','|---|---:|---:|---|']
+        lines += ['| 回归组 | 已测量格 | 已审计格 | 预期格 | 审计完整 |','|---|---:|---:|---:|---|']
         for name,c in coverage.items():
-            lines.append(f"| {name} | {c['actual']} | {c['expected']} | {'是' if c['complete'] else '否'} |")
+            lines.append(f"| {name} | {c.get('measured',c['actual'])} | {c['actual']} | {c['expected']} | {'是' if c['complete'] else '否'} |")
         lines += ['', '原ids_matrix组已因回退停止，预期格数保留，未伪称完成；cached_ids_matrix组才是当前候选的验证计划。所有更慢格仍在审计和CSV中。', '']
+    if d.get('pending_references'):
+        lines += ['完整GPU性能矩阵896格已测完，但4个SXM单请求MTP1控制格使用的旧纯device参考未记录mla.cuh的SHA。因此这4格的时间/guard/数值已验证，纯device/逐步max引用暂不采用；补测同硬件正常参考已排队，原参考不覆盖。原始时间及配对也保存在performance_audit的pending_reference_pairs和pending_reference_timings.csv，未隐藏。当前可带完整参考审计892格。初次缺字段导致的审计失败日志另存audit_missing_floor_math_sha_failure.log。', '']
+        for r in d.get('pending_reference_pairs',[]):
+            lines += [f"待补参考的MTP{r['mtp']}/R{r['requests']} {r['setting']}：base{r['old_us']:.3f}µs，候选{r['new_us']:.3f}µs，耗时降低{r['reduction']*100:.3f}%；此处未计算缺来源的两参考比率。", '']
 else:
     lines += ['当前仍在构建/正常测试/筛选，尚无已审计的性能收益结论。', '']
 controls=p/'controls_audit.json'
@@ -64,7 +71,12 @@ if controls.exists():
     lines += ['', f"R32无LRU的PCIe及R28 LRU的HBM负差没有复现；单请求MTP1 PCIe仍约慢3.9%。另在同一进程载入两份独立二进制，共用同一套query/indices、Host KV、cache、workspace及输出，交替执行各5次完整1024位置冷启动。base均值{z['means_us']['base']:.6f}µs，cached_ids为{z['means_us']['cached_ids']:.6f}µs，降低{z['reduction']*100:.4f}%。10次均校验输出和最终4096行实际cache载荷。", '',
         '该诊断支持内存分配或环境因素的解释，但不能确定因果；独立进程的负差未删除，也没有据此放宽采用门槛。逐步miss因同一步stamp下的并行入槽顺序略有变化，不假称每个pass命中完全一致。所有逐步时间、miss和原件SHA保存在[controls审计](../temp/glm_trace/tune_wait_20261031/controls_audit.json)及同目录原件。', '',
         '四个SXM旧runner已exit1：完整确认和正常矩阵的预检遇到前一自有CUDA context退出尾声，模拟矩阵后段遇到外部进程进入，失败日志保留。现已在取得文件锁后等待显存/进程空闲，再打开CUDA；仅恢复缺项，计划和完成raw不覆盖。恢复器及完整确认使用新handle，见continuation_state.json。', '']
-lines += ['短窗口只用于筛选；采用仍需完整1024位置、正反向多pass和全场景回归。模拟构建的真实NVLink关闭runtime hooks，不能替代最终正常构建。整体100GB/s大batch约32%–34%差距仍未改善。', '',
+if retained and retained['candidate_adopted']:
+    lines += ['## 最终保留与验证', '',
+        '896格/448配对的计划已全部测量并带两参考审计。96个改变的LRU whole CTA32配对，原矩阵未加权耗时降低均值2.028%、最大11.603%；不是跨负载总加速。原矩阵最差−1.753%仍保留，其四个R128/100GB负差经完整1024位置×5pass前后base夹测后，较前后base均值最差−0.357%、最好+0.712%。R40无LRU PCIe0.3原−2.849%在夹测中+0.004%；无LRU及其他原kernel352配对的指令/资源不变，全部测量负差继续保留，不承诺每次独立分配都更快。', '',
+        'SXM正常构建、MTP8/R128、完整1024位置×5次冷启动、fetch24/off：真实NVLink3349.277→3229.662µs（3.571%），PCIe9937.678→9957.666µs（慢0.201%）。完整EMU100GB0/20µs仅快0.383%/0.288%，同分配诊断也显示该大形状收益小，没有以它声称解决32%–34%历史差距。', '',
+        '独立候选105项正常测试、模拟9/正常18个原kernel指令资源等价及新缓存实例零stack/local已通过。安装逐字节相同原件后，生产root/include、独立新JIT的正常BF16/FP16编译及105项测试再次通过。新单请求正常纯device参考已补齐math头SHA，原参考未改写，pending_reference为0。保留门槛、完整审计快照及全部慢格理由见[cached_ids_retention.json](../temp/glm_trace/tune_wait_20261031/cached_ids_retention.json)。', '']
+lines += ['短窗口只用于筛选，正式保留依据完整窗口多pass及跨场景数据。模拟构建的真实NVLink关闭runtime hooks，不能替代正常构建。整体100GB/s大batch约32%–34%历史差距尚未解决。', '',
     '32-head CTA的独立资源方案及失败筛选见[新报告](mla_host_a100_half_heads_20261031.md)。重复QK两版本也已拒绝。缓存运行期判断及三版同分配诊断见[完整报告](mla_host_a100_cached_runtime_20261031.md)，没有稳定100GB大形状优势；所有旧负差保留，生产没有改变。', '',
     'H800五个原作业在23:13查询仍为Priority/Dependency，两个原watcher存活。未提交新任务或覆盖排队源码。', '']
 (root / 'docs/mla_host_a100_wait_budget_20261031.md').write_text('\n'.join(lines))

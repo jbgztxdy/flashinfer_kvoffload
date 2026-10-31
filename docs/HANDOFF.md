@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-10-31 23:14完整确认与三版同分配诊断检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-10-31 23:47共享页号正式保留与生产回归检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -13,6 +13,20 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+### 2.0 最新生产：缓存限定共享页号已保留；所有本机runner结束
+
+**当前生产header是cached_ids，SHA=`b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a`，不再是52919。下文§2.1–2.6保留各阶段历史，冲突时以本节及实际文件为准。** 单kernel、数学、精确LRU/真实cache载荷、模拟器和原5304矩阵不变；只在已有whole CTA32且启用LRU的路径共享块页号，未改路径原9EMU/18normal kernel指令与资源完全相同。基线52919保存在W/base.cuh及其他独立实验树。
+
+W补充矩阵896格/448配对的测量与两参考审计均完整，cached_planned_complete=true、pending_references=0。96个改变的LRU配对原矩阵耗时降低未加权均值2.028%、最大11.603%，最初四个大形状100GB负差仍保留；完整5pass前后夹测后最差−0.357%。未改路径R40PCIe0.3原−2.849%在夹测中+0.004%，其余原路径由代码身份和已有夹测/实际不同函数的同分配证据核对，原负差未删。保留标准明确不承诺每次独立内存分配都更快。
+
+SXM正常构建、MTP8/R128、full1024×5pass、f24/off：真实NVLink3349.277→3229.662µs（3.571%），PCIe9937.678→9957.666µs（慢0.201%）。100GB完整确认仅约0.3%收益，不能声称解决历史32%–34%差距。整体goal仍active。
+
+`retain_cached_ids.py --install`已实际通过门槛并逐字节安装已测b6原件；W/cached_ids_retention.json及retention_snapshot冻结完整审计/覆盖/编译/测试/慢格理由。生产root/include、独立jit_retained_normal、正常BF16/FP16 CPU编译及105项测试再次通过，记录tests_production_gpu3.json（13.16s）。测试source5845…保持不变。
+
+所有本机GPU/CPU调度器均已terminal：W原矩阵92282、完整确认86595、慢格夹测82401、补小参考28183、生产编译37851和生产测试28695全部exit0；R的四确认和三版诊断也均exit0；H/Q/U拒绝候选无活动任务。**不要再poll或重复启动这些handle。** 最终audit83501和coverage/report已成功。41741初次将生产测试记录当候选记录而缺compile_exit_code，失败日志audit_production_record_schema_failure.log保留，已显式区分两种记录并复核通过。旧审计98052因单请求floor缺mathSHA而失败的日志保留；新同硬件normal小参考已补齐，没有覆盖原floor。
+
+H800五个旧Slurm作业23:13仍Priority/Dependency，两个watcher活，没有覆盖排队源。当前所有自有本机GPU任务结束，不必等待其他用户任务。下一步在b6上提出新机制推进大100GB目标；不要重复无收益的ready/prebind/scatter/四缓冲/tail/半head双驻留/重复QK或unroll扫描。一个可能的新方向是研究两个不同KV tile的QK在寄存器中交错，而不是重复同一QK；**仅为未实现想法，先检查历史regpipe3是否已覆盖，不能直接宣称新机制或收益。**
 
 ### 2.1 最新续接：中等 batch 派发修正已保留，继续大 batch 主目标
 
@@ -68,16 +82,11 @@ GPU3是A100-PCIE/NUMA1，同卡独立HBM不是NVLink，物理PCIe和Memcpy pinne
 
 旧SXM handles **27470/27738/75965/59866均已exit1**，不要再poll。完整确认和正常矩阵预检遇到前一自有CUDA context退出尾声；模拟矩阵后段遇到外部PID643266/643267进入。所有失败raw/日志保留，未纳入计时结论。现在`bench.py`在拿到gpu01锁后等待进程/显存/利用率空闲再打开CUDA；没有忽略外部进程。
 
-**GPU3的88正常格和新增大形状32格均完整**，37750/17179已exit0，不重启。SXM模拟640/640格完整、正常最新审计83/136格仍不完整；实时覆盖以新audit为准。GPU3大形状R128 LRU的HBM3423.26→3374.46µs（1.43%），PCIe9933.76→9960.84（慢0.27%）；R64两链路约慢0.24%–0.43%。GPU3没有测MTP1/R512同卡HBM（40GB限制），该形状留SXM双GPU计划。
+**GPU3的88正常格和新增大形状32格均完整**，37750/17179已exit0，不重启。SXM模拟640/640及正常136/136格均已测量；正常132/136格已带参考审计，4个MTP1/R1控制格等待补参考。GPU3大形状R128 LRU的HBM3423.26→3374.46µs（1.43%），PCIe9933.76→9960.84（慢0.27%）；R64两链路约慢0.24%–0.43%。GPU3没有测MTP1/R512同卡HBM（40GB限制），该形状留SXM双GPU计划。
 
 对所有原路径超过1%的负差做前后5pass夹测，`controls_audit.json`：R32无LRU PCIe和R28 LRU HBM的负差没有复现；MTP1/R1 PCIe仍为base前52.0822、候选54.0782、base后52.0358µs（慢3.879%）。另在同进程载入两独立二进制，共用同一query/indices、Host KV/cache/workspace交替5+5次完整冷启动，base53.389000、cached_ids53.383400µs（降低0.01049%）。10次均校验输出和最终4096行实际cache载荷。此支持分配/环境因素解释，但因果未确定，原负差不删、不放宽门槛。逐步miss因同一步stamp下并行入槽顺序略有变化，不声称所有pass完全相同。
 
-当前仅一个SXM恢复父调度器仍活；完整确认父已terminal0。先核实PID/原handle，不重复：
-
-| handle | CPU父PID | 内容 | 状态 |
-|---|---:|---|---|
-| **92282** | **658154** | `resume_cached_sxm.py`，limited640已完成，native子739126继续 | 当前MTP1/R512正常LRU，完成raw不覆盖 |
-| **86595** | 原674391 | `full_cached_sxm.py`，5pass EMU四格及正常NVLink/PCIe | 全部exit0，勿重启 |
+W原恢复handle92282、父658154/子739126已全部exit0，limited640及native136都测完，GPU3另120格也完整，共896性能格。**不要再poll/restart92282。** 下文旧阶段数据保留；最新审计需区分测量和参考门槛。
 
 W完整SXM 5pass：100GB0/20µs快0.383%/0.288%、50GB20µs快0.216%、EMU构建NVLink快3.059%；正常NVLink3349.28→3229.66µs（3.571%），PCIe9937.68→9957.67（慢0.201%）。原3pass的大形状100GB负差约1.1%–1.75%和原路径0远端负差最高约2.22%仍保留，没有用5pass覆盖旧格。正常矩阵也已有慢格，待完整后分类与夹测。
 
@@ -113,9 +122,18 @@ R四组完整确认已全部结束：26独立格/13配对（6短格、20完整10
 
 W早先GPU3小请求同分配诊断也补做Graph函数核对：两个独立函数，各1024个attention节点，`same_process_dispatch.json`/audit_controls已确认；handle91360 exit0。原独立进程3.879%负差和同分配0.01049%差异均保留。
 
-现在**只有W/92282正常矩阵父658154、子调度739126活着**，正在MTP1/R512，可能需要几分钟CPU规划/正常PCIe逐步传输，不是卡死。其他R/H/Q/U任务均结束，生产仍52919，不要重复启动任何旧handle。接续完成W正常136格，检查每个slow cell，才决定cached_ids保留或限制到有清晰收益的medium路径；不能用理论/同分配诊断代替门槛。
+最新只有两个CPU调度器等待GPU0/1外部PID806097（/mnt/data/mozi-elastic-20261022.0jc96E/env/bin/python），不终止它。先核实原handle/PID，不重复：
 
-当前任务文件检查点提交`3d101924`，719个自有文件，414个stagedJSON全解析，diff check通过。其后R完整原件、诊断与W审计更新已纳入本检查点；W正常矩阵仍在运行，后续raw/state继续增长。不要只checkout旧提交丢掉当前工作区。
+| handle | 父PID | 内容 | 状态 |
+|---|---:|---|---|
+| **82401** | **806233** | W/recheck_sxm_slow.py，R128/MTP8 g100lat0/2/5/10完整5pass前后夹测；再R40无LRU正常PCIe0.3夹测 | WAITING_GPU，尚未开始GPU工作 |
+| **28183** | **814047** | W/small_floor_ref.py，MTP1/R1正常构建完整1024×3pass纯device参考 | WAITING_GPU，尚未开始GPU工作 |
+
+全部896性能格已测量，但当前只有892格可带完整参考审计：旧原矩阵`floor_floor_mtp1_b1.json`未记录mla.cuh SHA（MTP8/R1记录有SHA）。完整审计handle98052因此exit1，失败日志`audit_missing_floor_math_sha_failure.log`保留。没有据git commit猜测dirty旧math来源；补测同硬件参考，不覆盖原floor或5304矩阵。新auditor保留4个MTP1/R1控制格的实际时间/配对/guard检查于pending_references、pending_reference_pairs和pending_reference_timings.csv，未伪造两参考。新ref完成后会自动优先用于这四格。`coverage.json`明确measured896完整、audited892未完整，cached_measured_complete=true而cached_planned_complete=false。
+
+正常SXM矩阵新增最大负差为未改kernel的R40/MTP8 noLRU PCIe0.3慢2.849%；R128/MTP8 g100lat0/2/5/10慢1.1%–1.75%仍保留，尽管端点full5pass和同分配诊断未复现大幅负差。因此新夹测覆盖这些确实影响保留的疑点；不能仅用代码身份或同分配诊断放宽门槛。生产仍52919，整体goal active，32%–34%主差距未解决。
+
+检查点提交`3d101924`（719个自有文件/414个stagedJSON）及`d8c7131e`（299个自有文件/151个stagedJSON）均通过diff check和JSON全解析。新慢格夹测/补参考脚本及审计修正另在本检查点，运行数据会继续增长。其后R完整原件、诊断与W审计更新已纳入本检查点；W正常矩阵仍在运行，后续raw/state继续增长。不要只checkout旧提交丢掉当前工作区。
 
 ### 2.7 已完成阶段诊断（不重复启动）
 

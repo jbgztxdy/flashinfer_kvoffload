@@ -48,6 +48,7 @@ struct MLAHostBatchParams {
   using IdType = IdType_;
   static constexpr bool fully_staged = false;
   static constexpr bool whole_rows = false;
+  static constexpr bool shared_fetch_ids = false;
 
   DTypeQ* q_nope;
   DTypeQ* q_pe;
@@ -136,6 +137,11 @@ struct WholeRowHostBatchParams : FullyStagedHostBatchParams<Params> {
   static constexpr uint32_t num_chunks = 1;
 };
 
+template <typename Params>
+struct CachedSharedIdsHostBatchParams : WholeRowHostBatchParams<Params> {
+  static constexpr bool shared_fetch_ids = true;
+};
+
 constexpr uint32_t kHostBatchFetchRows = 64;
 // Smallest chunk; ready flags are allocated per this many staging slots.
 constexpr uint32_t kHostBatchMinFetchRows = 16;
@@ -172,7 +178,8 @@ constexpr uint32_t kHostBatchMaxPool = 8192;
 
 template <typename Params>
 __device__ __forceinline__ bool host_batch_caching(const Params& params) {
-  return params.pool_capacity != 0;
+  if constexpr (Params::shared_fetch_ids) return true;
+  else return params.pool_capacity != 0;
 }
 
 // In place with the cache: attention CTAs write missed pages into the cache as they load them.
@@ -699,18 +706,32 @@ __device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uin
 
   const uint32_t chunk_vecs = rows * VECS_PER_ROW;
   __shared__ int32_t cache_rows[kHostBatchFetchRows];
+  __shared__ typename Params::IdType page_ids[BUFFERS][kHostBatchFetchRows];
   __shared__ uint32_t deferred[kHostBatchMaxDeferred], deferred_count;
   if (tid == 0) deferred_count = 0;
   FAR_EMU_INIT(2);
   FAR_EMU_SYNC();
   auto issue = [&](uint32_t chunk, uint32_t buf) {
+    if constexpr (Params::shared_fetch_ids) {
+      if (tid < rows && chunk * rows + tid < count) {
+        page_ids[buf][tid] = params.unique_pages[chunk * rows + tid];
+      }
+      // This synchronizes the ordinary ID stores without draining the other buffer's
+      // outstanding KV cp.async group. Every thread then reuses one shared ID per row.
+      __syncthreads();
+    }
 #pragma unroll
     for (uint32_t i = 0; i < CHUNK_VECS / KTraits::NUM_THREADS; ++i) {
       const uint32_t v = i * KTraits::NUM_THREADS + tid;
       const uint32_t slot = chunk * rows + v / VECS_PER_ROW;
       if (v < chunk_vecs && slot < count) {
+        const auto page = [&]() {
+          if constexpr (Params::shared_fetch_ids)
+            return page_ids[buf][v / VECS_PER_ROW];
+          else return params.unique_pages[slot];
+        }();
         const auto* source = reinterpret_cast<const uint4*>(
-            params.ckv + static_cast<int64_t>(params.unique_pages[slot]) * ROW);
+            params.ckv + static_cast<int64_t>(page) * ROW);
         cp_async::load_128b<PrefetchMode::kNoPrefetch>(buffer + buf * CHUNK_VECS + v,
                                                        source + v % VECS_PER_ROW);
       }
@@ -745,8 +766,12 @@ __device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uin
     }
     // The resolve step is done, so the dedup entries can be cleared for the next launch.
     if (tid < rows && chunk * rows + tid < count) {
-      params.host_slot[params.unique_pages[chunk * rows + tid] -
-                       params.host_page_start] = 0;
+      const auto page = [&]() {
+        if constexpr (Params::shared_fetch_ids)
+          return page_ids[buf][tid];
+        else return params.unique_pages[chunk * rows + tid];
+      }();
+      params.host_slot[page - params.host_page_start] = 0;
     }
     if (params.stage) {
       __threadfence();
@@ -784,7 +809,17 @@ __device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uin
             victim = params.victim_of[slot];
           }
           cache_rows[tid] = victim;
-          bind_host_batch_staged_slot(params, slot, victim);
+          if constexpr (Params::shared_fetch_ids) {
+            if (victim >= 0) {
+              const auto page = page_ids[buf][tid];
+              const int32_t evicted = params.slot_page[victim];
+              if (evicted >= 0) params.resident[evicted - params.host_page_start] = -1;
+              params.resident[page - params.host_page_start] = victim;
+              params.slot_page[victim] = page;
+            }
+          } else {
+            bind_host_batch_staged_slot(params, slot, victim);
+          }
         }
         __syncthreads();
 #pragma unroll
@@ -2136,6 +2171,14 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
         static_assert(sizeof(WholeParams) == sizeof(Params));
         static_assert(alignof(WholeParams) == alignof(Params));
         kernel = reinterpret_cast<decltype(kernel)>(BatchMLAHostBatchKernel<KTraits, WholeParams, false>);
+        if constexpr (CTA_TILE_KV == 32) {
+          if (params.pool_capacity > 0) {
+            using SharedParams = CachedSharedIdsHostBatchParams<Params>;
+            static_assert(sizeof(SharedParams)==sizeof(Params));
+            static_assert(alignof(SharedParams)==alignof(Params));
+            kernel = reinterpret_cast<decltype(kernel)>(BatchMLAHostBatchKernel<KTraits, SharedParams, false>);
+          }
+        }
       }
       const size_t smem_size = sizeof(typename KTraits::SharedStorage);
       FLASHINFER_CUDA_CALL(

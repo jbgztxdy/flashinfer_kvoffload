@@ -1,5 +1,6 @@
 """Count planned regression cells from audited raw; never infer completion from state."""
 import json
+import hashlib
 from pathlib import Path
 p = Path(__file__).resolve().parent
 a = json.loads((p/'performance_audit.json').read_text())
@@ -14,14 +15,32 @@ for f in sorted(set(p.glob('ids_matrix_*_plan.json')) | set(p.glob('cached_ids_m
     assert len(expected)==plan['expected_cells']
     actual={(r['variant'],r['kind'],r['mtp'],r['requests'],r['fetch_ctas'],r['setting'],r['fraction'])
         for r in a['rows'] if r['cohort']==plan['tag']}
+    measured=set()
+    for directory in [p/'raw',p/'gpu3/raw']:
+        for raw in directory.glob(plan['tag']+'*.json'):
+            d=json.loads(raw.read_text())
+            if not d.get('complete'):continue
+            cfg=d['configuration']
+            assert cfg['positions']==1024 and cfg['passes']==3
+            for case in d['cases']:
+                measured.add((cfg['variant'],cfg['kind'],cfg['mtp'],cfg['requests'],cfg['fetch_ctas'],
+                              cfg['setting']['name'],case['host_fraction_requested']))
     assert actual<=expected
+    assert actual<=measured<=expected
     assert all(r['positions']==1024 and r['passes']==3 for r in a['rows'] if r['cohort']==plan['tag'])
     pairs=[r for r in a['pairs'] if r['cohort']==plan['tag']]
     coverage[plan['tag']]=dict(actual=len(actual),expected=len(expected),complete=actual==expected,
+        measured=len(measured),measurement_complete=measured==expected,pending_reference_cells=len(measured-actual),
         pairs=len(pairs),minimum_reduction=min((r['reduction'] for r in pairs),default=None),
         slower_than_1pct=[r for r in pairs if r['reduction']<-.01])
 result=dict(goal_complete=False,candidate_adopted=False,coverage=coverage,
+    cached_measured_complete=bool([x for x in coverage if x.startswith('cached_ids_')]) and all(r['measurement_complete'] for k,r in coverage.items() if k.startswith('cached_ids_')),
     cached_planned_complete=bool([x for x in coverage if x.startswith('cached_ids_')]) and all(r['complete'] for k,r in coverage.items() if k.startswith('cached_ids_')),
     all_planned_complete=bool(coverage) and all(r['complete'] for r in coverage.values()))
 (p/'coverage.json').write_text(json.dumps(result,indent=2)+'\n')
+retention=p/'cached_ids_retention.json'
+if retention.exists():
+    retained=json.loads(retention.read_text())
+    result['candidate_adopted']=bool(retained['candidate_adopted'] and retained['candidate_header_sha256']==hashlib.sha256((p.parents[2]/'include/flashinfer/attention/mla_host_batch.cuh').read_bytes()).hexdigest())
+    (p/'coverage.json').write_text(json.dumps(result,indent=2)+'\n')
 print(json.dumps({k:{q:v for q,v in r.items() if q!='slower_than_1pct'} for k,r in coverage.items()},indent=2))

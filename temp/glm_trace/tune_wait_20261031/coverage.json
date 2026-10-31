@@ -1,11 +1,14 @@
 {
   "goal_complete": false,
-  "candidate_adopted": false,
+  "candidate_adopted": true,
   "coverage": {
     "cached_ids_matrix_gpu3_large_": {
       "actual": 32,
       "expected": 32,
       "complete": true,
+      "measured": 32,
+      "measurement_complete": true,
+      "pending_reference_cells": 0,
       "pairs": 16,
       "minimum_reduction": -0.009462306047934632,
       "slower_than_1pct": []
@@ -14,6 +17,9 @@
       "actual": 88,
       "expected": 88,
       "complete": true,
+      "measured": 88,
+      "measurement_complete": true,
+      "pending_reference_cells": 0,
       "pairs": 44,
       "minimum_reduction": -0.08036076225521116,
       "slower_than_1pct": [
@@ -133,6 +139,9 @@
       "actual": 640,
       "expected": 640,
       "complete": true,
+      "measured": 640,
+      "measurement_complete": true,
+      "pending_reference_cells": 0,
       "pairs": 320,
       "minimum_reduction": -0.0221878919729257,
       "slower_than_1pct": [
@@ -425,10 +434,13 @@
       ]
     },
     "cached_ids_matrix_sxm_native_": {
-      "actual": 83,
+      "actual": 136,
       "expected": 136,
-      "complete": false,
-      "pairs": 41,
+      "complete": true,
+      "measured": 136,
+      "measurement_complete": true,
+      "pending_reference_cells": 0,
+      "pairs": 68,
       "minimum_reduction": -0.02849464715689165,
       "slower_than_1pct": [
         {
@@ -452,6 +464,50 @@
           "local_us": 758.6133281389872,
           "reference_us": 2359.920236176549,
           "over_reference": 0.14853147182229698
+        },
+        {
+          "hardware": "SXM0/1",
+          "cohort": "cached_ids_matrix_sxm_native_",
+          "variant": "cached_ids",
+          "kind": "nocache",
+          "fraction": 0.1,
+          "mtp": 8,
+          "requests": 128,
+          "fetch_ctas": 24,
+          "setting": "nvlink",
+          "positions": 1024,
+          "passes": 3,
+          "old_us": 2439.423978328705,
+          "new_us": 2480.2986780802407,
+          "reduction": -0.01675588176334153,
+          "old_raw": "temp/glm_trace/tune_wait_20261031/raw/cached_ids_matrix_sxm_native_base_staged_f24_i64_soff_nocache_nvlink_mtp8_b128.json",
+          "new_raw": "temp/glm_trace/tune_wait_20261031/raw/cached_ids_matrix_sxm_native_cached_ids_staged_f24_i64_soff_nocache_nvlink_mtp8_b128.json",
+          "memcpy_us": 2796.2026596069336,
+          "local_us": 2458.8799873987837,
+          "reference_us": 2458.8799873987837,
+          "over_reference": 0.008710750744738815
+        },
+        {
+          "hardware": "SXM0/1",
+          "cohort": "cached_ids_matrix_sxm_native_",
+          "variant": "cached_ids",
+          "kind": "nocache",
+          "fraction": 0.3,
+          "mtp": 8,
+          "requests": 64,
+          "fetch_ctas": 24,
+          "setting": "pcie",
+          "positions": 1024,
+          "passes": 3,
+          "old_us": 3971.328020095825,
+          "new_us": 4051.967978477478,
+          "reduction": -0.020305539601260802,
+          "old_raw": "temp/glm_trace/tune_wait_20261031/raw/cached_ids_matrix_sxm_native_base_staged_f24_i64_soff_nocache_pcie_mtp8_b64.json",
+          "new_raw": "temp/glm_trace/tune_wait_20261031/raw/cached_ids_matrix_sxm_native_cached_ids_staged_f24_i64_soff_nocache_pcie_mtp8_b64.json",
+          "memcpy_us": 5069.909413655599,
+          "local_us": 1236.6506656010947,
+          "reference_us": 3815.7387020419264,
+          "over_reference": 0.06190918584365779
         }
       ]
     },
@@ -459,6 +515,9 @@
       "actual": 68,
       "expected": 88,
       "complete": false,
+      "measured": 68,
+      "measurement_complete": false,
+      "pending_reference_cells": 0,
       "pairs": 34,
       "minimum_reduction": -0.1852090736826768,
       "slower_than_1pct": [
@@ -578,6 +637,9 @@
       "actual": 320,
       "expected": 640,
       "complete": false,
+      "measured": 320,
+      "measurement_complete": false,
+      "pending_reference_cells": 0,
       "pairs": 160,
       "minimum_reduction": -0.004171527989512258,
       "slower_than_1pct": []
@@ -586,11 +648,15 @@
       "actual": 0,
       "expected": 136,
       "complete": false,
+      "measured": 0,
+      "measurement_complete": false,
+      "pending_reference_cells": 0,
       "pairs": 0,
       "minimum_reduction": null,
       "slower_than_1pct": []
     }
   },
-  "cached_planned_complete": false,
+  "cached_measured_complete": true,
+  "cached_planned_complete": true,
   "all_planned_complete": false
 }

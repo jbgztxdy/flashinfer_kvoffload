@@ -1,0 +1,28 @@
+{
+  "command": [
+    "numactl",
+    "-N0",
+    "-m0",
+    "/mnt/data/mhy-vllm-venv/bin/python",
+    "-u",
+    "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_wait_20261031/bench.py",
+    "--kind",
+    "floor",
+    "--mtp",
+    "1",
+    "--requests",
+    "1",
+    "--positions",
+    "1024",
+    "--passes",
+    "3",
+    "--fetch-ctas",
+    "16",
+    "--host-split",
+    "off"
+  ],
+  "start": "2026-10-31T23:32:50+0800",
+  "pid": 817677,
+  "exit_code": 0,
+  "end": "2026-10-31T23:33:00+0800"
+}

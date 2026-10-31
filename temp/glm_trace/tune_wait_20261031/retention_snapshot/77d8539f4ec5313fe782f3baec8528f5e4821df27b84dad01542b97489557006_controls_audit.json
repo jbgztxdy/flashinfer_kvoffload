@@ -1,0 +1,116 @@
+{
+  "complete": true,
+  "independent_process_controls": [
+    {
+      "kind": "lru",
+      "mtp": 1,
+      "requests": 1,
+      "setting": "native_hbm",
+      "fraction": null,
+      "base_before_us": 42.67039947590092,
+      "candidate_us": 42.69299947991385,
+      "base_after_us": 42.61439945548773,
+      "reduction_vs_base_mean": -0.0011866127341224608,
+      "paths": {
+        "after": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_after_base_staged_f16_i64_soff_lru_native_hbm_mtp1_b1.json",
+        "before": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_before_base_staged_f16_i64_soff_lru_native_hbm_mtp1_b1.json",
+        "candidate": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_candidate_cached_ids_staged_f16_i64_soff_lru_native_hbm_mtp1_b1.json"
+      }
+    },
+    {
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 28,
+      "setting": "native_hbm",
+      "fraction": null,
+      "base_before_us": 931.9136001169682,
+      "candidate_us": 930.5343995802104,
+      "base_after_us": 928.1792000867426,
+      "reduction_vs_base_mean": -0.000524704443027435,
+      "paths": {
+        "after": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_after_base_staged_f16_i64_soff_lru_native_hbm_mtp8_b28.json",
+        "before": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_before_base_staged_f16_i64_soff_lru_native_hbm_mtp8_b28.json",
+        "candidate": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_candidate_cached_ids_staged_f16_i64_soff_lru_native_hbm_mtp8_b28.json"
+      }
+    },
+    {
+      "kind": "lru",
+      "mtp": 1,
+      "requests": 1,
+      "setting": "pcie",
+      "fraction": null,
+      "base_before_us": 52.08220019703731,
+      "candidate_us": 54.07820028194692,
+      "base_after_us": 52.03580019224319,
+      "reduction_vs_base_mean": -0.03878676270687498,
+      "paths": {
+        "after": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_after_base_staged_f16_i64_soff_lru_pcie_mtp1_b1.json",
+        "before": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_before_base_staged_f16_i64_soff_lru_pcie_mtp1_b1.json",
+        "candidate": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_candidate_cached_ids_staged_f16_i64_soff_lru_pcie_mtp1_b1.json"
+      }
+    },
+    {
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 32,
+      "setting": "pcie",
+      "fraction": 0.0,
+      "base_before_us": 721.9199985265732,
+      "candidate_us": 722.1248030662537,
+      "base_after_us": 723.2000052928925,
+      "reduction_vs_base_mean": 0.0006023013207607786,
+      "paths": {
+        "after": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_after_base_staged_f16_i64_soff_nocache_pcie_mtp8_b32.json",
+        "before": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_before_base_staged_f16_i64_soff_nocache_pcie_mtp8_b32.json",
+        "candidate": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_candidate_cached_ids_staged_f16_i64_soff_nocache_pcie_mtp8_b32.json"
+      }
+    },
+    {
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 32,
+      "setting": "pcie",
+      "fraction": 0.1,
+      "base_before_us": 791.4495974779129,
+      "candidate_us": 794.0607994794846,
+      "base_after_us": 794.2655980587006,
+      "reduction_vs_base_mean": -0.0015175508370790514,
+      "paths": {
+        "after": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_after_base_staged_f16_i64_soff_nocache_pcie_mtp8_b32.json",
+        "before": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_before_base_staged_f16_i64_soff_nocache_pcie_mtp8_b32.json",
+        "candidate": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_candidate_cached_ids_staged_f16_i64_soff_nocache_pcie_mtp8_b32.json"
+      }
+    },
+    {
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 32,
+      "setting": "pcie",
+      "fraction": 0.3,
+      "base_before_us": 2101.7087876796722,
+      "candidate_us": 2099.2511808872223,
+      "base_after_us": 2100.68479180336,
+      "reduction_vs_base_mean": 0.0009259527064731099,
+      "paths": {
+        "after": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_after_base_staged_f16_i64_soff_nocache_pcie_mtp8_b32.json",
+        "before": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_before_base_staged_f16_i64_soff_nocache_pcie_mtp8_b32.json",
+        "candidate": "temp/glm_trace/tune_wait_20261031/gpu3/raw/cached_controls_candidate_cached_ids_staged_f16_i64_soff_nocache_pcie_mtp8_b32.json"
+      }
+    }
+  ],
+  "shared_allocation_diagnostic": {
+    "means_us": {
+      "base": 53.389000277093146,
+      "cached_ids": 53.38340027301456
+    },
+    "reduction": 0.00010489059636864528,
+    "raw": "same_process_control.json",
+    "raw_sha256": "6af5474869f8865d5f277ba54dda9c66009dea636a9976c8113df4fd8d294258",
+    "numerical_and_final_cache_payload_checks": true,
+    "distinct_captured_functions_verified": true,
+    "dispatch_sha256": "16889d9118aa654a8e8d0b9c61de6cc08a77aeade75fe88e0c70ca62e21db0a7"
+  },
+  "interpretation": "Independent small MTP1 PCIe negative persists about3.9%; same-allocation alternating binaries are effectively equal. Consistent with an allocation/environment effect; causation not established. Original negative records retained. No candidate adopted.",
+  "goal_complete": false,
+  "candidate_adopted": false
+}
