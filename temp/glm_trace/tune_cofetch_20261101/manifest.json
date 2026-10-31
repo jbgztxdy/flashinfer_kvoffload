@@ -1,0 +1,13 @@
+{
+  "base_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "candidate_sha256": "af61098d178108843357bee2218d6f6719a2f3355591a5efe6f77dc6eebbbf6f",
+  "control_sha256": "020b565681fa948aef764d8d4faa795bd91867f0b6e9a3134c38016aa82b0b41",
+  "mechanism": "All CTAs service cyclic disjoint 16-row double-buffered fetch queues during one-stage attention; each eighth KV tile services one chunk, waits make fetch progress, every CTA drains before exit. LRU pools selected first with one uniform grid barrier. Single cooperative kernel; canonical math and emulator unchanged.",
+  "control": "One-stage attention with padding retaining original 64-row dedicated fetch double buffers; same routing threshold, no integrated service.",
+  "service_payload_bytes": 36864,
+  "attention_dynamic_bytes": 111104,
+  "original_attention_dynamic_bytes": 147968,
+  "progress": "Every false tile-ready check advances the CTA local queue; exhausted owners spin only after their queues are drained; idle or finished attention CTAs drain all remaining fetches. LRU is complete before any service is issued.",
+  "candidate_adopted": false,
+  "goal_complete": false
+}

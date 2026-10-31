@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cofetch_20261101/bench_gpu3_native.py", line 76, in <module>
+    RESOURCE_START=require_exclusive()
+                   ^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cofetch_20261101/resources_gpu3.py", line 15, in require_exclusive
+    if state['foreign']:raise RuntimeError('Other physical GPU3 process: '+str(state['foreign']))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Other physical GPU3 process: [{'gpu_uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'pid': 1217656, 'process': '/home/lyy/project/fast27/cuda_checkpoint_hack_20261031/build/counter', 'used_mib': '12'}]
+start cofetch256_f24_stage1_control_staged_f24_i64_soff_lru_g100_l0_mtp8_b128
+cofetch256_f24_stage1_control_staged_f24_i64_soff_lru_g100_l0_mtp8_b128 cached GPU metadata bytes 649802000
+cofetch256_f24_stage1_control_staged_f24_i64_soff_lru_g100_l0_mtp8_b128 fraction 1.0 mean_us {'ours': 3975.509, 'memcpy': 6039.509}
+complete cofetch256_f24_stage1_control_staged_f24_i64_soff_lru_g100_l0_mtp8_b128
+start cofetch256_f24_stage1_control_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128
+cofetch256_f24_stage1_control_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128 cached GPU metadata bytes 649802000
+cofetch256_f24_stage1_control_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128 fraction 1.0 mean_us {'ours': 3978.88, 'memcpy': 6060.117}
+complete cofetch256_f24_stage1_control_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128
+start cofetch256_f24_stage1_control_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128
+cofetch256_f24_stage1_control_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128 cached GPU metadata bytes 649802000
+cofetch256_f24_stage1_control_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128 fraction 1.0 mean_us {'ours': 5308.917, 'memcpy': 8486.667}
+complete cofetch256_f24_stage1_control_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128
