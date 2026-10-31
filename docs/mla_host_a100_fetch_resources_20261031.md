@@ -7,7 +7,8 @@
 - `attention_cache`：fetch 只写 staging/publish，attention 从已经载入的共享 KV tile 填充 LRU。每个重复引用用原子认领唯一 victim。105 项正常构建测试通过，但 GPU3 同参数短窗口100GB/s两格慢约12%、50GB/s＋20µs慢约1.2%，无采用依据。
 - `owner_cache`：prepare 的成功 CAS 所有者经 remap 标记传递到 attention，避免每个重复引用再做原子认领。105 项正常构建测试通过，但 CPU 审查发现临时 bit30 与合法的大 Host 页号可能冲突，已被后续编码修正取代。它的两项完成筛选原件保留，第三项因外部进程进入而末检失败；没有完整配对收益结论。
 - `owner_complement`：临时 Host 页号用按位取反标记所有者，resolve 恢复完整页号，再给受容量边界保护的负 staging 索引附加标记。唯一所有者从共享 tile 写回，没有额外 HBM 重读。105 项正常构建测试通过；默认 fetch24 未见收益，另测 fetch16/8 评估减少保留 fetch SM 是否足以偿还 attention 的元数据负担。
-- `whole_pipe4`：保留 fetch 内即时 cache fill，仅整行 CTA_TILE_KV=32 改为32行/四缓冲取数，其他 GPU 路径和数学不变。历史 fastpipe4 源码没有 WholeRowHostBatchParams，所以旧记录没有测试这一组合；本候选与旧实验独立。状态以测试、编译和调度原件为准。
+- `whole_pipe4`：保留 fetch 内即时 cache fill，仅整行 CTA_TILE_KV=32 改为32行/四缓冲取数，其他 GPU 路径和数学不变。历史 fastpipe4 源码没有 WholeRowHostBatchParams，所以旧记录没有测试这一组合；本候选与旧实验独立。105正常测试通过，fetch24/16/12/8完整配对筛选无替代现有推荐配置的收益，不采用。正常BF16/FP16的16个未改配置指令/资源相同，2个目标配置变化，全部stack/local0。
+- `tail_wave2`：保留前部整行直接输出，只把最后一个grid波次拆为两项，复用原attention与merge；新的fully-staged编译实例保留旧路径代码生成，仍为单cooperative kernel。105项正常测试通过，三个链路短筛选均慢0.87%–1.04%，不采用。全部原9个模拟kernel指令/资源不变，新增3个tail实例无stack/local使用。
 
 保持单 cooperative kernel、原 attention 数学、跨步 LRU 容量和策略；远端模拟文件及两种参考未改。所有派发候选基于冻结生产头，独立 include/JIT，不覆盖前轮源或集群排队源码。
 
@@ -35,15 +36,21 @@
 | whole_pipe4 | 16 | g100_l0 | 3552.69 | 4098.38 | -15.36% | 6059.18 | 2556.96 | 2699.68 | 51.8% |
 | whole_pipe4 | 16 | g100_l20000 | 4004.86 | 4115.73 | -2.77% | 6089.73 | 2556.96 | 2699.88 | 52.4% |
 | whole_pipe4 | 16 | g50_l20000 | 5304.25 | 5300.89 | 0.06% | 8486.55 | 2556.96 | 4959.79 | 6.9% |
+| whole_pipe4 | 8 | g100_l0 | 5506.11 | 7008.95 | -27.29% | 6019.22 | 2556.96 | 2699.80 | 159.6% |
+| whole_pipe4 | 8 | g100_l20000 | 7111.09 | 7020.57 | 1.27% | 6030.57 | 2556.96 | 2699.85 | 160.0% |
+| whole_pipe4 | 8 | g50_l20000 | 7206.51 | 7032.43 | 2.42% | 8479.47 | 2556.96 | 4959.85 | 41.8% |
 | attention_cache | 24 | g100_l0 | 3552.89 | 3985.99 | -12.19% | 6051.13 | 2556.96 | 2699.71 | 47.6% |
 | attention_cache | 24 | g100_l20000 | 3586.17 | 4014.19 | -11.94% | 6069.81 | 2556.96 | 2699.94 | 48.7% |
 | attention_cache | 24 | g50_l20000 | 5303.15 | 5368.33 | -1.23% | 8502.71 | 2556.96 | 4959.85 | 8.2% |
+| tail_wave2 | 24 | g100_l0 | 3566.91 | 3603.88 | -1.04% | 6063.64 | 2556.96 | 2699.79 | 33.5% |
+| tail_wave2 | 24 | g100_l20000 | 3586.98 | 3621.66 | -0.97% | 6086.41 | 2556.96 | 2699.81 | 34.1% |
+| tail_wave2 | 24 | g50_l20000 | 5304.86 | 5350.81 | -0.87% | 8483.47 | 2556.96 | 4959.12 | 7.9% |
 
 同参数 base 对照区分代码收益；fetch CTA 变化另作为参数收益比较，不能用新参数与旧默认混称代码收益。纯 device 参考在同一 GPU 正常构建、相同完整 trace 上独立实测，筛选使用其相同前缀；重叠参考逐步取 `max(C_t, unique_miss_t*1152/(1000*BW))` 后求均值。
 
 ## 审计与失败记录
 
-已审计 47 性能格、21 配对、9408 次计时 launch、588 段有效队列；1 个未完成原件排除于有效计时。每步/每pass、hit/miss、两参考、guard和执行源码SHA保存在 [CSV](../temp/glm_trace/tune_scatter_20261031/results.csv) 与[审计](../temp/glm_trace/tune_scatter_20261031/audit.json)。
+已审计 56 性能格、27 配对、11136 次计时 launch、696 段有效队列；1 个未完成原件排除于有效计时。每步/每pass、hit/miss、两参考、guard和执行源码SHA保存在 [CSV](../temp/glm_trace/tune_scatter_20261031/results.csv) 与[审计](../temp/glm_trace/tune_scatter_20261031/audit.json)。
 
 正常构建已完成的测试记录：
 
@@ -52,6 +59,7 @@
 | attention_cache | 105 |
 | owner_cache | 105 |
 | owner_complement | 105 |
+| tail_wave2 | 105 |
 | whole_pipe4 | 105 |
 
 全部六个原通用 BF16 kernel 的指令文本与资源逐项对比；整行实例单列，未满足零 stack 的实例也原样保留。`attention_cache`/owner 系列 CTA64 有 STACK:8、LOCAL:0，不能把它写成全配置零 stack。A100 CTA32 实例为248寄存器、STACK:0、LOCAL:0。完整结果在 `compiler_summary.json`、压缩SASS和资源文本中。

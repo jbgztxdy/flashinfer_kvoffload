@@ -1,4 +1,5 @@
 """Archive the exact normal BF16/FP16 kernels; enforce unaffected configurations."""
+import argparse
 import gzip
 import hashlib
 import json
@@ -8,7 +9,9 @@ from pathlib import Path
 p = Path(__file__).resolve().parent
 previous = p.parent / 'tune_general_20261031'
 sha = lambda f: hashlib.sha256(f.read_bytes()).hexdigest()
-variant = 'whole_pipe4'
+parser = argparse.ArgumentParser()
+parser.add_argument('--variant', choices=['whole_pipe4', 'tail_wave2'], default='whole_pipe4')
+variant = parser.parse_args().variant
 oldlibs = {f.name: f for f in (previous / 'jit_balanced_cached_sm80_normal').rglob('*host_overlap*.so')}
 newlibs = {f.name: f for f in (p / ('jit_' + variant + '_normal')).rglob('*host_overlap*.so')}
 assert oldlibs.keys() == newlibs.keys() and len(oldlibs) == 2
@@ -39,8 +42,13 @@ for label, paths in [('before', oldlibs), ('candidate', newlibs)]:
 old = {x['symbol']: x for x in records['before']}
 comparisons = []
 for new in records['candidate']:
+    if 'TailWaveHostBatchParams' in new['symbol']:
+        comparisons.append(dict(symbol=new['symbol'], new_tail_specialization=True,
+            targeted=True, instruction_text_equal=False, resource_equal=False))
+        assert 'STACK:0' in new['resource'] and 'LOCAL:0' in new['resource'], new
+        continue
     before = old[new['symbol']]
-    targeted = 'WholeRowHostBatchParams' in new['symbol'] and 'ELj32E' in new['symbol']
+    targeted = variant == 'whole_pipe4' and 'WholeRowHostBatchParams' in new['symbol'] and 'ELj32E' in new['symbol']
     equal = new['instruction_sha256'] == before['instruction_sha256'] and new['resource'] == before['resource']
     if not targeted:
         assert equal, new
@@ -48,9 +56,11 @@ for new in records['candidate']:
     comparisons.append(dict(symbol=new['symbol'], targeted=targeted,
         instruction_text_equal=new['instruction_sha256'] == before['instruction_sha256'],
         resource_equal=new['resource'] == before['resource']))
-assert len(comparisons) == 18 and sum(x['targeted'] for x in comparisons) == 2
-result = dict(build='normal SM80 BF16/FP16', unaffected_equal_kernels=16, targeted_changed_kernels=2,
+expected = 18 if variant == 'whole_pipe4' else 24
+targeted_count = sum(x['targeted'] for x in comparisons)
+assert len(comparisons) == expected and targeted_count == (2 if variant == 'whole_pipe4' else 6)
+result = dict(build='normal SM80 BF16/FP16', unaffected_equal_kernels=expected-targeted_count, targeted_changed_kernels=targeted_count,
     all_stack_and_local_zero=True, comparisons=comparisons, records=records, libraries=libraries,
     base_header_sha256=sha(p / 'base.cuh'), candidate_header_sha256=sha(p / (variant + '.cuh')))
-(p / 'compiler_normal_summary.json').write_text(json.dumps(result, indent=2) + '\n')
+(p / ('compiler_normal_summary.json' if variant == 'whole_pipe4' else 'compiler_normal_tail_wave2_summary.json')).write_text(json.dumps(result, indent=2) + '\n')
 print({k: v for k, v in result.items() if k not in ['comparisons', 'records', 'libraries']})

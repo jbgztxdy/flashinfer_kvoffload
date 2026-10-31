@@ -4,9 +4,9 @@ from pathlib import Path
 p=Path(__file__).resolve().parent
 hashfile=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
 records={};libraries={}
-for v in ('base','attention_cache','owner_cache','owner_complement','whole_pipe4'):
+for v in ('base','attention_cache','owner_cache','owner_complement','whole_pipe4','tail_wave2'):
     libs=list((p/('jit_'+v)).rglob('*host_overlap*.so'))
-    if v.startswith('owner_') and not libs:continue
+    if (v.startswith('owner_') or v=='tail_wave2') and not libs:continue
     assert len(libs)==1,(v,libs)
     lib=libs[0]
     sass=subprocess.check_output(['/usr/local/cuda-13.1/bin/cuobjdump','--dump-sass',str(lib)],text=True)
@@ -24,6 +24,7 @@ for v in ('base','attention_cache','owner_cache','owner_complement','whole_pipe4
         resource=re.search(r'Function '+re.escape(symbol)+r':?\s+([^\n]+)',res)
         assert resource
         rows.append(dict(symbol=symbol,whole_rows='WholeRowHostBatchParams' in symbol,
+            tail_wave='TailWaveHostBatchParams' in symbol,
             instructions=len(instructions),instruction_sha256=hashlib.sha256('\n'.join(instructions).encode()).hexdigest(),resource=resource[1]))
     records[v]=rows
 old={r['symbol']:r for r in records['base']}
@@ -31,6 +32,7 @@ comparisons={}
 for v in (v for v in records if v!='base'):
     generic=[];whole=[]
     for r in records[v]:
+        if r['tail_wave']:continue
         b=old[r['symbol']]
         c=dict(symbol=r['symbol'],instruction_count_before=b['instructions'],instruction_count_after=r['instructions'],
             instruction_text_equal=b['instruction_sha256']==r['instruction_sha256'],resource_equal=b['resource']==r['resource'])

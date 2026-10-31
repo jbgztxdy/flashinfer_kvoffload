@@ -1,0 +1,5 @@
+{
+  "base_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "candidate_sha256": "10e8a73039b037bd1500a04b7a1217b3ccc20dbf247783982ea841517bb1c31c",
+  "mechanism": "For already whole-row, CTA_TILE_KV=32, >=4SM launches with enough partial capacity: retain all but one SM wave as direct whole rows; split only final grid rows into two existing attention items, then existing merge. New fully-staged specialization; generic and original whole math unchanged."
+}

@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-10-31 20:25大batch实验检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-10-31 20:40大batch实验检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -41,16 +41,13 @@ GPU3是A100-PCIE/NUMA1，同卡独立HBM不是NVLink，物理PCIe和Memcpy pinne
 - `owner_complement`改为临时补码标记，恢复完整源ID，只在容量受限的负staging索引使用所有者位；105测试通过。fetch24/16/8同参对照已完整完成：24慢约11%–13%；16在100GB+20µs快1.5%但0µs慢9%，50GB略慢；8虽比同参base快11%–22%，仍不及现有fetch24推荐。当前不采用缓存写回迁移。
 - `whole_pipe4`保留fetch内即时cache fill，仅整行CTA_TILE_KV=32使用32行/四缓冲。**历史fastpipe4源码没有WholeRowHostBatchParams，没有测过这一组合**，因此这不是重复其原筛选。六个通用及另两个整行配置指令/资源相同；目标CTA32由7784降为7664条、244寄存器、stack/local0。105项正常测试已通过。最终源SHA=`e0ec1012ed7b29237fbaeca2e7985f15d0247dc06ede40903283134373112bb7`。
 
-当前只剩83402在验证，75786已exit0；下表保留原命令供核对，不重复启动：
+`whole_pipe4`的fetch24/16/12/8同参screen均已完成，83402及75786明确exit0；默认24近持平或略慢，减少fetch也无替代原推荐配置的收益，当前不采用。正常BF16/FP16编译审计16个未改实例相同，2目标变化，全部stack/local0。
 
-| handle | 命令 | 最近状态 |
-|---|---|---|
-| **75786** | `screen.py --hardware gpu3 --candidate whole_pipe4 --variants whole_pipe4 base --tag pipe4256_` | fetch24三格新旧对照均已完成，exit0；256位置、3pass |
-| **83402** | `fetch_tradeoff.py --candidate whole_pipe4 --fetch-ctas 16 12 8` | 配套新旧同参数，等待GPU3；状态`fetch_tradeoff_whole_pipe4_state.json`，最新normal代码生成18项已核对（16个未改配置相同） |
+接着独立实现`tail_wave2`：前部保持整行直接输出，仅最后grid行拆为两个现有partial item并沿用merge，复用原数学、仍单cooperative kernel。仅在已走whole、CTA_TILE_KV=32、≥4SM且partial容量足够时启用，其他派发不变；SHA=`10e8a73039b037bd1500a04b7a1217b3ccc20dbf247783982ea841517bb1c31c`。105项正常测试通过，但三链路同参短筛选全部慢0.87%–1.04%，拒绝。原九个模拟kernel指令/资源不变，新增三个tail实例stack/local0。
 
-Q的`continuation_state.json`按真实handle继续刷新。84718（whole_pipe4正常105）、34123（共享tile版参数对照）、25115（补码版24CTA对照）均已exit0；不要重做。正常BF16/FP16编译提前在CPU完成，缩短持有GPU测试锁的时间。Q的所有GPU3任务和P共用`P/gpu3_correctness.lock`。GPU0/1仍有其他用户任务；不抢占、不终止其他人。
+**全部GPU runner已结束，不要再poll或重复启动**：74331（tail正常105）、40736（EMU编译）、51442（tail同参筛选）、84718（pipe4正常105）、34123、25115、75786、83402都已exit0。CPU正常tail代码生成审计27774也已exit0：18个原BF16/FP16实例指令/资源相同，6个新增tail实例stack/local0。没有活动runner。全部五个新候选均不采用。Q与P所有GPU3任务共用`P/gpu3_correctness.lock`，未终止其他用户进程。GPU0/1本轮持续被其他用户占用，所以没有本轮SXM/NVLink性能新结论。
 
-下一步先检查两个screen，完成Q审计及normal代码生成检查。如果新四缓冲没有跨场景信号就拒绝；若有信号，必须先SXM同参筛选、完整1024位置正反向多pass以及大小batch/MTP1/8/LRU无LRU/全带宽延迟/物理链路回归，再考虑保留。全部当前数据为GPU3同卡独立HBM模拟，不能冒称真实NVLink或SXM收益。**大batch主目标仍未完成。**
+下一步继续定位大batch计算/fetch争用；不要再无新机制重复缓存写回迁移、四缓冲整行或最后一波二分片。当前GPU3同卡独立HBM模拟不能冒称真实NVLink或SXM收益。**大batch主目标仍未完成，生产保持ce341a02。**
 
 ### 2.3 已完成阶段诊断（不重复启动）
 

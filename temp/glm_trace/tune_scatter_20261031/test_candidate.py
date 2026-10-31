@@ -4,7 +4,7 @@ from pathlib import Path
 p=Path(__file__).resolve().parent
 root=p.parents[2]
 parser=argparse.ArgumentParser()
-parser.add_argument('--variant',required=True,choices=('base','attention_cache','owner_cache','owner_complement','whole_pipe4'))
+parser.add_argument('--variant',required=True,choices=('base','attention_cache','owner_cache','owner_complement','whole_pipe4','tail_wave2'))
 parser.add_argument('--gpu',type=int,required=True)
 parser.add_argument('--medium-only',action='store_true')
 parser.add_argument('--main-only',action='store_true')

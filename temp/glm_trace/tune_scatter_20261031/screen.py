@@ -14,12 +14,12 @@ a.add_argument('--positions', type=int, default=256)
 a.add_argument('--passes', type=int, default=3)
 a.add_argument('--fetch-ctas', type=int, default=24)
 a.add_argument('--tag', default='screen256_')
-a.add_argument('--candidate', default='attention_cache', choices=['attention_cache', 'owner_cache', 'owner_complement', 'whole_pipe4'])
+a.add_argument('--candidate', default='attention_cache', choices=['attention_cache', 'owner_cache', 'owner_complement', 'whole_pipe4', 'tail_wave2'])
 a = a.parse_args()
 from resources import snapshot as sxm_snapshot
 from resources_gpu3 import snapshot as gpu3_snapshot
 for v in a.variants:
-    assert v in ['base', 'attention_cache', 'owner_cache', 'owner_complement', 'whole_pipe4']
+    assert v in ['base', 'attention_cache', 'owner_cache', 'owner_complement', 'whole_pipe4', 'tail_wave2']
 gate = p / ('tests_' + a.candidate + '_gpu3.json')
 while True:
     t = json.loads(gate.read_text()) if gate.exists() else {}

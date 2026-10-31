@@ -1069,6 +1069,90 @@
     {
       "hardware": "GPU3",
       "cohort": "pipe4_f8_",
+      "variant": "base",
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 8,
+      "split": false,
+      "setting": "g100_l0",
+      "ours_us": 5506.112006803353,
+      "memcpy_us": 6032.874668637912,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.7984811410965,
+      "over_reference": 1.0394529611247654,
+      "reference_hit_rate": 0.7673340030709577,
+      "unique_miss_MB": 247.943856,
+      "pass_mean_us": [
+        5493.216015398502,
+        5509.824015200138,
+        5515.29598981142
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/pipe4_f8_base_staged_f8_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "pipe4_f8_",
+      "variant": "base",
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 8,
+      "split": false,
+      "setting": "g100_l20000",
+      "ours_us": 7111.093337337176,
+      "memcpy_us": 6049.269358317058,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.883921141097,
+      "over_reference": 1.6338515080795388,
+      "reference_hit_rate": 0.7673100902593348,
+      "unique_miss_MB": 247.95198,
+      "pass_mean_us": [
+        7103.936031460762,
+        7115.615978837013,
+        7113.728001713753
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/pipe4_f8_base_staged_f8_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "pipe4_f8_",
+      "variant": "base",
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 8,
+      "split": false,
+      "setting": "g50_l20000",
+      "ours_us": 7206.506664554278,
+      "memcpy_us": 8476.543992757797,
+      "local_us": 2556.959974269072,
+      "reference_us": 4960.44528,
+      "over_reference": 0.4527943073195797,
+      "reference_hit_rate": 0.7671314945534099,
+      "unique_miss_MB": 248.022264,
+      "pass_mean_us": [
+        7200.192049145699,
+        7212.704002857208,
+        7206.623941659927
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/pipe4_f8_base_staged_f8_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "pipe4_f8_",
       "variant": "whole_pipe4",
       "mtp": 8,
       "requests": 128,
@@ -1317,6 +1401,174 @@
       "raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/screen256_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
       "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
       "header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "tail256_",
+      "variant": "base",
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g100_l0",
+      "ours_us": 3566.9120028615,
+      "memcpy_us": 6063.050642609596,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.7812011410965,
+      "over_reference": 0.321185583985065,
+      "reference_hit_rate": 0.7673990427381477,
+      "unique_miss_MB": 247.915944,
+      "pass_mean_us": [
+        3555.9679940342903,
+        3541.3760021328926,
+        3603.3920124173164
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "tail256_",
+      "variant": "base",
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g100_l20000",
+      "ours_us": 3586.976006627083,
+      "memcpy_us": 6091.70134862264,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.9614411410967,
+      "over_reference": 0.328528604879299,
+      "reference_hit_rate": 0.767288060854945,
+      "unique_miss_MB": 247.951524,
+      "pass_mean_us": [
+        3567.904010415077,
+        3566.080003976822,
+        3626.9440054893494
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "tail256_",
+      "variant": "base",
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g50_l20000",
+      "ours_us": 5304.86398935318,
+      "memcpy_us": 8494.98662352562,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.7008,
+      "over_reference": 0.06959355075475115,
+      "reference_hit_rate": 0.7672160540718166,
+      "unique_miss_MB": 247.98504,
+      "pass_mean_us": [
+        5302.9119819402695,
+        5303.935997188091,
+        5307.743988931179
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "tail256_",
+      "variant": "tail_wave2",
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g100_l0",
+      "ours_us": 3603.882667919,
+      "memcpy_us": 6063.637341062228,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.7935611410967,
+      "over_reference": 0.334873421357365,
+      "reference_hit_rate": 0.767388254144209,
+      "unique_miss_MB": 247.920864,
+      "pass_mean_us": [
+        3564.2240047454834,
+        3574.7519806027412,
+        3672.6720184087753
+      ],
+      "max_abs_error": 0.0026658177375793457,
+      "raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_tail_wave2_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "10e8a73039b037bd1500a04b7a1217b3ccc20dbf247783982ea841517bb1c31c"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "tail256_",
+      "variant": "tail_wave2",
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g100_l20000",
+      "ours_us": 3621.6639975706735,
+      "memcpy_us": 6086.410661538442,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.807361141097,
+      "over_reference": 0.34145274573958706,
+      "reference_hit_rate": 0.7673365722570775,
+      "unique_miss_MB": 247.944552,
+      "pass_mean_us": [
+        3561.7279931902885,
+        3621.1520209908485,
+        3682.111978530884
+      ],
+      "max_abs_error": 0.0026581287384033203,
+      "raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_tail_wave2_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "10e8a73039b037bd1500a04b7a1217b3ccc20dbf247783982ea841517bb1c31c"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "tail256_",
+      "variant": "tail_wave2",
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g50_l20000",
+      "ours_us": 5350.805339713891,
+      "memcpy_us": 8483.466664950052,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.12312,
+      "over_reference": 0.07898215273870646,
+      "reference_hit_rate": 0.7672792898423694,
+      "unique_miss_MB": 247.956156,
+      "pass_mean_us": [
+        5348.000057041645,
+        5349.792003631592,
+        5354.623958468437
+      ],
+      "max_abs_error": 0.0026658177375793457,
+      "raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_tail_wave2_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "10e8a73039b037bd1500a04b7a1217b3ccc20dbf247783982ea841517bb1c31c"
     }
   ],
   "pairs": [
@@ -1682,6 +1934,66 @@
     },
     {
       "hardware": "GPU3",
+      "cohort": "pipe4_f8_",
+      "variant": "whole_pipe4",
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 8,
+      "setting": "g100_l0",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 5506.112006803353,
+      "new_us": 7008.949304620425,
+      "reduction": -0.2729398341261793,
+      "old_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/pipe4_f8_base_staged_f8_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/pipe4_f8_whole_pipe4_staged_f8_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "memcpy_us": 6019.221340616544,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.796201141097,
+      "over_reference": 1.596103106470785
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "pipe4_f8_",
+      "variant": "whole_pipe4",
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 8,
+      "setting": "g100_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 7111.093337337176,
+      "new_us": 7020.565326015155,
+      "reduction": 0.012730533411325018,
+      "old_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/pipe4_f8_base_staged_f8_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/pipe4_f8_whole_pipe4_staged_f8_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "memcpy_us": 6030.570646127065,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.8452811410966,
+      "over_reference": 1.6003583890732784
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "pipe4_f8_",
+      "variant": "whole_pipe4",
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 8,
+      "setting": "g50_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 7206.506664554278,
+      "new_us": 7032.426670193672,
+      "reduction": 0.024155947182680215,
+      "old_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/pipe4_f8_base_staged_f8_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/pipe4_f8_whole_pipe4_staged_f8_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "memcpy_us": 8479.466651876768,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.85128,
+      "over_reference": 0.41787047094558694
+    },
+    {
+      "hardware": "GPU3",
       "cohort": "screen256_",
       "variant": "attention_cache",
       "mtp": 8,
@@ -1739,6 +2051,66 @@
       "local_us": 2556.959974269072,
       "reference_us": 4959.84864,
       "over_reference": 0.08235775769864895
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "tail256_",
+      "variant": "tail_wave2",
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l0",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3566.9120028615,
+      "new_us": 3603.882667919,
+      "reduction": -0.01036489406742902,
+      "old_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_tail_wave2_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "memcpy_us": 6063.637341062228,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.7935611410967,
+      "over_reference": 0.334873421357365
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "tail256_",
+      "variant": "tail_wave2",
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3586.976006627083,
+      "new_us": 3621.6639975706735,
+      "reduction": -0.009670538882753377,
+      "old_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_tail_wave2_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "memcpy_us": 6086.410661538442,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.807361141097,
+      "over_reference": 0.34145274573958706
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "tail256_",
+      "variant": "tail_wave2",
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g50_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 5304.86398935318,
+      "new_us": 5350.805339713891,
+      "reduction": -0.008660231525806417,
+      "old_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_tail_wave2_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "memcpy_us": 8483.466664950052,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.12312,
+      "over_reference": 0.07898215273870646
     }
   ],
   "tests": [
@@ -1758,13 +2130,18 @@
       "sha256": "b91cac5da4215e5d8ac4bb1ea283d5774fbcf9774f8b353b6d7a0fda59ba3a45"
     },
     {
+      "variant": "tail_wave2",
+      "tests": 105,
+      "sha256": "0dfe81ec07a5388b374666e9a6fa7b7e3e59bee486fd29a16445bb44822e8532"
+    },
+    {
       "variant": "whole_pipe4",
       "tests": 105,
       "sha256": "7d17d934b347a4b53e06014b824040e458832b6bc72a71fbc258c1ba5e68ac9f"
     }
   ],
-  "timed_launches": 9408,
-  "accepted_segments": 588,
+  "timed_launches": 11136,
+  "accepted_segments": 696,
   "files": [
     {
       "path": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/complement256_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
@@ -1919,6 +2296,18 @@
       "sha256": "ca2ab0ef9c453e80804a8527a4e7a8ff0339c4289724f85ca9eff92a14530122"
     },
     {
+      "path": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/pipe4_f8_base_staged_f8_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "d264f6bda30be53f63e9e38ba8bf5f2f5a1c85e96e81efc9f822ff01d4a420bc"
+    },
+    {
+      "path": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/pipe4_f8_base_staged_f8_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "ccc140ece16466eead8b7e2e71956928fbf765b1fb81829d8f73f85fc6773390"
+    },
+    {
+      "path": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/pipe4_f8_base_staged_f8_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "sha256": "989fb1deb9359db543a0be328099414967db06f3ab4ca43cf91c9c7b2ab847ab"
+    },
+    {
       "path": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/pipe4_f8_whole_pipe4_staged_f8_i64_soff_lru_g100_l0_mtp8_b128.json",
       "sha256": "e2eb9061615a4c3bebc6ea72c3983f0e05a9aa411994f7e2e5f49ef7e08fae26"
     },
@@ -1957,6 +2346,30 @@
     {
       "path": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/screen256_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
       "sha256": "967dd332e6e6a6bbc620ca1d154fb6d04b8750def95332f7863b2e548c11a7bc"
+    },
+    {
+      "path": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "263a32c31d3f3e1ba7bf3a5a8ad353c71f3b817df07380a1623148af77976655"
+    },
+    {
+      "path": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "2ef088d1423e3f1eeec783479e48828a6f4f95637267a68c9e38388cd4cebbb2"
+    },
+    {
+      "path": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "sha256": "867feae28b4e657d92e64ce4efc32154f162845525c0391c25cfadf5914ee379"
+    },
+    {
+      "path": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_tail_wave2_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "fea48419fc02cabf7e8a030123556ff20a7b347a243fcb56ed875e47d5a714d6"
+    },
+    {
+      "path": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_tail_wave2_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "485037c5ec4e711f0c735388fb7986a55d9335991235752c295b03fd319fbdd0"
+    },
+    {
+      "path": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/tail256_tail_wave2_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "sha256": "7015d130bb246a968f7e3eaa431cc97d3b9e76c046efa66eb1ba2577ac85676e"
     }
   ],
   "incomplete": [
