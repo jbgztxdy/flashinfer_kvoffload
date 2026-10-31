@@ -1,0 +1,12 @@
+{
+  "predecessor_sha256": "af61098d178108843357bee2218d6f6719a2f3355591a5efe6f77dc6eebbbf6f",
+  "candidate_sha256": "9168c83fdb5ea1e5f0281aa42f820d433135269922225c133d824f21a3588259",
+  "base_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "mechanism": "Keep original two-stage attention. Dedicated CTAs fetch 64-row jobs from 2x64 buffers then join attention; workers service 2x4-row buffers once each eight KV tiles and during waits. Atomic job cursor assigns disjoint16-row jobs; every16rows gets its own ready flag. Same math/LRU/payload/unchanged emulator hooks.",
+  "progress": "Worker16-row jobs publish only after all four4-row subchunks. Queues drain before exit, wait loops service local jobs; dedicated queues drain before joining attention. LRU selections finish before issue. Gap flag reused only after prepare/compaction and reset at existing last-CTA exit.",
+  "predecessor_evidence": "One-stage control 100GB slowed11.8-12.3%; all-CTA16-row prototype slowed38.9-53.0%. Preserve original attention stages and dedicated transfer channel rather than cadence/unroll scan.",
+  "worker_payload_bytes": 9216,
+  "attention_dynamic_bytes": 147968,
+  "candidate_adopted": false,
+  "goal_complete": false
+}

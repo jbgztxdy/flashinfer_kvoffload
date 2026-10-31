@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-01 01:09 CTA协作取数与单stage控制检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-01 01:22 协作/辅助取数四版本完整拒绝检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -14,13 +14,15 @@
 
 ## 2. 当前运行状态与新一轮进度
 
-### 2.0 最新生产：共享页号已保留；本轮三项新候选未采用
+### 2.0 最新生产：共享页号已保留；协作与辅助取数候选均拒绝
 
 **当前生产header是cached_ids，SHA=`b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a`，不再是52919。下文§2.1–2.6保留各阶段历史，冲突时以本节及实际文件为准。** 单kernel、数学、精确LRU/真实cache载荷、模拟器和原5304矩阵不变；只在已有whole CTA32且启用LRU的路径共享块页号，未改路径原9EMU/18normal kernel指令与资源完全相同。基线52919保存在W/base.cuh及其他独立实验树。
 
 **最新C=`temp/glm_trace/tune_cofetch_20261101/`已完成并拒绝。** 原型af610…bf6f将attention减为1stage，腾出2×16行service buffer，所有CTA计算中/等待时推进取数，所有pool先做LRU再grid barrier；独立控制020b…0b41只减attention stage、用padding保留原64行fetch双缓冲。两版均105正常+2长队列/全cache载荷测试（共214项），34EMU/68normal原库内实例全等价，实际单kernel/108CTA/256线程/1CTA驻留已核实。cofetch静态38272B+动态111104B、REG244EMU/242normal；control静态2304+动态147968、REG240，均stack/local0。GPU3同参256×3pass的100GB0/20µs原型慢38.940%/53.030%，control慢11.794%/12.284%，50GB慢15.761%/0.470%。9格/6配对、1728计时launch/108segment、两参考完整。原control preflight外部counter失败及仅补缺失候选的重试保留；全部C runner已terminal。见[报告](mla_host_a100_cofetch_20261101.md)。
 
-后继HC=`temp/glm_trace/tune_hybrid_cofetch_20261101/`已实现，SHA9168…8259：保留原2stage attention和专用64行双缓冲主通道，worker用额外2×4行缓冲辅助；原gap flag只在prepare/compaction完成后复用为16行job cursor，原last-CTA退出复位。16行ready flag须等worker四个subchunk全部落地，dedicated每次领四个16行job。保持数学/LRU/模拟器/单kernel。**这仍是候选，不是生产改进。** 正常编译+105测试handle86861、EMU编译41882（已exit0）、长队列测试68190、EMU代码生成31554；先核实原handle/continuation_state，不重复。必须107正确性、34/68等价、实际Graph派发与同参性能后才能下结论。
+后继HC=`temp/glm_trace/tune_hybrid_cofetch_20261101/`两版也已完成并拒绝。hybrid 9168…8259保留原2stage attention和专用64行双缓冲主通道，worker用额外2×4行缓冲辅助；原gap flag只在prepare/compaction完成后复用为16行job cursor，last-CTA退出复位。16行ready须等worker四个subchunk全部落地，dedicated每次领四个job。新实例REG255、STACK440EMU/432normal，100GB慢107%–109%，50GB慢58%。独立hybrid_static 7cac…df25用编译期角色区分，把64行service移出attention accumulator活跃区间，保留同样的调度/cadence8/缓冲/job/数学/LRU/模拟器；新REG245、STACK0，但100GB仍慢13.881%/14.911%，50GB慢12.855%。两版均105+2正常测试（共214项），34EMU/68normal原实例全等价，实际单新kernel/108CTA/256线程、dynamic147968+static11264B、1residentCTA；12格/6配对、2304计时launch/144segment、两参考完整。[报告](mla_host_a100_hybrid_cofetch_20261101.md)。
+
+**C/HC全部CPU/GPU runner已terminal，四版本合计428项正常测试、21格/12配对、4032计时launch/252segment。** 不扩展完整1024位置/正常物理链路/全场景矩阵。C已提交6a909b27；HC后续检查点只保全已拒绝实现与证据，生产仍b6。正常BF16/FP16、实际Graph、长队列/全payload、原实例等价及两参考均不是主目标完成证明；整体goal继续active，主差距约32%–34%仍未改善。本轮属于progress，不是blocked：新机制、寄存器活跃区间修正及控制证据已完成；下一步不要重新扫描这些候选。
 
 生产提交为 **0f82e9de**。本轮P=`temp/glm_trace/tune_qk_pair_20261031/`实现不同KV tile共享Q fragment，确认历史regpipe3只改fetch buffer而未覆盖该机制；第一版75ea…d6f9f正常105测试通过、34EMU/68normal原实例相同、新REG255/STACK0，但GPU3同参256×3pass的100GB慢8.1%–8.5%。独立提前页号版adc6…f155fb同样105通过、原实例相同，新STACK8；三链路耗时降低−0.130%/+0.115%/+0.067%，没有稳定收益。两版均实际Graph确认单个新PairedQK kernel、108CTA/256线程、147968B dynamic shared、1CTA/SM。12格/6配对、2304计时launch、两参考完整，均拒绝。[报告](mla_host_a100_qk_pair_20261101.md)。首次base因外部counter_payload进入而preflight失败，原日志/state及仅重试base保留；SXM始终等待外部GPU0/1进程，取消自己的未启动runner，无SXM性能结果。
 
@@ -36,7 +38,7 @@ SXM正常构建、MTP8/R128、full1024×5pass、f24/off：真实NVLink3349.277�
 
 上一轮本机GPU/CPU调度器均已terminal：W原矩阵92282、完整确认86595、慢格夹测82401、补小参考28183、生产编译37851和生产测试28695全部exit0；R的四确认和三版诊断也均exit0；H/Q/U拒绝候选无活动任务。**不要再poll或重复启动这些handle。** 最终audit83501和coverage/report已成功。41741初次将生产测试记录当候选记录而缺compile_exit_code，失败日志audit_production_record_schema_failure.log保留，已显式区分两种记录并复核通过。旧审计98052因单请求floor缺mathSHA而失败的日志保留；新同硬件normal小参考已补齐，没有覆盖原floor。
 
-H800五个旧Slurm作业11/01 00:45:46仍Priority/Dependency，两个watcher活，保存C/h800_queue.txt；没有覆盖排队源或重复提交。P/F/C全部本机runner结束，HC新候选状态见上文和实际进程。下一步在b6上继续新机制推进大100GB目标；不要重复ready/prebind/scatter/四缓冲/tail/半head双驻留/重复QK/配对QK/warp按行取数/本轮单stage全CTA取数或纯参数扫描。已完成等待/CTA预算诊断支持关注fetch占据的SM，但不能将全部差距单因归因。HC保留2stage并只让worker辅助，与C已拒绝的单stage全CTA搬运分开核实；勿改模拟器/参考以制造收益。
+H800五个旧Slurm作业11/01 01:20:24仍Priority/Dependency，两个watcher活，保存HC/h800_queue.txt；没有覆盖排队源或重复提交。所有自有本机runner已结束，不必等待其他用户任务。下一步在b6上继续新机制推进大100GB目标；不要重复ready/prebind/scatter/四缓冲/tail/半head双驻留/重复QK/配对QK/warp按行取数/本轮单stage或hybrid辅助取数，或只扫cadence/unroll/fetch参数。已完成等待/CTA预算诊断支持查共享资源，但这些拒绝证据说明不能只凭更多CTA参与搬运推断收益。可重新检查attention计算效率的新机制；若研究更小KV tile，先审查现有低shared路径是否重复QK，并核算feature-shard/score交换的数学与shared/register预算。此方向尚未实现，不能宣称新收益，也不能重做已拒绝的32head/1stage方案。勿改模拟器/参考。
 
 ### 2.1 最新续接：中等 batch 派发修正已保留，继续大 batch 主目标
 
@@ -288,7 +290,7 @@ Trace由GLM-5.3在A800逐层BF16 prefill、SWE-rebench OpenHands语料原生模�
 
 ## 7. 建议接续顺序
 
-1. 复查源码SHA、dirty状态、GPU进程、Slurm；读已完成阶段诊断，不重复启动。上轮整行成果已提交并重新审计，不重做其整轮实验；先检查§2.1现有第三项runner。
+1. 复查源码SHA、dirty状态、GPU进程、Slurm；读已完成阶段诊断，不重复启动。所有§2.0旧runner已结束，按最新continuation_state核实，不因历史段落的WAITING字样重启。现有生产与已完成矩阵均已保全，不重做整轮实验。
 2. 以新目录`base.cuh`和上轮正式确认作基线。重点定位100GB下fetch/attention争用和尾部；物理NVLink可比较原地读，小batch另查prepare/同步。
 3. 独立include/JIT实现少量有依据候选，短窗口筛选后完整trace、同参数新旧/反向多pass确认；不要重跑原矩阵、重复已失败候选或重采trace。
 4. 保留候选需覆盖大小batch、MTP1/8、50/100GB及高低延迟、有/无LRU、PCIe/NVLink；检查默认未走分支的代码生成/性能，防编译器引入回退。不要按测试结果暗中挑最优。

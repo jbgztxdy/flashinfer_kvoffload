@@ -1,0 +1,8 @@
+{
+  "predecessor_sha256": "9168c83fdb5ea1e5f0281aa42f820d433135269922225c133d824f21a3588259",
+  "candidate_sha256": "7cac4924a0871435b5edb915cdfd28de562c7951418fd520ea8321f98fb0df25",
+  "mechanism": "Same two-stage hybrid policy, jobs, payload buffers, cadence8, math, LRU and emulator. Compile dedicated64-row service separately from worker4-row service, so attention never carries unreachable64-row paths while its output accumulators are live. Dedicated queues finish before attention.",
+  "evidence": "Predecessor passes107normaltests but EMU newkernel REG255 STACK440. Static specialization tests a compiler-liveness hypothesis, not an unroll/cadence sweep.",
+  "candidate_adopted": false,
+  "goal_complete": false
+}
