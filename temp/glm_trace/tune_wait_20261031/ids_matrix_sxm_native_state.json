@@ -1,0 +1,48 @@
+[
+  {
+    "variant": "base",
+    "kind": "lru",
+    "mtp": 8,
+    "requests": 28,
+    "settings": [
+      "nvlink",
+      "pcie"
+    ],
+    "fetch_ctas": 16,
+    "passes": 3,
+    "fractions": null,
+    "start": "2026-10-31T21:15:50+0800",
+    "remaining_settings": [
+      "nvlink",
+      "pcie"
+    ],
+    "command": [
+      "numactl",
+      "-N0",
+      "-m0",
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_wait_20261031/bench.py",
+      "--kind",
+      "lru",
+      "--mtp",
+      "8",
+      "--requests",
+      "28",
+      "--settings",
+      "nvlink",
+      "pcie",
+      "--passes",
+      "3",
+      "--positions",
+      "1024",
+      "--fetch-ctas",
+      "16",
+      "--host-split",
+      "off"
+    ],
+    "pid": 572875,
+    "exit_code": 1,
+    "end": "2026-10-31T21:16:05+0800"
+  }
+]

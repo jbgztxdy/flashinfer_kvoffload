@@ -1,0 +1,41 @@
+{
+  "start": "2026-10-31T21:21:49+0800",
+  "reason": "Original fetch_ids normal PCIe no-LRU medium regression reaches18.5%; preserve original plan/data, stop broad work before validating a cached-only specialization.",
+  "targets": [
+    {
+      "pid": 570410,
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "temp/glm_trace/tune_wait_20261031/validate_ids.py",
+        "--hardware",
+        "sxm",
+        "--cohort",
+        "limited"
+      ],
+      "children": [
+        583019
+      ],
+      "stopped": true,
+      "end": "2026-10-31T21:22:09+0800"
+    },
+    {
+      "pid": 570409,
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "temp/glm_trace/tune_wait_20261031/validate_ids.py",
+        "--hardware",
+        "gpu3",
+        "--cohort",
+        "native"
+      ],
+      "children": [
+        581920
+      ],
+      "stopped": true,
+      "end": "2026-10-31T21:22:49+0800"
+    }
+  ],
+  "end": "2026-10-31T21:22:49+0800"
+}

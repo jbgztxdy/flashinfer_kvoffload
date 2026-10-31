@@ -1,0 +1,754 @@
+{
+  "hardware": "sxm",
+  "cohort": "limited",
+  "tag": "ids_matrix_sxm_limited_",
+  "base_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "candidate_sha256": "270c48be82e1d15b70c461b00bac3fe7a124bc75f0b85323960d7e372c4edee9",
+  "positions": 1024,
+  "full_lru_window": true,
+  "no_lru_snapshots": [
+    0,
+    256,
+    512,
+    768
+  ],
+  "tasks": [
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 28,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 28,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 28,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 28,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 32,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 32,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 32,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "base",
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 32,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 40,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 40,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 40,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 40,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 48,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 48,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 48,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "base",
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 48,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 1,
+      "requests": 256,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "lru",
+      "mtp": 1,
+      "requests": 256,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "nocache",
+      "mtp": 1,
+      "requests": 256,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "nocache",
+      "mtp": 1,
+      "requests": 256,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 16,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 64,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 64,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 64,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "base",
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 64,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 128,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "lru",
+      "mtp": 8,
+      "requests": 128,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 128,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "nocache",
+      "mtp": 8,
+      "requests": 128,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "lru",
+      "mtp": 1,
+      "requests": 512,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "base",
+      "kind": "lru",
+      "mtp": 1,
+      "requests": 512,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "passes": 3,
+      "fractions": null
+    },
+    {
+      "variant": "fetch_ids",
+      "kind": "nocache",
+      "mtp": 1,
+      "requests": 512,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    },
+    {
+      "variant": "base",
+      "kind": "nocache",
+      "mtp": 1,
+      "requests": 512,
+      "settings": [
+        "g100_l0",
+        "g100_l2000",
+        "g100_l5000",
+        "g100_l10000",
+        "g100_l20000",
+        "g50_l0",
+        "g50_l2000",
+        "g50_l5000",
+        "g50_l10000",
+        "g50_l20000"
+      ],
+      "fetch_ctas": 24,
+      "passes": 3,
+      "fractions": [
+        0.0,
+        0.1,
+        0.3
+      ]
+    }
+  ],
+  "expected_cells": 640
+}

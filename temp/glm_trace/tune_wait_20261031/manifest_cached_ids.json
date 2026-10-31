@@ -1,0 +1,5 @@
+{
+  "base_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "candidate_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "mechanism": "Cache-enabled whole-row CTA32 gets a new ID-sharing specialization; every original generic and whole-row kernel remains compile-time shared_fetch_ids=false. No-LRU calls always use original kernels. Cached work reuses IDs in issue/dedup/cache-binding. Same capacity/policy/traffic/math/simulator."
+}

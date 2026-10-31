@@ -1,0 +1,152 @@
+[
+  {
+    "raw": "temp/glm_trace/tune_wait_20261031/raw/budget_profile_wait_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+    "raw_sha256": "2f7046cc9699b51085a1fbe271538fa99a7c2539e5f2219228b2287a91a964cb",
+    "setting": "g100_l20000",
+    "diagnostic_event_mean_us": 3525.9440056979656,
+    "phase_means": {
+      "fetch_start_us": 192.488,
+      "fetch_end_us": 3063.608,
+      "attention_end_us": 3513.504,
+      "wait_us_per_attention_item": 15.4996875,
+      "attention_us_per_item": 262.792109375,
+      "blocked_call_fraction": 0.009839004910329446
+    },
+    "summaries": {
+      "all": {
+        "mean_wait_us_per_CTA": 146.96,
+        "mean_attention_us_per_CTA": 2491.6585185185186,
+        "mean_attention_items_per_CTA": 9.481481481481481,
+        "mean_lru_us_per_CTA": 22.273925925925926,
+        "wait_fraction_of_attention": 0.058980794883312884,
+        "blocked_call_fraction": 0.011050173836166998
+      },
+      "workers": {
+        "mean_wait_us_per_CTA": 186.43295238095237,
+        "mean_attention_us_per_CTA": 3108.5041904761906,
+        "mean_attention_items_per_CTA": 11.816685267857142,
+        "mean_lru_us_per_CTA": 28.63790476190476,
+        "wait_fraction_of_attention": 0.05997513304056148,
+        "blocked_call_fraction": 0.011362139264323862
+      },
+      "fetchers": {
+        "mean_wait_us_per_CTA": 8.804666666666666,
+        "mean_attention_us_per_CTA": 332.69866666666667,
+        "mean_attention_items_per_CTA": 1.3082682291666667,
+        "mean_lru_us_per_CTA": 0.0,
+        "wait_fraction_of_attention": 0.026464388195123516,
+        "blocked_call_fraction": 0.0005675476267050076
+      },
+      "critical_CTA": {
+        "wait_us": 232.792,
+        "attention_us": 2808.168,
+        "attention_items": 10.40625,
+        "lru_us": 21.4,
+        "before_items_us": 675.568,
+        "last_attention_start_us": 3236.816,
+        "done_us": 3513.504
+      }
+    },
+    "max_abs_error": 0.0019550323486328125
+  },
+  {
+    "raw": "temp/glm_trace/tune_wait_20261031/raw/budget_profile_wait_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+    "raw_sha256": "1a57329296e0aa2a7f09402d0fecd8ba3897d7e74799aea390f4577532879c78",
+    "setting": "g50_l20000",
+    "diagnostic_event_mean_us": 5567.84001365304,
+    "phase_means": {
+      "fetch_start_us": 183.888,
+      "fetch_end_us": 5420.224,
+      "attention_end_us": 5555.976,
+      "wait_us_per_attention_item": 188.535109375,
+      "attention_us_per_item": 417.019,
+      "blocked_call_fraction": 0.10358239373392714
+    },
+    "summaries": {
+      "all": {
+        "mean_wait_us_per_CTA": 1787.5921481481482,
+        "mean_attention_us_per_CTA": 3953.957925925926,
+        "mean_attention_items_per_CTA": 9.481481481481481,
+        "mean_lru_us_per_CTA": 20.84288888888889,
+        "wait_fraction_of_attention": 0.4521019650783297,
+        "blocked_call_fraction": 0.10064288655351673
+      },
+      "workers": {
+        "mean_wait_us_per_CTA": 2298.3321904761906,
+        "mean_attention_us_per_CTA": 5083.638285714285,
+        "mean_attention_items_per_CTA": 12.19038318452381,
+        "mean_lru_us_per_CTA": 26.798,
+        "wait_fraction_of_attention": 0.45210380072374867,
+        "blocked_call_fraction": 0.10064382211830272
+      },
+      "fetchers": {
+        "mean_wait_us_per_CTA": 0.002,
+        "mean_attention_us_per_CTA": 0.07666666666666667,
+        "mean_attention_items_per_CTA": 0.0003255208333333333,
+        "mean_lru_us_per_CTA": 0.0,
+        "wait_fraction_of_attention": 0.02608695652173913,
+        "blocked_call_fraction": 0.0
+      },
+      "critical_CTA": {
+        "wait_us": 2411.608,
+        "attention_us": 5312.208,
+        "attention_items": 12.6640625,
+        "lru_us": 21.184,
+        "before_items_us": 212.92,
+        "last_attention_start_us": 5153.472,
+        "done_us": 5555.976
+      }
+    },
+    "max_abs_error": 0.0019550323486328125
+  },
+  {
+    "raw": "temp/glm_trace/tune_wait_20261031/raw/budget_profile_wait_staged_f24_i64_soff_lru_nvlink_mtp8_b128.json",
+    "raw_sha256": "70e23b7715788beb395df1cfec4e0c5ef3d3ac7e31ce26024dcd88b319c7c464",
+    "setting": "nvlink",
+    "diagnostic_event_mean_us": 3392.759997397661,
+    "phase_means": {
+      "fetch_start_us": 193.424,
+      "fetch_end_us": 2384.448,
+      "attention_end_us": 3380.256,
+      "wait_us_per_attention_item": 8.6025,
+      "attention_us_per_item": 259.8693671875,
+      "blocked_call_fraction": 0.0007723263884534327
+    },
+    "summaries": {
+      "all": {
+        "mean_wait_us_per_CTA": 81.56444444444445,
+        "mean_attention_us_per_CTA": 2463.9465925925924,
+        "mean_attention_items_per_CTA": 9.481481481481481,
+        "mean_lru_us_per_CTA": 22.461703703703705,
+        "wait_fraction_of_attention": 0.033103170616462674,
+        "blocked_call_fraction": 0.0014092868614886398
+      },
+      "workers": {
+        "mean_wait_us_per_CTA": 99.24266666666666,
+        "mean_attention_us_per_CTA": 2920.478666666667,
+        "mean_attention_items_per_CTA": 11.22367931547619,
+        "mean_lru_us_per_CTA": 28.879333333333335,
+        "wait_fraction_of_attention": 0.03398164410491613,
+        "blocked_call_fraction": 0.0014822154569395986
+      },
+      "fetchers": {
+        "mean_wait_us_per_CTA": 19.690666666666665,
+        "mean_attention_us_per_CTA": 866.0843333333333,
+        "mean_attention_items_per_CTA": 3.3837890625,
+        "mean_lru_us_per_CTA": 0.0,
+        "wait_fraction_of_attention": 0.022735276356844386,
+        "blocked_call_fraction": 0.00032859749401174305
+      },
+      "critical_CTA": {
+        "wait_us": 128.38400000000001,
+        "attention_us": 2715.072,
+        "attention_items": 10.265625,
+        "lru_us": 16.592,
+        "before_items_us": 640.52,
+        "last_attention_start_us": 3120.232,
+        "done_us": 3380.256
+      }
+    },
+    "max_abs_error": 0.0019550323486328125
+  }
+]

@@ -1,0 +1,82 @@
+{
+  "recorded_at": "2026-10-31T21:29:44+0800",
+  "goal_status": "active",
+  "previous_turn_classification": "progress: retained medium dispatch and rejected new mechanisms using measured evidence",
+  "production_header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "candidate_adopted": false,
+  "completed_handles": {
+    "19632": 0,
+    "28577": 0,
+    "1957": 0,
+    "75344": 0,
+    "26938": 0,
+    "99513": 0,
+    "12217": 0,
+    "70426": 0,
+    "44925": 0,
+    "44660": 0,
+    "61863": 0,
+    "6453": 0,
+    "10489": 0,
+    "20214": 0,
+    "48821": 0,
+    "8621": 0,
+    "49719": 1,
+    "47153": 0,
+    "86888": 0,
+    "99712": 0,
+    "13628": 0,
+    "13143": 0,
+    "3806": 0,
+    "91732": 0,
+    "20724": 0,
+    "6429": 0,
+    "92638": 143,
+    "77190": 143,
+    "80883": 1,
+    "2543": 0,
+    "71309": 0,
+    "94802": 0,
+    "58067": 0,
+    "92776": 0,
+    "60443": 0,
+    "94033": 0,
+    "89964": 0
+  },
+  "active_runners": [
+    {
+      "session_id": 27470,
+      "command": "screen.py cached_ids full1024positions5pass f24 EMU4settings",
+      "state": "cached_full_sxm_state.json"
+    },
+    {
+      "session_id": 27738,
+      "command": "screen.py cached_ids full1024positions5pass f24 NORMAL nvlink/pcie",
+      "state": "cached_native_full_sxm_state.json"
+    },
+    {
+      "session_id": 37750,
+      "command": "validate_cached_ids.py --hardware gpu3 --cohort native",
+      "state": "cached_ids_matrix_gpu3_native_state.json"
+    },
+    {
+      "session_id": 75965,
+      "command": "validate_cached_ids.py --hardware sxm --cohort limited",
+      "state": "cached_ids_matrix_sxm_limited_state.json"
+    },
+    {
+      "session_id": 59866,
+      "command": "validate_cached_ids.py --hardware sxm --cohort native",
+      "state": "cached_ids_matrix_sxm_native_state.json"
+    }
+  ],
+  "diagnostic": "3 full-window MTP8/R128 new per-CTA budgets completed.100GB wait5.90% of attention item time, NVLink3.31%,50GB45.21%; only1.31 attention items/fetcher at100GB. Timers affect scheduling; diagnosis only.",
+  "h800_snapshot": "h800_queue_20261031_2042.txt",
+  "remaining": "Large-batch100GB32\u201334%gap still unchanged. No candidate adopted.",
+  "tests": "cached_ids105 normal GPU3 tests passed; all three predecessor candidates also105",
+  "codegen": "cached_ids: all original9EMU and18normalBF16/FP16 kernels exact instructions/resources; newcached1/2kernels,allstack/local0",
+  "current_candidate": "cached_ids b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "screen": "fetch_ids105 tests pass; f24 four settings improve0.24\u20134.33%, full/native confirmation running. f16 completed, audit pending. prebind not adopted. Direct-cache avoids double stores to admitted misses, pending tests and screen.",
+  "results": "Original fetch_ids PCIe fraction.1 regression confirmed11.24%5pass with base-before830.57/base-after830.98us; cached_ids835.17(-0.55%) uses oldwhole kernel for noLRU. Direct-cache andprebindnotadopted. Cached-only candidate now freshfull/native and cross-scenario gates. SXM0/1 occupied again byforeign586497/586498; waitonly, GPU3normalvalidation progressing.",
+  "next_action": "Poll27470/27738/37750/75965/59866 original handles and processes; no duplicates. Refreshperformanceaudit+coverage; check allslow cells before retention. Do not restart rejectedoriginal ids matrices. Primary32\u201334%gap not solved."
+}

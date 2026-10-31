@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_wait_20261031/bench.py", line 72, in <module>
+    RESOURCE_START=require_exclusive()
+                   ^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_wait_20261031/resources.py", line 37, in require_exclusive
+    raise RuntimeError("Other GPU0/1 processes appeared during the benchmark: "+str(state["foreign"]))
+RuntimeError: Other GPU0/1 processes appeared during the benchmark: [{'gpu_uuid': 'GPU-6e5259ec-3532-b1b2-b0ab-b26231386565', 'pid': 572785, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '548'}, {'gpu_uuid': 'GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81', 'pid': 572785, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '416'}]

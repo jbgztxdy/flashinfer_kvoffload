@@ -1,0 +1,5 @@
+{
+  "base_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "candidate_sha256": "270c48be82e1d15b70c461b00bac3fe7a124bc75f0b85323960d7e372c4edee9",
+  "mechanism": "Whole-row CTA32 only: one coalesced source-ID load per chunk into a shared double ring, reused by vector cp.async issue, dedup clear and immediate cache binding. Same far bytes, waits, publication, immediate shared-buffer scatter and LRU policy; deferred chunks retain original lookup."
+}

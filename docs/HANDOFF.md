@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-10-31 20:40大batch实验检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-10-31 21:32缓存限定页号流水检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -30,7 +30,7 @@
 
 GPU3是A100-PCIE/NUMA1，同卡独立HBM不是NVLink，物理PCIe和Memcpy pinned源都绑NUMA1；参考在本GPU正常构建重测，PCIe约27.04GB/s、HBM约689GB/s。SXM0/1是NUMA0实际NV12，绝对时间不拼接。其他用户任务随时可能进入，继续资源预检/末检、共享锁，不终止其他人进程。
 
-**大batch 100GB/s约32%–34%差距未改善，整体goal仍active。** 下一步读真实fetch/attention/LRU代码，在独立include/JIT实现新机制，优先研究fetch的cache scatter占用和attention计算尾部；从attention共享KV tile写回缓存是尚未实现的可选方向，不能视为收益。单kernel和精确LRU/载荷要求不变。
+**大batch 100GB/s约32%–34%差距未改善，整体goal仍active。** 下一步读真实fetch/attention/LRU代码，在独立include/JIT实现新机制，优先研究fetch的cache scatter占用和attention计算尾部；从attention共享KV tile写回缓存已在下一轮实现并测出回退，详见§2.2，不再重复。单kernel和精确LRU/载荷要求不变。
 
 ### 2.2 新大batch实验：共享tile缓存写回未保留，整行四缓冲待性能结果
 
@@ -49,7 +49,38 @@ GPU3是A100-PCIE/NUMA1，同卡独立HBM不是NVLink，物理PCIe和Memcpy pinne
 
 下一步继续定位大batch计算/fetch争用；不要再无新机制重复缓存写回迁移、四缓冲整行或最后一波二分片。当前GPU3同卡独立HBM模拟不能冒称真实NVLink或SXM收益。**大batch主目标仍未完成，生产保持ce341a02。**
 
-### 2.3 已完成阶段诊断（不重复启动）
+### 2.3 最新：共享页号原版被正常PCIe回退拒绝，缓存限定修正版验证中
+
+新目录 `temp/glm_trace/tune_wait_20261031/`（W）。生产仍为ce341a02/52919…ff2c5。前轮Q任务全terminal，不重做。新报告：[CTA预算及fetch元数据](mla_host_a100_wait_budget_20261031.md)。W/audit.json只含插桩，W/performance_audit.json含性能；不要互相覆盖。
+
+新CTA预算诊断已完成（不是重做旧阶段表）：SXM0/1、MTP8/R128、LRU4096、完整1024位置、fetch24/off、1插桩pass，100GB20µs/50GB20µs/NVLink。128epoch×108CTA，每步合计1024attention/128LRU工作项。累计等待调用/attention时间为5.90%/45.21%/3.31%，100GB每个fetcher只做1.31个attention item。计时含元数据和timer，插桩影响调度，不能作精确开销分摊；它支持关注fetch吞吐/保留SM。
+
+本轮四候选：
+
+- `prebind`提前处理已选victim的元数据，让它与cp.async在途重叠，105正常测试通过；fetch24基本±0.7%，16在100GB20µs快5%但仍不如推荐24且NVLink负差，20也无足够替代收益。不采用。
+- `direct_cache`让获准页直接shared→victim，其余shared→staging，attention在原flag acquire后查victim。105测试通过，但100GB0/20µs慢约1%，不采用。
+- **`fetch_ids`原版拒绝**：共享页号供向量取数/清理/缓存绑定复用。105测试通过；大batch完整5pass曾100GB20µs3524.77→3476.42µs（1.37%），正常NVLink3322.15→3224.73µs（2.93%）。但GPU3正常构建无LRU、MTP8/R32、PCIe远端0.1初测慢18.5%，反向5pass仍慢11.24%（830.57→923.90µs），前后base830.57/830.98稳定。0.3初测8%负差未复现，全部原件保留。不能只报大batch收益。
+- **当前`cached_ids`**：共享页号只给有LRU的whole CTA32新实例，全部原generic/whole实例shared_fetch_ids=false。模拟9个和正常BF16/FP16的18个原kernel指令/资源完全相同；仅新增1/2个缓存实例，全部stack/local0。105项正常GPU3测试通过。原PCIe0.1格复核835.17µs（较830.57慢0.55%），无LRU确实使用原kernel。SHA=`b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a`。**尚未采用。**
+
+原版矩阵保留partial状态：GPU3 68/88、SXM limited320/640、SXM normal0/136（后者一次旧自有CUDA context退出尾声触发预检，无GPU计时）。发现回退后，仅SIGSTOP自有CPU父调度器，等各当前benchmark子进程自然结束，再SIGTERM/SIGCONT父进程；没有给GPU子进程或其他用户发信号。记录`rejected_matrix_stop.json`。原计划/源码/全部慢格不覆盖，不再启动原版`validate_ids.py`。
+
+当前缓存限定版使用新cohort和`validate_cached_ids.py`，完整计划覆盖8形状、MTP1/8、LRU1024位置和无LRU四快照×3比例、50/100GB/s五延迟及正常NVLink/PCIe、小batch控制。GPU3独立正常88格；SXM640模拟格和136正常格分别审计。参考同硬件，未修改原5304矩阵。
+
+原handle需先核实，不重复启动：
+
+| handle | 内容 | 状态文件/最近情况 |
+|---|---|---|
+| **27470** | cached_ids vs base，SXM R128/MTP8，1024位置×5pass，f24/off，EMU四链路 | `cached_full_sxm_state.json`；等GPU0/1外部任务 |
+| **27738** | 同形状正常构建5pass，真实NVLink/PCIe | `cached_native_full_sxm_state.json`；等GPU0/1 |
+| **37750** | 缓存限定版GPU3正常88格 | `cached_ids_matrix_gpu3_native_state.json`，正在执行 |
+| **75965** | 缓存限定版SXM limited640格 | `cached_ids_matrix_sxm_limited_state.json`；等GPU0/1 |
+| **59866** | 缓存限定版SXM normal136格 | `cached_ids_matrix_sxm_native_state.json`；等GPU0/1 |
+
+94802（cached105）、58067（EMU）、92776/60443（代码生成）、94033（PCIe复核）均exit0。原13628/3806/91732及所有prebind/direct筛选也已exit0。原92638/77190父进程143为主动保留后停止，80883为预检失败，均terminal。`continuation_state.json`持续记录，不拿旧state文件当存活证据。
+
+下一步先poll这五个handle、刷新performance审计/coverage，逐项检查负差；只有缓存限定版的完整新原件、正常物理链路及全场景都通过才能写新保留gate。GPU0/1目前被外部586497/586498占用，不终止它们，GPU3可独立推进。当前大batch历史32%–34%差距未被已保留代码改善；原fetch_ids同轮参考比例曾31.0%→29.2%，但已因回退拒绝，不能当作生产收益。整体goal active。
+
+### 2.4 已完成阶段诊断（不重复启动）
 
 目录：`temp/glm_trace/tune_general_20261031/`。`base.cuh`为上轮已验证生产kernel，SHA256：
 
@@ -78,7 +109,7 @@ GPU3是A100-PCIE/NUMA1，同卡独立HBM不是NVLink，物理PCIe和Memcpy pinne
 
 旧主汇报所说“最终路径阶段计时未取得”已被本次诊断补上；主汇报§7.6和本轮Markdown已同步。`audit_general.py`独立重解raw的128步×108CTA；审计现有数据不等于全目标完成。
 
-### 2.4 脚本注意事项
+### 2.5 脚本注意事项
 
 `bench_glm52_host_batch`的传递导入会重设源码路径，独立实验需在它导入**后**再次设置`jit_env.FLASHINFER_INCLUDE_DIR`；新bench已处理。更改头文件要独立JIT，核实执行header SHA，避免旧缓存。
 

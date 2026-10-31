@@ -1,0 +1,278 @@
+{
+  "build": "normal BF16/FP16",
+  "base_header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "candidate_header_sha256": "b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
+  "unchanged_original_kernels": 18,
+  "new_cached_kernels": 2,
+  "all_stack_and_local_zero": true,
+  "libraries": {
+    "base": [
+      {
+        "name": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "e597eca91de5e9e7918f9a59ce971b1dcbb021f33bbe69185c3e497e50093a34"
+      },
+      {
+        "name": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "4fdfb5fc77a259bbc751b195835642063f47d470eeddb703300ce7811ea194c6"
+      }
+    ],
+    "cached_ids": [
+      {
+        "name": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "d7ad5388ccb016158264515e6017e330efdddc9c251b1c5920b863e3c420fad4"
+      },
+      {
+        "name": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "79214c4686bcbdda5d9b7f916c06118ca3fb645395d0c6e7dc92ad1ba8ffda4d"
+      }
+    ]
+  },
+  "records": {
+    "base": [
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "instructions": 7152,
+        "instruction_sha256": "5e3d5ce97a4af565e40d29fc1ca4578271eee32f5495bcc3a5f0d9ee55b5d71a",
+        "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+        "instructions": 12320,
+        "instruction_sha256": "9b243ed56cfd6c37137d1914dfa4dc41b8c9fe0647d7cbcbb4a1bab2b246f2c8",
+        "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+        "instructions": 12464,
+        "instruction_sha256": "50791f851bce109d083adcfb6a69c8d1100483559ff23dd29de77c0b9cbb8ac7",
+        "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "instructions": 7600,
+        "instruction_sha256": "9dd2dd36429f4a00f1e08163c86735e3a9bf5280a8d56ce3e51bfafdd426b5f8",
+        "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+        "instructions": 12688,
+        "instruction_sha256": "206644c6d03c94bb4b69f56d888dc47897fdb64d6deacf2e65e75771d5459e02",
+        "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+        "instructions": 12824,
+        "instruction_sha256": "2c5eb961752643e984ee3d7d31726f5d966304b134e32d01ec4190e76c31a3df",
+        "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "instructions": 9144,
+        "instruction_sha256": "1ab7911440c129280df077517f65e7e376557871d8695c3e3112ab9370f0d016",
+        "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+        "instructions": 14344,
+        "instruction_sha256": "78bfc59cb188fea18ca1fe67920d8e9751a5dc0721ed8811981fcc62405cc66d",
+        "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+        "instructions": 14480,
+        "instruction_sha256": "d89167d89f98b124553c9a448e73bf5577a1683dc229612833a22c8e7ebc91d2",
+        "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "instructions": 7152,
+        "instruction_sha256": "559e64d05bd5233d1e398ae4092e10e392ece3ed5ea6fab010d167ac1f3b538f",
+        "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+        "instructions": 12320,
+        "instruction_sha256": "fc06028e485363ff74e906283fb406a29227e3223c6fce26416669c67d71927e",
+        "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+        "instructions": 12464,
+        "instruction_sha256": "d49cdac25c0c0f2a917797bf2f005695655d3b89fdbb9811f67d9e78cf2dd48e",
+        "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "instructions": 7600,
+        "instruction_sha256": "cf64c1b820ee1ed377dec8cc47cadee66eb8dd4d4c42b2d47844df0bac507f6a",
+        "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+        "instructions": 12688,
+        "instruction_sha256": "b8c9b1fb0d4e58f4a97469c33f415261453aa5cbc03b74dbce910af23d7a84d3",
+        "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+        "instructions": 12824,
+        "instruction_sha256": "c6d66b6cc652577c76efd864c2a174dbe191c011b2b0513efe6afc395a039ed4",
+        "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "instructions": 9144,
+        "instruction_sha256": "0b10f895e4f66284379734cec4cf54ea3702b1df7bfd0fea87d855ade80aa9f9",
+        "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+        "instructions": 14344,
+        "instruction_sha256": "0e938d45776a8898f0bab5df29fa68e71113b5e9d5d6e5c3405029c1ef759e93",
+        "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+        "instructions": 14480,
+        "instruction_sha256": "239bb8c965bceb7cba52aace4529d114b66adf27f062e93fa8068d1e0b48c41b",
+        "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      }
+    ],
+    "cached_ids": [
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "instructions": 7152,
+        "instruction_sha256": "5e3d5ce97a4af565e40d29fc1ca4578271eee32f5495bcc3a5f0d9ee55b5d71a",
+        "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+        "instructions": 12320,
+        "instruction_sha256": "9b243ed56cfd6c37137d1914dfa4dc41b8c9fe0647d7cbcbb4a1bab2b246f2c8",
+        "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+        "instructions": 12464,
+        "instruction_sha256": "50791f851bce109d083adcfb6a69c8d1100483559ff23dd29de77c0b9cbb8ac7",
+        "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "instructions": 7712,
+        "instruction_sha256": "f1113410651b61b2d47fa3e7460e9ec6f0d3fd39ec3539ef64d830994596af8a",
+        "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "instructions": 7600,
+        "instruction_sha256": "9dd2dd36429f4a00f1e08163c86735e3a9bf5280a8d56ce3e51bfafdd426b5f8",
+        "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+        "instructions": 12688,
+        "instruction_sha256": "206644c6d03c94bb4b69f56d888dc47897fdb64d6deacf2e65e75771d5459e02",
+        "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+        "instructions": 12824,
+        "instruction_sha256": "2c5eb961752643e984ee3d7d31726f5d966304b134e32d01ec4190e76c31a3df",
+        "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "instructions": 9144,
+        "instruction_sha256": "1ab7911440c129280df077517f65e7e376557871d8695c3e3112ab9370f0d016",
+        "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+        "instructions": 14344,
+        "instruction_sha256": "78bfc59cb188fea18ca1fe67920d8e9751a5dc0721ed8811981fcc62405cc66d",
+        "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+        "instructions": 14480,
+        "instruction_sha256": "d89167d89f98b124553c9a448e73bf5577a1683dc229612833a22c8e7ebc91d2",
+        "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "instructions": 7152,
+        "instruction_sha256": "559e64d05bd5233d1e398ae4092e10e392ece3ed5ea6fab010d167ac1f3b538f",
+        "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+        "instructions": 12320,
+        "instruction_sha256": "fc06028e485363ff74e906283fb406a29227e3223c6fce26416669c67d71927e",
+        "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+        "instructions": 12464,
+        "instruction_sha256": "d49cdac25c0c0f2a917797bf2f005695655d3b89fdbb9811f67d9e78cf2dd48e",
+        "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "instructions": 7712,
+        "instruction_sha256": "36c01e5bc1280eba37e43b8407545f66baa933882c2545a5021d1733c65050a8",
+        "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "instructions": 7600,
+        "instruction_sha256": "cf64c1b820ee1ed377dec8cc47cadee66eb8dd4d4c42b2d47844df0bac507f6a",
+        "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+        "instructions": 12688,
+        "instruction_sha256": "b8c9b1fb0d4e58f4a97469c33f415261453aa5cbc03b74dbce910af23d7a84d3",
+        "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+        "instructions": 12824,
+        "instruction_sha256": "c6d66b6cc652577c76efd864c2a174dbe191c011b2b0513efe6afc395a039ed4",
+        "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "instructions": 9144,
+        "instruction_sha256": "0b10f895e4f66284379734cec4cf54ea3702b1df7bfd0fea87d855ade80aa9f9",
+        "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+        "instructions": 14344,
+        "instruction_sha256": "0e938d45776a8898f0bab5df29fa68e71113b5e9d5d6e5c3405029c1ef759e93",
+        "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      },
+      {
+        "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+        "instructions": 14480,
+        "instruction_sha256": "239bb8c965bceb7cba52aace4529d114b66adf27f062e93fa8068d1e0b48c41b",
+        "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      }
+    ]
+  },
+  "new_cached": [
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "instructions": 7712,
+      "instruction_sha256": "f1113410651b61b2d47fa3e7460e9ec6f0d3fd39ec3539ef64d830994596af8a",
+      "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "instructions": 7712,
+      "instruction_sha256": "36c01e5bc1280eba37e43b8407545f66baa933882c2545a5021d1733c65050a8",
+      "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    }
+  ]
+}

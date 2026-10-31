@@ -1,0 +1,28 @@
+{
+  "base_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "diagnostic_sha256": "207492d57878b5193fd9709e34d4e0be9da66b5b8386f4b750b61c17bb68638b",
+  "classification": "Diagnostic only, not performance optimization. 32 fields per epoch/CTA; capacity128epochs/128CTAs, 1pass MTP8/1024positions.",
+  "fields": {
+    "0": "start",
+    "1": "prepare_done",
+    "2": "prepare_barrier_done",
+    "3": "resolve_done",
+    "4": "before_fetch_barrier",
+    "5": "after_fetch_barrier",
+    "6": "before_fetch",
+    "7": "after_fetch_before_items",
+    "8": "after_items",
+    "12": "epoch",
+    "13": "grid",
+    "14": "full_rows",
+    "15": "chunks",
+    "16": "wait_call_ns_sum",
+    "17": "wait_call_count",
+    "18": "blocked_call_count",
+    "19": "attention_item_ns_sum",
+    "20": "attention_item_count",
+    "21": "lru_item_ns_sum",
+    "22": "lru_item_count",
+    "26": "last_attention_start"
+  }
+}
