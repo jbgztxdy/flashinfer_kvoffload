@@ -1,0 +1,9 @@
+{
+  "timestamp": "2026-10-31T18:01:59+0800",
+  "old_runner_handle": 50210,
+  "old_runner_exit_code": 1,
+  "failure": "Preflight saw the still-tearing-down CUDA context of our separate PCIe calibration process 299418 after its lock was released. No GPU timing for the failed task began.",
+  "failed_log": "gpu3_full_base_lru_m8_b40.log",
+  "fix": "New benchmark waits for a fresh exclusive snapshot while holding its own lock and before opening CUDA. Completed raws are skipped; prior logs append/preserve failure text.",
+  "resume_script": "validate_gpu3_medium_numa1_v2.py"
+}

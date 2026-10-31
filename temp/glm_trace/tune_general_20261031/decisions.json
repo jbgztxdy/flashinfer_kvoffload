@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-31T17:32:38+0800",
+  "updated_at": "2026-10-31T19:49:47+0800",
   "warp_ready": {
     "status": "not_adopted_after_screen",
     "reason": "256-position 3-pass screen: 100 GB/s and NVLink slower; 50 GB/s essentially unchanged. Full validation not justified without a performance signal.",
@@ -77,7 +77,185 @@
     ]
   },
   "defer_cache": {
-    "status": "awaiting_screen",
-    "reason": "Keep immediate staging publications; defer whole-row cache binding/scatter until after the remote fetch loop. Test at identical fetch16 first. Adds one HBM read per inserted page and a cache-fill tail, so no adoption without full evidence."
+    "status": "not_adopted_after_screen",
+    "reason": "Same-parameter fetch16 SXM screen regresses all four links by roughly 29\u201335%; keeping cache fill after the transfer creates too much tail/extra HBM work. Correctness passed; no gain. Do not retest this candidate without a new mechanism.",
+    "normal_correctness": "103 normal-build tests passed on GPU3; SXM four-link screen rejected on performance.",
+    "rows": [
+      {
+        "setting": "g100_l0",
+        "base_us": 3538.506661852201,
+        "candidate_us": 4762.730655570825,
+        "slower_fraction": 0.3459719341259666,
+        "base_raw": "temp/glm_trace/tune_general_20261031/raw/screencache16_base_staged_f16_i64_soff_lru_g100_l0_mtp8_b128.json",
+        "candidate_raw": "temp/glm_trace/tune_general_20261031/raw/screencache16_defer_cache_staged_f16_i64_soff_lru_g100_l0_mtp8_b128.json",
+        "base_miss_MB": 247.993104,
+        "candidate_miss_MB": 247.989444,
+        "base_hit_rate": 0.7671705143781942,
+        "candidate_hit_rate": 0.7671738240067355
+      },
+      {
+        "setting": "g100_l20000",
+        "base_us": 4003.808001677195,
+        "candidate_us": 5369.36532954375,
+        "slower_fraction": 0.3410646382879805,
+        "base_raw": "temp/glm_trace/tune_general_20261031/raw/screencache16_base_staged_f16_i64_soff_lru_g100_l20000_mtp8_b128.json",
+        "candidate_raw": "temp/glm_trace/tune_general_20261031/raw/screencache16_defer_cache_staged_f16_i64_soff_lru_g100_l20000_mtp8_b128.json",
+        "base_miss_MB": 247.88622,
+        "candidate_miss_MB": 247.963836,
+        "base_hit_rate": 0.7674349069861697,
+        "candidate_hit_rate": 0.7671888216928281
+      },
+      {
+        "setting": "g50_l20000",
+        "base_us": 5304.277330636978,
+        "candidate_us": 7178.431977828343,
+        "slower_fraction": 0.3533289325515532,
+        "base_raw": "temp/glm_trace/tune_general_20261031/raw/screencache16_base_staged_f16_i64_soff_lru_g50_l20000_mtp8_b128.json",
+        "candidate_raw": "temp/glm_trace/tune_general_20261031/raw/screencache16_defer_cache_staged_f16_i64_soff_lru_g50_l20000_mtp8_b128.json",
+        "base_miss_MB": 247.902768,
+        "candidate_miss_MB": 247.959816,
+        "base_hit_rate": 0.7673537912704343,
+        "candidate_hit_rate": 0.7671739581808655
+      },
+      {
+        "setting": "nvlink",
+        "base_us": 3300.4053508241973,
+        "candidate_us": 4242.357323567073,
+        "slower_fraction": 0.28540493442953774,
+        "base_raw": "temp/glm_trace/tune_general_20261031/raw/screencache16_base_staged_f16_i64_soff_lru_nvlink_mtp8_b128.json",
+        "candidate_raw": "temp/glm_trace/tune_general_20261031/raw/screencache16_defer_cache_staged_f16_i64_soff_lru_nvlink_mtp8_b128.json",
+        "base_miss_MB": 247.943316,
+        "candidate_miss_MB": 248.0082,
+        "base_hit_rate": 0.7672540303200338,
+        "candidate_hit_rate": 0.7671208600112501
+      }
+    ]
+  },
+  "threshold2": {
+    "status": "rejected_uniform_threshold_after_native_regression",
+    "reason": "GPU3 normal build: MTP8/28 (224 rows), no LRU, native HBM fractions 0/.1 and PCIe fraction 0 regress 3.2\u20134.4%. A short final whole-row wave is worse than the original split schedule. Emulated-link/LRU gains do not justify global adoption.",
+    "native_regressions": [
+      {
+        "cohort": "gpu3_native_",
+        "kind": "nocache",
+        "mtp": 8,
+        "requests": 28,
+        "positions": 1024,
+        "passes": 3,
+        "setting": "native_hbm",
+        "fraction": 0.0,
+        "old_us": 696.6613382101059,
+        "new_us": 721.7493255933126,
+        "reduction": -0.036011740579237506,
+        "old_raw": "temp/glm_trace/tune_general_20261031/gpu3/raw/gpu3_native_base_staged_f16_i64_soff_nocache_native_hbm_mtp8_b28.json",
+        "new_raw": "temp/glm_trace/tune_general_20261031/gpu3/raw/gpu3_native_threshold2_sm80_staged_f16_i64_soff_nocache_native_hbm_mtp8_b28.json"
+      },
+      {
+        "cohort": "gpu3_native_",
+        "kind": "nocache",
+        "mtp": 8,
+        "requests": 28,
+        "positions": 1024,
+        "passes": 3,
+        "setting": "native_hbm",
+        "fraction": 0.1,
+        "old_us": 717.4826661745707,
+        "new_us": 740.5226727326711,
+        "reduction": -0.03211228318719361,
+        "old_raw": "temp/glm_trace/tune_general_20261031/gpu3/raw/gpu3_native_base_staged_f16_i64_soff_nocache_native_hbm_mtp8_b28.json",
+        "new_raw": "temp/glm_trace/tune_general_20261031/gpu3/raw/gpu3_native_threshold2_sm80_staged_f16_i64_soff_nocache_native_hbm_mtp8_b28.json"
+      },
+      {
+        "cohort": "gpu3_native_",
+        "kind": "nocache",
+        "mtp": 8,
+        "requests": 28,
+        "positions": 1024,
+        "passes": 3,
+        "setting": "pcie",
+        "fraction": 0.0,
+        "old_us": 693.16266477108,
+        "new_us": 723.8826751708984,
+        "reduction": -0.044318616626537244,
+        "old_raw": "temp/glm_trace/tune_general_20261031/gpu3/raw/gpu3_native_base_staged_f16_i64_soff_nocache_pcie_mtp8_b28.json",
+        "new_raw": "temp/glm_trace/tune_general_20261031/gpu3/raw/gpu3_native_threshold2_sm80_staged_f16_i64_soff_nocache_pcie_mtp8_b28.json"
+      }
+    ],
+    "adopted": false
+  },
+  "threshold2_sm80": {
+    "status": "rejected_uniform_threshold_after_native_regression",
+    "reason": "GPU3 normal build: MTP8/28 (224 rows), no LRU, native HBM fractions 0/.1 and PCIe fraction 0 regress 3.2\u20134.4%. A short final whole-row wave is worse than the original split schedule. Emulated-link/LRU gains do not justify global adoption.",
+    "native_regressions": [
+      {
+        "cohort": "gpu3_native_",
+        "kind": "nocache",
+        "mtp": 8,
+        "requests": 28,
+        "positions": 1024,
+        "passes": 3,
+        "setting": "native_hbm",
+        "fraction": 0.0,
+        "old_us": 696.6613382101059,
+        "new_us": 721.7493255933126,
+        "reduction": -0.036011740579237506,
+        "old_raw": "temp/glm_trace/tune_general_20261031/gpu3/raw/gpu3_native_base_staged_f16_i64_soff_nocache_native_hbm_mtp8_b28.json",
+        "new_raw": "temp/glm_trace/tune_general_20261031/gpu3/raw/gpu3_native_threshold2_sm80_staged_f16_i64_soff_nocache_native_hbm_mtp8_b28.json"
+      },
+      {
+        "cohort": "gpu3_native_",
+        "kind": "nocache",
+        "mtp": 8,
+        "requests": 28,
+        "positions": 1024,
+        "passes": 3,
+        "setting": "native_hbm",
+        "fraction": 0.1,
+        "old_us": 717.4826661745707,
+        "new_us": 740.5226727326711,
+        "reduction": -0.03211228318719361,
+        "old_raw": "temp/glm_trace/tune_general_20261031/gpu3/raw/gpu3_native_base_staged_f16_i64_soff_nocache_native_hbm_mtp8_b28.json",
+        "new_raw": "temp/glm_trace/tune_general_20261031/gpu3/raw/gpu3_native_threshold2_sm80_staged_f16_i64_soff_nocache_native_hbm_mtp8_b28.json"
+      },
+      {
+        "cohort": "gpu3_native_",
+        "kind": "nocache",
+        "mtp": 8,
+        "requests": 28,
+        "positions": 1024,
+        "passes": 3,
+        "setting": "pcie",
+        "fraction": 0.0,
+        "old_us": 693.16266477108,
+        "new_us": 723.8826751708984,
+        "reduction": -0.044318616626537244,
+        "old_raw": "temp/glm_trace/tune_general_20261031/gpu3/raw/gpu3_native_base_staged_f16_i64_soff_nocache_pcie_mtp8_b28.json",
+        "new_raw": "temp/glm_trace/tune_general_20261031/gpu3/raw/gpu3_native_threshold2_sm80_staged_f16_i64_soff_nocache_pcie_mtp8_b28.json"
+      }
+    ],
+    "adopted": false
+  },
+  "balanced_sm80": {
+    "status": "superseded_by_bounded_memo_version",
+    "header_sha256": "20e18110c2f2c1cfcb1bb9d03f53966015b43f17d863fd34df645bd3e1556efe",
+    "tests": 105,
+    "reason": "Compute-only schedule estimate uses original partial planning, fixed tile traffic costs and cyclic work assignment. For tested SM108/fetch16/K2048 it chooses original schedule at 224 rows and whole rows at 256/320/384. No per-link/per-hit-rate choice. >=4 SM rows and other shared-memory configurations unchanged.",
+    "adopted": false
+  },
+  "balanced_cached_sm80": {
+    "status": "adopted_after_final_validation",
+    "header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+    "tests": 105,
+    "reason": "Compute-only schedule estimate uses original partial planning, fixed tile traffic costs and cyclic work assignment. For tested SM108/fetch16/K2048 it chooses original schedule at 224 rows and whole rows at 256/320/384. No per-link/per-hit-rate choice. >=4 SM rows and other shared-memory configurations unchanged.",
+    "adopted": true,
+    "memo_check": {
+      "memo_equivalence_checks": 360,
+      "cold_us": 47.709,
+      "warm_us_per_call": 0.00190468
+    },
+    "final_paired_cells": 102,
+    "minimum_changed_reduction": 0.01289204770753516,
+    "maximum_unchanged_slowdown": 0.0030911790162651,
+    "retention_record": "balanced_retention.json"
   }
 }

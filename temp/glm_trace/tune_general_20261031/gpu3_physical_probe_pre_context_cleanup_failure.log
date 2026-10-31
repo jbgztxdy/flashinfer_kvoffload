@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_general_20261031/probe_gpu3_physical.py", line 13, in <module>
+    before=require_exclusive()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_general_20261031/resources_gpu3.py", line 15, in require_exclusive
+    if state['foreign']:raise RuntimeError('Other physical GPU3 process: '+str(state['foreign']))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Other physical GPU3 process: [{'gpu_uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'pid': 295449, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '624'}]

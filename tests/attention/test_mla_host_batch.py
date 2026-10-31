@@ -629,13 +629,14 @@ def test_host_batch_padding(stage, cached, requests, mtp):
 
 
 @pytest.mark.parametrize("cached", [False, True])
-def test_host_batch_whole_rows_graph_and_padding(cached):
-    """Large staged rows survive graph replay, changing misses and an all-local launch."""
+@pytest.mark.parametrize("sm_waves", [2, 4])
+def test_host_batch_whole_rows_graph_and_padding(cached, sm_waves):
+    """Staged rows at both dispatch thresholds preserve Graph, padding and cache payloads."""
     _skip_if_unsupported()
     device = torch.device("cuda")
     sm_count = torch.cuda.get_device_properties(device).multi_processor_count
     mtp, kv_len = 8, 97
-    requests = (4 * sm_count + mtp - 1) // mtp
+    requests = (sm_waves * sm_count + mtp - 1) // mtp
     rows = requests * mtp
     num_pages = requests * kv_len * 8
     host_start = num_pages // 2

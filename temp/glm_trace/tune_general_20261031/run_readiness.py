@@ -6,8 +6,9 @@ p=Path(__file__).resolve().parent
 root=p.parents[2]
 base_env=dict(os.environ,CUDA_DEVICE_ORDER='PCI_BUS_ID',CUDA_VISIBLE_DEVICES='0,1',CUDA_HOME='/usr/local/cuda-13.1',FLASHINFER_CUDA_ARCH_LIST='8.0',PYTHONPATH=str(root),TMPDIR=str(root/'temp'),FLASHINFER_EXTRA_CUDAFLAGS='-DFLASHINFER_FAR_EMU')
 parser=argparse.ArgumentParser()
-parser.add_argument('--variants',nargs='+',choices=('base','warp_ready','row_ready','defer_cache'),default=['base','warp_ready'])
+parser.add_argument('--variants',nargs='+',choices=('base','warp_ready','row_ready','defer_cache','threshold2','threshold2_sm80','balanced_sm80','balanced_cached_sm80'),default=['base','warp_ready'])
 parser.add_argument('--tag',default='screen256_')
+parser.add_argument('--normal-build',action='store_true')
 parser.add_argument('--positions',type=int,default=256)
 parser.add_argument('--passes',type=int,default=3)
 parser.add_argument('--mtp',type=int,default=8)
@@ -24,7 +25,7 @@ for variant in args.variants:
     while not snapshot()['available']:
         print('WAITING',snapshot(),flush=True)
         time.sleep(30)
-    env=dict(base_env,TUNE_VARIANT=variant,TUNE_RUN_TAG=args.tag,FLASHINFER_WORKSPACE_BASE=str(p/('jit_'+variant)))
+    env=dict(base_env,TUNE_VARIANT=variant,TUNE_RUN_TAG=args.tag,FLASHINFER_WORKSPACE_BASE=str(p/('jit_'+variant+('_normal' if args.normal_build else ''))),FLASHINFER_EXTRA_CUDAFLAGS='' if args.normal_build else '-DFLASHINFER_FAR_EMU')
     cmd=['numactl','-N0','-m0','/mnt/data/mhy-vllm-venv/bin/python','-u',str(p/'bench.py'),'--kind',args.kind,'--mtp',str(args.mtp),'--requests',str(args.requests),'--settings',*args.settings,'--passes',str(args.passes),'--positions',str(args.positions),'--fetch-ctas',str(args.fetch_ctas),'--host-split',args.host_split,'--route',args.route]
     entry=dict(variant=variant,start=time.strftime('%FT%T%z'),command=cmd)
     state.append(entry)

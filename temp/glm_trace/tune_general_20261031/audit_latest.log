@@ -1,0 +1,68 @@
+{
+  "status": "ongoing",
+  "goal_complete": false,
+  "production_candidate_adopted": true,
+  "timed_launches": 87408,
+  "accepted_segments": 5868,
+  "original_matrix_sha256": "e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99",
+  "production_header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "normal_gpu_correctness": [
+    {
+      "variant": "balanced_cached_sm80",
+      "physical_gpu": 3,
+      "device": "NVIDIA A100-PCIE-40GB",
+      "passed": 105,
+      "record": "temp/glm_trace/tune_general_20261031/tests_balanced_cached_sm80_gpu3.json",
+      "record_sha256": "10fa37778a620e7773845b962b3d123f707d691d20ca735c4846b525c241b3fb",
+      "log_sha256": "8a313e02954d805046d4ae2c08b3e0289baae86dbf4af287cec42f3c6c60e08d",
+      "header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5"
+    },
+    {
+      "variant": "balanced_sm80",
+      "physical_gpu": 3,
+      "device": "NVIDIA A100-PCIE-40GB",
+      "passed": 105,
+      "record": "temp/glm_trace/tune_general_20261031/tests_balanced_sm80_gpu3.json",
+      "record_sha256": "f40781115fbe36dd5dce869cc3eabc341201b820c22d78ae15a3729ab9a93e6f",
+      "log_sha256": "2ddb687412baef97d28850eb5e7b59f0e02e9887d4735e0143b4194bbee6c55e",
+      "header_sha256": "20e18110c2f2c1cfcb1bb9d03f53966015b43f17d863fd34df645bd3e1556efe"
+    },
+    {
+      "variant": "defer_cache",
+      "physical_gpu": 3,
+      "device": "NVIDIA A100-PCIE-40GB",
+      "passed": 103,
+      "record": "temp/glm_trace/tune_general_20261031/tests_defer_cache_gpu3.json",
+      "record_sha256": "6370f0711d5c75c92d27f494f1e6e8cca0cf749e3fe3f783383545034ee3af68",
+      "log_sha256": "f346a86acaaabec36c992bafc916b0d2dc9971be33fb6e7fda9c4001e9b778c9",
+      "header_sha256": "562fba07a3ce5ad5eeadf4ec817f779c512cb11b0bf783474ca2468ab1310cba"
+    },
+    {
+      "variant": "threshold2",
+      "physical_gpu": 3,
+      "device": "NVIDIA A100-PCIE-40GB",
+      "passed": 105,
+      "record": "temp/glm_trace/tune_general_20261031/tests_threshold2_gpu3.json",
+      "record_sha256": "2422139d3135fa69f8b4b386221522cc9fe17c40dada0efb9ff5ff5a9c38ab9d",
+      "log_sha256": "d676d17473a7187362a9888c534710663531144510ee1c37d3bbea3f9a530373",
+      "header_sha256": "89aa3f470963627c09ce6945922cfc3d4e4d4c3fe72cb4d27467241c277c9833"
+    },
+    {
+      "variant": "threshold2_sm80",
+      "physical_gpu": 3,
+      "device": "NVIDIA A100-PCIE-40GB",
+      "passed": 105,
+      "record": "temp/glm_trace/tune_general_20261031/tests_threshold2_sm80_gpu3.json",
+      "record_sha256": "9b11492a981774c0aab0b9edda8a2e350a72bd5446413b3311f70b0f279df442",
+      "log_sha256": "5c1693038055e02a9cb0a484bdf7a0410afd9057de019fec612ebb18a2ae9f2e",
+      "header_sha256": "5ee219fe15f1b2f4f9f2bd20d724110d651983cbb31bb77d0ccc653258b5e187"
+    }
+  ],
+  "artifact_sha256": {
+    "compiler_summary.json": "5b9fc7d7f26758d086070cf7b396cce0db0e4c3594233cd7806cc0f2cb9c5bd7",
+    "decisions.json": "6e472830b06242b352eedfb8baa3db155a64ce0823c0e1cdaa2ce26171eaf07c",
+    "previous_reaudit.json": "dae36f51c70d9d6d1b20ac2f0770afe457d2f54c897dfb304a8e68f3d8aa0803"
+  },
+  "report_sha256": "478b2ee736760b70d908d03a2ded0adc6fc48a056a39fa61e47ae9f445ea0d9d",
+  "audit_script_sha256": "59154f540a05e12b756217a30b1d60ac97250282b7f08e397ff7b83ce33525ea"
+}

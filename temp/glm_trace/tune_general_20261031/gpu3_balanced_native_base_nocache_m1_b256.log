@@ -1,0 +1,25 @@
+start gpu3_balanced_native_base_staged_f16_i64_soff_nocache_pcie_mtp1_b256
+gpu3_balanced_native_base_staged_f16_i64_soff_nocache_pcie_mtp1_b256 fraction 0.0 mean_us {'ours': 876.203, 'memcpy': 763.051}
+gpu3_balanced_native_base_staged_f16_i64_soff_nocache_pcie_mtp1_b256 fraction 0.1 mean_us {'ours': 2420.139, 'memcpy': 3025.237}
+gpu3_balanced_native_base_staged_f16_i64_soff_nocache_pcie_mtp1_b256 fraction 0.3 mean_us {'ours': 6953.557, 'memcpy': 7492.949}
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_general_20261031/bench_gpu3_native.py", line 488, in <module>
+    for setting in SETTINGS:run_setting(setting)
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_general_20261031/bench_gpu3_native.py", line 481, in run_setting
+    result["resources_end"]=require_exclusive()
+                            ^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_general_20261031/resources_gpu3.py", line 15, in require_exclusive
+    if state['foreign']:raise RuntimeError('Other physical GPU3 process: '+str(state['foreign']))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Other physical GPU3 process: [{'gpu_uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'pid': 435854, 'process': '/mnt/raid/ny_work/envs/dynampaq_py310_torch251/bin/python', 'used_mib': '416'}]
+start gpu3_balanced_native_base_staged_f16_i64_soff_nocache_pcie_mtp1_b256
+gpu3_balanced_native_base_staged_f16_i64_soff_nocache_pcie_mtp1_b256 fraction 0.0 mean_us {'ours': 871.168, 'memcpy': 761.515}
+gpu3_balanced_native_base_staged_f16_i64_soff_nocache_pcie_mtp1_b256 fraction 0.1 mean_us {'ours': 2618.709, 'memcpy': 3161.259}
+gpu3_balanced_native_base_staged_f16_i64_soff_nocache_pcie_mtp1_b256 fraction 0.3 mean_us {'ours': 6949.376, 'memcpy': 7489.877}
+complete gpu3_balanced_native_base_staged_f16_i64_soff_nocache_pcie_mtp1_b256
+start gpu3_balanced_native_base_staged_f16_i64_soff_nocache_native_hbm_mtp1_b256
+gpu3_balanced_native_base_staged_f16_i64_soff_nocache_native_hbm_mtp1_b256 fraction 0.0 mean_us {'ours': 874.581, 'memcpy': 763.989}
+gpu3_balanced_native_base_staged_f16_i64_soff_nocache_native_hbm_mtp1_b256 fraction 0.1 mean_us {'ours': 887.723, 'memcpy': 859.051}
+gpu3_balanced_native_base_staged_f16_i64_soff_nocache_native_hbm_mtp1_b256 fraction 0.3 mean_us {'ours': 1529.088, 'memcpy': 1042.347}
+complete gpu3_balanced_native_base_staged_f16_i64_soff_nocache_native_hbm_mtp1_b256

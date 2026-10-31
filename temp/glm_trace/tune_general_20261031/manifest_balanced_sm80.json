@@ -1,0 +1,5 @@
+{
+  "base_sha256": "81891229df298b90219410b5a4df1e6c20dc4cb1ee9c0233bd17ad383b29225b",
+  "candidate_sha256": "20e18110c2f2c1cfcb1bb9d03f53966015b43f17d863fd34df645bd3e1556efe",
+  "change": "Shape-only host model compares direct-row and original split-plan cyclic makespans. Medium A100 rows use whole only when predicted compute cost is no worse. >=4 SM waves/other shared-memory configurations retain original behavior. No measured times, link setting or hit state in the policy."
+}

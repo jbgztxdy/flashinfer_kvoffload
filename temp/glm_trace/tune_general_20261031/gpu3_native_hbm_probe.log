@@ -1,0 +1,100 @@
+{
+  "timestamp": "2026-10-31T18:39:31+0800",
+  "physical_gpu": 3,
+  "source": "independent HBM allocation on the same GPU",
+  "resources_start": {
+    "timestamp": "2026-10-31T18:39:30+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 4,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "rows": 1048576,
+  "bytes": 1207959552,
+  "measurements": {
+    "dma_contiguous": {
+      "samples_us": [
+        1745.919942855835,
+        1751.039981842041,
+        1753.0879974365234,
+        1757.1840286254883,
+        1753.0879974365234,
+        1751.039981842041,
+        1747.9679584503174,
+        1753.0879974365234,
+        1754.1120052337646
+      ],
+      "median_GBps": 689.0467299795305,
+      "payload_sample_check": true
+    },
+    "sm_gather_random": {
+      "samples_us": [
+        1860.6079816818237,
+        1861.631989479065,
+        1861.631989479065,
+        1861.631989479065,
+        1860.6079816818237,
+        1861.631989479065,
+        1859.5839738845825,
+        1859.5839738845825,
+        1862.6559972763062
+      ],
+      "median_GBps": 648.8712907957818,
+      "payload_sample_check": true
+    }
+  },
+  "reference_GBps": 689.0467299795305,
+  "residency": [
+    {
+      "tier": "near_hbm",
+      "address": "0x302000000",
+      "bytes": 1207959552,
+      "location_type": 1,
+      "location_id": 0
+    },
+    {
+      "tier": "far_peer_hbm_gpu0",
+      "address": "0x34a000000",
+      "bytes": 1207959552,
+      "location_type": 1,
+      "location_id": 0
+    },
+    {
+      "tier": "near_hbm_alias",
+      "address": "0x392000000",
+      "bytes": 1207959552,
+      "location_type": 1,
+      "location_id": 0
+    },
+    {
+      "tier": "staging_hbm",
+      "address": "0x3da000000",
+      "bytes": 1207959552,
+      "location_type": 1,
+      "location_id": 0
+    }
+  ],
+  "source_sha256": "a6ff9d940fc73302e35221054037655cc3ff1841fa9a463b6a2e57a298bdeb10",
+  "resources_end": {
+    "timestamp": "2026-10-31T18:39:31+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 497,
+        "total_mib": 40960,
+        "utilization": 50
+      }
+    ],
+    "foreign": [],
+    "available": false
+  },
+  "complete": true
+}

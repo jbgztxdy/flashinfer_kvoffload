@@ -1,0 +1,110 @@
+{
+  "timestamp": "2026-10-31T17:58:30+0800",
+  "physical_gpu": 3,
+  "numa_policy": "policy: bind\npreferred node: 1\nphyscpubind: 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 \ncpubind: 1 \nnodebind: 1 \nmembind: 1 \npreferred: 1 \n",
+  "resources_start": {
+    "timestamp": "2026-10-31T17:58:28+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 4,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "settings": [
+    {
+      "name": "pcie",
+      "tier": "host",
+      "rows": 1048576,
+      "bytes": 1207959552,
+      "measurements": {
+        "dma_contiguous": {
+          "samples_us": [
+            44670.33767700195,
+            44670.78399658203,
+            44672.096252441406,
+            44675.10223388672,
+            44674.78561401367,
+            44670.814514160156,
+            44676.38397216797,
+            44672.41668701172,
+            44670.55892944336
+          ],
+          "median_GBps": 27.040583570867977,
+          "payload_sample_check": true
+        },
+        "sm_gather_random": {
+          "samples_us": [
+            44677.120208740234,
+            44674.049377441406,
+            44685.31036376953,
+            44676.09786987305,
+            44678.14254760742,
+            44670.97473144531,
+            44674.049377441406,
+            44673.02322387695,
+            44675.071716308594
+          ],
+          "median_GBps": 27.03878260499883,
+          "payload_sample_check": true
+        }
+      },
+      "reference_GBps": 27.040583570867977,
+      "residency": [
+        {
+          "tier": "near_hbm",
+          "address": "0x302000000",
+          "bytes": 1207959552,
+          "location_type": 1,
+          "location_id": 0
+        },
+        {
+          "tier": "far_host_dram",
+          "address": "0x34a000000",
+          "bytes": 1207959552,
+          "location_type": 3,
+          "location_id": 1
+        },
+        {
+          "tier": "near_hbm_alias",
+          "address": "0x392000000",
+          "bytes": 1207959552,
+          "location_type": 1,
+          "location_id": 0
+        },
+        {
+          "tier": "staging_hbm",
+          "address": "0x3da000000",
+          "bytes": 1207959552,
+          "location_type": 1,
+          "location_id": 0
+        }
+      ],
+      "payload_sample_check": true
+    }
+  ],
+  "source_sha256": {
+    "temp/glm_trace/tune_general_20261031/probe_gpu3_physical.py": "a9172087b52065a8718b92fb2be740cdf51f7c60e86a338f0895c61deff77611",
+    "temp/h800/tiers.py": "938c31127bc6ce8a1b5483b59d914f2ad0342843899c7461a71715e550d467eb"
+  },
+  "resources_end": {
+    "timestamp": "2026-10-31T17:58:30+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 503,
+        "total_mib": 40960,
+        "utilization": 100
+      }
+    ],
+    "foreign": [],
+    "available": false
+  },
+  "complete": true
+}

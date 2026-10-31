@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-10-31T17:53:43+0800",
+  "reason": "GPU3 is NUMA1. Stop our validation scheduler before PCIe cells, keep finished HBM-source results, resume with CPU and pinned buffers on NUMA1. No physical PCIe raw file exists yet.",
+  "parent_pid": 287683,
+  "parent_cmd": "/mnt/data/mhy-vllm-venv/bin/python -u temp/glm_trace/tune_general_20261031/validate_gpu3_medium.py ",
+  "children": " 290728 Rl   /mnt/data/mhy-vllm-venv/bin/python -u /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_general_20261031/bench_gpu3.py --kind floor --mtp 1 --requests 256 --settings g100_l0 --passes 3 --positions 1024 --fetch-ctas 16 --host-split off\n",
+  "parent_stopped": true,
+  "finished_at": "2026-10-31T17:54:58+0800",
+  "child_completed_reference": true,
+  "scheduler_terminated_by_us": true,
+  "no_other_process_signalled": true,
+  "new_script": "validate_gpu3_medium_numa1.py"
+}

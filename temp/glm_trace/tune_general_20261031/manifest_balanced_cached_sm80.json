@@ -1,0 +1,5 @@
+{
+  "base_sha256": "81891229df298b90219410b5a4df1e6c20dc4cb1ee9c0233bd17ad383b29225b",
+  "candidate_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "change": "Same balanced shape policy; add one thread-local memo keyed by all five scalar inputs. Bounded host planning cache only, no KV state or extra GPU work. Uncached model costs around 25\u201342us per eager launch, motivating this memo."
+}

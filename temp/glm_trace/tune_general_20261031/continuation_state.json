@@ -1,36 +1,56 @@
 {
-  "recorded_at": "2026-10-31T17:35:17+0800",
+  "recorded_at": "2026-10-31T19:52:34+0800",
   "goal_status": "active",
-  "turn_classification": "progress and verified wait",
-  "previous_round_commit": "5157ff83",
-  "production_header_sha256": "81891229df298b90219410b5a4df1e6c20dc4cb1ee9c0233bd17ad383b29225b",
-  "completed_screening_sessions": [
-    3077,
-    56700
-  ],
-  "active_runner": {
-    "session_id": 49726,
-    "command": "/mnt/data/mhy-vllm-venv/bin/python -u temp/glm_trace/tune_general_20261031/run_readiness.py --variants defer_cache base --tag screencache16_ --fetch-ctas 16",
-    "last_direct_tool_observation": "2026-10-31T17:34:33+0800 WAITING; GPU0/1 foreign PIDs 246102 and 246103",
-    "revalidate": "Poll the same unified-exec handle. A stale state file, temporary observation failure or time elapsed is not terminal; inspect actual process if the handle is unavailable."
+  "turn_classification": "progress: retained validated medium shape dispatch; resuming large-batch primary implementation",
+  "production_header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "production_candidate_adopted": true,
+  "active_runners": [],
+  "completed_key_handles": {
+    "49726": 0,
+    "21924": 0,
+    "81486": 0,
+    "6921": 0,
+    "97471": 0,
+    "47570": 0,
+    "76920": 0,
+    "61374": 0,
+    "60890": 0,
+    "91812": 0,
+    "80178": 0,
+    "60385": 0,
+    "89684": 0,
+    "67399": 0,
+    "62246": 0,
+    "91049": 0,
+    "41792": 0,
+    "43216": 1,
+    "31760": 0
   },
-  "candidate_header_sha256": {
-    "base": "81891229df298b90219410b5a4df1e6c20dc4cb1ee9c0233bd17ad383b29225b",
-    "warp_ready": "0be44a5bc5edd86cb1560eacb6821ededc36ba2bf368dca3e498b1f1f649da75",
-    "row_ready": "b8107d4856af1178c871b1305903b46f04045faaff4187b2fd3dff2ef9ccfc5a",
-    "defer_cache": "562fba07a3ce5ad5eeadf4ec817f779c512cb11b0bf783474ca2468ab1310cba"
+  "completed_final_sxm_normal": {
+    "session_id": 41792,
+    "exit_code": 0,
+    "cohort": "balanced_sxm_native_",
+    "shape": "MTP8/32 requests",
+    "positions": 1024,
+    "passes": 5,
+    "settings": [
+      "nvlink",
+      "pcie"
+    ]
   },
-  "no_new_candidate_adopted": true,
-  "full_trace_performance_confirmation_pending": true,
-  "cross_scenario_regression_pending": true,
-  "normal_candidate_gpu_correctness_pending": true,
-  "h800_snapshot": "temp/glm_trace/tune_general_20261031/h800_queue_resume_20261031.txt",
-  "h800_existing_jobs": [
-    1004362,
-    1004363,
-    1040680,
-    1089379,
-    1089380
+  "rejected": [
+    "warp_ready",
+    "row_ready",
+    "defer_cache",
+    "threshold2",
+    "threshold2_sm80"
   ],
-  "note": "Do not rerun rejected readiness screens or duplicate the active runner. If defer_cache has no signal, reject it and continue investigating compute/fetch resource contention. If it has a signal, extend identical-parameter confirmation, not production adoption."
+  "current_candidate": "balanced_cached_sm80",
+  "candidate_header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "tests": "105 normal-build tests passed on GPU3",
+  "codegen": "Original 9 BF16 emulated kernels and 18 BF16/FP16 normal kernels have identical instruction text/resources; CPU dispatch only.",
+  "promotion_script": "retain_balanced.py --install completed; balanced_retention.json freezes all gate inputs; old promote_medium.py remains disabled",
+  "next_action": "Implement a genuinely new large-batch candidate in an isolated include/JIT, preserve single cooperative kernel and exact LRU/payload; do not repeat completed medium validation.",
+  "h800_snapshot": "temp/glm_trace/tune_general_20261031/h800_queue_20261031_1925.txt",
+  "remaining": "Overall objective not complete: large-batch 100GB/s gap32\u201334% unchanged; H800 jobs pending. Resume primary large-batch implementation after this bounded medium-dispatch iteration."
 }

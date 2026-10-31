@@ -1,0 +1,54 @@
+"""Full-window medium dispatch comparisons on GPU3; never mix with SXM/NVLink data."""
+import json,os,subprocess,time
+from pathlib import Path
+from resources_gpu3 import snapshot
+p=Path(__file__).resolve().parent
+root=p.parents[2]
+settings=[f'g{bw}_l{lat}' for bw in (100,50) for lat in (0,2000,5000,10000,20000)]+['pcie']
+base_env=dict(os.environ,CUDA_DEVICE_ORDER='PCI_BUS_ID',CUDA_VISIBLE_DEVICES='3',CUDA_HOME='/usr/local/cuda-13.1',FLASHINFER_CUDA_ARCH_LIST='8.0',PYTHONPATH=str(root),TMPDIR=str(root/'temp'),MAX_JOBS='4')
+tasks=[]
+for m,b in ((8,28),(8,32),(8,40),(8,48),(1,256)):
+    for kind in ('lru','nocache'):
+        for v in ('base','balanced_cached_sm80'):
+            task=dict(variant=v,kind=kind,mtp=m,requests=b,settings=['native_hbm','pcie'],passes=3,tag='gpu3_balanced_native_')
+            if kind=='nocache':task['fractions']=[0.,.1,.3]
+            tasks.append(task)
+state_path=p/'gpu3_balanced_native_state.json'
+state=json.loads(state_path.read_text()) if state_path.exists() else []
+for task in tasks:
+    # Preserve completed cells and rejected partial output when resuming after contention.
+    remaining=[]
+    for setting in task['settings']:
+        raw=p/'gpu3'/'raw'/f"{task['tag']}{task['variant']}_staged_f16_i64_soff_{task['kind']}_{setting}_mtp{task['mtp']}_b{task['requests']}.json"
+        if raw.exists():
+            data=json.loads(raw.read_text())
+            if data.get('complete'):
+                assert data['configuration']['passes']==task['passes']
+                assert data['configuration']['positions']==1024
+                continue
+            rejected=p/'gpu3'/'rejected';rejected.mkdir(exist_ok=True)
+            target=rejected/(raw.stem+'_contention_'+time.strftime('%Y%m%d_%H%M%S')+'.json')
+            assert not target.exists()
+            raw.rename(target)
+            print('PRESERVED_REJECTED_PARTIAL',str(target),flush=True)
+        remaining.append(setting)
+    if not remaining:
+        print('SKIP_COMPLETED_GPU3_VALIDATION',task,flush=True)
+        continue
+    task=dict(task,settings=remaining)
+    while not snapshot()['available']:
+        print('WAITING_GPU3',snapshot(),flush=True);time.sleep(30)
+    v=task['variant'];native=True
+    env=dict(base_env,TUNE_VARIANT=v,TUNE_RUN_TAG=task['tag'],FLASHINFER_WORKSPACE_BASE=str(p/('jit_'+v+('_normal' if native else ''))),FLASHINFER_EXTRA_CUDAFLAGS='' if native else '-DFLASHINFER_FAR_EMU')
+    cmd=['numactl','-N1','-m1','/mnt/data/mhy-vllm-venv/bin/python','-u',str(p/'bench_gpu3_native.py'),'--kind',task['kind'],'--mtp',str(task['mtp']),'--requests',str(task['requests']),'--settings',*task['settings'],'--passes',str(task['passes']),'--positions','1024','--fetch-ctas','16','--host-split','off']
+    if 'fractions' in task:cmd+=['--fractions',*map(str,task['fractions'])]
+    entry=dict(task,start=time.strftime('%FT%T%z'),command=cmd)
+    state.append(entry);print('START_GPU3_VALIDATION',task,flush=True)
+    with (p/f"{task['tag']}{v}_{task['kind']}_m{task['mtp']}_b{task['requests']}.log").open('a') as log:
+        child=subprocess.Popen(cmd,env=env,cwd=root,stdout=log,stderr=subprocess.STDOUT)
+        entry['pid']=child.pid;state_path.write_text(json.dumps(state,indent=2)+'\n')
+        entry['exit_code']=child.wait()
+    entry['end']=time.strftime('%FT%T%z');state_path.write_text(json.dumps(state,indent=2)+'\n')
+    if entry['exit_code']:raise SystemExit(entry['exit_code'])
+    print('DONE_GPU3_VALIDATION',task,flush=True)
+print('GPU3_VALIDATION_COMPLETE',flush=True)

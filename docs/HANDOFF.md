@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-10-31 17:33，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-10-31 19:50保留检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -14,25 +14,23 @@
 
 ## 2. 当前运行状态与新一轮进度
 
-### 2.1 当前续接状态：两个筛选拒绝，第三个运行器等待资源
+### 2.1 最新续接：中等 batch 派发修正已保留，继续大 batch 主目标
 
-上轮已验证整行优化及全部证据已保全提交为 **`5157ff83`**。`verify_previous.py`在不重写旧数据的前提下重跑其样本/队列/source SHA审计：577格、944064次计时launch、59760段有效队列、103项pytest记录均通过，见`previous_reaudit.json`。不是本轮重新跑了103项GPU测试。
+生产头现为 `balanced_cached_sm80.cuh` 的 **52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5**。原81891229…225b冻结在本轮 `base.cuh`，上轮整行成果提交 `5157ff83` 和检查点 `0ff2fa66` 保持不变。本轮保留记录见 [独立报告](mla_host_a100_balanced_dispatch_20261031.md)及 `balanced_retention.json`，旧 `promote_medium.py` 继续禁用。
 
-本轮所有新候选均在独立include/JIT，**生产header仍为下列base SHA**：
+最终完成 SXM 120 格受限链路、4 格正常构建真实NVLink/PCIe，以及 GPU3 80 格正常构建独立HBM/PCIe。共102配对，改变路径的82个快1.29%–28.78%；224行恢复原分片的20配对最大负差0.31%，均在1%原路径测量门槛内。未隐藏负差。SXM正常构建MTP8/32请求、完整1024位置×5pass：NVLink1047.27→901.58µs（13.91%），PCIe2887.49→2790.52µs（3.36%）。
 
-| 候选 | 实际验证 | 结果/决定 |
-|---|---|---|
-| `warp_ready` | 256位置、MTP8/128请求、LRU4096、fetch24/off，4链路×3pass，同参数base后candidate | 100GB的0/20µs约慢1.8%，NVLink慢1.3%，50GB近持平；不采用 |
-| `row_ready` | 同4链路/窗口/参数，candidate后base | 100GB的0/20µs慢2.0%/2.6%，50GB慢2.1%，NVLink慢1.1%；不采用 |
-| `defer_cache` | 模拟构建CPU编译完成；fetch16同参数短窗口筛选运行器等待GPU | 未取得GPU结果，不采用/不宣称收益 |
+`retain_balanced.py --install`已实际执行并通过完整源码、覆盖、测试、编译等价、原矩阵SHA门槛；它冻结当时两份审计和其他证据，随后逐字节安装已测试候选。生产未新增GPU数学。最终候选实际通过105项正常构建测试，包含2/4×SM Graph/padding/映射/实际cache载荷；模拟9个BF16和正常18个BF16/FP16 kernel指令文本及资源均与base相同。
 
-前两项只移动staging就绪等待；无收益说明尚不能用这种改动消除主要差距。第三项把整行staged的cache绑定/scatter移到fetch循环之后，从HBM staging重读载荷，检验远端流水关键路径；增加HBM流量和回填尾部，不改victim选择/模拟器。源码生成器、manifest、慢格和决策都保留。
+规则只读rows/max_kv_len/SM-grid/fetch_ctas/partial_capacity五个标量，用原tail planner、固定tile读写成本和现有前后两端循环估计波次。≥4×SM沿用原整行，2–4×SM且CTA_TILE_KV=32才比较；108SM/fetch16/K2048下216行整行，224–248行原分片，256/320/384行整行。单项thread-local有界记忆覆盖全部键，360检查通过；CPU微测cold47.7µs/warm0.002µs，不是端到端Python CPU时延。不用链路/命中/计时逐格挑选。
 
-**续接先检查现有运行器，不重复启动**：unified exec **session49726**，命令`run_readiness.py --variants defer_cache base --tag screencache16_ --fetch-ctas 16`。最近直接工具输出为WAITING，GPU0/1有其他用户flashcheck PID246102/246103；前面两项runner的session3077、56700已明确exit0。第三项CPU编译session52324也已exit0。session是当前线程工具handle；若不可用，再用实际进程及raw/log状态核实，不能只依赖本文件或state。
+统一threshold2/threshold2_sm80仍已拒绝：224行正常构建、无LRU低远端比例慢3.2%–4.4%。它的110格LRU、330格无LRU、18控制、6确认及80正常构建均完整保留，不能冒称最终修正版重跑了全部原范围。`defer_cache`四链路慢29%–35%，warp_ready/row_ready也已拒绝，不重复无新机制筛选。
 
-本机第三方任务反复进入GPU0/1，GPU2有VLLM、GPU3也有其他用户任务。运行器每30秒只读查询，不抢占、不终止。每次开始前/结束后`require_exclusive()`；仅观察超时不是终止证据。GPU现状必须重新查。
+本机前一轮runner已全部结束：SXM91049 exit0（120格），SXM41792 exit0（4格正常），GPU3原43216末检因外部PID435854进入而exit1，补齐缺项的31760 exit0。失败未完成raw保存在 `gpu3/rejected/`，追加日志和state未覆盖；重启只跳过完成格。**没有活动GPU runner需要继续poll或重复启动。**
 
-[本轮Markdown报告](mla_host_a100_readiness_20261031.md)、`audit_general.json`、`decisions.json`和`continuation_state.json`记录当前边界。已完成19格（含3插桩诊断、16短窗口筛选控制/候选）、3840次计时launch、240段检查；不是完整跨场景验证。原5304格矩阵SHA未变。
+GPU3是A100-PCIE/NUMA1，同卡独立HBM不是NVLink，物理PCIe和Memcpy pinned源都绑NUMA1；参考在本GPU正常构建重测，PCIe约27.04GB/s、HBM约689GB/s。SXM0/1是NUMA0实际NV12，绝对时间不拼接。其他用户任务随时可能进入，继续资源预检/末检、共享锁，不终止其他人进程。
+
+**大batch 100GB/s约32%–34%差距未改善，整体goal仍active。** 下一步读真实fetch/attention/LRU代码，在独立include/JIT实现新机制，优先研究fetch的cache scatter占用和attention计算尾部；从attention共享KV tile写回缓存是尚未实现的可选方向，不能视为收益。单kernel和精确LRU/载荷要求不变。
 
 ### 2.2 已完成阶段诊断（不重复启动）
 
@@ -137,13 +135,13 @@ temp/glm_trace/tune_general_20261031/bench.py \
 3. 两个参考同时列：纯device，以及`mean_t(max(mean_pass(C_t), mean_pass(unique_miss_t)×1152/(1000×BW)))`；**不是max(mean(C),mean(T))**。公式/probe见`temp/glm_trace/briefing_report_20261030/references.py`。
 4. max是乐观重叠参考，不含附加延迟/共享资源竞争；纯device是指定attention实现的参考，不是绝对数学下界。比值偶尔<1需保留解释，不能改时间/裁剪来保证≥1。
 5. 明标LRU容量、trace/快照、staged/原地读、形状、远端比例、带宽/延迟、参数和SHA；保留更慢格子、失败和源码快照，不替换原矩阵。
-6. 检查缓存映射/实际KV载荷、padding、冷启动、Graph/跨launch状态；生产变动后跑合适回归。当前完整套件`tests/attention/test_mla_host_batch.py`为103项。
+6. 检查缓存映射/实际KV载荷、padding、冷启动、Graph/跨launch状态；生产变动后跑合适回归。当前完整套件`tests/attention/test_mla_host_batch.py`为105项。
 
 Trace由GLM-5.3在A800逐层BF16 prefill、SWE-rebench OpenHands语料原生模板teacher forcing采集。正式回放4个连续assistant窗口×21层=84组、1024位置；>84请求复用capture但远端/LRU地址独立，>128 near物理KV按128请求alias以适配40GB。Q/KV随机，真实的是访问局部性；MTP8非真实草稿/接受率。采集已完成，不重采。1079524=`COMPLETED 0:0`，1079527=`FAILED 1:0`是全角色严格gate失败；assistant窗口检查通过，不能说全语料gate全过。详见[trace记录](mla_host_glm53_trace.md)及历史交接。
 
 ## 5. 集群正在排队的任务（本次重新查询）
 
-登录`ssh -n kaituo1000_login21`（luyouy@166.111.143.25），用`bash -lc`。原快照`temp/glm_trace/tune_general_20261031/h800_queue_20261031.txt`，续接再次查询的结果为`h800_queue_resume_20261031.txt`，状态仍如下。
+登录`ssh -n kaituo1000_login21`（luyouy@166.111.143.25），用`bash -lc`。原快照`temp/glm_trace/tune_general_20261031/h800_queue_20261031.txt`，最新再查结果为`h800_queue_20261031_1925.txt`，先读实际结果；此前五任务仍Priority/Dependency。
 
 | JobID | 名称 | GPU | 状态 | 内容/依赖 |
 |---:|---|---:|---|---|

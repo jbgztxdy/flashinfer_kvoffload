@@ -1,0 +1,5 @@
+{
+  "base_sha256": "81891229df298b90219410b5a4df1e6c20dc4cb1ee9c0233bd17ad383b29225b",
+  "candidate_sha256": "5ee219fe15f1b2f4f9f2bd20d724110d651983cbb31bb77d0ccc653258b5e187",
+  "change": "Preserve the validated threshold2 dispatch only for CTA_TILE_KV==32 (A100 shared-memory configuration); other hardware configurations retain 4*num_sms until measured. On tested A100s the host predicate and all GPU code are equivalent to threshold2."
+}

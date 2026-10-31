@@ -4,14 +4,16 @@ from pathlib import Path
 p=Path(__file__).resolve().parent
 hashfile=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
 records={};libraries={}
-for v in ('base','warp_ready','row_ready','defer_cache'):
+for v in ('base','warp_ready','row_ready','defer_cache','threshold2','threshold2_sm80','balanced_sm80','balanced_cached_sm80'):
     libs=list((p/('jit_'+v)).rglob('*host_overlap*.so'))
     assert len(libs)==1,(v,libs)
     lib=libs[0]
     sass=subprocess.check_output(['/usr/local/cuda-13.1/bin/cuobjdump','--dump-sass',str(lib)],text=True)
     res=subprocess.check_output(['/usr/local/cuda-13.1/bin/cuobjdump','--dump-resource-usage',str(lib)],text=True)
     (p/(v+'_resources.txt')).write_text(res)
-    with gzip.open(p/(v+'_sass.txt.gz'),'wb') as f:f.write(sass.encode())
+    archive=p/(v+'_sass.txt.gz')
+    if not archive.exists() or gzip.decompress(archive.read_bytes())!=sass.encode():
+        with gzip.GzipFile(filename=str(archive),mode='wb',mtime=0) as f:f.write(sass.encode())
     libraries[v]=dict(library_sha256=hashfile(lib),header_sha256=hashfile(p/(v+'.cuh')))
     rows=[]
     for part in re.split(r'\n\s*Function : ',sass)[1:]:
@@ -25,7 +27,7 @@ for v in ('base','warp_ready','row_ready','defer_cache'):
     records[v]=rows
 old={r['symbol']:r for r in records['base']}
 comparisons={}
-for v in ('warp_ready','row_ready','defer_cache'):
+for v in ('warp_ready','row_ready','defer_cache','threshold2','threshold2_sm80','balanced_sm80','balanced_cached_sm80'):
     generic=[];whole=[]
     for r in records[v]:
         b=old[r['symbol']]
@@ -35,6 +37,8 @@ for v in ('warp_ready','row_ready','defer_cache'):
     assert len(generic)==6 and len(whole)==3
     assert all(c['instruction_text_equal'] and c['resource_equal'] for c in generic)
     assert all('STACK:0' in r['resource'] and 'LOCAL:0' in r['resource'] for r in records[v])
+    if v.startswith('threshold2') or v.startswith('balanced'):
+        assert all(c['instruction_text_equal'] and c['resource_equal'] for c in whole)
     comparisons[v]=dict(generic=generic,whole_rows=whole)
 (p/'compiler_summary.json').write_text(json.dumps(dict(build='emulated SM80 BF16',builds=records,libraries=libraries,comparisons=comparisons),indent=2)+'\n')
 print(json.dumps({v:dict(generic_compared=6,generic_instruction_and_resource_equal=6,spill=False) for v in comparisons}))

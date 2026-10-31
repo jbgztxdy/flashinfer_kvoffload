@@ -1,0 +1,52 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_general_20261031/bench_gpu3_numa1.py", line 71, in <module>
+    RESOURCE_START=require_exclusive()
+                   ^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_general_20261031/resources_gpu3.py", line 15, in require_exclusive
+    if state['foreign']:raise RuntimeError('Other physical GPU3 process: '+str(state['foreign']))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Other physical GPU3 process: [{'gpu_uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'pid': 299418, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '490'}]
+start gpu3_full_base_staged_f16_i64_soff_lru_g100_l0_mtp8_b40
+gpu3_full_base_staged_f16_i64_soff_lru_g100_l0_mtp8_b40 cached GPU metadata bytes 817962208
+gpu3_full_base_staged_f16_i64_soff_lru_g100_l0_mtp8_b40 fraction 1.0 mean_us {'ours': 1376.171, 'memcpy': 1890.267}
+complete gpu3_full_base_staged_f16_i64_soff_lru_g100_l0_mtp8_b40
+start gpu3_full_base_staged_f16_i64_soff_lru_g100_l2000_mtp8_b40
+gpu3_full_base_staged_f16_i64_soff_lru_g100_l2000_mtp8_b40 cached GPU metadata bytes 817962208
+gpu3_full_base_staged_f16_i64_soff_lru_g100_l2000_mtp8_b40 fraction 1.0 mean_us {'ours': 1380.227, 'memcpy': 1898.2}
+complete gpu3_full_base_staged_f16_i64_soff_lru_g100_l2000_mtp8_b40
+start gpu3_full_base_staged_f16_i64_soff_lru_g100_l5000_mtp8_b40
+gpu3_full_base_staged_f16_i64_soff_lru_g100_l5000_mtp8_b40 cached GPU metadata bytes 817962208
+gpu3_full_base_staged_f16_i64_soff_lru_g100_l5000_mtp8_b40 fraction 1.0 mean_us {'ours': 1380.808, 'memcpy': 1902.533}
+complete gpu3_full_base_staged_f16_i64_soff_lru_g100_l5000_mtp8_b40
+start gpu3_full_base_staged_f16_i64_soff_lru_g100_l10000_mtp8_b40
+gpu3_full_base_staged_f16_i64_soff_lru_g100_l10000_mtp8_b40 cached GPU metadata bytes 817962208
+gpu3_full_base_staged_f16_i64_soff_lru_g100_l10000_mtp8_b40 fraction 1.0 mean_us {'ours': 1379.728, 'memcpy': 1902.957}
+complete gpu3_full_base_staged_f16_i64_soff_lru_g100_l10000_mtp8_b40
+start gpu3_full_base_staged_f16_i64_soff_lru_g100_l20000_mtp8_b40
+gpu3_full_base_staged_f16_i64_soff_lru_g100_l20000_mtp8_b40 cached GPU metadata bytes 817962208
+gpu3_full_base_staged_f16_i64_soff_lru_g100_l20000_mtp8_b40 fraction 1.0 mean_us {'ours': 1532.584, 'memcpy': 1915.229}
+complete gpu3_full_base_staged_f16_i64_soff_lru_g100_l20000_mtp8_b40
+start gpu3_full_base_staged_f16_i64_soff_lru_g50_l0_mtp8_b40
+gpu3_full_base_staged_f16_i64_soff_lru_g50_l0_mtp8_b40 cached GPU metadata bytes 817962208
+gpu3_full_base_staged_f16_i64_soff_lru_g50_l0_mtp8_b40 fraction 1.0 mean_us {'ours': 1945.072, 'memcpy': 2663.736}
+complete gpu3_full_base_staged_f16_i64_soff_lru_g50_l0_mtp8_b40
+start gpu3_full_base_staged_f16_i64_soff_lru_g50_l2000_mtp8_b40
+gpu3_full_base_staged_f16_i64_soff_lru_g50_l2000_mtp8_b40 cached GPU metadata bytes 817962208
+gpu3_full_base_staged_f16_i64_soff_lru_g50_l2000_mtp8_b40 fraction 1.0 mean_us {'ours': 1944.995, 'memcpy': 2672.611}
+complete gpu3_full_base_staged_f16_i64_soff_lru_g50_l2000_mtp8_b40
+start gpu3_full_base_staged_f16_i64_soff_lru_g50_l5000_mtp8_b40
+gpu3_full_base_staged_f16_i64_soff_lru_g50_l5000_mtp8_b40 cached GPU metadata bytes 817962208
+gpu3_full_base_staged_f16_i64_soff_lru_g50_l5000_mtp8_b40 fraction 1.0 mean_us {'ours': 1951.64, 'memcpy': 2672.024}
+complete gpu3_full_base_staged_f16_i64_soff_lru_g50_l5000_mtp8_b40
+start gpu3_full_base_staged_f16_i64_soff_lru_g50_l10000_mtp8_b40
+gpu3_full_base_staged_f16_i64_soff_lru_g50_l10000_mtp8_b40 cached GPU metadata bytes 817962208
+gpu3_full_base_staged_f16_i64_soff_lru_g50_l10000_mtp8_b40 fraction 1.0 mean_us {'ours': 1953.651, 'memcpy': 2675.0}
+complete gpu3_full_base_staged_f16_i64_soff_lru_g50_l10000_mtp8_b40
+start gpu3_full_base_staged_f16_i64_soff_lru_g50_l20000_mtp8_b40
+gpu3_full_base_staged_f16_i64_soff_lru_g50_l20000_mtp8_b40 cached GPU metadata bytes 817962208
+gpu3_full_base_staged_f16_i64_soff_lru_g50_l20000_mtp8_b40 fraction 1.0 mean_us {'ours': 1963.696, 'memcpy': 2684.677}
+complete gpu3_full_base_staged_f16_i64_soff_lru_g50_l20000_mtp8_b40
+start gpu3_full_base_staged_f16_i64_soff_lru_pcie_mtp8_b40
+gpu3_full_base_staged_f16_i64_soff_lru_pcie_mtp8_b40 cached GPU metadata bytes 817962208
+gpu3_full_base_staged_f16_i64_soff_lru_pcie_mtp8_b40 fraction 1.0 mean_us {'ours': 3285.203, 'memcpy': 4134.003}
+complete gpu3_full_base_staged_f16_i64_soff_lru_pcie_mtp8_b40
