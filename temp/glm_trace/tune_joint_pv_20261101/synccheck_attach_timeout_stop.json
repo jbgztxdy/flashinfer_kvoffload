@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-11-01T05:04:00+08:00",
+  "reason": "Sanitizer attachment timed out while target waited correctness; no CUDA context for either owned diagnostic process. End failed diagnostic before fresh attach after gates.",
+  "actions": [
+    {
+      "pid": 1709001,
+      "signal": "SIGTERM",
+      "command": "/mnt/data/mhy-vllm-venv/bin/python -u temp/glm_trace/tune_joint_pv_20261101/probe_synccheck_joint_pv.py ",
+      "no_gpu_context": true
+    },
+    {
+      "pid": 1708991,
+      "signal": "SIGTERM",
+      "command": "/usr/local/cuda-13.1/bin/../compute-sanitizer/compute-sanitizer --tool synccheck --error-exitcode 86 /mnt/data/mhy-vllm-venv/bin/python -u temp/glm_trace/tune_joint_pv_20261101/probe_synccheck_joint_pv.py ",
+      "no_gpu_context": true
+    }
+  ]
+}

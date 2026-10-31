@@ -4,28 +4,20 @@
   "candidate_adopted": false,
   "new_normal_tests": 218,
   "reused_control_new_tests": 0,
-  "performance_rows": 180,
-  "production_paired_comparisons": 86,
-  "three_way_points": 11,
-  "timed_launches": 292184,
-  "accepted_segments": 18338,
+  "performance_rows": 204,
+  "production_paired_comparisons": 104,
+  "three_way_points": 13,
+  "timed_launches": 379224,
+  "accepted_segments": 23778,
   "incomplete_raw": 0,
   "active_runners": [
     {
-      "session_id": 66919,
-      "command": "SXMlimited60cellmatrix"
-    },
-    {
-      "session_id": 18187,
-      "command": "SXMnative20cellmatrix"
-    },
-    {
       "session_id": 72075,
-      "command": "SXM3cohortfull5passthreewayconfirmation"
+      "command": "SXM3fullcohorts:reverse+nativecomplete;forwardbasecomplete,JM/JQ6settingswaitingexternalGPU01PIDs1713079/1713080"
     },
     {
       "session_id": 1398,
-      "command": "gatedretentionpipeline waitsverifiedexistingSXMthenfinalaudit/install/freshroot109tests+codegen+Graph;rollbackonpostinstallfailure"
+      "command": "verifiedwaitfororiginalconfirmation;thenfinalgates+install+root109validation;donotmanualinstall"
     }
   ],
   "verified_source_snapshots": 32,

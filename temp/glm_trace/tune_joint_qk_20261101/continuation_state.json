@@ -1,5 +1,5 @@
 {
-  "recorded_at": "2026-11-01T04:52:21+08:00",
+  "recorded_at": "2026-11-01T05:10:20+08:00",
   "goal_status": "active",
   "candidate_adopted": false,
   "manifest": {
@@ -15,23 +15,15 @@
   },
   "active_runners": [
     {
-      "session_id": 66919,
-      "command": "SXMlimited60cellmatrix"
-    },
-    {
-      "session_id": 18187,
-      "command": "SXMnative20cellmatrix"
-    },
-    {
       "session_id": 72075,
-      "command": "SXM3cohortfull5passthreewayconfirmation"
+      "command": "SXM3fullcohorts:reverse+nativecomplete;forwardbasecomplete,JM/JQ6settingswaitingexternalGPU01PIDs1713079/1713080"
     },
     {
       "session_id": 1398,
-      "command": "gatedretentionpipeline waitsverifiedexistingSXMthenfinalaudit/install/freshroot109tests+codegen+Graph;rollbackonpostinstallfailure"
+      "command": "verifiedwaitfororiginalconfirmation;thenfinalgates+install+root109validation;donotmanualinstall"
     }
   ],
-  "next_action": "Inspectcompletion_state.json and original1398 FIRST: livepipelinewillinstallonlyafter156matrixcells+SXM3fullconfirmstages+controlgates, thenfreshroot109tests/codegen/actualGraph. No manualinstall/rerunsinparallel. Onpipelinefailed, inspectfailurebeforeanyretry; sourceSHAguardsandrollbackpreserveb6. Updateaudit/report/HANDOFFandcommitproductiononlyaftercompletedrootvalidation. Main~25-28%gapremains,goalactive.",
+  "next_action": "Inspect1398 andcompletion_state first. All156matrixcells complete,204rows104pairs,bothrefs;nativeNVLinkJQvsbase+3.683%butvsJM-1.530%preservednative_control_review. MissingforwardSXM6raw under72075waitexternalGPUusers,no duplicate. Freshrootvalidation/installmustwaitoriginalgate. NewJP109tests but100GBslower rejected,allJPterminal. Updatefinaldocs/retention/commitrootonlyafterpipelinecomplete;main~25-28%gapactive.",
   "completed_handles": {
     "88681": 0,
     "28946": 0,
@@ -53,7 +45,9 @@
     "95653": 0,
     "1518": 0,
     "56668": 1,
-    "41849": 0
+    "41849": 0,
+    "66919": 0,
+    "18187": 0
   },
-  "results": "109newtestspass;34/68exact,REG251STACK0. ShortnewvsJM100GB+0.916/+0.398%;fullreverse+1.026/+0.837%,newvsproduction+3.766/+3.856%. Normalfull3wayand76localcellsrunning. Noadoption. R64limited10pointscomplete:100GB+2.664-3.335%,50GB+0.211-0.379%; nativeR64HBM+2.923%,PCIe-0.188%,noadoption. FullnormalGPU3newvsbaseHBM+3.311%,PCIe-0.031%;vsJMHBM+0.142%,PCIe-0.043%. Bothuninstalled. GPU0/1freednaturally,JMrealSXMmatrixrunning; newJQplansstartedindependently. Local76matrixcellsandnormalfull3waycomplete. Two>1%originalpathnegativesnotreproducedin5passbrackets:~0.11%slow/~0.06%fast. Retainedsourcehostlocalrenameall36/72SASSmachinewordsidentical,105+4testspass;notinstalled. Address-mapexperiment110testsbutslow2.8-3.2%vsJQrejected. SXMfullreverse100GBnewvsproduction+5.228/+4.886%,50GB+0.367%; normal/fullforwardandM1matrixremaining. Completion1398verifiedwaiting."
+  "results": "109newtestspass;34/68exact,REG251STACK0. ShortnewvsJM100GB+0.916/+0.398%;fullreverse+1.026/+0.837%,newvsproduction+3.766/+3.856%. Normalfull3wayand76localcellsrunning. Noadoption. R64limited10pointscomplete:100GB+2.664-3.335%,50GB+0.211-0.379%; nativeR64HBM+2.923%,PCIe-0.188%,noadoption. FullnormalGPU3newvsbaseHBM+3.311%,PCIe-0.031%;vsJMHBM+0.142%,PCIe-0.043%. Bothuninstalled. GPU0/1freednaturally,JMrealSXMmatrixrunning; newJQplansstartedindependently. Local76matrixcellsandnormalfull3waycomplete. Two>1%originalpathnegativesnotreproducedin5passbrackets:~0.11%slow/~0.06%fast. Retainedsourcehostlocalrenameall36/72SASSmachinewordsidentical,105+4testspass;notinstalled. Address-mapexperiment110testsbutslow2.8-3.2%vsJQrejected. SXMfullreverse100GBnewvsproduction+5.228/+4.886%,50GB+0.367%; normal/fullforwardandM1matrixremaining. Completion1398verifiedwaiting. Final156matrixcellscomplete,total204rows104pairs,no missingrefs/incompleteraw. NativeSXMfullJQ3183.982vsbase3305.725(+3.683%)butJM3136.016(-1.530%vsJM);PCIe+0.051%. Forwardbase3settingscomplete,JM/JQ6settingswaitingnewexternalGPU01PIDs1713079/1713080. Rootstillb6. JP109tests but100GBvsJQslower0.182/1.115%,rejected,no rootchange."
 }

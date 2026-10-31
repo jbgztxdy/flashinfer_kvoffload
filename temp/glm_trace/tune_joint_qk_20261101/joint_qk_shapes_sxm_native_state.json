@@ -400,6 +400,53 @@
       "--host-split",
       "off"
     ],
-    "pid": 1698351
+    "pid": 1698351,
+    "exit_code": 0,
+    "end": "2026-11-01T05:01:12+0800"
+  },
+  {
+    "variant": "joint_qk",
+    "kind": "lru",
+    "mtp": 8,
+    "requests": 32,
+    "settings": [
+      "nvlink",
+      "pcie"
+    ],
+    "fetch_ctas": 16,
+    "fractions": null,
+    "start": "2026-11-01T05:01:12+0800",
+    "remaining_settings": [
+      "nvlink",
+      "pcie"
+    ],
+    "command": [
+      "numactl",
+      "-N0",
+      "-m0",
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_qk_20261101/bench.py",
+      "--kind",
+      "lru",
+      "--mtp",
+      "8",
+      "--requests",
+      "32",
+      "--settings",
+      "nvlink",
+      "pcie",
+      "--passes",
+      "3",
+      "--positions",
+      "1024",
+      "--fetch-ctas",
+      "16",
+      "--host-split",
+      "off"
+    ],
+    "pid": 1709018,
+    "exit_code": 0,
+    "end": "2026-11-01T05:02:59+0800"
   }
 ]

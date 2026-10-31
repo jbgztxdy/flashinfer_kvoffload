@@ -1,0 +1,29 @@
+{
+  "complete": true,
+  "candidate_adopted": false,
+  "performance_claim": false,
+  "header_sha256": "5fd0b9db84a09a796cc001011d92af474e2121ee3a3c301a49ea0dd1ad8580c6",
+  "synccheck": {
+    "log": "synccheck_joint_pv.log",
+    "sha256": "c7fc1dd77d227e30938795305d4da964459f8337cd0ea321aa3f3a720e86e3bc",
+    "errors": 0,
+    "launch_timeout": 0,
+    "dispatch": "dispatch_probe_synccheck_joint_pv.json"
+  },
+  "racecheck": {
+    "log": "racecheck_joint_pv.log",
+    "sha256": "4cc27ee685a0dcb62264ad8604818220a27b8463d8f084d303225ea33a6e98e8",
+    "errors": 0,
+    "warnings": 0,
+    "hazards_displayed": 0,
+    "filter": "regex=BatchMLAJointPVKernel",
+    "checked_matching_launches": 1,
+    "dispatch": "dispatch_probe_racecheck_joint_pv.json"
+  },
+  "limitation": "Sanitizer diagnostics use BF16 rows432 K97 one targetkernel and its real Graph probe, not a fulltrace performance or exhaustive race proof. Racecheck instruments firstmatchinglaunch only; synccheck is separate.",
+  "first_failure": {
+    "session_id": 47636,
+    "exit_code": 143,
+    "reason": "AttachmenttimeoutbeforeCUDAcontextwhilewaitingcorrectness;endedonlyowncollectorandchild,recordedstop;failurepreserved."
+  }
+}

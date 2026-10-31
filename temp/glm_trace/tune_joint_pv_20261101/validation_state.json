@@ -1,0 +1,85 @@
+{
+  "start": "2026-11-01T04:59:40+0800",
+  "phase": "failed",
+  "complete": false,
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_pv_20261101/compiler_joint_pv.py"
+      ],
+      "start": "2026-11-01T05:02:41+0800",
+      "log": "compiler_joint_pv.log",
+      "pid": 1711140,
+      "exit_code": 0,
+      "end": "2026-11-01T05:03:07+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_pv_20261101/compiler_joint_pv.py",
+        "--normal"
+      ],
+      "start": "2026-11-01T05:03:07+0800",
+      "log": "compiler_joint_pv_normal.log",
+      "pid": 1711740,
+      "exit_code": 0,
+      "end": "2026-11-01T05:03:54+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_pv_20261101/stress_candidate.py",
+        "--variant",
+        "joint_pv"
+      ],
+      "start": "2026-11-01T05:03:54+0800",
+      "log": "stress_joint_pv.log",
+      "pid": 1712790,
+      "exit_code": 0,
+      "end": "2026-11-01T05:04:07+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_pv_20261101/probe_joint_pv.py"
+      ],
+      "start": "2026-11-01T05:04:07+0800",
+      "log": "probe_joint_pv.log",
+      "pid": 1713371,
+      "exit_code": 0,
+      "end": "2026-11-01T05:04:22+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_pv_20261101/screen.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "joint_pv",
+        "--variants",
+        "joint_qk",
+        "joint_pv",
+        "base",
+        "--tag",
+        "publish256_f24_"
+      ],
+      "start": "2026-11-01T05:04:22+0800",
+      "log": "screen_gpu3.log",
+      "pid": 1713923,
+      "exit_code": 1,
+      "end": "2026-11-01T05:04:41+0800"
+    }
+  ],
+  "error": "Failed screen_gpu3.log",
+  "end": "2026-11-01T05:04:41+0800"
+}

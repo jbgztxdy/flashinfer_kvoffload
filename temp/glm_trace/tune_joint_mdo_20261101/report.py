@@ -5,12 +5,12 @@ p=Path(__file__).resolve().parent;root=p.parents[2]
 read=lambda f:json.loads(f.read_text());sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
 a=read(p/'performance_audit.json')
 assert not a['pending_references']
-table=['| cohort | 位置/pass | 链路 | 同轮base µs | 联合MDO µs | 耗时降低 | 候选Memcpy µs | 候选逐步max µs |','|---|---|---|---:|---:|---:|---:|---:|']
+table=['| 硬件 | cohort | 位置/pass | 链路 | 同轮base µs | 联合MDO µs | 耗时降低 | 候选Memcpy µs | 候选逐步max µs |','|---|---|---|---|---:|---:|---:|---:|---:|']
 for r in a['pairs']:
- table.append(f"| {r['cohort']} | {r['positions']}/{r['passes']} | {r['setting']} | {r['old_us']:.3f} | {r['new_us']:.3f} | {100*r['reduction']:+.3f}% | {r['memcpy_us']:.3f} | {r['reference_us']:.3f} |")
+ table.append(f"| {r['hardware']} | {r['cohort']} | {r['positions']}/{r['passes']} | {r['setting']} | {r['old_us']:.3f} | {r['new_us']:.3f} | {100*r['reduction']:+.3f}% | {r['memcpy_us']:.3f} | {r['reference_us']:.3f} |")
 text='''# A100：双32KV tile共用在线softmax重缩放（2026-11-01）
 
-候选尚未采用，生产仍为0f82e9de / b6eea095…e72a。短窗口100GB0/20µs初测快0.653%/2.700%；第一组完整1024×5pass反向快2.677%/2.902%，正常独立HBM快3.002%、物理PCIe基本持平。第二组完整正向也已完成（快2.134%/1.881%），GPU3跨形状两矩阵全部完成；真实SXM/NVLink确认仍待。100GB大batch历史约32%–34%主差距尚未解决，goal active。
+候选尚未采用，生产仍为0f82e9de / b6eea095…e72a。短窗口100GB0/20µs初测快0.653%/2.700%；第一组完整1024×5pass反向快2.677%/2.902%，正常独立HBM快3.002%、物理PCIe基本持平。第二组完整正向也已完成（快2.134%/1.881%），GPU3及真实SXM/NVLink跨形状矩阵均已完成，共156格矩阵；本目录单独JM未安装，后续JQ组合使用该冻结源作控制。后续JQ完整SXM反向确认已见约5%对生产收益，完整证据见JQ报告，不能全部归因于Q复用；100GB大batch仍距逐步max约25%–28%，goal active。
 
 保留64head/256线程、32KV/2stage、dynamic147968B、原fetch64行双buffer/f24、精确跨步LRU和真实缓存载荷。两个降序tile先分别计算原native QK，再对两个score fragment共同求max，只计算一次d/O重缩放；各自的P指数和native PV仍按原tile降序执行。第一个stage在第一个PV结束后补下一tile，让其加载与第二个PV重叠，随后补第二个stage。原PE→CKV dot次序不改，完整576特征保留，attention方程相同但FP32在线归约分组不同，不承诺逐位相同。canonical数学头34af、模拟器及原5304矩阵均未改；新联合状态更新仅在私有host头内。派发仅原cached whole-row、至少4×SM行、完整staging的SM80路径，仍单cooperative kernel。
 
@@ -24,15 +24,15 @@ GPU3为A100-PCIE/NUMA1，far模拟源是同卡独立HBM，不是真实NVLink。�
 
 {table}
 
-[完整审计](../temp/glm_trace/tune_joint_mdo_20261101/performance_audit.json)当前{rows}格/{pairs}配对、{launches}计时launch/{segments}segment，保存每步/每pass/命中率/unique miss/guard/两参考/源码快照；所有正负差保留。原short_performance_audit.json冻结首次6格3对，不被full追加覆盖。GPU3两矩阵按冻结计划完成76格，合计当前98格/49对、114080次计时launch/7184segment。100GB十个改变路径配对快1.079%–3.633%；所有负差保留，最大为未改无LRU HBM远端0.3慢0.646%。coverage.json明确GPU3完整、SXM80格仍待。活动runner可能仍有未完成raw（当前{incomplete}份），未纳入表格与收益声明。327测试的通过不等于跨形状/完整链路性能gate已完成；只有全门槛完成才可能安装。
+[完整审计](../temp/glm_trace/tune_joint_mdo_20261101/performance_audit.json)当前{rows}格/{pairs}配对、{launches}计时launch/{segments}segment，保存每步/每pass/命中率/unique miss/guard/两参考/源码快照；所有正负差保留。原short_performance_audit.json冻结首次6格3对，不被full追加覆盖。GPU3两矩阵按冻结计划完成76格，合计当前98格/49对、114080次计时launch/7184segment。100GB十个改变路径配对快1.079%–3.633%；所有负差保留，最大为未改无LRU HBM远端0.3慢0.646%。coverage.json明确GPU3的76格和SXM的80格全部完整，全部178格/89配对、参考无缺失、未完成raw为{incomplete}份，无>1%负差。JM原30328/98811都已terminal0，不重复启动。本目录327测试单列，JQ复用这些控制证据不算新增测试。是否保留后续JQ组合由其独立完整确认及保留门槛决定。
 
-H80003:38:29只读复查五个原任务仍Priority/Dependency，调度估计推迟到11/05；两个原watcher仍活，AGENTS/MEMORY哈希与已读快照相同，无源码写入或重复提交。当前runner和接续任务以continuation_state.json及实际进程为准，不因本报告启动重复任务。此前F/S/WR/KV64已拒绝872项测试、48格/27配对；本候选的正向信号必须单独核实，不覆盖负差。
+H80004:57只读复查（JQ/h800_queue_0457.txt）：五个原任务仍Priority/Dependency，调度估计推迟到11/05；两个原watcher仍活，AGENTS/MEMORY哈希与已读快照相同，无源码写入或重复提交。当前runner和接续任务以continuation_state.json及实际进程为准，不因本报告启动重复任务。此前F/S/WR/KV64已拒绝872项测试、48格/27配对；本候选的正向信号必须单独核实，不覆盖负差。
 '''.replace('{table}','\n'.join(table))
 for key,value in [('rows',len(a['rows'])),('pairs',len(a['pairs'])),('launches',a['timed_launches']),('segments',a['accepted_segments']),('incomplete',len(a['incomplete']))]:text=text.replace('{'+key+'}',str(value))
 (root/'docs/mla_host_a100_joint_mdo_20261101.md').write_text(text)
 (p/'README.md').write_text('''# Joint online MDO over two32KV score tiles, 2026-11-01
 
-Not adopted; productionb6eea095…e72a/0f82e9de, goal active. Short100GB0/20us positive0.653/2.700%; full reverse/native/cross-shape gates required. See [report](../../../docs/mla_host_a100_joint_mdo_20261101.md), confirmation_plan.json and performance_audit.json.
+JM itself not installed; final178cells/89pairs, all156plannedGPU3/SXMmatrixcells complete, no >1%negative, bothreferences complete. Original30328/98811terminal0. JQ composition retains this frozen control and completes its own confirmation/retention gates. Goal active. See [report](../../../docs/mla_host_a100_joint_mdo_20261101.md), confirmation_plan.json and performance_audit.json.
 
 Original64head/256thread32KV/2stage/shared147968B/fetch/LRU remain. Two native QK score tiles share one max/d/O rescale; original PV runs per tile descending, refill first stage during secondPV. Same equation, different FP32 online grouping; canonical math header untouched. Distinct from paired-QK-only and64KV/one-stage, no parameter sweep.
 

@@ -80,6 +80,49 @@
       "pcie",
       "--native"
     ],
-    "pid": 1695723
+    "pid": 1695723,
+    "exit_code": 0,
+    "end": "2026-11-01T05:02:36+0800"
+  },
+  {
+    "tag": "compositionsxmforward1024_f24_",
+    "variants": [
+      "base",
+      "joint_mdo_typed",
+      "joint_qk"
+    ],
+    "settings": [
+      "g100_l0",
+      "g100_l20000",
+      "g50_l20000"
+    ],
+    "native": false,
+    "start": "2026-11-01T05:02:36+0800",
+    "command": [
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_qk_20261101/screen.py",
+      "--hardware",
+      "sxm",
+      "--candidate",
+      "joint_qk",
+      "--variants",
+      "base",
+      "joint_mdo_typed",
+      "joint_qk",
+      "--tag",
+      "compositionsxmforward1024_f24_",
+      "--fetch-ctas",
+      "24",
+      "--positions",
+      "1024",
+      "--passes",
+      "5",
+      "--settings",
+      "g100_l0",
+      "g100_l20000",
+      "g50_l20000"
+    ],
+    "pid": 1710926
   }
 ]

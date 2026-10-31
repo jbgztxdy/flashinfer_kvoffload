@@ -1,6 +1,6 @@
 # Joint online MDO over two32KV score tiles, 2026-11-01
 
-Not adopted; productionb6eea095…e72a/0f82e9de, goal active. Short100GB0/20us positive0.653/2.700%; full reverse/native/cross-shape gates required. See [report](../../../docs/mla_host_a100_joint_mdo_20261101.md), confirmation_plan.json and performance_audit.json.
+JM itself not installed; final178cells/89pairs, all156plannedGPU3/SXMmatrixcells complete, no >1%negative, bothreferences complete. Original30328/98811terminal0. JQ composition retains this frozen control and completes its own confirmation/retention gates. Goal active. See [report](../../../docs/mla_host_a100_joint_mdo_20261101.md), confirmation_plan.json and performance_audit.json.
 
 Original64head/256thread32KV/2stage/shared147968B/fetch/LRU remain. Two native QK score tiles share one max/d/O rescale; original PV runs per tile descending, refill first stage during secondPV. Same equation, different FP32 online grouping; canonical math header untouched. Distinct from paired-QK-only and64KV/one-stage, no parameter sweep.
 

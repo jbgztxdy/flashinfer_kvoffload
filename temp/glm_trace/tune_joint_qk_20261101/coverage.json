@@ -27,90 +27,9 @@
       "cohort": "limited",
       "tag": "joint_qk_shapes_sxm_limited_",
       "expected_cells": 60,
-      "completed_audited_cells": 50,
-      "missing_cells": [
-        [
-          "joint_qk",
-          "lru",
-          1,
-          512,
-          "g100_l0",
-          null
-        ],
-        [
-          "joint_qk",
-          "lru",
-          1,
-          512,
-          "g100_l2000",
-          null
-        ],
-        [
-          "joint_qk",
-          "lru",
-          1,
-          512,
-          "g100_l5000",
-          null
-        ],
-        [
-          "joint_qk",
-          "lru",
-          1,
-          512,
-          "g100_l10000",
-          null
-        ],
-        [
-          "joint_qk",
-          "lru",
-          1,
-          512,
-          "g100_l20000",
-          null
-        ],
-        [
-          "joint_qk",
-          "lru",
-          1,
-          512,
-          "g50_l0",
-          null
-        ],
-        [
-          "joint_qk",
-          "lru",
-          1,
-          512,
-          "g50_l2000",
-          null
-        ],
-        [
-          "joint_qk",
-          "lru",
-          1,
-          512,
-          "g50_l5000",
-          null
-        ],
-        [
-          "joint_qk",
-          "lru",
-          1,
-          512,
-          "g50_l10000",
-          null
-        ],
-        [
-          "joint_qk",
-          "lru",
-          1,
-          512,
-          "g50_l20000",
-          null
-        ]
-      ],
-      "complete": false,
+      "completed_audited_cells": 60,
+      "missing_cells": [],
+      "complete": true,
       "plan_sha256": "5cd216015fded91a2887923717504923317749e393f8c0a731484589f127860d"
     },
     {
@@ -118,66 +37,17 @@
       "cohort": "native",
       "tag": "joint_qk_shapes_sxm_native_",
       "expected_cells": 20,
-      "completed_audited_cells": 14,
-      "missing_cells": [
-        [
-          "joint_qk",
-          "lru",
-          1,
-          1,
-          "nvlink",
-          null
-        ],
-        [
-          "joint_qk",
-          "lru",
-          1,
-          1,
-          "pcie",
-          null
-        ],
-        [
-          "base",
-          "lru",
-          8,
-          32,
-          "nvlink",
-          null
-        ],
-        [
-          "base",
-          "lru",
-          8,
-          32,
-          "pcie",
-          null
-        ],
-        [
-          "joint_qk",
-          "lru",
-          8,
-          32,
-          "nvlink",
-          null
-        ],
-        [
-          "joint_qk",
-          "lru",
-          8,
-          32,
-          "pcie",
-          null
-        ]
-      ],
-      "complete": false,
+      "completed_audited_cells": 20,
+      "missing_cells": [],
+      "complete": true,
       "plan_sha256": "b6e3d1ebef7508acc2af701ad4004ce7c3d6163dc191ee7ba3e815302bd619a9"
     }
   ],
   "gpu3_matrix_complete": true,
-  "sxm_matrix_complete": false,
+  "sxm_matrix_complete": true,
   "gpu3_completed_rows": 76,
-  "total_rows": 180,
-  "total_pairs": 86,
+  "total_rows": 204,
+  "total_pairs": 104,
   "pending_references": 0,
   "incomplete_raw": 0,
   "changed_gpu3_100GB_pairs": 10,
@@ -412,6 +282,50 @@
       "variant": "joint_qk",
       "kind": "lru",
       "fraction": null,
+      "mtp": 1,
+      "requests": 1,
+      "fetch_ctas": 16,
+      "setting": "nvlink",
+      "positions": 1024,
+      "passes": 3,
+      "old_us": 44.56100005821403,
+      "new_us": 44.564333404802404,
+      "reduction": -7.4804124324368e-05,
+      "old_raw": "temp/glm_trace/tune_joint_qk_20261101/raw/joint_qk_shapes_sxm_native_base_staged_f16_i64_soff_lru_nvlink_mtp1_b1.json",
+      "new_raw": "temp/glm_trace/tune_joint_qk_20261101/raw/joint_qk_shapes_sxm_native_joint_qk_staged_f16_i64_soff_lru_nvlink_mtp1_b1.json",
+      "memcpy_us": 44.26966668688692,
+      "local_us": 32.63633320602821,
+      "reference_us": 32.63633320602821,
+      "over_reference": 0.3654822410187608
+    },
+    {
+      "hardware": "SXM0/1",
+      "cohort": "joint_qk_shapes_sxm_native_",
+      "variant": "joint_qk",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 32,
+      "fetch_ctas": 16,
+      "setting": "pcie",
+      "positions": 1024,
+      "passes": 3,
+      "old_us": 2795.6480014448366,
+      "new_us": 2795.794666123887,
+      "reduction": -5.2461783091040104e-05,
+      "old_raw": "temp/glm_trace/tune_joint_qk_20261101/raw/joint_qk_shapes_sxm_native_base_staged_f16_i64_soff_lru_pcie_mtp8_b32.json",
+      "new_raw": "temp/glm_trace/tune_joint_qk_20261101/raw/joint_qk_shapes_sxm_native_joint_qk_staged_f16_i64_soff_lru_pcie_mtp8_b32.json",
+      "memcpy_us": 3845.541321362058,
+      "local_us": 751.0906651926538,
+      "reference_us": 2598.5655546731814,
+      "over_reference": 0.0758992248996817
+    },
+    {
+      "hardware": "SXM0/1",
+      "cohort": "joint_qk_shapes_sxm_native_",
+      "variant": "joint_qk",
+      "kind": "lru",
+      "fraction": null,
       "mtp": 8,
       "requests": 64,
       "fetch_ctas": 24,
@@ -481,5 +395,5 @@
     "Anyover1%negativepointneedsforward/reversecontrolandpreservedreason",
     "Onlythenfrozenretentionaudit/install+freshrootnormalcompile/tests"
   ],
-  "audit_sha256": "64e20d1cc0dbf2de74ab8db454c3c9443e483b043f5357d21a81eccfa38603ef"
+  "audit_sha256": "7991d5f5d586afc953fd5519a49c4febed7becc5efd7f993d731df7a438cb9d0"
 }

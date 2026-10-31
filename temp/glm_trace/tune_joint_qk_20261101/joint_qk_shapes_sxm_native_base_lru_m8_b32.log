@@ -1,0 +1,9 @@
+WAITING_AFTER_LOCK {'timestamp': '2026-11-01T05:00:48+0800', 'gpus': [{'index': 0, 'uuid': 'GPU-6e5259ec-3532-b1b2-b0ab-b26231386565', 'used_mib': 753, 'total_mib': 40960, 'utilization': 100}, {'index': 1, 'uuid': 'GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81', 'used_mib': 423, 'total_mib': 40960, 'utilization': 100}], 'foreign': [{'gpu_uuid': 'GPU-6e5259ec-3532-b1b2-b0ab-b26231386565', 'pid': 1698352, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '746'}, {'gpu_uuid': 'GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81', 'pid': 1698352, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '416'}], 'available': False}
+start joint_qk_shapes_sxm_native_base_staged_f16_i64_soff_lru_nvlink_mtp8_b32
+joint_qk_shapes_sxm_native_base_staged_f16_i64_soff_lru_nvlink_mtp8_b32 cached GPU metadata bytes 668031376
+joint_qk_shapes_sxm_native_base_staged_f16_i64_soff_lru_nvlink_mtp8_b32 fraction 1.0 mean_us {'ours': 886.741, 'memcpy': 1300.515}
+complete joint_qk_shapes_sxm_native_base_staged_f16_i64_soff_lru_nvlink_mtp8_b32
+start joint_qk_shapes_sxm_native_base_staged_f16_i64_soff_lru_pcie_mtp8_b32
+joint_qk_shapes_sxm_native_base_staged_f16_i64_soff_lru_pcie_mtp8_b32 cached GPU metadata bytes 668031376
+joint_qk_shapes_sxm_native_base_staged_f16_i64_soff_lru_pcie_mtp8_b32 fraction 1.0 mean_us {'ours': 2795.648, 'memcpy': 3818.339}
+complete joint_qk_shapes_sxm_native_base_staged_f16_i64_soff_lru_pcie_mtp8_b32

@@ -1,5 +1,5 @@
 {
-  "recorded_at": "2026-11-01T04:39:29+08:00",
+  "recorded_at": "2026-11-01T05:00:47+08:00",
   "goal_status": "active",
   "candidate_adopted": false,
   "manifest": {
@@ -11,13 +11,8 @@
     "candidate_adopted": false,
     "goal_complete": false
   },
-  "active_runners": [
-    {
-      "session_id": 30328,
-      "command": "SXMlimited60cellmatrix waitsGPU01idle"
-    }
-  ],
-  "next_action": "ContinueoriginalSXM30328/98811whenGPU0/1idle,no duplicates. Need80matrixcells+full5passSXMconfirmationthenretentionaudit/rootinstalltests; productionunchanged. Separatejoint_qkcompositionprototypehasitsownsource/runners, do not overwrite or conflate.",
+  "active_runners": [],
+  "next_action": "JM156plannedmatrixcellscomplete178rows89pairswithbothreferences. Original30328/98811terminal0,no restart. ExactfrozenJMcontrol reusedbyJQwhichcompletesitsindependentfullSXMconfirmation/retention1398. Overallgoalactive,~25-28%referencegapremains.",
   "completed_handles": {
     "10463": 0,
     "98842": 0,
@@ -45,7 +40,8 @@
     "16920": 0,
     "61915": 0,
     "12133": 0,
-    "98811": 0
+    "98811": 0,
+    "30328": 0
   },
   "first_version": "109tests+actual108CTApass;4/34EMU,8/68normal original instruction text changed,puredevice exact. strict gate rejected,0performance. after is identical algorithm definition-order control in private tree.",
   "results": "Localcomplete98cells/49pairs,114080timedlaunches/7184segments,327tests. GPU3limited40/40allpositive;100GBgains1.079-3.633%,50GB0.049-0.174%. Nativecontrols36/36,maxnegative0.646%unchangednocache. Full5passbothorders100GB~1.9-2.9%,HBM~3%,PCIeflat. SXM80cellswaitingGPU01,noadoption. SXMnative20/20complete. SXMlimitedM1R512remaining10cellsrunning, inspect30328."

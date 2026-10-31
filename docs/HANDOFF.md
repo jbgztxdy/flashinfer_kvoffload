@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-01 04:51 SXM回归进行中；地址表拒绝；保留流程等待门槛，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-01 05:11 SXM矩阵完整；联合发布P拒绝；正向确认等待其他用户，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -14,13 +14,17 @@
 
 ## 2. 当前运行状态与新一轮进度
 
-### 2.0 最新生产：共享页号已保留；联合MDO候选待SXM验证
+### 2.0 最新生产：共享页号已保留；JQ矩阵完整，保留门槛仍待
 
 **当前生产header是cached_ids，SHA=`b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a`，不再是52919。下文§2.1–2.6保留各阶段历史，冲突时以本节及实际文件为准。** 单kernel、数学、精确LRU/真实cache载荷、模拟器和原5304矩阵不变；只在已有whole CTA32且启用LRU的路径共享块页号，未改路径原9EMU/18normal kernel指令与资源完全相同。基线52919保存在W/base.cuh及其他独立实验树。
 
-**最新自动收尾runner为JQ/complete_retention.py，原handle1398，先查它及completion_state.json，不能并行手动install。** 它只等待已验证存活的JM/JQ原SXM进程，全部156格JQ矩阵、JM完整SXM、JQ三组SXM完整1024×5pass三方确认结束后，重新performance/coverage/controls审计；retain_joint_qk.py要求60个改变路径配对不慢于1%、100GB完整两顺序均>1%收益、正常物理链路不慢于1%，以及原34/68和清理源36/72完整代码等价/109测试/实际Graph。门槛失败停止，不放宽，不重复提交。全部通过才逐字节安装retained_joint_qk.cuh，再新jit_production_joint_normal从root include编译BF16/FP16、109测试、72实例指令资源验证及实际Graph；安装后任何失败只在root仍为本候选时恢复冻结b6并记日志，避免覆盖其他人编辑。完成/失败以实际state/handle为准，安装不等于全goal完成。**当前04:52仍waiting，root保持b6；后续不能只相信本文时间快照。**
+**最新自动收尾runner为JQ/complete_retention.py，原handle1398，先查它及completion_state.json，不能并行手动install。** 它只等待已验证存活的JM/JQ原SXM进程，全部156格JQ矩阵、JM完整SXM、JQ三组SXM完整1024×5pass三方确认结束后，重新performance/coverage/controls审计；retain_joint_qk.py要求60个改变路径配对不慢于1%、100GB完整两顺序均>1%收益、正常物理链路不慢于1%，以及原34/68和清理源36/72完整代码等价/109测试/实际Graph。门槛失败停止，不放宽，不重复提交。全部通过才逐字节安装retained_joint_qk.cuh，再新jit_production_joint_normal从root include编译BF16/FP16、109测试、72实例指令资源验证及实际Graph；安装后任何失败只在root仍为本候选时恢复冻结b6并记日志，避免覆盖其他人编辑。完成/失败以实际state/handle为准，安装不等于全goal完成。**当前05:11仍waiting，root保持b6；JQ156矩阵完整、full反向与正常物理链路已完成，full正向base3格完成，JM/JQ6格因其他用户GPU0/1进程1713079/1713080等待。后续不能只相信本文时间快照。**
 
 保留用retained_joint_qk.cuh只把新host dispatcher里的KV64局部别名改为Joint，无device/helper/params字段改动；原测源a2f37…c4b7c保持不覆盖。retained_codegen的36EMU/72normal全部原+新增实例指令/资源精确相同，machine_word_identity.json进一步验证全部Ampere机器字/控制字相同。额外正常105+4测试通过。cleanup源码SHA见retained_source_manifest.json。root新安装后还须更新audits/report/HANDOFF并只提交本任务文件；不要把尚未结束的1398当失败重启。
+
+**新JP=`temp/glm_trace/tune_joint_pv_20261101/`已完成拒绝。** 在JQ现有paired QK+joint MDO后，一次量化/rowsum/发布两个P tile，4个原生PV barrier变1个，再保持hi-PV/refill/lo-PV/refill；原joint MDO barrier保护KPE→P覆写，P stage与m_wg分离，原补数barrier和奇尾原生PV保留。无tile/unroll/fetch/cadence扫描。原34/68指令资源及机器字/控制字全相同，新REG252/STACK0/LOCAL0，105+4正常长cache载荷测试及实际单108CTA/256线程Graph均通过。单独synccheck零错、racecheck首个匹配新kernel launch零hazard（BF16/432行/K97，不作穷尽或trace性能证明）。
+
+JP固定JQ→新→b6、GPU3/NUMA1/256×3pass/f24，100GB0/20µs相对JQ慢0.182%/1.115%，50GB快0.048%，拒绝，不扩full/native/跨形状。9格/6个对b6配对、3三方点、1728launch/108segment、两参考齐全，相对b6正差也保留。全部50732/77642/96800/53029/60928/59627 terminal0；88832因短测漏拷plans.cpp预检exit1，冻结plan补齐后只恢复缺失短测，原failedstate/log保留；47636首次sanitizer等待测试触发attach timeout，核实无GPUcontext后仅终止自有collector/child exit143，失败log/stop JSON保留，第二次launch-timeout0成功。不要重启JP任何runner。生产未改，[报告](mla_host_a100_joint_pv_20261101.md)，checkpoint通过。
 
 **新AM=`temp/glm_trace/tune_address_map_20261101/`已完成拒绝。** 复用whole-row闲置partial_o存uint64行地址，prepare/resolve连同remap写指针、padding compaction复制同样disjoint mover，沿用原grid同步，不增分配/barrier/kernel。派发明确uint64(rows)×max_kv_len×8≤partial_capacity×64×512×sizeof(O)，不足回原生产路径。canonical math/fetch/LRU/真实cache载荷不变。原34/68全等价，新REG252/STACK0/LOCAL0，实际单108CTA/block32x4x2通过。105+4长测试及1容量不足/全backing哨兵/Graph/padding/cache载荷测试，共110项通过。JQ控制复用原binary/gates不算新增测试。三方256×3pass：相对JQ的100GB0/20慢2.812%/3.159%，50GB慢0.493%；相对生产100GB20快0.742%也保留。9格/6对生产配对、3三方点、1728launch/108segment、两参考完整，全部10839/97365/62831/20361/3002/25750/2690terminal0。停止，不扫地址布局/容量参数。[报告](mla_host_a100_address_map_20261101.md)。
 
@@ -28,11 +32,13 @@ JQ本轮两项>1%GPU3未改路径负差已经64659完整5pass前/候选/后夹�
 
 硬件计数器诊断已单独完成（41849terminal0；56668首版因pytest导入缺失在GPU工作前exit1，失败源/log保留，改用make_wrapper后成功）。GPU3合成1024×2048/MTP8全共享/25%新页，application replay每次重建LRU/epoch，输出及327680有效cache槽全载荷通过；两版实际Tensor指令均71827456，short-scoreboard26.98→19.31%、long-scoreboard5.39→11.13%、barrier8.48→9.05%。默认Ncu cache控制、原CSV/source/限制见counters_audit.json；不计trace收益/参考，stall不能相加当时间分解。它提示shared读取/加载重叠取舍，不证明真实trace全部剩余差距因果。
 
-GPU0/1已自然空闲、JM/JQ的原SXM验证均在运行，不再是waitingotherusers。JQ新66919 limited60格、18187 native20格，实际SXMprobe55667已terminal0；JQ完整5pass三方72075依次反向EMU3设置→正常NVLink/PCIe→正向EMU3设置，所有任务共用gpu01锁串行。长MTP1/R512每步metadata/PCIe回放会耗时，先ps/proc确认活动，不终止或重复。GPU3原69652/63115/74895均terminal0，正常full三方JQ较生产HBM快3.311%、PCIe慢0.031%，较JM快0.142%/慢0.043%。本机全部76矩阵格完整，新的SXM正负格见freshaudit。JM原98811 native20格已terminal0，30328 limited还在MTP1/R512最后十格；不能重启旧本机矩阵。
+JM的完整156矩阵已终，178总格/89配对、两参考完整，无>1%负差；30328/98811均terminal0，勿重启。JQ原66919 limited60格和18187 native20格也terminal0，全部156矩阵格通过审计；总204格/104个对b6配对，60个改变路径配对未加权降低均值1.602%、范围−0.188%至+5.253%，全部正负格保留。原两项>1%未改路径负差均有上述完整5pass夹测。
 
-SXM完整反向三方首组已完成：JQ相对生产100GB0/20µs快5.228%/4.886%、50GB20µs快0.367%；相对JM的额外收益较GPU3小，分别约0.13%/0.24%，不能将全部生产收益归给Q复用。正常完整NVLink/PCIe及正向完整确认仍排队运行，不可跳过。
+只剩JQ原72075完整5pass正向的JM/JQ六格，CPU screen正在等其他用户GPU0/1进程1713079/1713080（/mnt/raid/ny_work/envs/flashcheck/bin/python）。反向EMU3格、正常NVLink/PCIe三方和正向base3格均完整。不得终止其他用户、重复启动72075或绕过1398门槛；没有当前自有GPU工作时也不说明72075死掉。GPU3本轮JP全部terminal，原JQ本机69652/63115/74895早已terminal0。
 
-当前已测JQ full100GB距逐步max：GPU3约26.94%/27.89%，SXM约25.42%/26.53%，仍明显高于10%目标。50GB约6%差距，不能将优化3%–5%写成已解决主目标。H80004:05:35仍原五作业Priority/Dependency，预估11/05，两个watcher活、AGENTS/MEMORY哈希不变；没有修改/重新提交远端排队源。
+SXM完整反向三方首组已完成：JQ相对生产100GB0/20µs快5.228%/4.886%、50GB20µs快0.367%；相对JM的额外收益较GPU3小，分别约0.13%/0.24%，不能将全部生产收益归给Q复用。正常完整SXM：base/JM/JQ的NVLink3305.725/3136.016/3183.982µs，JQ较b6快3.683%，但较JM慢1.530%；PCIe9954.458/9951.677/9949.350µs，JQ较b6快0.051%。native_control_review.json保全这项组合负差，不声称Q复用均更好。正向完整JM/JQ仍待，不可跳过。
+
+当前已测JQ full100GB距逐步max：GPU3约26.94%/27.89%，SXM约25.42%/26.53%，仍明显高于10%目标。50GB约6%差距，不能将优化3%–5%写成已解决主目标。H80004:57只读快照仍原五作业Priority/Dependency，预估11/05，两个watcher活、AGENTS/MEMORY哈希不变；没有修改/重新提交远端排队源。
 
 **最新WR=`temp/glm_trace/tune_warp_roles_20261101/`空间warp分工两版已结束，均不采用。** 同256线程CTA，物理z0/1四warp取数，z2/3四warp计算映射到虚拟z0/1，named barrier2/1各128线程；全CTA做原prepare/LRU，grid同步后分角色，结束全CTA/grid同步后原lastCTA复位。原32head/sharded32KV/2stage计算shared110848B，加独立2×16row payload36864B共147712≤原dynamic147968B；每query两headitem直接输出。所有108CTA取数，实际在途3456row比原f24的3072多12.5%，明确是策略变化，未暗称预算相同。FAR waiter仍物理(0,0,0)，模拟器/字节不变。
 

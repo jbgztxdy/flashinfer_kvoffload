@@ -1,0 +1,34 @@
+{
+  "complete": true,
+  "goal_complete": false,
+  "notes": "Full5passSXMnormalforwardcontrol. JQimprovesNVLinkvsproductionbutslowerthanJM;donotclaimcompositionuniformlyimprovesJM. Keepalltimeandno timing-based dispatch. Existingretentiongatesstillbaseline-relative;overallgoalactive.",
+  "triples": [
+    {
+      "setting": "nvlink",
+      "base_us": 3305.724798515439,
+      "joint_mdo_us": 3136.0160060226917,
+      "joint_qk_us": 3183.9824013412,
+      "joint_qk_vs_base": 0.03682774719447679,
+      "joint_qk_vs_joint_mdo": -0.015295328603677216,
+      "raws": [
+        "temp/glm_trace/tune_joint_qk_20261101/raw/compositionsxmnative1024_f24_base_staged_f24_i64_soff_lru_nvlink_mtp8_b128.json",
+        "temp/glm_trace/tune_joint_qk_20261101/raw/compositionsxmnative1024_f24_joint_mdo_typed_staged_f24_i64_soff_lru_nvlink_mtp8_b128.json",
+        "temp/glm_trace/tune_joint_qk_20261101/raw/compositionsxmnative1024_f24_joint_qk_staged_f24_i64_soff_lru_nvlink_mtp8_b128.json"
+      ]
+    },
+    {
+      "setting": "pcie",
+      "base_us": 9954.457601904869,
+      "joint_mdo_us": 9951.676815748215,
+      "joint_qk_us": 9949.350396543741,
+      "joint_qk_vs_base": 0.0005130571212790258,
+      "joint_qk_vs_joint_mdo": 0.0002337715791566053,
+      "raws": [
+        "temp/glm_trace/tune_joint_qk_20261101/raw/compositionsxmnative1024_f24_base_staged_f24_i64_soff_lru_pcie_mtp8_b128.json",
+        "temp/glm_trace/tune_joint_qk_20261101/raw/compositionsxmnative1024_f24_joint_mdo_typed_staged_f24_i64_soff_lru_pcie_mtp8_b128.json",
+        "temp/glm_trace/tune_joint_qk_20261101/raw/compositionsxmnative1024_f24_joint_qk_staged_f24_i64_soff_lru_pcie_mtp8_b128.json"
+      ]
+    }
+  ],
+  "audit_sha256": "7991d5f5d586afc953fd5519a49c4febed7becc5efd7f993d731df7a438cb9d0"
+}

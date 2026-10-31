@@ -5,14 +5,6 @@
   "phase": "waiting_existing_work",
   "steps": [],
   "missing": [
-    "tune_joint_qk_20261101/joint_qk_shapes_sxm_limited_",
-    "tune_joint_qk_20261101/joint_qk_shapes_sxm_native_",
-    "compositionsxmnative1024_f24_joint_mdo_typed/pcie",
-    "compositionsxmnative1024_f24_joint_qk/nvlink",
-    "compositionsxmnative1024_f24_joint_qk/pcie",
-    "compositionsxmforward1024_f24_base/g100_l0",
-    "compositionsxmforward1024_f24_base/g100_l20000",
-    "compositionsxmforward1024_f24_base/g50_l20000",
     "compositionsxmforward1024_f24_joint_mdo_typed/g100_l0",
     "compositionsxmforward1024_f24_joint_mdo_typed/g100_l20000",
     "compositionsxmforward1024_f24_joint_mdo_typed/g50_l20000",
@@ -21,9 +13,7 @@
     "compositionsxmforward1024_f24_joint_qk/g50_l20000"
   ],
   "live_existing_processes": [
-    "1633438 1633433 /mnt/data/mhy-vllm-venv/bin/python -u temp/glm_trace/tune_joint_qk_20261101/validate_sxm.py --cohort limited",
-    "1633488 1633476 /mnt/data/mhy-vllm-venv/bin/python -u temp/glm_trace/tune_joint_qk_20261101/validate_sxm.py --cohort native",
     "1640200 1640195 /mnt/data/mhy-vllm-venv/bin/python -u temp/glm_trace/tune_joint_qk_20261101/confirm_sxm.py"
   ],
-  "last_observation": "2026-11-01T04:53:26+0800"
+  "last_observation": "2026-11-01T05:13:35+0800"
 }
