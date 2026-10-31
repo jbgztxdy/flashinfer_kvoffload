@@ -1,0 +1,11 @@
+WAITING_AFTER_LOCK {'timestamp': '2026-10-31T22:59:14+0800', 'gpus': [{'index': 0, 'uuid': 'GPU-6e5259ec-3532-b1b2-b0ab-b26231386565', 'used_mib': 647, 'total_mib': 40960, 'utilization': 14}, {'index': 1, 'uuid': 'GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81', 'used_mib': 423, 'total_mib': 40960, 'utilization': 0}], 'foreign': [{'gpu_uuid': 'GPU-6e5259ec-3532-b1b2-b0ab-b26231386565', 'pid': 742437, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '640'}, {'gpu_uuid': 'GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81', 'pid': 742437, 'process': '/mnt/data/mhy-vllm-venv/bin/python', 'used_mib': '416'}], 'available': False}
+start cached_ids_matrix_sxm_native_base_staged_f16_i64_soff_nocache_nvlink_mtp8_b32
+cached_ids_matrix_sxm_native_base_staged_f16_i64_soff_nocache_nvlink_mtp8_b32 fraction 0.0 mean_us {'ours': 720.213, 'memcpy': 750.251}
+cached_ids_matrix_sxm_native_base_staged_f16_i64_soff_nocache_nvlink_mtp8_b32 fraction 0.1 mean_us {'ours': 739.84, 'memcpy': 843.605}
+cached_ids_matrix_sxm_native_base_staged_f16_i64_soff_nocache_nvlink_mtp8_b32 fraction 0.3 mean_us {'ours': 769.109, 'memcpy': 979.115}
+complete cached_ids_matrix_sxm_native_base_staged_f16_i64_soff_nocache_nvlink_mtp8_b32
+start cached_ids_matrix_sxm_native_base_staged_f16_i64_soff_nocache_pcie_mtp8_b32
+cached_ids_matrix_sxm_native_base_staged_f16_i64_soff_nocache_pcie_mtp8_b32 fraction 0.0 mean_us {'ours': 719.445, 'memcpy': 746.325}
+cached_ids_matrix_sxm_native_base_staged_f16_i64_soff_nocache_pcie_mtp8_b32 fraction 0.1 mean_us {'ours': 829.611, 'memcpy': 1468.928}
+cached_ids_matrix_sxm_native_base_staged_f16_i64_soff_nocache_pcie_mtp8_b32 fraction 0.3 mean_us {'ours': 2273.195, 'memcpy': 2850.389}
+complete cached_ids_matrix_sxm_native_base_staged_f16_i64_soff_nocache_pcie_mtp8_b32

@@ -42,6 +42,12 @@ prepare在第二个grid barrier前已完成所有resident lookup/stamp；本步�
 | GPU3 | fetch_ids/ids_pcie_recheck_ | 无/0.0 | 1024/5 | 8/32 | 16 | pcie | 722.74 | 721.87 | 0.12% | 747.06 | 750.93 | 750.93 |
 | GPU3 | fetch_ids/ids_pcie_recheck_ | 无/0.1 | 1024/5 | 8/32 | 16 | pcie | 830.57 | 923.90 | -11.24% | 1463.40 | 754.77 | 758.47 |
 | GPU3 | fetch_ids/ids_pcie_recheck_ | 无/0.3 | 1024/5 | 8/32 | 16 | pcie | 2267.85 | 2270.92 | -0.14% | 2848.41 | 752.04 | 1965.24 |
+| SXM0/1 | cached_ids/cached_full_ | LRU4096 | 1024/5 | 8/128 | 24 | g100_l0 | 3576.61 | 3562.90 | 0.38% | 6325.96 | 2467.18 | 2691.37 |
+| SXM0/1 | cached_ids/cached_full_ | LRU4096 | 1024/5 | 8/128 | 24 | g100_l20000 | 3605.50 | 3595.10 | 0.29% | 6346.94 | 2467.18 | 2691.55 |
+| SXM0/1 | cached_ids/cached_full_ | LRU4096 | 1024/5 | 8/128 | 24 | g50_l20000 | 5548.71 | 5536.70 | 0.22% | 8984.89 | 2467.18 | 5190.46 |
+| SXM0/1 | cached_ids/cached_full_ | LRU4096 | 1024/5 | 8/128 | 24 | nvlink | 3486.82 | 3380.16 | 3.06% | 4781.87 | 2467.18 | 2467.18 |
+| SXM0/1 | cached_ids/cached_native_full_ | LRU4096 | 1024/5 | 8/128 | 24 | nvlink | 3349.28 | 3229.66 | 3.57% | 4436.72 | 2467.18 | 2467.18 |
+| SXM0/1 | cached_ids/cached_native_full_ | LRU4096 | 1024/5 | 8/128 | 24 | pcie | 9937.68 | 9957.67 | -0.20% | 13352.61 | 2467.18 | 9599.51 |
 | SXM0/1 | direct_cache/direct256_ | LRU4096 | 256/3 | 8/128 | 24 | g100_l0 | 3452.67 | 3481.99 | -0.85% | 6034.74 | 2458.67 | 2620.68 |
 | SXM0/1 | direct_cache/direct256_ | LRU4096 | 256/3 | 8/128 | 24 | g100_l20000 | 3449.31 | 3485.86 | -1.06% | 6057.12 | 2458.67 | 2620.74 |
 | SXM0/1 | direct_cache/direct256_ | LRU4096 | 256/3 | 8/128 | 24 | g50_l20000 | 5303.82 | 5306.75 | -0.06% | 8569.55 | 2458.67 | 4958.46 |
@@ -75,7 +81,7 @@ prepare在第二个grid barrier前已完成所有resident lookup/stamp；本步�
 | SXM0/1 | prebind/prebind_f20_256_ | LRU4096 | 256/3 | 8/128 | 20 | g50_l20000 | 5312.60 | 5316.31 | -0.07% | 8557.26 | 2458.67 | 4959.90 |
 | SXM0/1 | prebind/prebind_f20_256_ | LRU4096 | 256/3 | 8/128 | 20 | nvlink | 3295.51 | 3303.73 | -0.25% | 4522.03 | 2458.67 | 2458.67 |
 
-性能审计目前1119格/549配对，正常构建测试记录[{'variant': 'cached_ids', 'tests': 105, 'sha256': 'df515400f5618fbc25c0487bed7fb2cb709cee132c6a0682cd188417c2190727'}, {'variant': 'direct_cache', 'tests': 105, 'sha256': 'd5523355a849ef8bead8e113aa413d4d23d089f4992fadd367c55cb08f28c376'}, {'variant': 'fetch_ids', 'tests': 105, 'sha256': '02986d201b75a89dbf91d57af2a0a35c1ee5972645f3b4e05223e1186da2c849'}, {'variant': 'prebind', 'tests': 105, 'sha256': 'adaacef43ff1320fb69ea3fabaad85c300e5836e144bf19cc84577aefdc9c8db'}]。每步/每pass、命中、两参考及SHA另存于[性能审计](../temp/glm_trace/tune_wait_20261031/performance_audit.json)和CSV。
+性能审计目前1337格/659配对，正常构建测试记录[{'variant': 'cached_ids', 'tests': 105, 'sha256': 'df515400f5618fbc25c0487bed7fb2cb709cee132c6a0682cd188417c2190727'}, {'variant': 'direct_cache', 'tests': 105, 'sha256': 'd5523355a849ef8bead8e113aa413d4d23d089f4992fadd367c55cb08f28c376'}, {'variant': 'fetch_ids', 'tests': 105, 'sha256': '02986d201b75a89dbf91d57af2a0a35c1ee5972645f3b4e05223e1186da2c849'}, {'variant': 'prebind', 'tests': 105, 'sha256': 'adaacef43ff1320fb69ea3fabaad85c300e5836e144bf19cc84577aefdc9c8db'}]。每步/每pass、命中、两参考及SHA另存于[性能审计](../temp/glm_trace/tune_wait_20261031/performance_audit.json)和CSV。
 
 ## 原共享页号版的真实回退与修正
 
@@ -89,8 +95,8 @@ cached_ids新增独立的缓存实例，只在开启LRU且走整行CTA32时共�
 |---|---:|---:|---|
 | cached_ids_matrix_gpu3_large_ | 32 | 32 | 是 |
 | cached_ids_matrix_gpu3_native_ | 88 | 88 | 是 |
-| cached_ids_matrix_sxm_limited_ | 499 | 640 | 否 |
-| cached_ids_matrix_sxm_native_ | 18 | 136 | 否 |
+| cached_ids_matrix_sxm_limited_ | 640 | 640 | 是 |
+| cached_ids_matrix_sxm_native_ | 83 | 136 | 否 |
 | ids_matrix_gpu3_native_ | 68 | 88 | 否 |
 | ids_matrix_sxm_limited_ | 320 | 640 | 否 |
 | ids_matrix_sxm_native_ | 0 | 136 | 否 |
@@ -118,6 +124,6 @@ R32无LRU的PCIe及R28 LRU的HBM负差没有复现；单请求MTP1 PCIe仍约慢
 
 短窗口只用于筛选；采用仍需完整1024位置、正反向多pass和全场景回归。模拟构建的真实NVLink关闭runtime hooks，不能替代最终正常构建。整体100GB/s大batch约32%–34%差距仍未改善。
 
-32-head CTA的独立资源方案及失败筛选见[新报告](mla_host_a100_half_heads_20261031.md)。生产没有安装它。
+32-head CTA的独立资源方案及失败筛选见[新报告](mla_host_a100_half_heads_20261031.md)。重复QK两版本也已拒绝。缓存运行期判断及三版同分配诊断见[完整报告](mla_host_a100_cached_runtime_20261031.md)，没有稳定100GB大形状优势；所有旧负差保留，生产没有改变。
 
-H800五个原作业在22:13查询仍为Priority/Dependency，两个原watcher存活。未提交新任务或覆盖排队源码。
+H800五个原作业在23:13查询仍为Priority/Dependency，两个原watcher存活。未提交新任务或覆盖排队源码。

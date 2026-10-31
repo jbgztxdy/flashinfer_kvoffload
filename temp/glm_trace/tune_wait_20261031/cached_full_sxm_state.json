@@ -63,6 +63,42 @@
       "--host-split",
       "off"
     ],
-    "pid": 710043
+    "pid": 710043,
+    "exit_code": 0,
+    "end": "2026-10-31T22:46:03+0800"
+  },
+  {
+    "variant": "base",
+    "start": "2026-10-31T22:46:04+0800",
+    "command": [
+      "numactl",
+      "-N0",
+      "-m0",
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_wait_20261031/bench.py",
+      "--kind",
+      "lru",
+      "--mtp",
+      "8",
+      "--requests",
+      "128",
+      "--settings",
+      "g100_l0",
+      "g100_l20000",
+      "g50_l20000",
+      "nvlink",
+      "--passes",
+      "5",
+      "--positions",
+      "1024",
+      "--fetch-ctas",
+      "24",
+      "--host-split",
+      "off"
+    ],
+    "pid": 721424,
+    "exit_code": 0,
+    "end": "2026-10-31T22:53:18+0800"
   }
 ]

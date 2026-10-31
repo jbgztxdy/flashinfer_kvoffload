@@ -49,5 +49,16 @@ result=dict(complete=True,independent_process_controls=results,
         numerical_and_final_cache_payload_checks=True),
     interpretation='Independent small MTP1 PCIe negative persists about3.9%; same-allocation alternating binaries are effectively equal. Consistent with an allocation/environment effect; causation not established. Original negative records retained. No candidate adopted.',
     goal_complete=False,candidate_adopted=False)
+dispatch_path=p/'same_process_dispatch.json'
+if dispatch_path.exists():
+    dispatch=json.loads(dispatch_path.read_text())
+    assert dispatch['complete']
+    assert dispatch['original_control_source_sha256']==sha(p/'same_process_control.py')
+    assert dispatch['source_sha256']==sha(p/'same_process_dispatch.py')
+    assert dispatch['resources_start']['foreign']==dispatch['resources_end']['foreign']==[]
+    assert len({r['launch']['function'] for r in dispatch['dispatch'].values()})==2
+    assert all(r['attention_nodes']==1024 for r in dispatch['dispatch'].values())
+    result['shared_allocation_diagnostic']['distinct_captured_functions_verified']=True
+    result['shared_allocation_diagnostic']['dispatch_sha256']=sha(dispatch_path)
 (p/'controls_audit.json').write_text(json.dumps(result,indent=2)+'\n')
 print(json.dumps(result,indent=2))

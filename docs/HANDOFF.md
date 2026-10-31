@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-10-31 22:42 QK两候选拒绝与SXM恢复检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-10-31 23:14完整确认与三版同分配诊断检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -68,16 +68,18 @@ GPU3是A100-PCIE/NUMA1，同卡独立HBM不是NVLink，物理PCIe和Memcpy pinne
 
 旧SXM handles **27470/27738/75965/59866均已exit1**，不要再poll。完整确认和正常矩阵预检遇到前一自有CUDA context退出尾声；模拟矩阵后段遇到外部PID643266/643267进入。所有失败raw/日志保留，未纳入计时结论。现在`bench.py`在拿到gpu01锁后等待进程/显存/利用率空闲再打开CUDA；没有忽略外部进程。
 
-**GPU3的88正常格和新增大形状32格均完整**，37750/17179已exit0，不重启。SXM模拟已至少499/640格、正常18/136格，仍不完整；实时覆盖以新audit为准。GPU3大形状R128 LRU的HBM3423.26→3374.46µs（1.43%），PCIe9933.76→9960.84（慢0.27%）；R64两链路约慢0.24%–0.43%。GPU3没有测MTP1/R512同卡HBM（40GB限制），该形状留SXM双GPU计划。
+**GPU3的88正常格和新增大形状32格均完整**，37750/17179已exit0，不重启。SXM模拟640/640格完整、正常最新审计83/136格仍不完整；实时覆盖以新audit为准。GPU3大形状R128 LRU的HBM3423.26→3374.46µs（1.43%），PCIe9933.76→9960.84（慢0.27%）；R64两链路约慢0.24%–0.43%。GPU3没有测MTP1/R512同卡HBM（40GB限制），该形状留SXM双GPU计划。
 
 对所有原路径超过1%的负差做前后5pass夹测，`controls_audit.json`：R32无LRU PCIe和R28 LRU HBM的负差没有复现；MTP1/R1 PCIe仍为base前52.0822、候选54.0782、base后52.0358µs（慢3.879%）。另在同进程载入两独立二进制，共用同一query/indices、Host KV/cache/workspace交替5+5次完整冷启动，base53.389000、cached_ids53.383400µs（降低0.01049%）。10次均校验输出和最终4096行实际cache载荷。此支持分配/环境因素解释，但因果未确定，原负差不删、不放宽门槛。逐步miss因同一步stamp下并行入槽顺序略有变化，不声称所有pass完全相同。
 
-当前仅两个SXM恢复父调度器，先核实PID/原handle，不重复：
+当前仅一个SXM恢复父调度器仍活；完整确认父已terminal0。先核实PID/原handle，不重复：
 
 | handle | CPU父PID | 内容 | 状态 |
 |---|---:|---|---|
-| **92282** | **658154** | `resume_cached_sxm.py`，先limited缺项，再native缺项 | 外部任务已离开，正在大形状缺项；完成raw不覆盖 |
-| **86595** | **674391** | `full_cached_sxm.py`，5pass EMU四格，再正常NVLink/PCIe | 等矩阵间空闲；之前这两组均未开始计时 |
+| **92282** | **658154** | `resume_cached_sxm.py`，limited640已完成，native子739126继续 | 当前MTP1/R512正常LRU，完成raw不覆盖 |
+| **86595** | 原674391 | `full_cached_sxm.py`，5pass EMU四格及正常NVLink/PCIe | 全部exit0，勿重启 |
+
+W完整SXM 5pass：100GB0/20µs快0.383%/0.288%、50GB20µs快0.216%、EMU构建NVLink快3.059%；正常NVLink3349.28→3229.66µs（3.571%），PCIe9937.68→9957.67（慢0.201%）。原3pass的大形状100GB负差约1.1%–1.75%和原路径0远端负差最高约2.22%仍保留，没有用5pass覆盖旧格。正常矩阵也已有慢格，待完整后分类与夹测。
 
 94802、58067、92776/60443、94033、7575（新夹测）、62149（同分配诊断）均exit0。`continuation_state.json`列真实新handle。cached_planned_complete仍false，只有完整新原件、正常物理链路和全场景通过才能保留。当前大batch历史32%–34%差距未被已保留代码改善，整体goal active。
 
@@ -99,7 +101,23 @@ GPU3受限链路、MTP8/R128、LRU4096、256位置×3pass，fetch24/32/48共18�
 
 此缩短展开候选也已拒绝。105正常测试通过，EMU32和正常64个原实例指令/资源完全相同；新实例REG244、STACK0、LOCAL0。GPU3同参256位置×3pass，100GB仍慢约22%，50GB也慢；[报告](mla_host_a100_qk_loop_20261031.md)。消除栈没有使这个机制取得收益，不再无新机制扫描unroll2/8。全部原handles10603、54470、14315、61075、90680已terminal0，不重启。U/continuation_state.json已更新。
 
-### 2.6 已完成阶段诊断（不重复启动）
+### 2.6 新R候选：保留缓存限定派发，恢复运行期LRU判断
+
+`temp/glm_trace/tune_cached_runtime_20261031/`，`runtime_ids.cuh` SHA=`85ef148314998a7973c615e1f3a3853ea2be027ce17bdc2ccfbc162495948a93`。与W/cached_ids相比，只把host_batch_caching的constexpr true恢复为原`params.pool_capacity != 0`。派发仍只在有LRU的whole CTA32启用共享页号，无LRU保持原kernel。没有改数学/cache策略/模拟器/参考。观察到W/cached_ids新目标比原fetch_ids目标少8条EMU指令，normal目标也有变化；大batch负差不能仅由此归因，需要本候选测量。
+
+R正常105测试通过；原32EMU/64normal库内kernel指令/资源不变，新缓存目标REG244/STACK0/LOCAL0，且确实与最初fetch_ids缓存目标逐条指令/资源相同（EMU/BF16/FP16），无LRU仍用原kernel。`predecessor_comparison.json`明确这是代码身份，不代表性能/因果证明。
+
+R四组完整确认已全部结束：26独立格/13配对（6短格、20完整1024×5pass格）。SXM100GB0/20µs慢0.653%/0.122%，正常NVLink快1.841%、PCIe慢0.085%；GPU3 full100GB0µs慢0.458%、20µs快0.378%、50GB快0.308%，正常独立HBM快1.395%、PCIe慢0.290%。没有稳定的100GB优势，不采用，不能说R已跑完整跨形状矩阵。[报告](mla_host_a100_cached_runtime_20261031.md)。原handles45270、68557、66889、18639、98493、91439、44565、24263、96705均terminal0，勿重启。
+
+新增R/allocation_probe：SXM共用同一Q/indices/KV/cache/workspace/output，base/cached_ids/runtime_ids三份已加载二进制各5次完整冷启动，100GB0/20µs两链路，共30pass。Graph API实查3个不同函数、相同launch形状、每图128个attention节点；不是动态链接错用同一函数。每pass检查输出、映射及524288行实际cache载荷，全部通过。0µs下cached慢0.272%、runtime快0.044%；20µs两候选快约0.6%。`allocation_audit.json`保留全部逐步样本/miss和源/库SHA。此诊断不替代矩阵，未建立各波动的因果，也未解决32%–34%主差距。handle72917已exit0。
+
+W早先GPU3小请求同分配诊断也补做Graph函数核对：两个独立函数，各1024个attention节点，`same_process_dispatch.json`/audit_controls已确认；handle91360 exit0。原独立进程3.879%负差和同分配0.01049%差异均保留。
+
+现在**只有W/92282正常矩阵父658154、子调度739126活着**，正在MTP1/R512，可能需要几分钟CPU规划/正常PCIe逐步传输，不是卡死。其他R/H/Q/U任务均结束，生产仍52919，不要重复启动任何旧handle。接续完成W正常136格，检查每个slow cell，才决定cached_ids保留或限制到有清晰收益的medium路径；不能用理论/同分配诊断代替门槛。
+
+当前任务文件检查点提交`3d101924`，719个自有文件，414个stagedJSON全解析，diff check通过。其后R完整原件、诊断与W审计更新已纳入本检查点；W正常矩阵仍在运行，后续raw/state继续增长。不要只checkout旧提交丢掉当前工作区。
+
+### 2.7 已完成阶段诊断（不重复启动）
 
 目录：`temp/glm_trace/tune_general_20261031/`。`base.cuh`为上轮已验证生产kernel，SHA256：
 
@@ -128,7 +146,7 @@ GPU3受限链路、MTP8/R128、LRU4096、256位置×3pass，fetch24/32/48共18�
 
 旧主汇报所说“最终路径阶段计时未取得”已被本次诊断补上；主汇报§7.6和本轮Markdown已同步。`audit_general.py`独立重解raw的128步×108CTA；审计现有数据不等于全目标完成。
 
-### 2.7 脚本注意事项
+### 2.8 脚本注意事项
 
 `bench_glm52_host_batch`的传递导入会重设源码路径，独立实验需在它导入**后**再次设置`jit_env.FLASHINFER_INCLUDE_DIR`；新bench已处理。更改头文件要独立JIT，核实执行header SHA，避免旧缓存。
 
@@ -208,7 +226,7 @@ Trace由GLM-5.3在A800逐层BF16 prefill、SWE-rebench OpenHands语料原生模�
 
 ## 5. 集群正在排队的任务（本次重新查询）
 
-登录`ssh -n kaituo1000_login21`（luyouy@166.111.143.25），用`bash -lc`。原快照`temp/glm_trace/tune_general_20261031/h800_queue_20261031.txt`，最新再查结果为W目录`h800_queue_20261031_2215.txt`（实际22:13:28），先读实际结果；此前五任务仍Priority/Dependency。
+登录`ssh -n kaituo1000_login21`（luyouy@166.111.143.25），用`bash -lc`。原快照`temp/glm_trace/tune_general_20261031/h800_queue_20261031.txt`，最新再查结果为W目录`h800_queue_20261031_2313.txt`（实际23:13:30），先读实际结果；此前五任务仍Priority/Dependency。
 
 | JobID | 名称 | GPU | 状态 | 内容/依赖 |
 |---:|---|---:|---|---|
@@ -232,7 +250,7 @@ Trace由GLM-5.3在A800逐层BF16 prefill、SWE-rebench OpenHands语料原生模�
 
 **上轮生产header、测试、完整实验目录及优化报告已提交`5157ff83`（665个明确自有文件）。** 当前仍继续共享dirty工作区，不丢弃未提交内容。
 
-后续提交`ce341a02`保留中batch派发，`43e2f835`/`b58193fb`保全拒绝候选，`448c4b3b`保存CTA预算和共享页号修正。W/H/QK/U当前新原件仍待提交。
+后续提交`ce341a02`保留中batch派发，`43e2f835`/`b58193fb`保全拒绝候选，`448c4b3b`保存CTA预算和共享页号修正。W/H/QK/U已在3d101924保全，R和W后续原件保存在本检查点；当前仍可能有W运行数据继续增长。
 
 本轮自己的新增/修改包括`docs/HANDOFF.md`、`docs/mla_host_glm53_report.md`、`docs/mla_host_a100_readiness_20261031.md`和`temp/glm_trace/tune_general_20261031/`；交接历史与goal prompt也属本任务。第三项的include/JIT输入已冻结，不覆盖其源码。`restore_include.py`可重建缺失的独立include，但拒绝覆盖不同的已有目录。
 

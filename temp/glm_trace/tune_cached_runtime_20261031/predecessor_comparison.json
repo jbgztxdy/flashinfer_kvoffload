@@ -1,0 +1,28 @@
+{
+  "complete": true,
+  "records": [
+    {
+      "build": "emulated BF16",
+      "unique_types": 1,
+      "matching_original_shared_id_target_instructions_and_resources": true,
+      "target_instruction_sha256": [
+        "255a786592c34921de754d9f1e1503c03e376e2b453ce55dbeb5e35d94c094cf"
+      ],
+      "all_original_kernels_unchanged": 32
+    },
+    {
+      "build": "normal BF16/FP16",
+      "unique_types": 2,
+      "matching_original_shared_id_target_instructions_and_resources": true,
+      "target_instruction_sha256": [
+        "abd8b1f56c8f1156f5f4e31ef9189270c74288f182d03ec343f22fcaf86e936f",
+        "e28661dbc851af7301aaf41fe1a0e2460f59e609685f758eba3afa6c1b63126e"
+      ],
+      "all_original_kernels_unchanged": 64
+    }
+  ],
+  "candidate_header_sha256": "85ef148314998a7973c615e1f3a3853ea2be027ce17bdc2ccfbc162495948a93",
+  "explanation": "Only the cached target matches the firstfetch_ids machine instructions/resources. Dispatch retains cached-only routing and originaluncached kernels. This proves code identity, not fresh full-matrix performance or causation for predecessor negatives.",
+  "candidate_adopted": false,
+  "goal_complete": false
+}

@@ -1,0 +1,48 @@
+{
+  "complete": true,
+  "diagnostic": true,
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "actual_distinct_functions_and_equal_launch_shape": true,
+  "passes_each": 5,
+  "positions": 1024,
+  "checks": "All30passes:sampledoutputs,cachebijection,andactual524288cachedKVrows",
+  "raw_sha256": "535510a309452e27d57f6fbe1bde54f6c1dbee8bfb2451fd0d141a27f7ab9615",
+  "summary": [
+    {
+      "setting": "g100_l0",
+      "mean_us": {
+        "base": 3469.471998512745,
+        "cached_ids": 3478.920002281666,
+        "runtime_ids": 3467.943999543786
+      },
+      "mean_unique_misses": {
+        "base": 225330.9796875,
+        "cached_ids": 225310.4734375,
+        "runtime_ids": 225316.76875
+      },
+      "reductions": {
+        "cached_ids": -0.0027231820210600333,
+        "runtime_ids": 0.00044041253816540227
+      }
+    },
+    {
+      "setting": "g100_l20000",
+      "mean_us": {
+        "base": 3528.4367997199297,
+        "cached_ids": 3507.465598359704,
+        "runtime_ids": 3506.692798063159
+      },
+      "mean_unique_misses": {
+        "base": 225328.5296875,
+        "cached_ids": 225296.0828125,
+        "runtime_ids": 225318.465625
+      },
+      "reductions": {
+        "cached_ids": 0.005943482213395579,
+        "runtime_ids": 0.00616250279968078
+      }
+    }
+  ],
+  "limitation": "Sameallocationdiagnosisisnotareplacementfortheindependentprocessmatrix;allnegativecellsremain.Causationforcross-runvariationsnotestablished."
+}

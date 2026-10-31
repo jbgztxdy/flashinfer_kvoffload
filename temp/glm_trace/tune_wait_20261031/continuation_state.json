@@ -46,9 +46,14 @@
     "25045": 0,
     "7575": 0,
     "62149": 0,
-    "88285": 0
+    "88285": 0,
+    "86595": 0,
+    "91360": 0,
+    "16834": 0,
+    "53796": 0,
+    "53864": 0
   },
-  "recorded_at": "2026-10-31T22:42:19+0800",
+  "recorded_at": "2026-10-31T23:15:03+0800",
   "goal_status": "active",
   "previous_turn_classification": "progress: rejected half-head and full-unroll duplicate-QK mechanisms, completed120GPU3nativecells, bracketednegativecontrolsandsameallocationdiagnosis",
   "production_header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
@@ -58,23 +63,18 @@
     {
       "session_id": 92282,
       "pid": 658154,
-      "command": "resume_cached_sxm.py (limited then native; only incomplete cells)",
+      "child_launcher_pid": 739126,
+      "command": "resume_cached_sxm.py:limited640done,nativenowremaining",
       "state": "resume_cached_sxm_state.json"
-    },
-    {
-      "session_id": 86595,
-      "pid": 674391,
-      "command": "full_cached_sxm.py (5passEMU then5passnormal)",
-      "state": "full_cached_retry_state.json"
     }
   ],
   "diagnostic": "3 full-window MTP8/R128 new per-CTA budgets completed.100GB wait5.90% of attention item time, NVLink3.31%,50GB45.21%; only1.31 attention items/fetcher at100GB. Timers affect scheduling; diagnosis only.",
-  "h800_snapshot": "h800_queue_20261031_2215.txt (actual22:13:28)",
-  "results": "External647559/647560left;resume92282proceedinglarge128/512shapes,full86595startedcachedIDsEMU confirmation. NewlargeR128100GB3passpairsnegative0.7-1.8%,mustnotretainwithoutfullconfirm. GPU3controlsandnegativeoriginalsretained.",
+  "h800_snapshot": "h800_queue_20261031_2313.txt (actual timestamp insidefile;fiveoldjobsunchanged,watchersalive)",
+  "results": "OriginalcachedIdsfull5passSXM:100GB0+0.383%,20+0.288%,50+0.216%,emulatedbuildNVLink+3.059%;normalNVLink+3.571%,PCIe-0.201%. Threepassnegative1-2.2%allremain;manyunchanged0remotecontrols. ActualdistinctfunctionsverifiedforsmallGPU3sameallocationcontrol;newlargeSXMthreevariantdiagnosis inR completed30passes,at100GB0cached-0.272%,runtime+0.044%;20both+0.6%.",
   "tests": "cached_ids105normalpassed",
   "codegen": "cached_ids original9EMU/18normal exact instructions/resources,newcached1/2stack/local0",
-  "coverage": "GPU3normal88+large32complete,SXMlimitedatleast499/640,native18/136;matrixactiveonlargeitems;full5passscreenactive",
+  "coverage": "GPU3normal88+large32complete,SXMlimited640/640complete;SXMnativeongoing,readlatestcoverageafteraudit",
   "controls": "IndependentR1MTP1PCIe3.879%negative persists; same-allocation5+5passes53.389000/53.383400us,difference0.01049%,actual4096-rowcachepayloadchecked. Causationnotestablished,negativepreserved.",
   "remaining": "Primarylarge-batch100GBhistorical32-34%gapunchanged;normalfull5passandcross-scenarioSXMgatespending",
-  "next_action": "Poll92282/86595 actualprocesses,state,originalhandles;no duplicates. Refreshauditcoverageafterrawgrowth. Hhalfheads,QduplicateQK,Uunroll4allrejectedandterminal,105testseach. IfcachedIDslarge regressionsconfirm, rejectlarge path or isolate validmedium dispatch with complete codegen/provenance and focusedgates;do nothide negatives."
+  "next_action": "OnlyW92282nativecohortactive;verifyPID/state,no duplicate. H/Q/Urejectedandterminal,Rallconfirm/probesterminalnotadopted. Finishnormalmatrixandreviewchangedvsunchangedslowpaths;primary100GBgapstillunresolved,no productionchange."
 }

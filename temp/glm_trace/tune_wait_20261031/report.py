@@ -65,7 +65,7 @@ if controls.exists():
         '该诊断支持内存分配或环境因素的解释，但不能确定因果；独立进程的负差未删除，也没有据此放宽采用门槛。逐步miss因同一步stamp下的并行入槽顺序略有变化，不假称每个pass命中完全一致。所有逐步时间、miss和原件SHA保存在[controls审计](../temp/glm_trace/tune_wait_20261031/controls_audit.json)及同目录原件。', '',
         '四个SXM旧runner已exit1：完整确认和正常矩阵的预检遇到前一自有CUDA context退出尾声，模拟矩阵后段遇到外部进程进入，失败日志保留。现已在取得文件锁后等待显存/进程空闲，再打开CUDA；仅恢复缺项，计划和完成raw不覆盖。恢复器及完整确认使用新handle，见continuation_state.json。', '']
 lines += ['短窗口只用于筛选；采用仍需完整1024位置、正反向多pass和全场景回归。模拟构建的真实NVLink关闭runtime hooks，不能替代最终正常构建。整体100GB/s大batch约32%–34%差距仍未改善。', '',
-    '32-head CTA的独立资源方案及失败筛选见[新报告](mla_host_a100_half_heads_20261031.md)。生产没有安装它。', '',
-    'H800五个原作业在22:13查询仍为Priority/Dependency，两个原watcher存活。未提交新任务或覆盖排队源码。', '']
+    '32-head CTA的独立资源方案及失败筛选见[新报告](mla_host_a100_half_heads_20261031.md)。重复QK两版本也已拒绝。缓存运行期判断及三版同分配诊断见[完整报告](mla_host_a100_cached_runtime_20261031.md)，没有稳定100GB大形状优势；所有旧负差保留，生产没有改变。', '',
+    'H800五个原作业在23:13查询仍为Priority/Dependency，两个原watcher存活。未提交新任务或覆盖排队源码。', '']
 (root / 'docs/mla_host_a100_wait_budget_20261031.md').write_text('\n'.join(lines))
 print('diagnostic_records', len(a['records']))
