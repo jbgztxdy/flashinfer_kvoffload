@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-01 06:33 小batch私有直方图拒绝；JQ正向最后三格仍等待，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-01 07:27 JQ已保留并完成生产验证；QPE复用本地完成、SXM等待，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -14,13 +14,27 @@
 
 ## 2. 当前运行状态与新一轮进度
 
-### 2.0 最新生产：共享页号已保留；JQ矩阵完整，保留门槛仍待
+### 2.0 最新生产：JQ已保留；QPE全item片段复用验证中
 
-**当前生产header是cached_ids，SHA=`b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a`，不再是52919。下文§2.1–2.6保留各阶段历史，冲突时以本节及实际文件为准。** 单kernel、数学、精确LRU/真实cache载荷、模拟器和原5304矩阵不变；只在已有whole CTA32且启用LRU的路径共享块页号，未改路径原9EMU/18normal kernel指令与资源完全相同。基线52919保存在W/base.cuh及其他独立实验树。
+**当前生产header已升级为JQ等价清理源，SHA=`7193255e2fdf83d3baa9347dea1a02b892c29ed746da719818e30fdf4066d469`。原b6ee…e72a是本轮基线，不要按下面旧快照回退。** 实测JQ源a2f37…c4b7c保持冻结；清理只改host局部别名，全部36EMU/72normal实例指令、资源、机器字/控制字全相同。canonical math34af、模拟器5e409及原5304矩阵e3fd均不变。
 
-**最新自动收尾runner为JQ/complete_retention.py，原handle1398，先查它及completion_state.json，不能并行手动install。** 它只等待已验证存活的JM/JQ原SXM进程，全部156格JQ矩阵、JM完整SXM、JQ三组SXM完整1024×5pass三方确认结束后，重新performance/coverage/controls审计；retain_joint_qk.py要求60个改变路径配对不慢于1%、100GB完整两顺序均>1%收益、正常物理链路不慢于1%，以及原34/68和清理源36/72完整代码等价/109测试/实际Graph。门槛失败停止，不放宽，不重复提交。全部通过才逐字节安装retained_joint_qk.cuh，再新jit_production_joint_normal从root include编译BF16/FP16、109测试、72实例指令资源验证及实际Graph；安装后任何失败只在root仍为本候选时恢复冻结b6并记日志，避免覆盖其他人编辑。完成/失败以实际state/handle为准，安装不等于全goal完成。**当前06:33仍waiting，root保持b6；JQ156矩阵完整、full反向与正常物理链路已完成，full正向base及JM六格完成；最后JQ三格因新外部GPU0/1进程1780064/1780065等待。后续不能只相信本文时间快照。**
+原JQ确认72075和自动保留1398均已实际terminal0，原PID1640200/1693759已结束。GPU0/1旧外部1780064/1780065自然结束的窗口完成最后JQ三格；156矩阵、full两顺序/正常NVLink-PCIe三方确认和全部门槛通过后，1398逐字节安装7193，再从生产root新建独立jit_production_joint_normal编译正常BF16/FP16，109项测试、72实例代码核验及实际单108CTA/block32x4x2/dynamic147968/active1 Graph全部通过。**安装和生产验证均完成，不要再等待或重启这两个handle。** [保留记录](../temp/glm_trace/tune_joint_qk_20261101/joint_qk_retention.json)、[最终当前状态审计](../temp/glm_trace/tune_joint_qk_20261101/final_retention_audit.json)及audit_final_retention.py绑定root SHA、测试/代码/Graph原件。completion_state.json保留循环最后一次missing/live旧字段，但phase/complete已完成；最终审计用实际raw/coverage/ps明确missing为空、原producer无存活，勿把旧字段当未完成。
 
-保留用retained_joint_qk.cuh只把新host dispatcher里的KV64局部别名改为Joint，无device/helper/params字段改动；原测源a2f37…c4b7c保持不覆盖。retained_codegen的36EMU/72normal全部原+新增实例指令/资源精确相同，machine_word_identity.json进一步验证全部Ampere机器字/控制字相同。额外正常105+4测试通过。cleanup源码SHA见retained_source_manifest.json。root新安装后还须更新audits/report/HANDOFF并只提交本任务文件；不要把尚未结束的1398当失败重启。
+JQ共210格/110个对原b6配对，156矩阵完整；60改变路径配对未加权降低均值1.602%，范围−0.188%至+5.253%，全部正负差保留。SXM完整1024×5pass：反向100GB0/20较b6快5.228%/4.886%，正向快3.839%/3.948%；正常NVLink较b6快3.683%，但较JM慢1.530%，没有隐藏；PCIe较b6快0.051%。[JQ报告](mla_host_a100_joint_qk_20261101.md)和主报告§7.9已改为已保留，原5304格/图1–6不改。当前100GB仍高于逐步max约25%–27%，整体goal active，不能标完成。历史performance_audit/源manifest里的candidate_adopted=false是测量时快照；当前采用状态以retention和final_retention_audit为准。
+
+**后继CPE=`temp/glm_trace/tune_cached_pe_20261101/`正在验证，尚未安装。** 头SHA=`a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15`，基线是冻结JQ a2f37（与当前7193代码等价）。每item把完整64特征QPE按原MMA片段读入每lane16个uint32，成对和奇尾KV tile全程复用；保持PE→CKV MMA、jointMDO/PV/refill、256线程/64head/2stage/CTA32/f24及LRU/模拟器。原QPE共享分配/初始copy仍在，隔离复用机制；区别于N9每tile重读QPE和9warp服务角色。原JQ36/72实例机器字全同；新REG255，EMU STACK8、正常BF16/FP16 STACK0，static2304/dynamic147968/active1，实际单kernel和synccheck/racecheck通过。SASS LDSM198→190、LDG85→101、HMMA299/BAR58不变；R12–R27在成对循环前加载后不覆写，循环内无LDL/STL，整kernel的8B stack仍如实记录，不以静态数当性能证明。
+
+CPE通过105+6=111正常测试，新增K2048/63tile奇尾、128池/512和4096容量/空单元素/padding/LSE/全部cache载荷/Graph，以及大形状K65/QPE head stride80。GPU3 MTP8R128/f24off/full1024×5：反向100GB0/20较JQ快1.471%/1.323%，正向快0.842%/0.598%；50GB快0.058%/0.138%；正常HBM快1.315%，物理PCIe快0.019%。GPU3两矩阵76格已完整；十个100GB矩阵配对快0.725%–1.363%，50GB接近持平，R64 PCIe慢0.225%也保留。两个原路径HBM负差MTP1/R1慢1.133%、R256慢1.078%，已追加完整5pass前/候选/后：R1为41.616/41.637/42.203µs（较两端均值快0.650%），R256为1061.371/1067.660/1063.863µs（慢0.475%）；均未复现>1%，原负差不删。当前104格/49配对、175520计时launch/11024segment、两参考完整。[CPE报告](mla_host_a100_cached_pe_20261101.md)、controls_audit与checkpoint记录完整边界。
+
+**当前唯一CPE父runner为15217/PID2084930，validate_more.py；子screen PID2104175仍live，等待新的GPU0/1外部2101252/2101253（checkfreq_formal_runner.py）。** 旧JQ/外部进程都已结束，不要误等旧PID。15217已做完本地76格及刷新；会继续SXM反向/正向/正常NVLink-PCIe共16格full确认，全部过门槛后再做SXM80格矩阵，最后刷新审计/报告。它不会安装。先查该handle、broader_validation_state和实际ps，不要重启或重复启动。SXM没有CPE性能数据，不能拿GPU3独立HBM当NVLink或跳过MTP1R512。111测试/本地通过不能替代所有SXM门槛和新保留root验证。
+
+CPE其他handles95227/36824/61566/49401/66271/66530/62457/40637均terminal0。最初generator签名空格断言在生成候选前失败；编译前又修正const数组引用与原MMA签名不兼容，未编译28d149源/manifest和说明都保留。只有a436被编译测量，没有GPU失败或重试。当前生产7193已独立验证，不要安装未完成的CPE。
+
+CPU-only真实trace抽样另核验简单prepare交错：原row32重复率0，2row×16col约1.355%，8row×4col约1.734%，不是性能或实际atomic节省；不值得按这个简单布局直接实现/扫参数。followup_resource_review.json还列了尚未实现的attention五个16row半buffer思路：利用不再读取的shared QPE8KB和原余量，计算dynamic158336+static2304=160640B；但P half的32B行映射、寄存器255和所有权/cp.async生命周期均待设计/验证。它不是旧fetch四缓冲或N9架构，不要把分析写成已有实现/收益。下一步优先处理15217已有验证及负差，再推进真正的新机制。
+
+H800本轮07:29只读复查原五任务仍Priority/Dependency，两个原watcher4160646/1174145 live；AGENTS/MEMORY哈希不变，CPE/h800_context_hashes.txt、h800_queue.txt及带最新哈希/时间的h800_queue_latest.txt保存原件，无新Slurm提交、排队源码或远端临时目录写入。
+
+下面WH/N9/LD/JP等记录保留当时的失败/拒绝证据，其中“生产b6”“72075/1398等待”等是旧时间快照；当前采用状态和活动进程以上述入口及实际文件为准。
 
 **新WH=`temp/glm_trace/tune_warp_histogram_20261101/`已完成拒绝。** 只在原cached/staged ROW_MERGE（rows×headtiles≤32）、A100/2stage/CTA32派发新Params实例；保持所有原JQ36EMU/72normal实例指令/资源及机器字/控制字全相同。新helper保留warp聚合，用8×256-bin私有直方图避免warp间相同epoch计数争用，warp0归并回原lane负责的八个bin，再执行原radix rank/prefix和thread-major同龄淘汰。无新barrier，LRU/缓存载荷/attention数学/fetch/planner/模拟器不变；额外8192B static，新static10240+dynamic147968=158208B，实际108CTA/block32x4x2/active1。新REG246EMU/244normal、STACK0/LOCAL0。
 

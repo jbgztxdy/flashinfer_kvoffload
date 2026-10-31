@@ -1,0 +1,33 @@
+{
+  "status": "analysis_only_no_new_kernel",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "base_header_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "rejected_simple_prepare_interleave": {
+    "evidence": "prepare_overlap_review.json",
+    "rows2_cols16_duplicate_fraction": 0.013545036315917969,
+    "rows8_cols4_duplicate_fraction": 0.017342329025268555,
+    "reason": "Only1-2% warp-local duplicates in sampled real trace; extra per-row cursor groups and8row sector fragmentation are unlikely to justify a prototype. This does not reject broader MTP sharing mechanisms."
+  },
+  "possible_followup": {
+    "mechanism": "Five16-row physical half-buffers can represent two32KV tiles plus a16-row prefetch ahead of current QK. Rotate half-buffer ownership as hi/lo PV frees halves. Keep256threads and dedicated fetch; this is an attention load pipeline, distinct from old fetch four-buffer and N9 service warp designs.",
+    "current_dynamic_bytes": 147968,
+    "current_static_bytes": 2304,
+    "unused_shared_qpe_bytes": 8192,
+    "proposed_dynamic_formula": "64*512*2 + 128 alignment padding + 5*16*(512+64)*2 + 2*64*4",
+    "proposed_dynamic_bytes": 158336,
+    "proposed_total_bytes": 160640,
+    "fetch_double_buffer_bytes": 147456,
+    "unresolved": [
+      "Existing SwizzleMode only k64B/k128B; a64head x16KV P half has32B rows and needs a correct private mapping/load-store helper. Do not pretend a stage-count edit suffices.",
+      "Register budget already255/thread; half IDs/pointers may spill and erase load overlap.",
+      "Prove half-buffer ownership, cp.async wait groups and P/KPE alias lifetime; preserve exact PE->CKV and descending PV arithmetic and true post-read simulator hooks.",
+      "No prototype, codegen, correctness or performance evidence exists yet. First finish current cached-PE and original JQ gates."
+    ]
+  },
+  "source_references": [
+    "include/flashinfer/attention/mla.cuh:SharedStorageQKVO",
+    "include/flashinfer/permuted_smem.cuh:SwizzleMode",
+    "static_instruction_review.json"
+  ]
+}

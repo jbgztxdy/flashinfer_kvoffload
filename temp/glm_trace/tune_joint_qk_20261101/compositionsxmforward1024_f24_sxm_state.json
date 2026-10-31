@@ -64,5 +64,38 @@
     "pid": 1778738,
     "exit_code": 0,
     "end": "2026-11-01T05:53:03+0800"
+  },
+  {
+    "variant": "joint_qk",
+    "start": "2026-11-01T07:12:27+0800",
+    "command": [
+      "numactl",
+      "-N0",
+      "-m0",
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_qk_20261101/bench.py",
+      "--kind",
+      "lru",
+      "--mtp",
+      "8",
+      "--requests",
+      "128",
+      "--settings",
+      "g100_l0",
+      "g100_l20000",
+      "g50_l20000",
+      "--passes",
+      "5",
+      "--positions",
+      "1024",
+      "--fetch-ctas",
+      "24",
+      "--host-split",
+      "off"
+    ],
+    "pid": 2100416,
+    "exit_code": 0,
+    "end": "2026-11-01T07:13:12+0800"
   }
 ]

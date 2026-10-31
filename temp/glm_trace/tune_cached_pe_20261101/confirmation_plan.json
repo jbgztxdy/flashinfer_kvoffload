@@ -1,0 +1,27 @@
+{
+  "recorded_at": "2026-11-01T06:47:17+0800",
+  "hardware": "GPU3 A100-PCIE NUMA1; same-card HBM emulator,notNVLink",
+  "mtp": 8,
+  "requests": 128,
+  "kind": "lru",
+  "capacity": 4096,
+  "fetch_ctas": 24,
+  "host_split": "off",
+  "positions": 1024,
+  "passes": 5,
+  "settings": [
+    "g100_l0",
+    "g100_l20000",
+    "g50_l20000"
+  ],
+  "order": [
+    "cached_pe",
+    "base"
+  ],
+  "tag": "cachedreverse1024_f24_",
+  "headers": {
+    "base": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
+    "cached_pe": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15"
+  },
+  "reason": "Short100GB+0.252/+0.585%,50GBapproximatelyflat;onefixedreversefulltracechecksreproducibility,notadoption. No parameter sweep. All negative points retained."
+}

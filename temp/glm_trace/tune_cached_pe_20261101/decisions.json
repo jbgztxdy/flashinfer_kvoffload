@@ -1,0 +1,28 @@
+{
+  "status": "pending_sxm_confirmation_and_matrix",
+  "conclusion": "QPE片段复用候选在GPU3完整两顺序100GB对照均有正信号，76格本地矩阵及两项负差夹测已完成；SXM确认/80格矩阵仍待，尚未安装。",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "audit_sha256": "292c2ada0038dc1d4c599e66bbf9fda6a116df8e7c119589390a9ef870144802",
+  "local_matrix_complete": true,
+  "local_full_100GB_reduction_range": [
+    0.005976279638057469,
+    0.0147075488518007
+  ],
+  "original_negative_samples_preserved": true,
+  "controls_audit_sha256": "354229a854de9972fd72107843949770bcb8248603bc4cec2ce4c0aba232ada8",
+  "no_over_one_percent_negative_reproduced": true,
+  "remaining": [
+    "SXMfull1024x5twoorders+nativeNVLink/PCIe",
+    "80SXMmatrixcellsincludingMTP1R512",
+    "Allnewnegativecontrols",
+    "Frozenretentionandfreshroot111tests/codegen/Graphonlyafterallgates;currentproductionJQ7193alreadyverified"
+  ],
+  "active_producer": {
+    "session_id": 15217,
+    "pid": 2084930,
+    "child_pid": 2104175,
+    "waiting_for": "GPU0/1 external2101252/2101253"
+  },
+  "recorded_at": "2026-11-01T07:25:46+0800"
+}

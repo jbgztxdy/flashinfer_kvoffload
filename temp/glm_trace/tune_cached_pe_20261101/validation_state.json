@@ -1,0 +1,153 @@
+{
+  "start": "2026-11-01T06:41:30+0800",
+  "phase": "short_screen_complete",
+  "complete": true,
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/compiler_cached_pe.py"
+      ],
+      "start": "2026-11-01T06:42:50+0800",
+      "log": "compiler_cached_pe.log",
+      "pid": 2064414,
+      "exit_code": 0,
+      "end": "2026-11-01T06:43:16+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/compiler_cached_pe.py",
+        "--normal"
+      ],
+      "start": "2026-11-01T06:43:16+0800",
+      "log": "compiler_cached_pe_normal.log",
+      "pid": 2064967,
+      "exit_code": 0,
+      "end": "2026-11-01T06:44:06+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/verify_machine_words.py"
+      ],
+      "start": "2026-11-01T06:44:06+0800",
+      "log": "verify_machine_words.log",
+      "pid": 2065885,
+      "exit_code": 0,
+      "end": "2026-11-01T06:44:11+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/probe_cached_pe.py"
+      ],
+      "start": "2026-11-01T06:44:11+0800",
+      "log": "probe_cached_pe.log",
+      "pid": 2065983,
+      "exit_code": 0,
+      "end": "2026-11-01T06:44:15+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "synccheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLACachedPEKernel",
+        "--launch-count",
+        "1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/probe_cached_pe.py"
+      ],
+      "start": "2026-11-01T06:44:15+0800",
+      "log": "synccheck_cached_pe.log",
+      "pid": 2066121,
+      "exit_code": 0,
+      "end": "2026-11-01T06:44:20+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "racecheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLACachedPEKernel",
+        "--launch-count",
+        "1",
+        "--racecheck-num-workers",
+        "8",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/probe_cached_pe.py"
+      ],
+      "start": "2026-11-01T06:44:20+0800",
+      "log": "racecheck_cached_pe.log",
+      "pid": 2066349,
+      "exit_code": 0,
+      "end": "2026-11-01T06:44:36+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/screen.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "cached_pe",
+        "--variants",
+        "base",
+        "cached_pe",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--tag",
+        "cached256_f24_"
+      ],
+      "start": "2026-11-01T06:44:36+0800",
+      "log": "screen_gpu3.log",
+      "pid": 2066697,
+      "exit_code": 0,
+      "end": "2026-11-01T06:46:08+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/audit_performance.py"
+      ],
+      "start": "2026-11-01T06:46:08+0800",
+      "log": "audit_performance.log",
+      "pid": 2068633,
+      "exit_code": 0,
+      "end": "2026-11-01T06:46:08+0800"
+    }
+  ],
+  "end": "2026-11-01T06:46:08+0800"
+}

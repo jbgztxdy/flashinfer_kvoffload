@@ -1,0 +1,48 @@
+{
+  "positions": 1024,
+  "passes": 5,
+  "mtp": 8,
+  "requests": 128,
+  "fetch_ctas": 24,
+  "host_split": "off",
+  "tasks": [
+    {
+      "tag": "cachedsxmreverse1024_f24_",
+      "variants": [
+        "cached_pe",
+        "base"
+      ],
+      "native": false,
+      "settings": [
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ]
+    },
+    {
+      "tag": "cachedsxmforward1024_f24_",
+      "variants": [
+        "base",
+        "cached_pe"
+      ],
+      "native": false,
+      "settings": [
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ]
+    },
+    {
+      "tag": "cachedsxmnative1024_f24_",
+      "variants": [
+        "base",
+        "cached_pe"
+      ],
+      "native": true,
+      "settings": [
+        "nvlink",
+        "pcie"
+      ]
+    }
+  ]
+}

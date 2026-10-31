@@ -1,5 +1,5 @@
 {
-  "candidate_adopted": false,
+  "candidate_adopted": true,
   "goal_status": "active",
   "triples": [
     {
@@ -129,6 +129,54 @@
       "over_joint_reduction": -0.00042720604747326085,
       "memcpy_us": 13291.848005354404,
       "reference_us": 9594.867600398902
+    },
+    {
+      "cohort": "compositionsxmforward1024_f24_",
+      "setting": "g100_l0",
+      "positions": 1024,
+      "passes": 5,
+      "hardware": "SXM0/1",
+      "local_us": 2467.1786644806466,
+      "over_reference": 0.2451824481327134,
+      "base_us": 3485.0064001977444,
+      "joint_mdo_us": 3368.3024007827044,
+      "joint_qk_us": 3351.2319955974817,
+      "over_base_reduction": 0.03838569840005801,
+      "over_joint_reduction": 0.0050679550569022735,
+      "memcpy_us": 6239.927998930216,
+      "reference_us": 2691.3582026658173
+    },
+    {
+      "cohort": "compositionsxmforward1024_f24_",
+      "setting": "g100_l20000",
+      "positions": 1024,
+      "passes": 5,
+      "hardware": "SXM0/1",
+      "local_us": 2467.1786644806466,
+      "over_reference": 0.2540174613005004,
+      "base_us": 3513.35839740932,
+      "joint_mdo_us": 3384.7327951341867,
+      "joint_qk_us": 3374.6607933193445,
+      "over_base_reduction": 0.03947721479034083,
+      "over_joint_reduction": 0.0029757154920239115,
+      "memcpy_us": 6262.078396975994,
+      "reference_us": 2691.079588173832
+    },
+    {
+      "cohort": "compositionsxmforward1024_f24_",
+      "setting": "g50_l20000",
+      "positions": 1024,
+      "passes": 5,
+      "hardware": "SXM0/1",
+      "local_us": 2467.1786644806466,
+      "over_reference": 0.06262657522183601,
+      "base_us": 5527.763195335865,
+      "joint_mdo_us": 5522.358406335115,
+      "joint_qk_us": 5517.03039444983,
+      "over_base_reduction": 0.0019416173426334282,
+      "over_joint_reduction": 0.000964807332891171,
+      "memcpy_us": 8970.159997045994,
+      "reference_us": 5191.880688
     },
     {
       "cohort": "compositionsxmnative1024_f24_",

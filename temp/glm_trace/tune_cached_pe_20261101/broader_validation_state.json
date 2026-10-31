@@ -1,0 +1,109 @@
+{
+  "start": "2026-11-01T06:59:29+0800",
+  "pid": 2084930,
+  "phase": "sxm_full_confirmation",
+  "complete": false,
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/validate_shapes.py",
+        "--cohort",
+        "limited"
+      ],
+      "log": "matrix_gpu3_limited.log",
+      "start": "2026-11-01T06:59:29+0800",
+      "pid": 2084931,
+      "exit_code": 0,
+      "end": "2026-11-01T07:04:40+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/validate_shapes.py",
+        "--cohort",
+        "native"
+      ],
+      "log": "matrix_gpu3_native.log",
+      "start": "2026-11-01T07:04:40+0800",
+      "pid": 2091403,
+      "exit_code": 0,
+      "end": "2026-11-01T07:15:21+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/audit_performance.py"
+      ],
+      "log": "audit_performance.log",
+      "start": "2026-11-01T07:15:21+0800",
+      "pid": 2104164,
+      "exit_code": 0,
+      "end": "2026-11-01T07:15:22+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/audit_coverage.py"
+      ],
+      "log": "audit_coverage.log",
+      "start": "2026-11-01T07:15:22+0800",
+      "pid": 2104169,
+      "exit_code": 0,
+      "end": "2026-11-01T07:15:22+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/report.py"
+      ],
+      "log": "report.log",
+      "start": "2026-11-01T07:15:22+0800",
+      "pid": 2104173,
+      "exit_code": 0,
+      "end": "2026-11-01T07:15:22+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/screen.py",
+        "--hardware",
+        "sxm",
+        "--candidate",
+        "cached_pe",
+        "--variants",
+        "cached_pe",
+        "base",
+        "--positions",
+        "1024",
+        "--passes",
+        "5",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--tag",
+        "cachedsxmreverse1024_f24_",
+        "--settings",
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ],
+      "log": "cachedsxmreverse1024_f24_screen.log",
+      "start": "2026-11-01T07:15:22+0800",
+      "pid": 2104175
+    }
+  ],
+  "gpu3_matrix_complete": true,
+  "missing_original_JQ": [],
+  "last_observation": "2026-11-01T07:15:22+0800"
+}

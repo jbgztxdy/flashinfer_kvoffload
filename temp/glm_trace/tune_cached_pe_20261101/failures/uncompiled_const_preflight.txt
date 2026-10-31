@@ -1,0 +1,1 @@
+Pre-compile source inspection found canonical mma_sync_m16n16k16_row_col_f16f16f32 accepts uint32_t* A rather than const uint32_t*. No build or GPU work had begun. Changed new cached-QPE helper parameters to non-const array references; the MMA helper only reads its operands. Initial28d149 header is archived and was never measured.

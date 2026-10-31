@@ -1,0 +1,117 @@
+{
+  "complete": true,
+  "candidate_adopted": false,
+  "goal_status": "active",
+  "cases": [
+    {
+      "case": "m1b256_lru_hbm",
+      "before_us": 1053.6390016670339,
+      "candidate_us": 1054.9924012972042,
+      "after_us": 1054.0304015390575,
+      "reduction_vs_before": -0.0012845003156005674,
+      "reduction_vs_after": -0.0009126869175140051,
+      "reduction_vs_baseline_mean": -0.001098559093183571,
+      "baseline_endpoint_change": 0.00037147435829942843,
+      "over_one_percent_slow": false,
+      "original_samples_preserved": true,
+      "evidence": [
+        {
+          "phase": "before",
+          "ours_us": 1053.6390016670339,
+          "raw": "temp/glm_trace/tune_joint_qk_20261101/gpu3/raw/joint_qk_control_m1b256_lru_hbm_before_base_staged_f16_i64_soff_lru_native_hbm_mtp1_b256.json",
+          "sha256": "187c7d80dd6d370d3c6a700aec5c52b14b72edd40c244491050a033ce28fe62f",
+          "pass_mean_us": [
+            1012.3089994885959,
+            1061.9920029421337,
+            1060.9600009047426,
+            1065.8920021378435,
+            1067.0420028618537
+          ]
+        },
+        {
+          "phase": "candidate",
+          "ours_us": 1054.9924012972042,
+          "raw": "temp/glm_trace/tune_joint_qk_20261101/gpu3/raw/joint_qk_control_m1b256_lru_hbm_candidate_joint_qk_staged_f16_i64_soff_lru_native_hbm_mtp1_b256.json",
+          "sha256": "4fdf402a7b05f690943c3f6f48d9a90048580534bb8a99eec4b5eb91453cdcfd",
+          "pass_mean_us": [
+            1015.4890012345277,
+            1061.2579999142326,
+            1063.6550034978427,
+            1066.0570019390434,
+            1068.5029999003746
+          ]
+        },
+        {
+          "phase": "after",
+          "ours_us": 1054.0304015390575,
+          "raw": "temp/glm_trace/tune_joint_qk_20261101/gpu3/raw/joint_qk_control_m1b256_lru_hbm_after_base_staged_f16_i64_soff_lru_native_hbm_mtp1_b256.json",
+          "sha256": "f818593b4316aee6289192283e8cbdbb98d7ff9c42ca606fed51e6964c59c330",
+          "pass_mean_us": [
+            1004.9250010633841,
+            1064.369001018349,
+            1065.7400022028014,
+            1067.5220015109517,
+            1067.5960018998012
+          ]
+        }
+      ]
+    },
+    {
+      "case": "m8b64_nocache0_hbm",
+      "before_us": 1205.1455855369568,
+      "candidate_us": 1203.711974620819,
+      "after_us": 1203.8143694400787,
+      "reduction_vs_before": 0.0011895748806970419,
+      "reduction_vs_after": 8.505864513586037e-05,
+      "reduction_vs_baseline_mean": 0.0006376219464436783,
+      "baseline_endpoint_change": -0.0011046101922075335,
+      "over_one_percent_slow": false,
+      "original_samples_preserved": true,
+      "evidence": [
+        {
+          "phase": "before",
+          "ours_us": 1205.1455855369568,
+          "raw": "temp/glm_trace/tune_joint_qk_20261101/gpu3/raw/joint_qk_control_m8b64_nocache0_hbm_before_base_staged_f24_i64_soff_nocache_native_hbm_mtp8_b64.json",
+          "sha256": "5d0181c711a1536dc6e0040de573649012c95b36dfef5f90bf3dd83be2787697",
+          "pass_mean_us": [
+            1206.527978181839,
+            1205.2479982376099,
+            1202.9439806938171,
+            1208.319991827011,
+            1202.6879787445068
+          ]
+        },
+        {
+          "phase": "candidate",
+          "ours_us": 1203.711974620819,
+          "raw": "temp/glm_trace/tune_joint_qk_20261101/gpu3/raw/joint_qk_control_m8b64_nocache0_hbm_candidate_joint_qk_staged_f24_i64_soff_nocache_native_hbm_mtp8_b64.json",
+          "sha256": "71102228699225df56abe5d53d1bba9ca317f4ca0cf38bcf18269df27d9c9805",
+          "pass_mean_us": [
+            1205.5039703845978,
+            1205.2479684352875,
+            1201.4079689979553,
+            1204.9919962882996,
+            1201.4079689979553
+          ]
+        },
+        {
+          "phase": "after",
+          "ours_us": 1203.8143694400787,
+          "raw": "temp/glm_trace/tune_joint_qk_20261101/gpu3/raw/joint_qk_control_m8b64_nocache0_hbm_after_base_staged_f24_i64_soff_nocache_native_hbm_mtp8_b64.json",
+          "sha256": "7b4ceb029ee1610fed4e87c0b7cd2f3f19a55c2fc242c7d0e1819a4191af62ef",
+          "pass_mean_us": [
+            1205.2479684352875,
+            1204.9919664859772,
+            1201.919972896576,
+            1205.2479684352875,
+            1201.6639709472656
+          ]
+        }
+      ]
+    }
+  ],
+  "all_within_one_percent_each_endpoint": true,
+  "plan_sha256": "3a2e99b27405d942faa44446fee17703cef4a50ea0f5609c861d4d1611d415a9",
+  "performance_audit_sha256": "b4594768148aca8a26d66cc396392f27dac4e558dccbaecf1b5e5b5b435913ee",
+  "limitation": "Brackets establish repeatability of these two independent-allocation measurements, not a causal attribution. Original slow cells stay in performance_audit.json."
+}

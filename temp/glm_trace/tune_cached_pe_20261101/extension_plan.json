@@ -1,0 +1,37 @@
+{
+  "recorded_at": "2026-11-01T06:50:23+0800",
+  "positions": 1024,
+  "passes": 5,
+  "mtp": 8,
+  "requests": 128,
+  "fetch_ctas": 24,
+  "host_split": "off",
+  "order": [
+    "base",
+    "cached_pe"
+  ],
+  "headers": {
+    "base": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
+    "cached_pe": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15"
+  },
+  "tasks": [
+    {
+      "tag": "cachedforward1024_f24_",
+      "native": false,
+      "settings": [
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ]
+    },
+    {
+      "tag": "cachednative1024_f24_",
+      "native": true,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ]
+    }
+  ],
+  "reason": "Reversefull100GB+1.471/+1.323%; oppositeorderandnativechecksneeded. GPU3nativeHBMisnotNVLink. No adoption before cross-shape/SXM gates."
+}

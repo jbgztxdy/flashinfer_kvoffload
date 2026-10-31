@@ -1,0 +1,98 @@
+{
+  "start": "2026-11-01T06:50:23+0800",
+  "complete": true,
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/screen.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "cached_pe",
+        "--variants",
+        "base",
+        "cached_pe",
+        "--positions",
+        "1024",
+        "--passes",
+        "5",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--tag",
+        "cachedforward1024_f24_",
+        "--settings",
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ],
+      "start": "2026-11-01T06:50:23+0800",
+      "task": {
+        "tag": "cachedforward1024_f24_",
+        "native": false,
+        "settings": [
+          "g100_l0",
+          "g100_l20000",
+          "g50_l20000"
+        ]
+      },
+      "pid": 2074765,
+      "exit_code": 0,
+      "end": "2026-11-01T06:52:26+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/screen.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "cached_pe",
+        "--variants",
+        "base",
+        "cached_pe",
+        "--positions",
+        "1024",
+        "--passes",
+        "5",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--tag",
+        "cachednative1024_f24_",
+        "--settings",
+        "native_hbm",
+        "pcie",
+        "--native"
+      ],
+      "start": "2026-11-01T06:52:27+0800",
+      "task": {
+        "tag": "cachednative1024_f24_",
+        "native": true,
+        "settings": [
+          "native_hbm",
+          "pcie"
+        ]
+      },
+      "pid": 2077275,
+      "exit_code": 0,
+      "end": "2026-11-01T06:56:34+0800"
+    }
+  ],
+  "end": "2026-11-01T06:56:34+0800"
+}

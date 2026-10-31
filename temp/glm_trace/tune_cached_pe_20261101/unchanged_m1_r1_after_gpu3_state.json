@@ -1,0 +1,33 @@
+[
+  {
+    "variant": "base",
+    "start": "2026-11-01T07:18:27+0800",
+    "command": [
+      "numactl",
+      "-N1",
+      "-m1",
+      "/mnt/data/mhy-vllm-venv/bin/python",
+      "-u",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/bench_gpu3_native.py",
+      "--kind",
+      "lru",
+      "--mtp",
+      "1",
+      "--requests",
+      "1",
+      "--settings",
+      "native_hbm",
+      "--passes",
+      "5",
+      "--positions",
+      "1024",
+      "--fetch-ctas",
+      "16",
+      "--host-split",
+      "off"
+    ],
+    "pid": 2108065,
+    "exit_code": 0,
+    "end": "2026-11-01T07:18:34+0800"
+  }
+]

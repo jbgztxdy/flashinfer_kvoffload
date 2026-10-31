@@ -1,0 +1,11 @@
+{
+  "base_sha256": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
+  "candidate_sha256": "28d149c1f2d016d89dc7f5deed9eb116e966559dfd1610b99d66ba12fb6802f2",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "mechanism": "Load QPE64 into16 packed MMA words/lane once per attention item; reuse across all paired and odd KV tiles. SamePEthenCKV MMA order, jointMDO/PV/refill, 64heads/256threads/2stage/CTA32/f24, fetch/LRU/math/shared layout.",
+  "distinction": "N9 read QPE global anew per tile as part of a288thread service-warp design. This caches QPE across the whole item and keeps the original256thread dedicated fetch architecture. No unroll/tile/grid/fetch sweep.",
+  "tradeoff": "Sixteen additional long-lived packed words may increase registers/spills. Original shared QPE allocation/load is retained to isolate reuse and keep147968B layout; no memory-capacity/occupancy gain claimed.",
+  "invariants": "All576features and native score accumulation order, exactLRU/cachepayload, simulator and references unchanged. No new kernel/barrier. Only original large cached fully-staged JQ dispatch."
+}

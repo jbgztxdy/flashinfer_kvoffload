@@ -1,0 +1,23 @@
+{
+  "positions": 256,
+  "passes": 3,
+  "mtp": 8,
+  "requests": 128,
+  "fetch_ctas": 24,
+  "host_split": "off",
+  "settings": [
+    "g100_l0",
+    "g100_l20000",
+    "g50_l20000"
+  ],
+  "order": [
+    "base",
+    "cached_pe"
+  ],
+  "headers": {
+    "base": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
+    "cached_pe": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15"
+  },
+  "unroll": "Frozen original4, no numerical sweep",
+  "mechanism": "Load QPE64 into16 packed MMA words/lane once per attention item; reuse across all paired and odd KV tiles. SamePEthenCKV MMA order, jointMDO/PV/refill, 64heads/256threads/2stage/CTA32/f24, fetch/LRU/math/shared layout."
+}

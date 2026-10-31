@@ -1,0 +1,79 @@
+{
+  "start": "2026-11-01T07:16:33+0800",
+  "production_header_sha256": "7193255e2fdf83d3baa9347dea1a02b892c29ed746da719818e30fdf4066d469",
+  "math_header_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "test_source_sha256": "5845ad3cf3f5fe1193011e707002b774faebaa3f9c70ab345b95db845d2d74a8",
+  "stress_source_sha256": "ed9c05387d0b46442be0c2090b43240333e6092547512c45a14d3ba09080a30a",
+  "expected_tests": 109,
+  "resources_start": {
+    "timestamp": "2026-11-01T07:16:33+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "fresh_workspace": "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_qk_20261101/jit_production_joint_normal",
+  "include_path": "/mnt/data/rtx/projects/flashinfer/include",
+  "normal_build": true,
+  "libraries": [
+    {
+      "path": "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_qk_20261101/jit_production_joint_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "sha256": "a9b4c20cc0fe9e7057898ad0f05506d0d2355f4693130870a24b2e331d287a6f"
+    },
+    {
+      "path": "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_qk_20261101/jit_production_joint_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "sha256": "7f03ca0555e20174ba6e8dd79f8661a9a546d27dbf8e8132fea09edb77ca7df4"
+    },
+    {
+      "path": "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_qk_20261101/jit_production_joint_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "sha256": "2f6b25ce91727d03b6fd2470c4379ea7bc5babd6df43f62f1965f864e1802fd9"
+    },
+    {
+      "path": "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_qk_20261101/jit_production_joint_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "sha256": "bb15aecd9dc3d15e3fa547900b088c7a35f6fa5e75ad50b0402d45e798382167"
+    }
+  ],
+  "complete": true,
+  "pid": 2105595,
+  "command": [
+    "numactl",
+    "-N1",
+    "-m1",
+    "/mnt/data/mhy-vllm-venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "-p",
+    "jitpaths",
+    "-p",
+    "productionpaths",
+    "tests/attention/test_mla_host_batch.py",
+    "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_qk_20261101/test_cofetch_progress.py"
+  ],
+  "exit_code": 0,
+  "end": "2026-11-01T07:16:46+0800",
+  "resources_end": {
+    "timestamp": "2026-11-01T07:16:46+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 20
+      }
+    ],
+    "foreign": [],
+    "available": false
+  },
+  "log_sha256": "b442dd45770bd487a27d2ea2194e2aa541e31ba1054c61161a98962d6ccbe68c"
+}
