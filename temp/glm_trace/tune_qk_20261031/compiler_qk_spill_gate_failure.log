@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_20261031/compiler_qk.py", line 49, in <module>
+    assert all('KernelTraits' in r['symbol'] and 'STACK:0' in r['resource'] and 'LOCAL:0' in r['resource'] for r in added)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

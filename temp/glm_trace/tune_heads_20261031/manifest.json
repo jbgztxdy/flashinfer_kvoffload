@@ -1,0 +1,11 @@
+{
+  "base_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "candidate_sha256": "d8dc5371b4e28b15764bf331a39eb579678190c91f22902e048b52627b35038e",
+  "base_mla_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "candidate_mla_sha256": "e5968e7605bb657de30e5600c4a8fc09b977a3e2e7163f64e46718de519289a3",
+  "mechanism": "Two32-head items per whole row;128threads/CTA,1stage32KV,cooperative grid from actual occupancy. Try twoCTAs/SM; fetch32rows/double buffer. Same heads/math/cache/far traffic/simulator, no head merge. Original64-head constants unchanged; require compiled-code equivalence.",
+  "expected_dynamic_shared_bytes": 73984,
+  "workspace_claim_capacity": "2*rows+partial_capacity+num_pools already allocated; whole/ROW_MERGE=false skips completion and partial data",
+  "candidate_adopted": false,
+  "goal_complete": false
+}

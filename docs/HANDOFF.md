@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-10-31 21:32缓存限定页号流水检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-10-31 22:42 QK两候选拒绝与SXM恢复检查点，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -66,21 +66,40 @@ GPU3是A100-PCIE/NUMA1，同卡独立HBM不是NVLink，物理PCIe和Memcpy pinne
 
 当前缓存限定版使用新cohort和`validate_cached_ids.py`，完整计划覆盖8形状、MTP1/8、LRU1024位置和无LRU四快照×3比例、50/100GB/s五延迟及正常NVLink/PCIe、小batch控制。GPU3独立正常88格；SXM640模拟格和136正常格分别审计。参考同硬件，未修改原5304矩阵。
 
-原handle需先核实，不重复启动：
+旧SXM handles **27470/27738/75965/59866均已exit1**，不要再poll。完整确认和正常矩阵预检遇到前一自有CUDA context退出尾声；模拟矩阵后段遇到外部PID643266/643267进入。所有失败raw/日志保留，未纳入计时结论。现在`bench.py`在拿到gpu01锁后等待进程/显存/利用率空闲再打开CUDA；没有忽略外部进程。
 
-| handle | 内容 | 状态文件/最近情况 |
-|---|---|---|
-| **27470** | cached_ids vs base，SXM R128/MTP8，1024位置×5pass，f24/off，EMU四链路 | `cached_full_sxm_state.json`；等GPU0/1外部任务 |
-| **27738** | 同形状正常构建5pass，真实NVLink/PCIe | `cached_native_full_sxm_state.json`；等GPU0/1 |
-| **37750** | 缓存限定版GPU3正常88格 | `cached_ids_matrix_gpu3_native_state.json`，正在执行 |
-| **75965** | 缓存限定版SXM limited640格 | `cached_ids_matrix_sxm_limited_state.json`；等GPU0/1 |
-| **59866** | 缓存限定版SXM normal136格 | `cached_ids_matrix_sxm_native_state.json`；等GPU0/1 |
+**GPU3的88正常格和新增大形状32格均完整**，37750/17179已exit0，不重启。SXM模拟已至少499/640格、正常18/136格，仍不完整；实时覆盖以新audit为准。GPU3大形状R128 LRU的HBM3423.26→3374.46µs（1.43%），PCIe9933.76→9960.84（慢0.27%）；R64两链路约慢0.24%–0.43%。GPU3没有测MTP1/R512同卡HBM（40GB限制），该形状留SXM双GPU计划。
 
-94802（cached105）、58067（EMU）、92776/60443（代码生成）、94033（PCIe复核）均exit0。原13628/3806/91732及所有prebind/direct筛选也已exit0。原92638/77190父进程143为主动保留后停止，80883为预检失败，均terminal。`continuation_state.json`持续记录，不拿旧state文件当存活证据。
+对所有原路径超过1%的负差做前后5pass夹测，`controls_audit.json`：R32无LRU PCIe和R28 LRU HBM的负差没有复现；MTP1/R1 PCIe仍为base前52.0822、候选54.0782、base后52.0358µs（慢3.879%）。另在同进程载入两独立二进制，共用同一query/indices、Host KV/cache/workspace交替5+5次完整冷启动，base53.389000、cached_ids53.383400µs（降低0.01049%）。10次均校验输出和最终4096行实际cache载荷。此支持分配/环境因素解释，但因果未确定，原负差不删、不放宽门槛。逐步miss因同一步stamp下并行入槽顺序略有变化，不声称所有pass完全相同。
 
-下一步先poll这五个handle、刷新performance审计/coverage，逐项检查负差；只有缓存限定版的完整新原件、正常物理链路及全场景都通过才能写新保留gate。GPU0/1目前被外部586497/586498占用，不终止它们，GPU3可独立推进。当前大batch历史32%–34%差距未被已保留代码改善；原fetch_ids同轮参考比例曾31.0%→29.2%，但已因回退拒绝，不能当作生产收益。整体goal active。
+当前仅两个SXM恢复父调度器，先核实PID/原handle，不重复：
 
-### 2.4 已完成阶段诊断（不重复启动）
+| handle | CPU父PID | 内容 | 状态 |
+|---|---:|---|---|
+| **92282** | **658154** | `resume_cached_sxm.py`，先limited缺项，再native缺项 | 外部任务已离开，正在大形状缺项；完成raw不覆盖 |
+| **86595** | **674391** | `full_cached_sxm.py`，5pass EMU四格，再正常NVLink/PCIe | 等矩阵间空闲；之前这两组均未开始计时 |
+
+94802、58067、92776/60443、94033、7575（新夹测）、62149（同分配诊断）均exit0。`continuation_state.json`列真实新handle。cached_planned_complete仍false，只有完整新原件、正常物理链路和全场景通过才能保留。当前大batch历史32%–34%差距未被已保留代码改善，整体goal active。
+
+### 2.4 32-head双驻留：拒绝，不重跑
+
+独立H目录`temp/glm_trace/tune_heads_20261031/`，报告[32-head CTA](mla_host_a100_half_heads_20261031.md)。host头SHA=`d8dc5371b4e28b15764bf331a39eb579678190c91f22902e048b52627b35038e`，私有math头SHA=`e5968e7605bb657de30e5600c4a8fc09b977a3e2e7163f64e46718de519289a3`。两32-head项、128线程、1stage/32KV、32行双缓冲，无head合并，生产未改。
+
+105正常测试通过；Graph实查1kernel、grid(1,216,1)、block(32,2,2)、dynamic shared73984B、实际occupancy2，确实走新路径。新增kernel寄存器241、stack/local0；EMU32和正常64个原库内实例（含纯device）指令/资源相同，新增唯一符号1/2个、各在两个库内出现。原计数审计漏算第二库导致断言失败，日志保留，修正后成功。审计显式要求64个正常原实例等价才沿用同硬件参考；没有跳过math头SHA检查。旧128CTA插桩器从未用于H。
+
+GPU3受限链路、MTP8/R128、LRU4096、256位置×3pass，fetch24/32/48共18格/9配对完成。24的100GB0/20µs慢7.96%/30.11%；32在0µs快3.47%但20µs慢4.31%；48同参快6.47%/7.10%，但3668µs仍慢于同轮推荐base f24的3553/3580µs。50GB快0.36%–1.54%，无足够替代收益。候选拒绝，不扩大完整窗口/native/全矩阵。全部H GPU runner已terminal0：96997、79051、61333、82666、16552、57912、29770；代码生成78165/34929也exit0。
+
+### 2.5 重复QK与当前缩短展开候选
+
+独立`temp/glm_trace/tune_qk_20261031/`，`qk_local.cuh` SHA=`030da403e7d11d4bb2544684fad08676d5ffa1d9c6d571a8fcb00fcba5e8fe18`。只在原大形状whole、CTA_KV32且≥4SM行时用原生`KernelTraits<false,2,false,512,64,64,32,...>`。两个warp group各算完整QK，PV仍分特征，用既有false-QK_SHARD数学省m_wg/P交换。不改mla.cuh、缓存、搬运、模拟器、参考、单kernel架构。
+
+**此全展开候选已拒绝**：105正常测试通过；EMU32和正常64个原库内kernel指令/资源相同；新增kernel REG255、STACK192B、LOCAL0。GPU3受限链路、MTP8/R128、LRU4096、256位置×3pass、f24同参3配对，100GB0/20µs慢22.77%/22.39%，50GB20µs慢1.57%。[报告](mla_host_a100_qk_local_20261031.md)。新栈被明确记录，初始无栈断言失败保留，后续资源审计报告false，未伪称零spill。所有handles29098、44081、41125、59185、82166 terminal0；13953初始spill gate exit1。首次CLI遗漏--gpu的exit2日志也保留。
+
+后续U目录`temp/glm_trace/tune_qk_loop_20261031/`，`qk_unroll4`：host SHA仍030da403，私有math SHA=`1e3e5731ed0df5c98508b58210c0e2b979daf5d8f6a53613f23a40522e229aea`。只对false-QK_SHARD/CTA32的outer feature loop设展开4，其余实例显式完整原展开因子，须验证原64个正常库内kernel等价才可沿用参考。试图减少活跃片段/192B栈，不修改原失败源。
+
+此缩短展开候选也已拒绝。105正常测试通过，EMU32和正常64个原实例指令/资源完全相同；新实例REG244、STACK0、LOCAL0。GPU3同参256位置×3pass，100GB仍慢约22%，50GB也慢；[报告](mla_host_a100_qk_loop_20261031.md)。消除栈没有使这个机制取得收益，不再无新机制扫描unroll2/8。全部原handles10603、54470、14315、61075、90680已terminal0，不重启。U/continuation_state.json已更新。
+
+### 2.6 已完成阶段诊断（不重复启动）
 
 目录：`temp/glm_trace/tune_general_20261031/`。`base.cuh`为上轮已验证生产kernel，SHA256：
 
@@ -109,7 +128,7 @@ GPU3是A100-PCIE/NUMA1，同卡独立HBM不是NVLink，物理PCIe和Memcpy pinne
 
 旧主汇报所说“最终路径阶段计时未取得”已被本次诊断补上；主汇报§7.6和本轮Markdown已同步。`audit_general.py`独立重解raw的128步×108CTA；审计现有数据不等于全目标完成。
 
-### 2.5 脚本注意事项
+### 2.7 脚本注意事项
 
 `bench_glm52_host_batch`的传递导入会重设源码路径，独立实验需在它导入**后**再次设置`jit_env.FLASHINFER_INCLUDE_DIR`；新bench已处理。更改头文件要独立JIT，核实执行header SHA，避免旧缓存。
 
@@ -189,7 +208,7 @@ Trace由GLM-5.3在A800逐层BF16 prefill、SWE-rebench OpenHands语料原生模�
 
 ## 5. 集群正在排队的任务（本次重新查询）
 
-登录`ssh -n kaituo1000_login21`（luyouy@166.111.143.25），用`bash -lc`。原快照`temp/glm_trace/tune_general_20261031/h800_queue_20261031.txt`，最新再查结果为`h800_queue_20261031_1925.txt`，先读实际结果；此前五任务仍Priority/Dependency。
+登录`ssh -n kaituo1000_login21`（luyouy@166.111.143.25），用`bash -lc`。原快照`temp/glm_trace/tune_general_20261031/h800_queue_20261031.txt`，最新再查结果为W目录`h800_queue_20261031_2215.txt`（实际22:13:28），先读实际结果；此前五任务仍Priority/Dependency。
 
 | JobID | 名称 | GPU | 状态 | 内容/依赖 |
 |---:|---|---:|---|---|
@@ -212,6 +231,8 @@ Trace由GLM-5.3在A800逐层BF16 prefill、SWE-rebench OpenHands语料原生模�
 ## 6. 工作区与提交：必须保留未提交成果
 
 **上轮生产header、测试、完整实验目录及优化报告已提交`5157ff83`（665个明确自有文件）。** 当前仍继续共享dirty工作区，不丢弃未提交内容。
+
+后续提交`ce341a02`保留中batch派发，`43e2f835`/`b58193fb`保全拒绝候选，`448c4b3b`保存CTA预算和共享页号修正。W/H/QK/U当前新原件仍待提交。
 
 本轮自己的新增/修改包括`docs/HANDOFF.md`、`docs/mla_host_glm53_report.md`、`docs/mla_host_a100_readiness_20261031.md`和`temp/glm_trace/tune_general_20261031/`；交接历史与goal prompt也属本任务。第三项的include/JIT输入已冻结，不覆盖其源码。`restore_include.py`可重建缺失的独立include，但拒绝覆盖不同的已有目录。
 

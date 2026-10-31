@@ -19,4 +19,11 @@ The rejected matrix launchers were stopped only after their current children nat
 
 CPU audit once ran before the next candidate's library existed and failed its assertion; `compiler_pending_direct_cache_failure.log` is retained, and the archive script now reports pending builds explicitly. This did not produce GPU data. Include/JIT trees are ignored and reconstructable; do not overwrite an active candidate. GPU0/1 share the original `gpu01.lock`; all GPU3 tests/benchmarks use the preceding round's `gpu3_correctness.lock`.
 
-H800 uses existing five Slurm jobs and two watchers only. The20:42 snapshot still shows Priority/Dependency; no new submission or source overwrite. The main large-batch100GB/s gap remains well above10%, so the overall goal stays active.
+H800 uses existing five Slurm jobs and two watchers only. The22:13 snapshot still shows Priority/Dependency; no new submission or source overwrite. The main large-batch100GB/s gap remains well above10%, so the overall goal stays active.
+
+
+Latest checkpoint: GPU3 normal88+large32 planned cells complete; SXM limited423/640 and normal18/136 remain partial. Four original SXM handles exited1 on strict exclusivity checks; failures are retained. The benchmark now waits for actual GPU availability after taking the shared lock, covering the previous process CUDA context teardown. Resume handles92282(parent658154) and86595(parent674391) serialize missing cohorts/full confirmations respectively; check actual state/PIDs, do not duplicate them.
+
+`controls_audit.json` keeps all independent-process sandwiches. R32no-LRU PCIe and R28LRU HBM negatives did not reproduce. Small MTP1/R1 PCIe still regresses3.879% independently; a diagnostic using both binaries and exactly the same Host/query/cache/workspace allocations alternates five full cold passes each and measures53.389000/53.383400us, difference0.01049%, with output and final4096-row cache-payload checks. This is consistent with allocation/environment effects but does not establish causation; the original negative remains and no retention gate is relaxed. `same_process_control.json` retains per-step times/misses and source/library hashes.
+
+The separate half-head/two-resident-CTA experiment was rejected after105tests and nine paired screens; all original math kernels remain equivalent. See `tune_heads_20261031`. Duplicate-QK fully unrolled code was also rejected due192Bstack and~22%100GB regressions; `tune_qk_loop_20261031` tests bounded unrolling independently. Production is unchanged and the main gap remains unresolved.

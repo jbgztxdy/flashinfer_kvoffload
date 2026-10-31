@@ -50,7 +50,22 @@ if perf.exists():
         lines += ['', '原ids_matrix组已因回退停止，预期格数保留，未伪称完成；cached_ids_matrix组才是当前候选的验证计划。所有更慢格仍在审计和CSV中。', '']
 else:
     lines += ['当前仍在构建/正常测试/筛选，尚无已审计的性能收益结论。', '']
+controls=p/'controls_audit.json'
+if controls.exists():
+    c=json.loads(controls.read_text())
+    lines += ['## 慢格夹测与同分配诊断', '',
+        'GPU3正常120格已完成；原矩阵的负差继续保留。对超过1%的原路径负差使用完整1024位置×5pass、base→cached_ids→base夹测，结果如下。无LRU仍是原四快照。', '',
+        '| 场景 | MTP/请求 | 链路 | 比例 | base前 µs | 候选 µs | base后 µs | 较两base均值降低 |',
+        '|---|---|---|---|---:|---:|---:|---:|']
+    for r in c['independent_process_controls']:
+        fraction='LRU4096' if r['fraction'] is None else str(r['fraction'])
+        lines.append(f"| {r['kind']} | {r['mtp']}/{r['requests']} | {r['setting']} | {fraction} | {r['base_before_us']:.3f} | {r['candidate_us']:.3f} | {r['base_after_us']:.3f} | {r['reduction_vs_base_mean']*100:.3f}% |")
+    z=c['shared_allocation_diagnostic']
+    lines += ['', f"R32无LRU的PCIe及R28 LRU的HBM负差没有复现；单请求MTP1 PCIe仍约慢3.9%。另在同一进程载入两份独立二进制，共用同一套query/indices、Host KV、cache、workspace及输出，交替执行各5次完整1024位置冷启动。base均值{z['means_us']['base']:.6f}µs，cached_ids为{z['means_us']['cached_ids']:.6f}µs，降低{z['reduction']*100:.4f}%。10次均校验输出和最终4096行实际cache载荷。", '',
+        '该诊断支持内存分配或环境因素的解释，但不能确定因果；独立进程的负差未删除，也没有据此放宽采用门槛。逐步miss因同一步stamp下的并行入槽顺序略有变化，不假称每个pass命中完全一致。所有逐步时间、miss和原件SHA保存在[controls审计](../temp/glm_trace/tune_wait_20261031/controls_audit.json)及同目录原件。', '',
+        '四个SXM旧runner已exit1：完整确认和正常矩阵的预检遇到前一自有CUDA context退出尾声，模拟矩阵后段遇到外部进程进入，失败日志保留。现已在取得文件锁后等待显存/进程空闲，再打开CUDA；仅恢复缺项，计划和完成raw不覆盖。恢复器及完整确认使用新handle，见continuation_state.json。', '']
 lines += ['短窗口只用于筛选；采用仍需完整1024位置、正反向多pass和全场景回归。模拟构建的真实NVLink关闭runtime hooks，不能替代最终正常构建。整体100GB/s大batch约32%–34%差距仍未改善。', '',
-    'H800五个原作业在20:42查询仍为Priority/Dependency，两个原watcher存活。未提交新任务或覆盖排队源码。', '']
+    '32-head CTA的独立资源方案及失败筛选见[新报告](mla_host_a100_half_heads_20261031.md)。生产没有安装它。', '',
+    'H800五个原作业在22:13查询仍为Priority/Dependency，两个原watcher存活。未提交新任务或覆盖排队源码。', '']
 (root / 'docs/mla_host_a100_wait_budget_20261031.md').write_text('\n'.join(lines))
 print('diagnostic_records', len(a['records']))

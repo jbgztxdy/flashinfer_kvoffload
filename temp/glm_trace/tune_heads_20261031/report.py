@@ -1,0 +1,25 @@
+"""Report the rejected half-head resident-CTA experiment without mixing hardware."""
+import json
+from pathlib import Path
+p=Path(__file__).resolve().parent;root=p.parents[2]
+a=json.loads((p/'performance_audit.json').read_text())
+lines=['# A100：32-head CTA与双驻留筛选（2026-10-31）','',
+    '候选不采用，生产仍保持ce341a02/52919…ff2c5。大batch 100GB/s约32%–34%的历史差距未解决。本文只有隔离实现、正确性和短窗口筛选，没有新生产收益或H800结论。','',
+    '## 机制和实际分派','',
+    '将64 heads拆成两个32-head工作项，128线程/CTA，不需要head合并，两项写不相交的head。attention仍使用原QK/softmax/PV/归一化函数；load_q的常量改为由CTA head数导出。取数为32行/双缓冲，保持原缓存、单cooperative kernel和模拟器。只在原大形状整行条件成立、SM80共享内存和实际occupancy允许时派发。','',
+    '新增128线程traits的动态shared为73984B，BF16新增kernel寄存器241、静态shared1664B、stack/local均0。正常BF16/FP16和模拟构建完成。全部原kernel（包括纯device attention）逐条指令及资源相同：EMU共32个库内实例，正常共64个；新增kernel的唯一符号分别1/2个，在普通与host-overlap库各出现一次。代码生成审计及gzip SASS均保留。','',
+    '正常105项测试通过。另用CUDA Graph节点API实查432行、64heads、K97、fetch32：恰好一个kernel节点，grid(1,216,1)、block(32,2,2)、dynamic shared73984B、实际每SM可驻留2CTA，输出采样max abs0.004128。因此正确性证据确实覆盖了新路径。旧128CTA容量的插桩器没有用于这个216CTA kernel。','',
+    '工作项claim复用原整行路径不读写的row-completion词；原容量为2×rows+partial_capacity+num_pools，新需求为2×rows+num_pools，ROW_MERGE=false且没有partial访问。全部生产/候选/私有mla.cuh SHA见manifest.json；执行benchmark同时冻结两个私有头。','',
+    '## 同参数筛选','',
+    '均为GPU3 A100-PCIE、MTP8/128请求、staged、LRU4096、256位置×3次冷启动pass、split off。far源为同卡独立HBM上的受限链路模拟，不是NVLink。fetch24/32/48分别有同参数base，运行顺序交替；CUDA Graph/event计时、逐步miss、数值、队列guard和前后独占检查由独立审计复核。','',
+    '| fetch CTA | 链路 | base µs | 候选 µs | 同参数耗时降低 | Memcpy µs | 纯device µs | 逐步max µs |',
+    '|---:|---|---:|---:|---:|---:|---:|---:|']
+for r in a['pairs']:
+    lines.append(f"| {r['fetch_ctas']} | {r['setting']} | {r['old_us']:.3f} | {r['new_us']:.3f} | {r['reduction']*100:.3f}% | {r['memcpy_us']:.3f} | {r['local_us']:.3f} | {r['reference_us']:.3f} |")
+lines+=['',
+    'fetch24的100GB两格分别慢7.96%和30.11%；fetch32降低0µs时耗时3.47%，但20µs慢4.31%。fetch48同参数快6.47%/7.10%，然而3668µs仍慢于同轮现有推荐base fetch24的3553/3580µs。50GB下收益0.36%–1.54%，不足以替换推荐配置。代码对照与参数选择分列，未取最好格冒充生产收益。','',
+    '据此停止该候选，不扩展完整1024位置/正常NVLink或全矩阵。32行取数减半了每个chunk载荷，并不能仅凭双驻留认定保留的计算SM更多；这里没有精确因果剖分。进一步实验需要新的机制，不能重复这三组扫描。','',
+    '参考沿用同硬件正常构建的原attention测量。私有mla.cuh源码SHA不同，审计显式要求正常构建全部64个原kernel的指令/资源相同，才允许复用；未修改参考公式或原始数据。逐步max仍按每步计算与真实unique miss载荷/带宽取max再求均值。','',
+    f"原件[性能审计](../temp/glm_trace/tune_heads_20261031/performance_audit.json)、[CSV](../temp/glm_trace/tune_heads_20261031/results.csv)、[分派实查](../temp/glm_trace/tune_heads_20261031/dispatch_probe.json)。共{len(a['rows'])}格/{len(a['pairs'])}配对，{a['timed_launches']}次计时launch；测试/源码/编译/失败记录全部保留。最初编译审计按唯一符号计数、未考虑两个库各有实例而断言失败，修正计数后完整通过，失败日志仍保存。",'']
+(root/'docs/mla_host_a100_half_heads_20261031.md').write_text('\n'.join(lines))
+print('reported',len(a['rows']),len(a['pairs']))

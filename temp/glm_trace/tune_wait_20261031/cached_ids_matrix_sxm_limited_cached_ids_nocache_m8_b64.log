@@ -1,0 +1,64 @@
+start cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l0_mtp8_b64
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l0_mtp8_b64 fraction 0.0 mean_us {'ours': 1205.76, 'memcpy': 1384.619}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l0_mtp8_b64 fraction 0.1 mean_us {'ours': 1343.659, 'memcpy': 1759.488}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l0_mtp8_b64 fraction 0.3 mean_us {'ours': 1510.912, 'memcpy': 2445.739}
+complete cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l0_mtp8_b64
+start cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l2000_mtp8_b64
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l2000_mtp8_b64 fraction 0.0 mean_us {'ours': 1213.355, 'memcpy': 1399.893}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l2000_mtp8_b64 fraction 0.1 mean_us {'ours': 1342.72, 'memcpy': 1761.365}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l2000_mtp8_b64 fraction 0.3 mean_us {'ours': 1510.827, 'memcpy': 2446.592}
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_wait_20261031/bench.py", line 483, in <module>
+    for setting in SETTINGS:run_setting(setting)
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_wait_20261031/bench.py", line 476, in run_setting
+    result["resources_end"]=require_exclusive()
+                            ^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_wait_20261031/resources.py", line 37, in require_exclusive
+    raise RuntimeError("Other GPU0/1 processes appeared during the benchmark: "+str(state["foreign"]))
+RuntimeError: Other GPU0/1 processes appeared during the benchmark: [{'gpu_uuid': 'GPU-6e5259ec-3532-b1b2-b0ab-b26231386565', 'pid': 643266, 'process': '/mnt/raid/ny_work/envs/flashcheck/bin/python', 'used_mib': '12'}, {'gpu_uuid': 'GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81', 'pid': 643267, 'process': '/mnt/raid/ny_work/envs/flashcheck/bin/python', 'used_mib': '12'}]
+start cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l2000_mtp8_b64
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l2000_mtp8_b64 fraction 0.0 mean_us {'ours': 1198.592, 'memcpy': 1384.277}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l2000_mtp8_b64 fraction 0.1 mean_us {'ours': 1336.064, 'memcpy': 1762.389}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l2000_mtp8_b64 fraction 0.3 mean_us {'ours': 1510.059, 'memcpy': 2446.592}
+complete cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l2000_mtp8_b64
+start cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l5000_mtp8_b64
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l5000_mtp8_b64 fraction 0.0 mean_us {'ours': 1196.117, 'memcpy': 1385.728}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l5000_mtp8_b64 fraction 0.1 mean_us {'ours': 1338.88, 'memcpy': 1768.021}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l5000_mtp8_b64 fraction 0.3 mean_us {'ours': 1511.339, 'memcpy': 2452.224}
+complete cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l5000_mtp8_b64
+start cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l10000_mtp8_b64
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l10000_mtp8_b64 fraction 0.0 mean_us {'ours': 1195.776, 'memcpy': 1388.032}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l10000_mtp8_b64 fraction 0.1 mean_us {'ours': 1343.403, 'memcpy': 1774.336}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l10000_mtp8_b64 fraction 0.3 mean_us {'ours': 1514.496, 'memcpy': 2457.173}
+complete cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l10000_mtp8_b64
+start cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l20000_mtp8_b64
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l20000_mtp8_b64 fraction 0.0 mean_us {'ours': 1195.861, 'memcpy': 1383.68}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l20000_mtp8_b64 fraction 0.1 mean_us {'ours': 1356.459, 'memcpy': 1783.296}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l20000_mtp8_b64 fraction 0.3 mean_us {'ours': 1521.408, 'memcpy': 2465.365}
+complete cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g100_l20000_mtp8_b64
+start cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l0_mtp8_b64
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l0_mtp8_b64 fraction 0.0 mean_us {'ours': 1195.179, 'memcpy': 1386.496}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l0_mtp8_b64 fraction 0.1 mean_us {'ours': 1452.885, 'memcpy': 2096.896}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l0_mtp8_b64 fraction 0.3 mean_us {'ours': 2222.507, 'memcpy': 3468.715}
+complete cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l0_mtp8_b64
+start cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l2000_mtp8_b64
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l2000_mtp8_b64 fraction 0.0 mean_us {'ours': 1195.349, 'memcpy': 1386.325}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l2000_mtp8_b64 fraction 0.1 mean_us {'ours': 1453.312, 'memcpy': 2098.859}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l2000_mtp8_b64 fraction 0.3 mean_us {'ours': 2220.373, 'memcpy': 3472.64}
+complete cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l2000_mtp8_b64
+start cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l5000_mtp8_b64
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l5000_mtp8_b64 fraction 0.0 mean_us {'ours': 1195.605, 'memcpy': 1386.752}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l5000_mtp8_b64 fraction 0.1 mean_us {'ours': 1453.227, 'memcpy': 2100.48}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l5000_mtp8_b64 fraction 0.3 mean_us {'ours': 2226.773, 'memcpy': 3472.469}
+complete cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l5000_mtp8_b64
+start cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l10000_mtp8_b64
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l10000_mtp8_b64 fraction 0.0 mean_us {'ours': 1195.861, 'memcpy': 1386.155}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l10000_mtp8_b64 fraction 0.1 mean_us {'ours': 1452.8, 'memcpy': 2105.344}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l10000_mtp8_b64 fraction 0.3 mean_us {'ours': 2233.515, 'memcpy': 3480.491}
+complete cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l10000_mtp8_b64
+start cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l20000_mtp8_b64
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l20000_mtp8_b64 fraction 0.0 mean_us {'ours': 1195.776, 'memcpy': 1386.411}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l20000_mtp8_b64 fraction 0.1 mean_us {'ours': 1452.459, 'memcpy': 2116.949}
+cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l20000_mtp8_b64 fraction 0.3 mean_us {'ours': 2243.499, 'memcpy': 3483.307}
+complete cached_ids_matrix_sxm_limited_cached_ids_staged_f24_i64_soff_nocache_g50_l20000_mtp8_b64

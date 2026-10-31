@@ -1,9 +1,4 @@
 {
-  "recorded_at": "2026-10-31T21:29:44+0800",
-  "goal_status": "active",
-  "previous_turn_classification": "progress: retained medium dispatch and rejected new mechanisms using measured evidence",
-  "production_header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
-  "candidate_adopted": false,
   "completed_handles": {
     "19632": 0,
     "28577": 0,
@@ -41,42 +36,45 @@
     "92776": 0,
     "60443": 0,
     "94033": 0,
-    "89964": 0
+    "89964": 0,
+    "27470": 1,
+    "27738": 1,
+    "37750": 0,
+    "75965": 1,
+    "59866": 1,
+    "17179": 0,
+    "25045": 0,
+    "7575": 0,
+    "62149": 0,
+    "88285": 0
   },
+  "recorded_at": "2026-10-31T22:42:19+0800",
+  "goal_status": "active",
+  "previous_turn_classification": "progress: rejected half-head and full-unroll duplicate-QK mechanisms, completed120GPU3nativecells, bracketednegativecontrolsandsameallocationdiagnosis",
+  "production_header_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "candidate_adopted": false,
+  "current_candidate": "cached_ids b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
   "active_runners": [
     {
-      "session_id": 27470,
-      "command": "screen.py cached_ids full1024positions5pass f24 EMU4settings",
-      "state": "cached_full_sxm_state.json"
+      "session_id": 92282,
+      "pid": 658154,
+      "command": "resume_cached_sxm.py (limited then native; only incomplete cells)",
+      "state": "resume_cached_sxm_state.json"
     },
     {
-      "session_id": 27738,
-      "command": "screen.py cached_ids full1024positions5pass f24 NORMAL nvlink/pcie",
-      "state": "cached_native_full_sxm_state.json"
-    },
-    {
-      "session_id": 37750,
-      "command": "validate_cached_ids.py --hardware gpu3 --cohort native",
-      "state": "cached_ids_matrix_gpu3_native_state.json"
-    },
-    {
-      "session_id": 75965,
-      "command": "validate_cached_ids.py --hardware sxm --cohort limited",
-      "state": "cached_ids_matrix_sxm_limited_state.json"
-    },
-    {
-      "session_id": 59866,
-      "command": "validate_cached_ids.py --hardware sxm --cohort native",
-      "state": "cached_ids_matrix_sxm_native_state.json"
+      "session_id": 86595,
+      "pid": 674391,
+      "command": "full_cached_sxm.py (5passEMU then5passnormal)",
+      "state": "full_cached_retry_state.json"
     }
   ],
   "diagnostic": "3 full-window MTP8/R128 new per-CTA budgets completed.100GB wait5.90% of attention item time, NVLink3.31%,50GB45.21%; only1.31 attention items/fetcher at100GB. Timers affect scheduling; diagnosis only.",
-  "h800_snapshot": "h800_queue_20261031_2042.txt",
-  "remaining": "Large-batch100GB32\u201334%gap still unchanged. No candidate adopted.",
-  "tests": "cached_ids105 normal GPU3 tests passed; all three predecessor candidates also105",
-  "codegen": "cached_ids: all original9EMU and18normalBF16/FP16 kernels exact instructions/resources; newcached1/2kernels,allstack/local0",
-  "current_candidate": "cached_ids b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a",
-  "screen": "fetch_ids105 tests pass; f24 four settings improve0.24\u20134.33%, full/native confirmation running. f16 completed, audit pending. prebind not adopted. Direct-cache avoids double stores to admitted misses, pending tests and screen.",
-  "results": "Original fetch_ids PCIe fraction.1 regression confirmed11.24%5pass with base-before830.57/base-after830.98us; cached_ids835.17(-0.55%) uses oldwhole kernel for noLRU. Direct-cache andprebindnotadopted. Cached-only candidate now freshfull/native and cross-scenario gates. SXM0/1 occupied again byforeign586497/586498; waitonly, GPU3normalvalidation progressing.",
-  "next_action": "Poll27470/27738/37750/75965/59866 original handles and processes; no duplicates. Refreshperformanceaudit+coverage; check allslow cells before retention. Do not restart rejectedoriginal ids matrices. Primary32\u201334%gap not solved."
+  "h800_snapshot": "h800_queue_20261031_2215.txt (actual22:13:28)",
+  "results": "External647559/647560left;resume92282proceedinglarge128/512shapes,full86595startedcachedIDsEMU confirmation. NewlargeR128100GB3passpairsnegative0.7-1.8%,mustnotretainwithoutfullconfirm. GPU3controlsandnegativeoriginalsretained.",
+  "tests": "cached_ids105normalpassed",
+  "codegen": "cached_ids original9EMU/18normal exact instructions/resources,newcached1/2stack/local0",
+  "coverage": "GPU3normal88+large32complete,SXMlimitedatleast499/640,native18/136;matrixactiveonlargeitems;full5passscreenactive",
+  "controls": "IndependentR1MTP1PCIe3.879%negative persists; same-allocation5+5passes53.389000/53.383400us,difference0.01049%,actual4096-rowcachepayloadchecked. Causationnotestablished,negativepreserved.",
+  "remaining": "Primarylarge-batch100GBhistorical32-34%gapunchanged;normalfull5passandcross-scenarioSXMgatespending",
+  "next_action": "Poll92282/86595 actualprocesses,state,originalhandles;no duplicates. Refreshauditcoverageafterrawgrowth. Hhalfheads,QduplicateQK,Uunroll4allrejectedandterminal,105testseach. IfcachedIDslarge regressionsconfirm, rejectlarge path or isolate validmedium dispatch with complete codegen/provenance and focusedgates;do nothide negatives."
 }

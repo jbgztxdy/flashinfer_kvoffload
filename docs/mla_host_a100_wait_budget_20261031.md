@@ -75,7 +75,7 @@ prepare在第二个grid barrier前已完成所有resident lookup/stamp；本步�
 | SXM0/1 | prebind/prebind_f20_256_ | LRU4096 | 256/3 | 8/128 | 20 | g50_l20000 | 5312.60 | 5316.31 | -0.07% | 8557.26 | 2458.67 | 4959.90 |
 | SXM0/1 | prebind/prebind_f20_256_ | LRU4096 | 256/3 | 8/128 | 20 | nvlink | 3295.51 | 3303.73 | -0.25% | 4522.03 | 2458.67 | 2458.67 |
 
-性能审计目前464格/232配对，正常构建测试记录[{'variant': 'cached_ids', 'tests': 105, 'sha256': 'df515400f5618fbc25c0487bed7fb2cb709cee132c6a0682cd188417c2190727'}, {'variant': 'direct_cache', 'tests': 105, 'sha256': 'd5523355a849ef8bead8e113aa413d4d23d089f4992fadd367c55cb08f28c376'}, {'variant': 'fetch_ids', 'tests': 105, 'sha256': '02986d201b75a89dbf91d57af2a0a35c1ee5972645f3b4e05223e1186da2c849'}, {'variant': 'prebind', 'tests': 105, 'sha256': 'adaacef43ff1320fb69ea3fabaad85c300e5836e144bf19cc84577aefdc9c8db'}]。每步/每pass、命中、两参考及SHA另存于[性能审计](../temp/glm_trace/tune_wait_20261031/performance_audit.json)和CSV。
+性能审计目前1119格/549配对，正常构建测试记录[{'variant': 'cached_ids', 'tests': 105, 'sha256': 'df515400f5618fbc25c0487bed7fb2cb709cee132c6a0682cd188417c2190727'}, {'variant': 'direct_cache', 'tests': 105, 'sha256': 'd5523355a849ef8bead8e113aa413d4d23d089f4992fadd367c55cb08f28c376'}, {'variant': 'fetch_ids', 'tests': 105, 'sha256': '02986d201b75a89dbf91d57af2a0a35c1ee5972645f3b4e05223e1186da2c849'}, {'variant': 'prebind', 'tests': 105, 'sha256': 'adaacef43ff1320fb69ea3fabaad85c300e5836e144bf19cc84577aefdc9c8db'}]。每步/每pass、命中、两参考及SHA另存于[性能审计](../temp/glm_trace/tune_wait_20261031/performance_audit.json)和CSV。
 
 ## 原共享页号版的真实回退与修正
 
@@ -87,15 +87,37 @@ cached_ids新增独立的缓存实例，只在开启LRU且走整行CTA32时共�
 
 | 回归组 | 已审计格 | 预期格 | 完整 |
 |---|---:|---:|---|
-| cached_ids_matrix_gpu3_native_ | 0 | 88 | 否 |
-| cached_ids_matrix_sxm_limited_ | 0 | 640 | 否 |
-| cached_ids_matrix_sxm_native_ | 0 | 136 | 否 |
+| cached_ids_matrix_gpu3_large_ | 32 | 32 | 是 |
+| cached_ids_matrix_gpu3_native_ | 88 | 88 | 是 |
+| cached_ids_matrix_sxm_limited_ | 499 | 640 | 否 |
+| cached_ids_matrix_sxm_native_ | 18 | 136 | 否 |
 | ids_matrix_gpu3_native_ | 68 | 88 | 否 |
 | ids_matrix_sxm_limited_ | 320 | 640 | 否 |
 | ids_matrix_sxm_native_ | 0 | 136 | 否 |
 
 原ids_matrix组已因回退停止，预期格数保留，未伪称完成；cached_ids_matrix组才是当前候选的验证计划。所有更慢格仍在审计和CSV中。
 
+## 慢格夹测与同分配诊断
+
+GPU3正常120格已完成；原矩阵的负差继续保留。对超过1%的原路径负差使用完整1024位置×5pass、base→cached_ids→base夹测，结果如下。无LRU仍是原四快照。
+
+| 场景 | MTP/请求 | 链路 | 比例 | base前 µs | 候选 µs | base后 µs | 较两base均值降低 |
+|---|---|---|---|---:|---:|---:|---:|
+| lru | 1/1 | native_hbm | LRU4096 | 42.670 | 42.693 | 42.614 | -0.119% |
+| lru | 8/28 | native_hbm | LRU4096 | 931.914 | 930.534 | 928.179 | -0.052% |
+| lru | 1/1 | pcie | LRU4096 | 52.082 | 54.078 | 52.036 | -3.879% |
+| nocache | 8/32 | pcie | 0.0 | 721.920 | 722.125 | 723.200 | 0.060% |
+| nocache | 8/32 | pcie | 0.1 | 791.450 | 794.061 | 794.266 | -0.152% |
+| nocache | 8/32 | pcie | 0.3 | 2101.709 | 2099.251 | 2100.685 | 0.093% |
+
+R32无LRU的PCIe及R28 LRU的HBM负差没有复现；单请求MTP1 PCIe仍约慢3.9%。另在同一进程载入两份独立二进制，共用同一套query/indices、Host KV、cache、workspace及输出，交替执行各5次完整1024位置冷启动。base均值53.389000µs，cached_ids为53.383400µs，降低0.0105%。10次均校验输出和最终4096行实际cache载荷。
+
+该诊断支持内存分配或环境因素的解释，但不能确定因果；独立进程的负差未删除，也没有据此放宽采用门槛。逐步miss因同一步stamp下的并行入槽顺序略有变化，不假称每个pass命中完全一致。所有逐步时间、miss和原件SHA保存在[controls审计](../temp/glm_trace/tune_wait_20261031/controls_audit.json)及同目录原件。
+
+四个SXM旧runner已exit1：完整确认和正常矩阵的预检遇到前一自有CUDA context退出尾声，模拟矩阵后段遇到外部进程进入，失败日志保留。现已在取得文件锁后等待显存/进程空闲，再打开CUDA；仅恢复缺项，计划和完成raw不覆盖。恢复器及完整确认使用新handle，见continuation_state.json。
+
 短窗口只用于筛选；采用仍需完整1024位置、正反向多pass和全场景回归。模拟构建的真实NVLink关闭runtime hooks，不能替代最终正常构建。整体100GB/s大batch约32%–34%差距仍未改善。
 
-H800五个原作业在20:42查询仍为Priority/Dependency，两个原watcher存活。未提交新任务或覆盖排队源码。
+32-head CTA的独立资源方案及失败筛选见[新报告](mla_host_a100_half_heads_20261031.md)。生产没有安装它。
+
+H800五个原作业在22:13查询仍为Priority/Dependency，两个原watcher存活。未提交新任务或覆盖排队源码。

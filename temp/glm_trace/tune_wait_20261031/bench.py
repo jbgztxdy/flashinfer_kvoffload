@@ -12,7 +12,7 @@ import random
 import subprocess
 import sys
 import time
-from resources import require_exclusive
+from resources import require_exclusive, snapshot
 
 ROOT = Path(__file__).resolve().parents[3]
 DEST = Path(__file__).resolve().parent
@@ -69,6 +69,11 @@ if A.auto:
         A.fetch_ctas=16; A.host_split="on"
 LOCK=(ROOT/"temp/glm_trace/kernel_report_20261029/gpu01.lock").open("w")
 fcntl.flock(LOCK,fcntl.LOCK_EX)
+# The file lock can be released before the previous CUDA context is gone.
+# Observe every process after acquiring it, before this process opens CUDA.
+while not snapshot()['available']:
+    print('WAITING_AFTER_LOCK', snapshot(), flush=True)
+    time.sleep(2)
 RESOURCE_START=require_exclusive()
 torch.set_num_threads(8)
 torch.cuda.set_device(0)

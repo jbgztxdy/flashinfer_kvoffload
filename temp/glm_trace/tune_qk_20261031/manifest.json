@@ -1,0 +1,7 @@
+{
+  "base_sha256": "52919c286398d4668933a772c646bdccd46273a53aafeb8d5c1b14e2d9bff2c5",
+  "candidate_sha256": "030da403e7d11d4bb2544684fad08676d5ffa1d9c6d571a8fcb00fcba5e8fe18",
+  "mechanism": "64-head CTA32/2stages,duplicate QK logits in both warpgroups; native false-QK_SHARD softmax/PV skips shared m/P exchange. Single cooperative kernel, same attention/LRU/traffic/emulator. Only original large whole-row conditions with>=4SMrows.",
+  "candidate_adopted": false,
+  "goal_complete": false
+}
