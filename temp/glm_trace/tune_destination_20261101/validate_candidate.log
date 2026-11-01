@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_destination_20261101/validate_candidate.py", line 51, in <module>
+    run([py,str(p/'audit_performance.py')],'audit_performance.log')
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_destination_20261101/validate_candidate.py", line 15, in run
+    if item['exit_code']:raise RuntimeError('Failed '+log)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Failed audit_performance.log

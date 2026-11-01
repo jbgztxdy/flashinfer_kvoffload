@@ -1,0 +1,120 @@
+{
+  "start": "2026-11-01T09:50:05+0800",
+  "pid": 2351788,
+  "complete": true,
+  "candidate_adopted": true,
+  "goal_complete": false,
+  "phase": "complete",
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/audit_performance.py"
+      ],
+      "log": "completion_audit_performance.log",
+      "start": "2026-11-01T11:19:47+0800",
+      "pid": 2561762,
+      "exit_code": 0,
+      "end": "2026-11-01T11:19:49+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/audit_coverage.py"
+      ],
+      "log": "completion_audit_coverage.log",
+      "start": "2026-11-01T11:19:49+0800",
+      "pid": 2561831,
+      "exit_code": 0,
+      "end": "2026-11-01T11:19:49+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/verify_machine_words.py"
+      ],
+      "log": "completion_verify_machine_words.log",
+      "start": "2026-11-01T11:19:49+0800",
+      "pid": 2561832,
+      "exit_code": 0,
+      "end": "2026-11-01T11:19:54+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/retain_cached_pe.py"
+      ],
+      "log": "retention_dry_run.log",
+      "start": "2026-11-01T11:19:54+0800",
+      "pid": 2561880,
+      "exit_code": 0,
+      "end": "2026-11-01T11:19:54+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/retain_cached_pe.py",
+        "--install"
+      ],
+      "log": "retention_install.log",
+      "start": "2026-11-01T11:19:54+0800",
+      "pid": 2561883,
+      "exit_code": 0,
+      "end": "2026-11-01T11:19:55+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/compile_production.py"
+      ],
+      "log": "compile_production.log",
+      "start": "2026-11-01T11:19:55+0800",
+      "pid": 2561884,
+      "exit_code": 0,
+      "end": "2026-11-01T11:23:05+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/test_production.py"
+      ],
+      "log": "test_production.log",
+      "start": "2026-11-01T11:23:05+0800",
+      "pid": 2566005,
+      "exit_code": 0,
+      "end": "2026-11-01T11:23:24+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/verify_production_codegen.py"
+      ],
+      "log": "verify_production_codegen.log",
+      "start": "2026-11-01T11:23:24+0800",
+      "pid": 2566528,
+      "exit_code": 0,
+      "end": "2026-11-01T11:23:47+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/probe_production_cached_pe.py"
+      ],
+      "log": "probe_production_cached_pe.log",
+      "start": "2026-11-01T11:23:47+0800",
+      "pid": 2567071,
+      "exit_code": 0,
+      "end": "2026-11-01T11:23:52+0800"
+    }
+  ],
+  "last_observation": "2026-11-01T11:19:17+0800",
+  "original_phase": "native_matrix",
+  "original_pid": 2351762,
+  "end": "2026-11-01T11:23:52+0800"
+}

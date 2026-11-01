@@ -1,0 +1,44 @@
+{
+  "cpu_only": true,
+  "candidate_sha256": "3c744e78251fdc6787c6a68c0d248773857c859e1c09dba687c58ef1dfaa7749",
+  "math_helpers_exactly_preserved": [
+    {
+      "helper": "qk_pair_fragments",
+      "normalized_text_sha256": "55553b34ee6f85c80db5a965ed15b323863bcd692d75a793e82f6dbd7074f403"
+    },
+    {
+      "helper": "load_query",
+      "normalized_text_sha256": "191c599d75df76b55e3180e4e55bf88cb401efccf272f541fb9de3ba741602a1"
+    },
+    {
+      "helper": "compute_pe",
+      "normalized_text_sha256": "89755af0b9472b11b85ea48cbb7989004ac295cd544eec6f4a3f5021d7c1dcf2"
+    },
+    {
+      "helper": "compute_one",
+      "normalized_text_sha256": "3d7f5fc892c78855d782815a87fa1a1a2f2805b2b9c7afca2a7d73abd1a03026"
+    },
+    {
+      "helper": "compute_qk_pair",
+      "normalized_text_sha256": "58c591822519c73b7c160e5d02731e23255c6aa7bb9adaea2fba5d0d1b04b5f3"
+    },
+    {
+      "helper": "update_joint_host_mdo",
+      "normalized_text_sha256": "f2a51287061f03106b06f4c07a7d31e79de34110d0e4b18c019af038bd20c69f"
+    }
+  ],
+  "different_from_old_direct_cache": {
+    "old_header_sha256": "09d31d38e0353cb0cb375993e80831c4803d04075c15ae7bf0cfedc8d641f21a",
+    "old_mechanism": "Whole-row CTA32 only: admitted misses go directly shared->cache victim, other misses shared->staging; one HBM store per unique page. Existing chunk flag release/acquire guards both metadata and bytes; attention maps admitted staging entries to victim after that acquire. No changing policy/capacity/far bytes/simulator/reference, one kernel.",
+    "new_difference": "No dependent perKV victim lookup; rewrite remap once before fetch. Perpage cache-ready slot_page plus chunkready staging; two additional gridbarriers and upfrontLRU are explicit costs."
+  },
+  "publication_review": [
+    "Prepare completes globally before any old resident mapping is retired; current-launch hits have protected stamp.",
+    "Exact original LRU selector/ties copied privately; victim slots are disjoint by pool and selected once perunique.",
+    "LRU marks chosen slot_page=-1; grid barrier then everymiss remap changes tofinalvictim orretains staging; grid barrier before consumer/fetch.",
+    "Each of256fetchthreads writes real payload, threadfence thenCTAbarrier; one designated lane setsresident and release-publishes nonnegative slot_page.",
+    "Tile waiter acquire-loads slot_page forcache destinations ororiginalepochchunkflag forstaging; originaltile barrier precedesload.",
+    "Allmiss claims cleared byfetch; originallastCTA exit advancesepoch onlyafterallCTAsfinish."
+  ],
+  "limitation": "Source/memory protocol review, not measured performance, dynamic instruction count, full correctness proof or goal completion."
+}

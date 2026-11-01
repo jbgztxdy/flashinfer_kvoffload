@@ -1,0 +1,11 @@
+{
+  "base_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "candidate_sha256": "3c744e78251fdc6787c6a68c0d248773857c859e1c09dba687c58ef1dfaa7749",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "base_status": "Frozen CPEa436, pending production adoption when this candidate was generated; compare directly to CPE, not JQ.",
+  "mechanism": "Upfront exact LRU, retire victim mappings and mark slot_page pending; resolve32bit remap once to finalcache or staging. Shared payload written once, release slot_page only after allwriters fence+barrier. Wait only in tile wait helper; no perKV victim lookup.",
+  "changes": "Two extra grid barriers, LRU moved ahead of farfetch/attention; no LRU attention items. Same256thread108CTA/32KV2stage/64row2fetchbuffers/f24; math/FAR/reference unchanged.",
+  "risks": "Extra upfront LRU/remap/barrier may outweigh saved HBM store; new perpage ready polling may regress. Must verify payload publication, original38/76machinewords, actual branch/resources and performance."
+}

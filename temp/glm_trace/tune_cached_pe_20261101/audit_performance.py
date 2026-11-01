@@ -188,6 +188,10 @@ for k, new in index.items():
             reference_us=new['reference_us'], over_reference=new['over_reference']))
 tests = []
 for f in sorted(p.glob('tests_*_gpu3.json')):
+    # Production is independently recompiled/retested after retention. Its record
+    # has a separate schema and is not counted as additional candidate tests.
+    if f.name == 'tests_production_gpu3.json':
+        continue
     t = load(f)
     if not t.get('complete'):
         continue

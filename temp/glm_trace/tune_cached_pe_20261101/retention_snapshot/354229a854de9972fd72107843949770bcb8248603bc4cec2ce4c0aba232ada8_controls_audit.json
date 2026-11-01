@@ -1,0 +1,158 @@
+{
+  "complete": true,
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "controls": [
+    {
+      "original_point": {
+        "hardware": "GPU3",
+        "cohort": "cached_pe_shapes_gpu3_native_",
+        "variant": "cached_pe",
+        "kind": "lru",
+        "fraction": null,
+        "mtp": 1,
+        "requests": 1,
+        "fetch_ctas": 16,
+        "setting": "native_hbm",
+        "positions": 1024,
+        "passes": 3,
+        "old_us": 42.08399929363319,
+        "new_us": 42.560999434499536,
+        "reduction": -0.011334477446836022,
+        "old_raw": "temp/glm_trace/tune_cached_pe_20261101/gpu3/raw/cached_pe_shapes_gpu3_native_base_staged_f16_i64_soff_lru_native_hbm_mtp1_b1.json",
+        "new_raw": "temp/glm_trace/tune_cached_pe_20261101/gpu3/raw/cached_pe_shapes_gpu3_native_cached_pe_staged_f16_i64_soff_lru_native_hbm_mtp1_b1.json",
+        "memcpy_us": 39.45499872133951,
+        "local_us": 32.29466642369516,
+        "reference_us": 32.29466642369516,
+        "over_reference": 0.31789562016568107
+      },
+      "raws": [
+        {
+          "side": "before",
+          "variant": "base",
+          "raw": "temp/glm_trace/tune_cached_pe_20261101/gpu3/raw/unchanged_m1_r1_before_base_staged_f16_i64_soff_lru_native_hbm_mtp1_b1.json",
+          "sha256": "7024d1cd0adf447a8d88c80537502ad84069a66d19c052941514df452f0b47d4",
+          "mean_us": 41.61599919752916,
+          "pass_mean_us": [
+            41.96299927934888,
+            41.54699918581173,
+            41.51899917633273,
+            41.54299917718163,
+            41.507999168970855
+          ],
+          "header_sha256": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c"
+        },
+        {
+          "side": "candidate",
+          "variant": "cached_pe",
+          "raw": "temp/glm_trace/tune_cached_pe_20261101/gpu3/raw/unchanged_m1_r1_candidate_cached_pe_staged_f16_i64_soff_lru_native_hbm_mtp1_b1.json",
+          "sha256": "7d924cdeccb95527806c56fc0f8b072225a240ec1e041e677c3aab87dab78602",
+          "mean_us": 41.636999206093606,
+          "pass_mean_us": [
+            41.95999927833327,
+            41.55899918987416,
+            41.542999188095564,
+            41.56599918860593,
+            41.55699918555911
+          ],
+          "header_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15"
+        },
+        {
+          "side": "after",
+          "variant": "base",
+          "raw": "temp/glm_trace/tune_cached_pe_20261101/gpu3/raw/unchanged_m1_r1_after_base_staged_f16_i64_soff_lru_native_hbm_mtp1_b1.json",
+          "sha256": "101b31114c96ab2d36c0c27a673b22338d67ecbdc7a5ca8bf98ed28514b56b9d",
+          "mean_us": 42.202599345182534,
+          "pass_mean_us": [
+            42.514999440754764,
+            42.10899931422318,
+            42.10399931616848,
+            42.143999326071935,
+            42.140999328694306
+          ],
+          "header_sha256": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c"
+        }
+      ],
+      "baseline_mean_us": 41.90929927135585,
+      "reduction": 0.00649736621696162,
+      "over_one_percent_negative_reproduced": false
+    },
+    {
+      "original_point": {
+        "hardware": "GPU3",
+        "cohort": "cached_pe_shapes_gpu3_native_",
+        "variant": "cached_pe",
+        "kind": "lru",
+        "fraction": null,
+        "mtp": 1,
+        "requests": 256,
+        "fetch_ctas": 16,
+        "setting": "native_hbm",
+        "positions": 1024,
+        "passes": 3,
+        "old_us": 1049.9463341548108,
+        "new_us": 1061.263335306042,
+        "reduction": -0.010778647234709782,
+        "old_raw": "temp/glm_trace/tune_cached_pe_20261101/gpu3/raw/cached_pe_shapes_gpu3_native_base_staged_f16_i64_soff_lru_native_hbm_mtp1_b256.json",
+        "new_raw": "temp/glm_trace/tune_cached_pe_20261101/gpu3/raw/cached_pe_shapes_gpu3_native_cached_pe_staged_f16_i64_soff_lru_native_hbm_mtp1_b256.json",
+        "memcpy_us": 1233.774000739989,
+        "local_us": 770.6229979715621,
+        "reference_us": 770.721599592233,
+        "over_reference": 0.37697365153322093
+      },
+      "raws": [
+        {
+          "side": "before",
+          "variant": "base",
+          "raw": "temp/glm_trace/tune_cached_pe_20261101/gpu3/raw/unchanged_m1_r256_before_base_staged_f16_i64_soff_lru_native_hbm_mtp1_b256.json",
+          "sha256": "d6b2972332e25ad68a5a5c94c2c9693a85c667f4f2934c826dad57cdd7363833",
+          "mean_us": 1061.3714009174146,
+          "pass_mean_us": [
+            1021.8610003357753,
+            1068.8670001691207,
+            1068.5570019995794,
+            1073.6630017636344,
+            1073.909000318963
+          ],
+          "header_sha256": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c"
+        },
+        {
+          "side": "candidate",
+          "variant": "cached_pe",
+          "raw": "temp/glm_trace/tune_cached_pe_20261101/gpu3/raw/unchanged_m1_r256_candidate_cached_pe_staged_f16_i64_soff_lru_native_hbm_mtp1_b256.json",
+          "sha256": "9d828db857b866d5834a962a013e86fb8adad59aec2c3ab42a6fd841d540cee0",
+          "mean_us": 1067.6604014472105,
+          "pass_mean_us": [
+            1030.1599996746518,
+            1075.3500031423755,
+            1076.3630012515932,
+            1077.8570014517754,
+            1078.5720017156564
+          ],
+          "header_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15"
+        },
+        {
+          "side": "after",
+          "variant": "base",
+          "raw": "temp/glm_trace/tune_cached_pe_20261101/gpu3/raw/unchanged_m1_r256_after_base_staged_f16_i64_soff_lru_native_hbm_mtp1_b256.json",
+          "sha256": "64556e7b3eb484f144d8f62abd2ca255941cb00fe102964ccee4691fa1e9cff4",
+          "mean_us": 1063.863001856953,
+          "pass_mean_us": [
+            1022.6380007225089,
+            1071.31800201023,
+            1073.1220046291128,
+            1075.3249996341765,
+            1076.9120022887364
+          ],
+          "header_sha256": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c"
+        }
+      ],
+      "baseline_mean_us": 1062.6172013871837,
+      "reduction": -0.00474601771309846,
+      "over_one_percent_negative_reproduced": false
+    }
+  ],
+  "all_original_negatives_preserved": true,
+  "no_over_one_percent_negative_reproduced": true,
+  "limit": "Brackets quantify reproducibility. Unchanged machine words and non-reproduction do not prove a unique cause or promise every independent allocation is faster."
+}

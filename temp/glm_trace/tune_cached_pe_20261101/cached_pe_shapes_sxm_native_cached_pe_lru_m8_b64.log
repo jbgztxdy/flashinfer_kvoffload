@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/bench.py", line 489, in <module>
+    for setting in SETTINGS:run_setting(setting)
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/bench.py", line 220, in run_setting
+    require_exclusive()
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/resources.py", line 37, in require_exclusive
+    raise RuntimeError("Other GPU0/1 processes appeared during the benchmark: "+str(state["foreign"]))
+RuntimeError: Other GPU0/1 processes appeared during the benchmark: [{'gpu_uuid': 'GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81', 'pid': 2344687, 'process': '/mnt/raid/ny_work/envs/flashcheck/bin/python', 'used_mib': '416'}]
+start cached_pe_shapes_sxm_native_cached_pe_staged_f24_i64_soff_lru_nvlink_mtp8_b64
+cached_pe_shapes_sxm_native_cached_pe_staged_f24_i64_soff_lru_nvlink_mtp8_b64 cached GPU metadata bytes 1321070064
+cached_pe_shapes_sxm_native_cached_pe_staged_f24_i64_soff_lru_nvlink_mtp8_b64 fraction 1.0 mean_us {'ours': 1602.909, 'memcpy': 2223.235}
+complete cached_pe_shapes_sxm_native_cached_pe_staged_f24_i64_soff_lru_nvlink_mtp8_b64
+start cached_pe_shapes_sxm_native_cached_pe_staged_f24_i64_soff_lru_pcie_mtp8_b64
+cached_pe_shapes_sxm_native_cached_pe_staged_f24_i64_soff_lru_pcie_mtp8_b64 cached GPU metadata bytes 1321070064
+cached_pe_shapes_sxm_native_cached_pe_staged_f24_i64_soff_lru_pcie_mtp8_b64 fraction 1.0 mean_us {'ours': 5149.691, 'memcpy': 6775.443}
+complete cached_pe_shapes_sxm_native_cached_pe_staged_f24_i64_soff_lru_pcie_mtp8_b64

@@ -1,0 +1,59 @@
+{
+  "recorded_at": "2026-11-01T07:18:13+0800",
+  "positions": 1024,
+  "passes": 5,
+  "host_split": "off",
+  "points": [
+    {
+      "hardware": "GPU3",
+      "cohort": "cached_pe_shapes_gpu3_native_",
+      "variant": "cached_pe",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 1,
+      "requests": 1,
+      "fetch_ctas": 16,
+      "setting": "native_hbm",
+      "positions": 1024,
+      "passes": 3,
+      "old_us": 42.08399929363319,
+      "new_us": 42.560999434499536,
+      "reduction": -0.011334477446836022,
+      "old_raw": "temp/glm_trace/tune_cached_pe_20261101/gpu3/raw/cached_pe_shapes_gpu3_native_base_staged_f16_i64_soff_lru_native_hbm_mtp1_b1.json",
+      "new_raw": "temp/glm_trace/tune_cached_pe_20261101/gpu3/raw/cached_pe_shapes_gpu3_native_cached_pe_staged_f16_i64_soff_lru_native_hbm_mtp1_b1.json",
+      "memcpy_us": 39.45499872133951,
+      "local_us": 32.29466642369516,
+      "reference_us": 32.29466642369516,
+      "over_reference": 0.31789562016568107
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "cached_pe_shapes_gpu3_native_",
+      "variant": "cached_pe",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 1,
+      "requests": 256,
+      "fetch_ctas": 16,
+      "setting": "native_hbm",
+      "positions": 1024,
+      "passes": 3,
+      "old_us": 1049.9463341548108,
+      "new_us": 1061.263335306042,
+      "reduction": -0.010778647234709782,
+      "old_raw": "temp/glm_trace/tune_cached_pe_20261101/gpu3/raw/cached_pe_shapes_gpu3_native_base_staged_f16_i64_soff_lru_native_hbm_mtp1_b256.json",
+      "new_raw": "temp/glm_trace/tune_cached_pe_20261101/gpu3/raw/cached_pe_shapes_gpu3_native_cached_pe_staged_f16_i64_soff_lru_native_hbm_mtp1_b256.json",
+      "memcpy_us": 1233.774000739989,
+      "local_us": 770.6229979715621,
+      "reference_us": 770.721599592233,
+      "over_reference": 0.37697365153322093
+    }
+  ],
+  "order": [
+    "base_before",
+    "cached_pe",
+    "base_after"
+  ],
+  "original_audit_sha256": "c1732b8af533aa0e25a1271c3335ce03b49efe4bf31d4c03c35aab0a45d0f0b2",
+  "reason": "Two unchanged-path negatives>1%; original samples remain. Same source/config, full5coldpasses each side. No numerical or retention gate weakened."
+}

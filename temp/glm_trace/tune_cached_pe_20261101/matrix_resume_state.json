@@ -1,0 +1,59 @@
+{
+  "pid": 2351762,
+  "start": "2026-11-01T09:50:04+0800",
+  "phase": "regression_measurements_complete",
+  "complete": true,
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/validate_sxm.py",
+        "--cohort",
+        "native"
+      ],
+      "log": "matrix_sxm_native_resume.log",
+      "start": "2026-11-01T09:50:04+0800",
+      "pid": 2351768,
+      "exit_code": 0,
+      "end": "2026-11-01T11:19:15+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/audit_performance.py"
+      ],
+      "log": "resume_audit_performance.log",
+      "start": "2026-11-01T11:19:15+0800",
+      "pid": 2561069,
+      "exit_code": 0,
+      "end": "2026-11-01T11:19:17+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/audit_coverage.py"
+      ],
+      "log": "resume_audit_coverage.log",
+      "start": "2026-11-01T11:19:17+0800",
+      "pid": 2561159,
+      "exit_code": 0,
+      "end": "2026-11-01T11:19:17+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/report.py"
+      ],
+      "log": "resume_report.log",
+      "start": "2026-11-01T11:19:17+0800",
+      "pid": 2561160,
+      "exit_code": 0,
+      "end": "2026-11-01T11:19:17+0800"
+    }
+  ],
+  "preserved_failure_sha256": "42ecdc1d3bb882efd15085135436d67441f013d04caa97fcb91611595060b77e",
+  "end": "2026-11-01T11:19:17+0800"
+}

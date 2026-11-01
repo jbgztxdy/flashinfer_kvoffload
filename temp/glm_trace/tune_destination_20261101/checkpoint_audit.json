@@ -1,0 +1,30 @@
+{
+  "checkpoint_verified": true,
+  "timestamp": "2026-11-01T17:19:05+0800",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "experiment_complete": true,
+  "broad_regression_complete": false,
+  "rows": 6,
+  "pairs": 3,
+  "timed_launches": 1152,
+  "accepted_segments": 72,
+  "independent_tests": 113,
+  "proofs": [
+    {
+      "file": "compiler_final_destination_summary.json",
+      "sha256": "ddeb8a33a98f8d6b0971720b64412d230957bdd33f848b20c125099fb5633cb4",
+      "original_instances": 38
+    },
+    {
+      "file": "compiler_final_destination_normal_summary.json",
+      "sha256": "0a1e438dc5d654670dd52fb182532ffe23a54a0d1258bcf5071cf2e139c0a45a",
+      "original_instances": 76
+    }
+  ],
+  "invalid_reference_hit_rows": 3,
+  "extra_diagnostic_launches": 8,
+  "cpu_structural_cases": 144,
+  "outcome": "Reject all three negative pairs; no full/native/SXM expansion.",
+  "limitation": "Reference hit rate withheld for candidate, cannot recover historical trace hit rate. Unique counter/timing/two references checked independently; four-step diagnoses are not fulltrace proof."
+}

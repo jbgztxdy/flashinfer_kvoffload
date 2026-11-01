@@ -1,28 +1,20 @@
 {
-  "status": "pending_sxm_confirmation_and_matrix",
-  "conclusion": "QPE片段复用候选在GPU3完整两顺序100GB对照均有正信号，76格本地矩阵及两项负差夹测已完成；SXM确认/80格矩阵仍待，尚未安装。",
-  "candidate_adopted": false,
+  "recorded_at": "2026-11-01T17:13:59+0800",
+  "status": "retained_and_fresh_root_verified",
+  "conclusion": "\u5b8c\u6574156\u77e9\u9635\u548c\u6240\u6709\u95e8\u69db\u901a\u8fc7\uff0c\u5df2\u4fdd\u7559\u5b9e\u6d4ba436\u539f\u4ef6\uff1b\u751f\u4ea7root111\u6d4b\u8bd5/76\u5b9e\u4f8b\u4ee3\u7801/\u5355kernel Graph\u9a8c\u8bc1\u5b8c\u6210\u3002",
+  "candidate_adopted": true,
   "goal_complete": false,
-  "audit_sha256": "292c2ada0038dc1d4c599e66bbf9fda6a116df8e7c119589390a9ef870144802",
-  "local_matrix_complete": true,
-  "local_full_100GB_reduction_range": [
-    0.005976279638057469,
-    0.0147075488518007
-  ],
+  "audit_sha256": "a2bb77e839477f8bbafcc856f1921cf47d908f199bafaf703cbbea078587eb50",
+  "measured_cells": 200,
+  "pairs": 97,
+  "matrix_cells_audited": 156,
+  "missing_matrix_cells": 0,
   "original_negative_samples_preserved": true,
   "controls_audit_sha256": "354229a854de9972fd72107843949770bcb8248603bc4cec2ce4c0aba232ada8",
-  "no_over_one_percent_negative_reproduced": true,
+  "original_parent_terminal_exit_code": 1,
+  "live_measurement_producers": [],
   "remaining": [
-    "SXMfull1024x5twoorders+nativeNVLink/PCIe",
-    "80SXMmatrixcellsincludingMTP1R512",
-    "Allnewnegativecontrols",
-    "Frozenretentionandfreshroot111tests/codegen/Graphonlyafterallgates;currentproductionJQ7193alreadyverified"
+    "Overall goal active: continue reducing the large100GB gap."
   ],
-  "active_producer": {
-    "session_id": 15217,
-    "pid": 2084930,
-    "child_pid": 2104175,
-    "waiting_for": "GPU0/1 external2101252/2101253"
-  },
-  "recorded_at": "2026-11-01T07:25:46+0800"
+  "final_retention_audit_sha256": "d19ee80dfbb759251b6b14289ed870b33cdd066ea396588c8dc58f652f993d39"
 }

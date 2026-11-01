@@ -11,8 +11,23 @@ retention=json.loads((jq/'completion_state.json').read_text())
 prior_status=('原JQ保留及生产root109项验证已完成，当前生产为7193255e…d469；'
               '本候选继续使用与该清理源全部36/72实例机器字等价的冻结a2f37f控制。'
               if retention.get('complete') else '原JQ72075/1398先完成自己的确认及生产root验证；本候选不绕过该流程安装。')
-d=read('decisions.json') if (p/'decisions.json').exists() else dict(
-    status='pending',conclusion='QPE片段跨item内KV tile复用候选仍在验证，尚未安装。')
+d=read('decisions.json') if (p/'decisions.json').exists() else dict(status='pending')
+installed=(root/'include/flashinfer/attention/mla_host_batch.cuh').read_bytes()==(p/'cached_pe.cuh').read_bytes()
+completion=read('completion_state.json') if (p/'completion_state.json').exists() else {}
+if (p/'completion_resume_state.json').exists():completion=read('completion_resume_state.json')
+retained=installed and completion.get('complete',False)
+if retained:
+    prior_status='原JQ生产7193的109项验证与完整等价桥保持为历史基线；本候选的冻结a2f37f控制与7193全部36/72实例机器字等价。'
+if retained:
+    d['conclusion']='QPE片段复用已保留。完整156格矩阵、两种顺序完整确认及正常物理链路通过；生产root新编译、111项测试、76实例完整代码与实际单kernel Graph验证均完成。'
+elif installed:
+    d['conclusion']='完整回归及保留门槛已通过，已安装实测原件；生产root新编译与验证进行中，尚未完成最终保留审计。'
+elif c['gpu3_matrix_complete'] and c['sxm_matrix_complete']:
+    d['conclusion']='完整156格矩阵及GPU3/SXM两种顺序完整确认已完成；等待负差与冻结保留审计，尚未安装。'
+else:
+    d['conclusion']='GPU3完整确认及76格本地矩阵完成；SXM完整两种顺序与正常NVLink/PCIe确认通过，剩余矩阵运行中，尚未安装。'
+    if (p/'matrix_resume_state.json').exists():
+        d['conclusion']='完整两顺序及正常物理链路确认、136/156矩阵格已完成；外部GPU进程进入导致正常矩阵预检退出，补测父进程等待空闲后只补最后20格，尚未安装。'
 lines=['# A100：在整个 attention item 内复用 QPE MMA 片段（2026-11-01）','',d['conclusion'],'',
     '对照是冻结 JQ `a2f37f…`，不是原生产 b6。候选从global按原ldmatrix.x4的MMA布局读取64个QPE特征，'
     '每lane保存16个uint32 packed word，在该item所有成对及奇尾KV tile中复用；PE→CKV MMA累加次序、'
@@ -53,9 +68,15 @@ if (p/'controls_audit.json').exists():
         for x in controls['controls']:
             v=x['raws'];o=x['original_point']
             lines.append(f"| {o['mtp']}/{o['requests']} | {v[0]['mean_us']:.3f} | {v[1]['mean_us']:.3f} | {v[2]['mean_us']:.3f} | {x['reduction']:+.3%} |")
+retention_status=('已逐字节保留实测a436原件，生产root正常BF16/FP16重建与111项测试通过；'
+    '全部76个原与新实例的指令、机器字/控制字、资源精确等价，实际Graph为单108CTA/256线程/active1。'
+    if retained else '完整回归、正常物理链路、SXM完整确认和所有负差门槛均通过后，才可考虑冻结保留和root新编译/测试。')
 lines+=['','GPU3为A100-PCIE/NUMA1，受限far是同卡独立HBM，不能称为NVLink；SXM0/1数据来自实际NV12/NUMA0。'
     'MTP1/R512受限链路必须在SXM完成，不能拿GPU3代替。'+prior_status+
-    '完整回归、正常物理链路、SXM完整确认和所有负差门槛均通过后，才可考虑冻结保留和root新编译/测试。', '',
+    retention_status, '',
+    '原父15217在最后正常矩阵预检时发现外部GPU1进程进入，exit1且尚未创建该次raw或GPU计时；'
+    '保留父47513随之拒绝，未安装。原状态/失败日志保留在resource_preflight_failure/；'
+    'resume_matrix.py仅补原计划缺项，独立completion_resume_state跟踪后续保留，不覆盖原失败。','',
     '初始generator因签名空格差异触发断言，在创建候选前失败；随后编译前检查发现新helper的const数组引用与原MMA签名不兼容，'
     '改为仅供MMA读取的非const引用。失败源/说明及未编译28d149版本均保留，未测量或混入其时间。','',
     f"当前已测候选SHA256：`{m['candidate_sha256']}`。整体目标继续active，100GB大batch剩余差距未解决。",'',

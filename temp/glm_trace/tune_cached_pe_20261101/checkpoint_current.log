@@ -1,0 +1,29 @@
+{
+  "complete": true,
+  "evidence_checkpoint_only": true,
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "tests": 111,
+  "measured_cells": 180,
+  "pairs": 87,
+  "timed_launches": 349600,
+  "accepted_segments": 21904,
+  "planned_matrix_cells": 156,
+  "gpu3_matrix_complete": true,
+  "sxm_matrix_complete": false,
+  "missing_matrix_cells": 20,
+  "verified_source_snapshots": 30,
+  "parsed_json": 234,
+  "live_own_producers": [
+    "2351762 /mnt/data/mhy-vllm-venv/bin/python -u temp/glm_trace/tune_cached_pe_20261101/resume_matrix.py"
+  ],
+  "production_header_sha256": "7193255e2fdf83d3baa9347dea1a02b892c29ed746da719818e30fdf4066d469",
+  "comparison_base_sha256": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
+  "candidate_header_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "remaining_retention_gates": [
+    "Complete156matrixcellsincludingMTP1R512andactualNVLink/PCIe;originalJQforwardproducerhaspriority",
+    "ChangedSXMlargefull1024x5passnormal+simulatedconfirmation",
+    "Anyover1%negativepointneedsforward/reversecontrolandpreservedreason",
+    "Onlyafteroriginal1398terminalandallnewgates:frozenretentionaudit/install+freshrootnormalcompile/111tests;no manualinstallwhile1398live"
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "comparison_base": "FrozenCPEa436",
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "pairs": [
+    {
+      "hardware": "GPU3",
+      "cohort": "destination256_f24_",
+      "variant": "final_destination",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l0",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3416.4373353123665,
+      "new_us": 3545.3333457310996,
+      "reduction": -0.037728193954111644,
+      "old_raw": "temp/glm_trace/tune_destination_20261101/gpu3/raw/destination256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_destination_20261101/gpu3/raw/destination256_f24_final_destination_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "memcpy_us": 6099.807967742284,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.764521141097,
+      "over_reference": 0.3132009543679055
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "destination256_f24_",
+      "variant": "final_destination",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3464.5013262828193,
+      "new_us": 3563.733331859112,
+      "reduction": -0.028642507602316902,
+      "old_raw": "temp/glm_trace/tune_destination_20261101/gpu3/raw/destination256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_destination_20261101/gpu3/raw/destination256_f24_final_destination_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "memcpy_us": 6076.447983582814,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.8600411410966,
+      "over_reference": 0.319969656780023
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "destination256_f24_",
+      "variant": "final_destination",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g50_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 5268.821321427822,
+      "new_us": 5369.759991765022,
+      "reduction": -0.019157732665310068,
+      "old_raw": "temp/glm_trace/tune_destination_20261101/gpu3/raw/destination256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_destination_20261101/gpu3/raw/destination256_f24_final_destination_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "memcpy_us": 8481.36536280314,
+      "local_us": 2556.959974269072,
+      "reference_us": 4960.20096,
+      "over_reference": 0.0825690400586152
+    }
+  ],
+  "tests": [
+    {
+      "variant": "final_destination",
+      "tests": 105,
+      "sha256": "131848e8d4654f8a6f0809697054ec8c0ce1ee18f8f70ac43927c912c0d050a4"
+    }
+  ],
+  "stress_tests": [
+    {
+      "variant": "final_destination",
+      "tests": 8,
+      "sha256": "ee8a7b15db3ee99d8d98fd01618d7ecce8417e98f2cf0b205cb3d2fb2d4aedfc",
+      "scope": "BF16/FP16 longK2048/63tileodd-tail,128pools,capacity512/4096,empty/single/padding,LSE/fullcachepayload/Graph;K65QPEstride80;crossCTAidentical97pages/disjoint2048pages andclaimclearacrosslaunches"
+    }
+  ],
+  "invalid_reference_hit_diagnostics": [
+    {
+      "raw": "temp/glm_trace/tune_destination_20261101/gpu3/raw/destination256_f24_final_destination_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "raw_sha256": "63b199b84265f93698ee7c5e234053ccf085c769684aa0f0fa2e3501c177b723",
+      "original_reported_hit_rate": 0.9363529807692393,
+      "reason": "Legacy post-launch remap threshold counts only unadmitted staging misses; admitted cold misses now encode cache destinations. Reference hit rate withheld. Actual unique counter, timings and references independently checked."
+    },
+    {
+      "raw": "temp/glm_trace/tune_destination_20261101/gpu3/raw/destination256_f24_final_destination_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "raw_sha256": "81ccf7c5ed13e079dc6e6ebb89be3897ad14f4855fe9cfd93bab0c9ced0a7937",
+      "original_reported_hit_rate": 0.9363103332735314,
+      "reason": "Legacy post-launch remap threshold counts only unadmitted staging misses; admitted cold misses now encode cache destinations. Reference hit rate withheld. Actual unique counter, timings and references independently checked."
+    },
+    {
+      "raw": "temp/glm_trace/tune_destination_20261101/gpu3/raw/destination256_f24_final_destination_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "raw_sha256": "f7553af29d3bcfd97a69cb575aa9cd7b529ea55416eb6137a83c126801c8432a",
+      "original_reported_hit_rate": 0.9361504623128672,
+      "reason": "Legacy post-launch remap threshold counts only unadmitted staging misses; admitted cold misses now encode cache destinations. Reference hit rate withheld. Actual unique counter, timings and references independently checked."
+    }
+  ],
+  "pending_references": [],
+  "pending_reference_pairs": [],
+  "timed_launches": 1152,
+  "accepted_segments": 72,
+  "incomplete": [],
+  "production_header_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "original_matrix_sha256": "e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99"
+}

@@ -32,7 +32,7 @@ result=dict(goal_complete=False,candidate_adopted=False,groups=groups,
  total_rows=len(a['rows']),total_pairs=len(a['pairs']),pending_references=len(a['pending_references']),incomplete_raw=len(a['incomplete']),
  changed_gpu3_100GB_pairs=len(changed),changed_gpu3_100GB_reduction_range=[min(r['reduction'] for r in changed),max(r['reduction'] for r in changed)] if changed else None,
  negative_pairs=negative,over_one_percent_slow=[r for r in a['pairs'] if r['reduction']<-.01],
- remaining_retention_gates=['Complete156matrixcellsincludingMTP1R512andactualNVLink/PCIe;originalJQforwardproducerhaspriority','ChangedSXMlargefull1024x5passnormal+simulatedconfirmation','Anyover1%negativepointneedsforward/reversecontrolandpreservedreason','Onlyafteroriginal1398terminalandallnewgates:frozenretentionaudit/install+freshrootnormalcompile/111tests;no manualinstallwhile1398live'],
+ remaining_retention_gates=['Complete missing cells from frozen156matrix plans, including actualNVLink/PCIe','Confirm all large full1024x5pass cohorts in both orders','Preserve and review every over1%negative with full controls','Frozen retention gates, then fresh production root normal compile/111tests/codegen76/actualGraph'],
  audit_sha256=sha(p/'performance_audit.json'))
 (p/'coverage.json').write_text(json.dumps(result,indent=2)+'\n')
 print({k:result[k] for k in ['gpu3_matrix_complete','sxm_matrix_complete','total_rows','total_pairs','pending_references','incomplete_raw']})

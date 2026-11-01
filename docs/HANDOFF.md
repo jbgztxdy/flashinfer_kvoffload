@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-01 09:40 JQ生产保持；claim原子两版拒绝，CPE已通过SXM完整确认、矩阵运行中，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-01 17:16 CPE已保留且生产验证完成；预解析目标槽短测拒绝，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -13,6 +13,20 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**当前生产已升级为实测CPE原件，SHA=`a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15`。** 原JQ7193已冻结为生产前基线，不要回退。11:23:52保留父28985/PID2351788实际terminal0，补矩阵父36222/PID2351762亦terminal0：156矩阵完整、GPU3/SXM完整1024×5pass两顺序及正常链路确认通过；先冻结审计再逐字节安装a436，没有未测清理。生产root独立jit_production_cached_pe_normal正常BF16/FP16重建、**111项测试、76个全部原与新实例指令/资源/机器字及控制字、实际单108CTA/block32x4x2/dynamic147968/active1 Graph均通过**。[CPE最终保留审计](../temp/glm_trace/tune_cached_pe_20261101/final_retention_audit.json)、cached_pe_retention和completion_resume_state绑定原件SHA；17:11再次核对通过。canonical math34af/模拟器5e409/原5304矩阵e3fd保持，整体goal active。
+
+CPE共**200格/97配对、407968计时launch/25552segment**，两参考、逐步逐pass及实际命中率齐全。60改变路径配对未加权降低均值0.454%、范围−0.225%至+1.619%，负差原样保留；原两个未改HBM>1%负差的完整夹测均未复现，原慢格不删。SXM完整100GB0/20反向较JQ快1.732%/1.869%，正向快0.965%/0.899%；正常实际NVLink3159.205→3079.042µs（快2.537%），PCIe9950.082→9942.459（快0.077%）。这些是同轮对JQ的收益，不能跨轮拼绝对时间当组合收益。SXM正向仍高于逐步max24.94%/25.67%，离目标仍远。
+
+CPE原15217/PID2084930与第一保留47513/PID2331207均terminal1：最后native矩阵开始前，外部GPU1 PID2344687进入，在run_setting资源预检退出，未创建该次raw/计时，生产未动。原状态/全部失败log保留resource_preflight_failure/。确认终止后只用新36222补原计划缺失20格，日志/state追加，保留父28985以独立resume状态等待，外部任务自然结束后完成。**全部CPE runner已结束，不要重复启动15217/47513/36222/28985。** broader_validation_state和completion_state保留失败历史，当前完成状态看matrix_resume_state、completion_resume_state和final_retention_audit，不因旧failed误判当前生产。
+
+**新预解析目标槽 `temp/glm_trace/tune_destination_20261101/` 已实现并拒绝。** 头3c744e…a7749，以CPEa436为直接基线；提前精确LRU、淘汰oldresident并将slot_page设pending，额外两grid barrier间把现有32bit miss remap改为最终cache槽或保留staging。原f24/64row双缓冲真实读后每页只写一个最终位置；全部256writer fence+CTAbar后release发布cache slot_page，tile wait acquire。原perKV地址解析器保持，无旧direct_cache逐KV查victim依赖；额外LRU/remap/同步开销明确，非单一省写因果证明。
+
+该候选113正常/长cache-payload/LSE/Graph测试通过，原CPE38EMU/76normal指令/资源/机器字及控制字全同，新REG255/STACK0/static2048/dynamic147968，实际单108CTA/256线程/active1与首BF16/K97三sanitizer通过。GPU3/NUMA1/CPE→candidate、MTP8R128/LRU4096/f24off/256×3pass：100GB0/20慢3.773%/2.864%，50GB20慢1.916%，停止，不扩full/native/SXM或扫LRU/barrier参数。6格/3配对、1152launch/72segment，全部原件保留。
+
+destination原父33355实际terminal1发生在**计时完成后的审计**：旧reference-hit诊断将remap低于cache_slots当命中，新候选的获准miss也落在cache槽，因此漏算，原报告reference命中率无效。审计已将该字段置null并保存原报告值/理由，实际unique counter、时间、两参考仍独立核验；不能用坏诊断宣称高命中。追加正常四步冷/热/淘汰/热的双版独立诊断证明冷miss41904引用/97unique、热0/0及全部载荷，旧阈值只在新候选漏计。首诊断脚本因cache backing尚未lazy初始化而在读views处退出，失败源/log保留，加入eager初始化并清空后两版通过；没有改kernel或回写原raw。其余原build/test/stress均terminal0；详细状态见continuation，勿重启。
+
+17:14 H800只读复查仍原五任务Priority/Dependency，估计11/05；原两个watcher4160646/1174145活，AGENTS/MEMORY哈希91b070/e3df236不变，无新Slurm提交或排队源写入。下面所有“CPE尚未安装/正在等SXM”均为历史快照，以当前生产及最终保留原件为准。
 
 **最新claim实验 `temp/glm_trace/tune_claim_probe_20261101/` 已完成，两版均拒绝，生产7193不变。** 直接基线是当前生产7193，不是尚未采用的CPE。claim_probe头95ff4054…f5c1c，仅prepare先GPU scope relaxed原子load，非零跳过CAS；claim_store头15aa954a…c81e保留全部原CAS，仅唯一owner发布编码row/rank时用relaxed GPU原子store替代无返回值atomicExch。0→1→编码及原grid阶段保持；规范化新kernel名/prepare调用后，整个cooperative生命周期与JQ逐字相同。数学、LRU/FAR/payload、256线程/108CTA、147968dynamic/2304static/32KV双stage/f24双fetch保持；每版REG251/STACK0/LOCAL0，原36EMU/72normal机器字/控制字及资源全同。
 

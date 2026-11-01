@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/validate_more.py", line 85, in <module>
+    run([py,'-u',str(p/'validate_sxm.py'),'--cohort',cohort], 'matrix_sxm_'+cohort+'.log')
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/validate_more.py", line 25, in run
+    if item['exit_code']:raise RuntimeError('Failed '+name)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Failed matrix_sxm_native.log

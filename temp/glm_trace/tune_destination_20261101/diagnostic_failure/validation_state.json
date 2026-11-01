@@ -1,0 +1,176 @@
+{
+  "pid": 2341925,
+  "start": "2026-11-01T09:46:49+0800",
+  "phase": "failed",
+  "complete": false,
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_destination_20261101/compiler.py"
+      ],
+      "log": "compiler.log",
+      "start": "2026-11-01T09:50:49+0800",
+      "pid": 2353755,
+      "exit_code": 0,
+      "end": "2026-11-01T09:51:16+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_destination_20261101/compiler.py",
+        "--normal"
+      ],
+      "log": "compiler_normal.log",
+      "start": "2026-11-01T09:51:16+0800",
+      "pid": 2354717,
+      "exit_code": 0,
+      "end": "2026-11-01T09:52:06+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_destination_20261101/probe_final_destination.py"
+      ],
+      "log": "probe_final_destination.log",
+      "start": "2026-11-01T09:52:06+0800",
+      "pid": 2356534,
+      "exit_code": 0,
+      "end": "2026-11-01T09:52:10+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "synccheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLAFinalDestinationKernel",
+        "--launch-count",
+        "1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_destination_20261101/probe_final_destination.py"
+      ],
+      "log": "synccheck_final_destination.log",
+      "start": "2026-11-01T09:52:10+0800",
+      "pid": 2356709,
+      "exit_code": 0,
+      "end": "2026-11-01T09:52:26+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "racecheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLAFinalDestinationKernel",
+        "--launch-count",
+        "1",
+        "--racecheck-num-workers",
+        "8",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_destination_20261101/probe_final_destination.py"
+      ],
+      "log": "racecheck_final_destination.log",
+      "start": "2026-11-01T09:52:26+0800",
+      "pid": 2357253,
+      "exit_code": 0,
+      "end": "2026-11-01T09:52:31+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "memcheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLAFinalDestinationKernel",
+        "--launch-count",
+        "1",
+        "--report-api-errors",
+        "no",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_destination_20261101/probe_final_destination.py"
+      ],
+      "log": "memcheck_final_destination.log",
+      "start": "2026-11-01T09:52:31+0800",
+      "pid": 2357663,
+      "exit_code": 0,
+      "end": "2026-11-01T09:52:36+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_destination_20261101/screen.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "final_destination",
+        "--variants",
+        "base",
+        "final_destination",
+        "--settings",
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--tag",
+        "destination256_f24_"
+      ],
+      "log": "screen_gpu3.log",
+      "start": "2026-11-01T09:52:36+0800",
+      "pid": 2357988,
+      "exit_code": 0,
+      "end": "2026-11-01T09:54:08+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_destination_20261101/audit_performance.py"
+      ],
+      "log": "audit_performance.log",
+      "start": "2026-11-01T09:54:08+0800",
+      "pid": 2361489,
+      "exit_code": 1,
+      "end": "2026-11-01T09:54:08+0800"
+    }
+  ],
+  "error": "Failed audit_performance.log",
+  "end": "2026-11-01T09:54:08+0800"
+}

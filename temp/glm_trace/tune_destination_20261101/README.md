@@ -1,0 +1,15 @@
+# Final miss destination experiment
+
+Current status: **rejected**, no expansion. The three fixed short-screen pairs regressed 3.773%, 2.864% and 1.916%. All 113 tests and old38/76 full code identities passed. Production CPEa436 is independently retained and root-validated. `checkpoint_audit.json`, `decisions.json`, `continuation_state.json` and the [report](../../../docs/mla_host_a100_final_destination_20261101.md) bind the final evidence.
+
+The original parent exited1 at post-timing audit: the old remap threshold no longer measures reference misses because this candidate puts admitted misses into cache destinations. Raw timings/counts are preserved; the audited reference hit rate is null, with the original claimed value and reason recorded separately. Four cold/warm/eviction/warm launches per version check reference misses before the launch, the kernel unique counter, output and all cache payloads; they prove the diagnostic incompatibility, not historical trace hit rates. The first diagnostic script's lazy-cache initialization failure and repaired version are preserved in `diagnostic_failure/`. No kernel or measured raw was rewritten.
+
+The frozen baseline is cached-PE a436, whose own validation/retention runs separately. This candidate is not adopted. Do not confuse gains over that baseline with gains over JQ7193.
+
+`make_candidate.py` adds private typed helpers and a single cooperative kernel. It runs the original exact LRU selector first, clears evicted resident mappings and marks selected cache slots pending. It rewrites the existing 32-bit miss remap once to its final cache or staging row. Dedicated fetch CTAs copy each unique page once from shared memory to that destination. They release-publish a cache row only after every payload writer fences and joins the CTA barrier; unadmitted staging rows retain the original epoch chunk flags. Attention's tile wait acquires the appropriate flag; its per-KV address resolver is unchanged.
+
+This differs from the rejected old direct-cache experiment, which used a dependent victim lookup on each KV load. It explicitly adds upfront LRU and two grid barriers. Those costs may exceed the saved HBM write; correctness and measured performance decide.
+
+The original CPE, JQ, generic, pure-device and dispatch definitions remain literal. The new branch uses the same 256 threads, 108 CTAs, 147968-byte dynamic compute/fetch union, 32-KV/two-stage attention and 64-row/two-buffer fetch. Actual compiled resources, old-instance instruction/control-word identity, Graph dispatch, payload/Graph tests, sanitizers and timings are recorded independently.
+
+`source_review.json` verifies unchanged attention helper text. `destination_model_review.json` is a CPU structural oracle using supplied victim maps; it is not GPU memory-order, LRU-selection or performance evidence. `reused_cached_pe_control.json` binds baseline evidence without counting its tests again. Build/test/screen states are authoritative for execution progress. Preserve failures and frozen source bytes, and inspect live producer PIDs before any restart.

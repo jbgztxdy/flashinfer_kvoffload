@@ -1,35 +1,28 @@
 {
-  "recorded_at": "2026-11-01T07:25:46+0800",
+  "recorded_at": "2026-11-01T17:19:29+0800",
   "goal_status": "active",
-  "candidate_adopted": false,
-  "production_header_sha256": "7193255e2fdf83d3baa9347dea1a02b892c29ed746da719818e30fdf4066d469",
-  "comparison_base_sha256": "a2f37fb985fcbc523e740c85e9cc6468afad74fd8716c11aef4221ebab7c4b7c",
-  "candidate_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
-  "active_runners": [
-    {
-      "session_id": 15217,
-      "pid": 2084930,
-      "child_pid": 2104175,
-      "phase": "SXMreversefullwaitnewexternalGPU01users2101252/2101253;thenforward/nativefull+80matrix;noinstall"
-    }
-  ],
+  "candidate_adopted": true,
+  "production_header_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "active_runners": [],
   "completed_handles": {
-    "95227": 0,
-    "36824": 0,
-    "61566": 0,
-    "49401": 0,
-    "66271": 0,
-    "66530": 0,
-    "62457": 0,
-    "40637": 0
+    "15217": 1,
+    "47513": 1,
+    "36222": 0,
+    "28985": 0,
+    "71488": 0,
+    "49046": 0
   },
-  "results": {
-    "tests": 111,
-    "local_matrix_cells": 76,
-    "measured_cells": 104,
-    "pairs": 49,
-    "timed_launches": 175520,
-    "accepted_segments": 11024
+  "production_validation": {
+    "tests_production_gpu3.json": "289acce52209c72e3bfd31cd1e24f323d3384bef2f14826b9dce80783a961469",
+    "production_codegen_normal_summary.json": "824282840527f0f1571e7717c7d3814e272848595fb48b1ec46078d8d1241a3e",
+    "dispatch_probe_production_cached_pe.json": "1c974e5ae651c225769446252785dc632187516a40c2b7ef3a6fdc2cfbff0f3c"
   },
-  "next_action": "Inspect15217andbroader_validation_state FIRST;do not duplicate. OriginalJQ72075/1398terminal0,production7193root109/codegen72/Graphpassed. FinishnewSXMfull/matrixandnegativecontrols,beforeanynewretention. SimpleprepareinterleaveCPUduplicatesonly1-2%,notworthnaiveprototype;halfbufferattentionresourceideaonlyanalysis,seefollowup_resource_review.json.No newkernelimplementedforthatidea."
+  "rows": 200,
+  "pairs": 97,
+  "timed_launches": 407968,
+  "accepted_segments": 25552,
+  "matrix_cells": 156,
+  "final_retention_audit_sha256": "d19ee80dfbb759251b6b14289ed870b33cdd066ea396588c8dc58f652f993d39",
+  "source_of_truth": "completion_resume_state and final_retention_audit. Original broader_validation_state/completion_state preserve preflight failure, not unfinished adoption.",
+  "next_action": "Continue independent optimization from productionCPEa436. Do not rerun any completed CPEproducer. Retain allnegative/failedrecords. Goalactive with large100GB gap still23-26%depending cohort."
 }

@@ -1,5 +1,9 @@
 # QPE fragments cached across an attention item
 
+Current status: **retained and verified**. Production is the exact measured a4361729 header. `completion_resume_state.json` completed at 11:23:52; `final_retention_audit.json` verifies all 156 matrix cells, 200 total rows / 97 pairs, fresh production root compilation, 111 tests, all 76 kernel instances' instruction/control-word/resource identity, and the actual single-kernel Graph. No CPE producer remains active.
+
+The original 15217 and first retention 47513 exited 1 because an external GPU1 process entered native-matrix resource preflight before that row or timing existed. `resource_preflight_failure/` preserves their source states/logs. Only missing native20 cells were resumed by 36222; retention 28985 subsequently passed every gate, froze evidence, installed the measured bytes and validated the root. Both resumed handles are terminal0. Historical sections below retain the earlier pending status; use `continuation_state.json` and final retention for the current state. Overall optimization remains active.
+
 The base is frozen JQ a2f37fb9, not production b6. `manifest.json` binds the
 candidate and canonical math headers. Only the existing large cached fully
 staged JQ dispatch uses the new derived traits/params and single cooperative

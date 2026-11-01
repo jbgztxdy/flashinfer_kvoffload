@@ -16,8 +16,11 @@ assert m['math_sha256']=='34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6ee
 assert sha(root/'include/flashinfer/attention/far_link_emu.cuh')=='5e409035aa4edc83f72135c09c453e825ce59e5dcc4bae63c04ff3909d024095'
 assert sha(root/'temp/glm_trace/kernel_report_20261029/matrix.json')=='e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99'
 production=sha(root/'include/flashinfer/attention/mla_host_batch.cuh')
-assert production!=m['candidate_sha256']
-if production!='b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a':
+adopted=production==m['candidate_sha256']
+if adopted:
+    final=read(p/'final_retention_audit.json')
+    assert final['complete'] and final['candidate_adopted'] and final['production_header_sha256']==production
+elif production!='b6eea0957bc5f972e5645c1f8e90b14217601ba11ef9e57f3ead51159d66e72a':
     retention=read(p.parent/'tune_joint_qk_20261101/joint_qk_retention.json')
     assert retention['candidate_adopted'] and retention['candidate_header_sha256']==production
 for suffix,count,stack in [('',36,8),('_normal',72,0)]:
@@ -69,13 +72,18 @@ assert overlap['source_sha256']==sha(p/'inspect_prepare_overlap.py')
 assert overlap['layouts']['rows2_cols16']['duplicate_reference_fraction']<.02
 assert overlap['layouts']['rows8_cols4']['duplicate_reference_fraction']<.02
 state=read(p/'broader_validation_state.json')
+if state['phase']=='failed':
+    assert state['error']=='Failed matrix_sxm_native.log'
+    assert state==read(p/'resource_preflight_failure/broader_validation_state.json')
+    assert all(x.get('exit_code',0)==0 for x in state['steps'][:-1]) and state['steps'][-1]['exit_code']==1
+    state=read(p/'matrix_resume_state.json')
 assert state['phase']!='failed' and all(x.get('exit_code',0)==0 for x in state['steps'])
 live=[]
 if not state['complete']:
     ps=subprocess.check_output(['ps','-p',str(state['pid']),'-o','pid,args'],text=True)
-    assert 'tune_cached_pe_20261101/validate_more.py' in ps
+    assert 'tune_cached_pe_20261101/validate_more.py' in ps or 'tune_cached_pe_20261101/resume_matrix.py' in ps
     live=ps.splitlines()[1:]
-decision=read(p/'decisions.json');assert not decision['candidate_adopted'] and not decision['goal_complete']
+decision=read(p/'decisions.json');assert decision['candidate_adopted']==adopted and not decision['goal_complete']
 assert decision['audit_sha256']==sha(p/'performance_audit.json')
 snapshots=jsons=0
 names=subprocess.check_output(['git','ls-files','--cached','--others','--exclude-standard','--',str(p.relative_to(root))],cwd=root,text=True).splitlines()
@@ -85,7 +93,7 @@ for name in set(names):
     if f.parent.name=='source_snapshots' and len(f.stem)==64:
         assert sha(f)==f.stem;snapshots+=1
 for f in p.glob('*.py'):compile(f.read_text(),str(f),'exec')
-result=dict(complete=True,evidence_checkpoint_only=True,goal_complete=False,candidate_adopted=False,
+result=dict(complete=True,evidence_checkpoint_only=not adopted,goal_complete=False,candidate_adopted=adopted,
     tests=111,measured_cells=len(a['rows']),pairs=len(a['pairs']),timed_launches=a['timed_launches'],
     accepted_segments=a['accepted_segments'],planned_matrix_cells=156,gpu3_matrix_complete=c['gpu3_matrix_complete'],
     sxm_matrix_complete=c['sxm_matrix_complete'],missing_matrix_cells=sum(len(g['missing_cells']) for g in c['groups']),

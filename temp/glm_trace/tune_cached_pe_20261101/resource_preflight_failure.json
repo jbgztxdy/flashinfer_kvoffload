@@ -1,0 +1,45 @@
+{
+  "recorded_at": "2026-11-01T09:49:53+0800",
+  "original_handles": {
+    "15217": 1,
+    "47513": 1
+  },
+  "original_pids": {
+    "validation": 2084930,
+    "completion": 2331207
+  },
+  "failure": "ExternalGPU1PID2344687 appeared at run_setting resourcepreflight before label/raw/timedGPUwork. OtherGPU0PID2344686 is same external task. No native row created.",
+  "existing_native_raw_files": 0,
+  "limited_60_completed": true,
+  "recovery": "Run only missing native20 with unchangedvalidate_sxm and appendlogs/state; preserve originalparent failure. Newmatrix_resume_state is authority forresumed work. No kill/override resources.",
+  "preserved": [
+    {
+      "name": "broader_validation_state.json",
+      "sha256": "397eaa0780c46e80960e18c6bad8125d645f82cea350b5a8272309573834a968"
+    },
+    {
+      "name": "completion_state.json",
+      "sha256": "7b40284b243d4be1a211c8198a59950076712b1fd69ad17089797319963ae061"
+    },
+    {
+      "name": "validate_more.log",
+      "sha256": "267e95893f2ce808e4c50cb8c4ba80409a389822884fa1f6f45d93aa47529aca"
+    },
+    {
+      "name": "complete_retention.log",
+      "sha256": "115e66f9581c8d62a512fb7937028dce1897dc35643e5857637016d28d1b52a0"
+    },
+    {
+      "name": "matrix_sxm_native.log",
+      "sha256": "b15082e7ec978211da6be2bb50e0437368066e6e4001b88b6d24859fa68a1c33"
+    },
+    {
+      "name": "cached_pe_shapes_sxm_native_state.json",
+      "sha256": "1bfb5c32ae1f7a4b07ef781e34278db937c559f541a42bf6e419ced49af525f7"
+    },
+    {
+      "name": "cached_pe_shapes_sxm_native_cached_pe_lru_m8_b64.log",
+      "sha256": "75b6c303902809bd839b783f186e9ffd9cb3489ee3acf62ad36d04195fca5616"
+    }
+  ]
+}

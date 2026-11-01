@@ -1,0 +1,306 @@
+{
+  "complete": true,
+  "build": "EMU BF16",
+  "records": [
+    {
+      "variant": "base",
+      "symbol": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI13__nv_bfloat16S3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "sass_archive_sha256": "00e023dd5d42e3afc4f4f995ab0ed71e5ad9a22e2c4b85e0867f51a37cbe10d0",
+      "instruction_count": 6952,
+      "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "opcodes": {
+        "ATOM": 2,
+        "ATOMG": 22,
+        "ATOMS": 5,
+        "B2R": 1,
+        "BAR": 58,
+        "BPT": 2,
+        "BRA": 272,
+        "BREAK": 4,
+        "BREV": 2,
+        "BSSY": 107,
+        "BSYNC": 107,
+        "CALL": 47,
+        "CCTL": 20,
+        "CS2R": 135,
+        "DEPBAR": 4,
+        "ERRBAR": 9,
+        "EXIT": 3,
+        "F2FP": 76,
+        "F2I": 7,
+        "FADD": 4,
+        "FFMA": 28,
+        "FLO": 6,
+        "FMNMX": 36,
+        "FMUL": 397,
+        "FSEL": 18,
+        "FSETP": 2,
+        "HMMA": 299,
+        "I2F": 7,
+        "IADD3": 530,
+        "IMAD": 1701,
+        "IMNMX": 33,
+        "ISETP": 659,
+        "LD": 26,
+        "LDG": 85,
+        "LDGDEPBAR": 6,
+        "LDGSTS": 90,
+        "LDS": 368,
+        "LDSM": 198,
+        "LEA": 272,
+        "LOP3": 401,
+        "MATCH": 2,
+        "MEMBAR": 10,
+        "MOV": 43,
+        "MUFU": 39,
+        "NANOSLEEP": 7,
+        "NOP": 15,
+        "P2R": 25,
+        "PLOP3": 27,
+        "POPC": 52,
+        "R2UR": 1,
+        "RED": 3,
+        "REDUX": 5,
+        "RET": 11,
+        "S2R": 27,
+        "S2UR": 1,
+        "SEL": 97,
+        "SHF": 91,
+        "SHFL": 53,
+        "ST": 3,
+        "STG": 140,
+        "STS": 114,
+        "UFLO": 1,
+        "UIADD3": 19,
+        "UIMAD": 2,
+        "UISETP": 5,
+        "ULDC": 14,
+        "ULEA": 11,
+        "ULOP3": 5,
+        "UMOV": 6,
+        "UPOPC": 3,
+        "USEL": 1,
+        "USHF": 5,
+        "VOTE": 29,
+        "VOTEU": 5,
+        "WARPSYNC": 28,
+        "YIELD": 3
+      },
+      "instruction_sha256": "d4bb44c1fe6d40040320f487c3488732bbaeab19454746d419ffb3e909c7cc4e"
+    },
+    {
+      "variant": "cached_pe",
+      "symbol": "_ZN10flashinfer3mla22BatchMLACachedPEKernelINS0_14CachedPETraitsI13__nv_bfloat16S3_S3_iEENS0_18CachedPEHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "sass_archive_sha256": "01f3670b8942b751970efb7eba09c27ec39e21d6d458554a7100295b656ab02e",
+      "instruction_count": 6968,
+      "resource": "REG:255 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+      "opcodes": {
+        "ATOM": 2,
+        "ATOMG": 22,
+        "ATOMS": 5,
+        "B2R": 1,
+        "BAR": 58,
+        "BPT": 2,
+        "BRA": 272,
+        "BREAK": 4,
+        "BREV": 2,
+        "BSSY": 107,
+        "BSYNC": 107,
+        "CALL": 47,
+        "CCTL": 20,
+        "CS2R": 137,
+        "DEPBAR": 4,
+        "ERRBAR": 9,
+        "EXIT": 3,
+        "F2FP": 76,
+        "F2I": 7,
+        "FADD": 4,
+        "FFMA": 28,
+        "FLO": 6,
+        "FMNMX": 36,
+        "FMUL": 397,
+        "FSEL": 18,
+        "FSETP": 2,
+        "HMMA": 299,
+        "I2F": 7,
+        "IADD3": 534,
+        "IMAD": 1694,
+        "IMNMX": 33,
+        "ISETP": 659,
+        "LD": 26,
+        "LDG": 101,
+        "LDGDEPBAR": 6,
+        "LDGSTS": 90,
+        "LDL": 1,
+        "LDS": 368,
+        "LDSM": 190,
+        "LEA": 275,
+        "LOP3": 399,
+        "MATCH": 2,
+        "MEMBAR": 10,
+        "MOV": 43,
+        "MUFU": 39,
+        "NANOSLEEP": 7,
+        "NOP": 20,
+        "P2R": 25,
+        "PLOP3": 27,
+        "POPC": 52,
+        "R2UR": 1,
+        "RED": 3,
+        "REDUX": 5,
+        "RET": 11,
+        "S2R": 27,
+        "S2UR": 1,
+        "SEL": 97,
+        "SHF": 92,
+        "SHFL": 53,
+        "ST": 3,
+        "STG": 140,
+        "STL": 1,
+        "STS": 114,
+        "UFLO": 1,
+        "UIADD3": 19,
+        "UIMAD": 2,
+        "UISETP": 5,
+        "ULDC": 14,
+        "ULEA": 11,
+        "ULOP3": 5,
+        "UMOV": 6,
+        "UPOPC": 3,
+        "USEL": 1,
+        "USHF": 5,
+        "VOTE": 29,
+        "VOTEU": 5,
+        "WARPSYNC": 28,
+        "YIELD": 3
+      },
+      "instruction_sha256": "ca178f1e37bcef177b2c015b18bedf4c9be50c74c6b7041c51bd2330b4755f46"
+    }
+  ],
+  "cache_liveness": {
+    "verified": true,
+    "compiler": "CUDA13.1 sm80",
+    "registers": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27
+    ],
+    "load_region": [
+      "0xc240",
+      "0xc420"
+    ],
+    "paired_loop_region": [
+      "0xdec0",
+      "0x116e0"
+    ],
+    "qpe_loads": [
+      {
+        "address": "0xc240",
+        "instruction": "LDG.E R14, [R6.64+0x10]"
+      },
+      {
+        "address": "0xc260",
+        "instruction": "LDG.E R12, [R6.64]"
+      },
+      {
+        "address": "0xc270",
+        "instruction": "LDG.E R16, [R6.64+0x20]"
+      },
+      {
+        "address": "0xc280",
+        "instruction": "LDG.E R18, [R6.64+0x30]"
+      },
+      {
+        "address": "0xc290",
+        "instruction": "LDG.E R20, [R6.64+0x40]"
+      },
+      {
+        "address": "0xc2a0",
+        "instruction": "LDG.E R22, [R6.64+0x50]"
+      },
+      {
+        "address": "0xc2b0",
+        "instruction": "LDG.E R24, [R6.64+0x60]"
+      },
+      {
+        "address": "0xc2c0",
+        "instruction": "LDG.E R26, [R6.64+0x70]"
+      },
+      {
+        "address": "0xc300",
+        "instruction": "LDG.E R13, [R8.64]"
+      },
+      {
+        "address": "0xc330",
+        "instruction": "LDG.E R15, [R8.64+0x10]"
+      },
+      {
+        "address": "0xc360",
+        "instruction": "LDG.E R17, [R8.64+0x20]"
+      },
+      {
+        "address": "0xc390",
+        "instruction": "LDG.E R19, [R8.64+0x30]"
+      },
+      {
+        "address": "0xc3c0",
+        "instruction": "LDG.E R21, [R8.64+0x40]"
+      },
+      {
+        "address": "0xc3f0",
+        "instruction": "LDG.E R23, [R8.64+0x50]"
+      },
+      {
+        "address": "0xc410",
+        "instruction": "LDG.E R25, [R8.64+0x60]"
+      },
+      {
+        "address": "0xc420",
+        "instruction": "LDG.E R27, [R8.64+0x70]"
+      }
+    ],
+    "no_writes_to_query_registers_in_pair_loop": true,
+    "no_local_memory_in_pair_loop": true,
+    "detail": "All16 QPE words load before the paired-tile backedge and stay inR12-R27. The kernel still uses8B stack elsewhere; no spill-free-kernel claim. Register reuse is verified, but is not a performance result."
+  },
+  "selected": {
+    "LDSM": {
+      "base": 198,
+      "cached_pe": 190
+    },
+    "LDG": {
+      "base": 85,
+      "cached_pe": 101
+    },
+    "LDL": {
+      "base": 0,
+      "cached_pe": 1
+    },
+    "STL": {
+      "base": 0,
+      "cached_pe": 1
+    },
+    "HMMA": {
+      "base": 299,
+      "cached_pe": 299
+    },
+    "BAR": {
+      "base": 58,
+      "cached_pe": 58
+    }
+  },
+  "limits": "Static counts include loops and odd tail, not dynamic executed counts or timing. The QPE register witness covers the paired loop; STACK8 elsewhere means the whole kernel is not spill-free. Extra loads, register pressure and scheduling can offset LDSM removal. Full SASS/control/resource archives remain authoritative."
+}

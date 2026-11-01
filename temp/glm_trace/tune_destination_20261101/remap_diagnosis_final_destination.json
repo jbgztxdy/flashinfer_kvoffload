@@ -1,0 +1,71 @@
+{
+  "complete": true,
+  "timestamp": "2026-11-01T17:14:32+0800",
+  "variant": "final_destination",
+  "steps": [
+    {
+      "step": 0,
+      "before_launch_reference_misses": 41904,
+      "before_launch_unique_misses": 97,
+      "kernel_unique_counter": 97,
+      "legacy_postlaunch_threshold_count": 0,
+      "output_and_all_cache_payload_checked": true
+    },
+    {
+      "step": 1,
+      "before_launch_reference_misses": 0,
+      "before_launch_unique_misses": 0,
+      "kernel_unique_counter": 0,
+      "legacy_postlaunch_threshold_count": 0,
+      "output_and_all_cache_payload_checked": true
+    },
+    {
+      "step": 2,
+      "before_launch_reference_misses": 41904,
+      "before_launch_unique_misses": 97,
+      "kernel_unique_counter": 97,
+      "legacy_postlaunch_threshold_count": 0,
+      "output_and_all_cache_payload_checked": true
+    },
+    {
+      "step": 3,
+      "before_launch_reference_misses": 0,
+      "before_launch_unique_misses": 0,
+      "kernel_unique_counter": 0,
+      "legacy_postlaunch_threshold_count": 0,
+      "output_and_all_cache_payload_checked": true
+    }
+  ],
+  "resources_start": {
+    "timestamp": "2026-11-01T17:14:29+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "resources_end": {
+    "timestamp": "2026-11-01T17:14:32+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 993,
+        "total_mib": 40960,
+        "utilization": 7
+      }
+    ],
+    "foreign": [],
+    "available": false
+  },
+  "performance_claim": false,
+  "header_sha256": "3c744e78251fdc6787c6a68c0d248773857c859e1c09dba687c58ef1dfaa7749",
+  "source_sha256": "327eba23733a07fa0ffb93719483b56d05c21e132f0750fef05e99666049d9e7",
+  "limitation": "Four deterministic launches, proves diagnostic incompatibility; does not recover historical trace reference hit rates."
+}

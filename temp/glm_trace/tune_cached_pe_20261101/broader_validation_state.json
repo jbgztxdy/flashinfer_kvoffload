@@ -1,7 +1,7 @@
 {
   "start": "2026-11-01T06:59:29+0800",
   "pid": 2084930,
-  "phase": "sxm_full_confirmation",
+  "phase": "failed",
   "complete": false,
   "candidate_adopted": false,
   "goal_complete": false,
@@ -100,10 +100,150 @@
       ],
       "log": "cachedsxmreverse1024_f24_screen.log",
       "start": "2026-11-01T07:15:22+0800",
-      "pid": 2104175
+      "pid": 2104175,
+      "exit_code": 0,
+      "end": "2026-11-01T09:24:20+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/screen.py",
+        "--hardware",
+        "sxm",
+        "--candidate",
+        "cached_pe",
+        "--variants",
+        "base",
+        "cached_pe",
+        "--positions",
+        "1024",
+        "--passes",
+        "5",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--tag",
+        "cachedsxmforward1024_f24_",
+        "--settings",
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ],
+      "log": "cachedsxmforward1024_f24_screen.log",
+      "start": "2026-11-01T09:24:20+0800",
+      "pid": 2294976,
+      "exit_code": 0,
+      "end": "2026-11-01T09:25:54+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/screen.py",
+        "--hardware",
+        "sxm",
+        "--candidate",
+        "cached_pe",
+        "--variants",
+        "base",
+        "cached_pe",
+        "--positions",
+        "1024",
+        "--passes",
+        "5",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--tag",
+        "cachedsxmnative1024_f24_",
+        "--settings",
+        "nvlink",
+        "pcie",
+        "--native"
+      ],
+      "log": "cachedsxmnative1024_f24_screen.log",
+      "start": "2026-11-01T09:25:54+0800",
+      "pid": 2297896,
+      "exit_code": 0,
+      "end": "2026-11-01T09:29:24+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/audit_performance.py"
+      ],
+      "log": "audit_performance.log",
+      "start": "2026-11-01T09:29:24+0800",
+      "pid": 2304420,
+      "exit_code": 0,
+      "end": "2026-11-01T09:29:25+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/audit_coverage.py"
+      ],
+      "log": "audit_coverage.log",
+      "start": "2026-11-01T09:29:25+0800",
+      "pid": 2304428,
+      "exit_code": 0,
+      "end": "2026-11-01T09:29:25+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/report.py"
+      ],
+      "log": "report.log",
+      "start": "2026-11-01T09:29:25+0800",
+      "pid": 2304429,
+      "exit_code": 0,
+      "end": "2026-11-01T09:29:25+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/validate_sxm.py",
+        "--cohort",
+        "limited"
+      ],
+      "log": "matrix_sxm_limited.log",
+      "start": "2026-11-01T09:29:25+0800",
+      "pid": 2304430,
+      "exit_code": 0,
+      "end": "2026-11-01T09:47:31+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/validate_sxm.py",
+        "--cohort",
+        "native"
+      ],
+      "log": "matrix_sxm_native.log",
+      "start": "2026-11-01T09:47:31+0800",
+      "pid": 2344153,
+      "exit_code": 1,
+      "end": "2026-11-01T09:47:46+0800"
     }
   ],
   "gpu3_matrix_complete": true,
   "missing_original_JQ": [],
-  "last_observation": "2026-11-01T07:15:22+0800"
+  "last_observation": "2026-11-01T07:15:22+0800",
+  "sxm_confirmation_gate_passed": true,
+  "error": "Failed matrix_sxm_native.log",
+  "end": "2026-11-01T09:47:46+0800"
 }
