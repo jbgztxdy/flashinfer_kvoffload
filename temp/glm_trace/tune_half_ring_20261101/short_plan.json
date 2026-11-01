@@ -1,0 +1,25 @@
+{
+  "positions": 256,
+  "passes": 3,
+  "mtp": 8,
+  "requests": 128,
+  "fetch_ctas": 24,
+  "host_split": "off",
+  "settings": [
+    "g100_l0",
+    "g100_l20000",
+    "g50_l20000"
+  ],
+  "order": [
+    "base",
+    "no_copy_pe",
+    "half_ring"
+  ],
+  "headers": {
+    "base": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+    "no_copy_pe": "a05122ada68293e0968d9622b15a0d67900668aa9a303c558dcfe47600a4c086",
+    "half_ring": "0c44476e29faaea84a37ab1f953fbc30cc8dc52ae78b382e9d801f624e7393ab"
+  },
+  "comparison_base": "Frozen cachedPEa436; currentproductionJQ7193 unchanged",
+  "limitation": "Short screen only,not full trace or adoption. Two-stage control isolates unused shared QPE removal; half-ring also changes P layout/loader,not an isolated latency attribution."
+}

@@ -1,0 +1,208 @@
+{
+  "start": "2026-11-01T08:04:24+0800",
+  "pid": 2163454,
+  "phase": "fixed_short_screen_complete",
+  "complete": true,
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_half_ring_20261101/compiler.py",
+        "--variants",
+        "no_copy_pe_fixed"
+      ],
+      "log": "compiler_fixed.log",
+      "start": "2026-11-01T08:08:04+0800",
+      "pid": 2168327,
+      "exit_code": 0,
+      "end": "2026-11-01T08:08:31+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_half_ring_20261101/compiler.py",
+        "--variants",
+        "no_copy_pe_fixed",
+        "--normal"
+      ],
+      "log": "compiler_fixed_normal.log",
+      "start": "2026-11-01T08:08:31+0800",
+      "pid": 2168780,
+      "exit_code": 0,
+      "end": "2026-11-01T08:09:17+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_half_ring_20261101/probe_no_copy_pe_fixed.py"
+      ],
+      "log": "probe_no_copy_pe_fixed.log",
+      "start": "2026-11-01T08:09:17+0800",
+      "pid": 2169670,
+      "exit_code": 0,
+      "end": "2026-11-01T08:09:22+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "synccheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLANoCopyPEKernel",
+        "--launch-count",
+        "1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_half_ring_20261101/probe_no_copy_pe_fixed.py"
+      ],
+      "log": "synccheck_no_copy_pe_fixed.log",
+      "start": "2026-11-01T08:09:22+0800",
+      "pid": 2169849,
+      "exit_code": 0,
+      "end": "2026-11-01T08:09:37+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "racecheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLANoCopyPEKernel",
+        "--launch-count",
+        "1",
+        "--racecheck-num-workers",
+        "8",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_half_ring_20261101/probe_no_copy_pe_fixed.py"
+      ],
+      "log": "racecheck_no_copy_pe_fixed.log",
+      "start": "2026-11-01T08:09:37+0800",
+      "pid": 2170243,
+      "exit_code": 0,
+      "end": "2026-11-01T08:09:54+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "memcheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLANoCopyPEKernel",
+        "--launch-count",
+        "1",
+        "--report-api-errors",
+        "no",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_half_ring_20261101/probe_no_copy_pe_fixed.py"
+      ],
+      "log": "memcheck_no_copy_pe_fixed.log",
+      "start": "2026-11-01T08:09:54+0800",
+      "pid": 2170622,
+      "exit_code": 0,
+      "end": "2026-11-01T08:10:00+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "memcheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLAHalfRingKernel",
+        "--launch-count",
+        "1",
+        "--report-api-errors",
+        "no",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_half_ring_20261101/probe_half_ring.py"
+      ],
+      "log": "memcheck_half_ring.log",
+      "start": "2026-11-01T08:10:00+0800",
+      "pid": 2170799,
+      "exit_code": 0,
+      "end": "2026-11-01T08:10:15+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_half_ring_20261101/screen_fixed.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "half_ring",
+        "--variants",
+        "base",
+        "no_copy_pe_fixed",
+        "half_ring",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--settings",
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000",
+        "--tag",
+        "half_fixed256_f24_"
+      ],
+      "log": "screen_fixed_gpu3.log",
+      "start": "2026-11-01T08:10:15+0800",
+      "pid": 2171197,
+      "exit_code": 0,
+      "end": "2026-11-01T08:12:30+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_half_ring_20261101/audit_performance.py"
+      ],
+      "log": "audit_fixed_performance.log",
+      "start": "2026-11-01T08:12:30+0800",
+      "pid": 2174021,
+      "exit_code": 0,
+      "end": "2026-11-01T08:12:30+0800"
+    }
+  ],
+  "end": "2026-11-01T08:12:30+0800"
+}

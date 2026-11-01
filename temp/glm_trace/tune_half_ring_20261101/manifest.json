@@ -1,0 +1,23 @@
+{
+  "base_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "candidate_sha256": {
+    "no_copy_pe": "a05122ada68293e0968d9622b15a0d67900668aa9a303c558dcfe47600a4c086",
+    "half_ring": "0c44476e29faaea84a37ab1f953fbc30cc8dc52ae78b382e9d801f624e7393ab"
+  },
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "base": "Frozen cachedPEa436,not currentproductionJQ7193; parent cachedPE SXM runner remains unchanged.",
+  "mechanism": "Five16rowphysicalhalves represent two32KVtiles plus one16rowprefetch. Rotate halves after descending hi/lo PV. Prefetch only tiles beyond host_tiles, so no earlier remote wait. Same native quantizedP/MMA order, jointMDO, QPEregisterreuse,256threads/f24/onecooperativekernel.",
+  "control": "no_copy_pe retains2x32KV attention stages but sizeof storage139904 automatically selects ONE fetch buffer. It cannot isolate unusedQPEcopy removal; see fixed_control_manifest.json and corrected invalid_budget_review.json. Frozen header unchanged.",
+  "resources": {
+    "no_copy_pe_dynamic": 139904,
+    "half_ring_dynamic": 158336,
+    "prior_static": 2304,
+    "half_ring_total_if_static_unchanged": 160640
+  },
+  "changes": "Private32Brow P-half address mapping; balanced16threads/row half loader; no far read/traffic hook changes. Initial QNOPE copies join first half group. Wait_group1 only after an additional early prefetch commit, otherwise wait_group0.",
+  "risks": "Additional metadata, buffer IDs, cp.async groups or register spills may offset overlap. All original38EMU/76normal instances must remain exact; numerical/cache/Graph/synchronization and performance gates precede any adoption.",
+  "control_claim_at_generation": "no_copy_pe retains2x32KV stages, removes unused8KBsharedQPE allocation/copy and adds128B alignment pad. It isolates that necessary resource/layout change from the half-ring pipeline.",
+  "control_policy_correction": "Original BUFFERS expression uses sizeof SharedStorage:139904<147456 selects1; fixed union padded147968 selects2. This is not an out-of-bounds issue."
+}

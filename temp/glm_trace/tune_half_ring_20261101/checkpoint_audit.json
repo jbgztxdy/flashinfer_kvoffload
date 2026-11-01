@@ -1,0 +1,106 @@
+{
+  "complete": true,
+  "timestamp": "2026-11-01T08:14:22+0800",
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "headers": {
+    "base": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+    "no_copy_pe": "a05122ada68293e0968d9622b15a0d67900668aa9a303c558dcfe47600a4c086",
+    "half_ring": "0c44476e29faaea84a37ab1f953fbc30cc8dc52ae78b382e9d801f624e7393ab",
+    "no_copy_pe_fixed": "7ff39d969821de571717c9fa1960243c407d233a38bcc7b8fb214f0ce7df6e53"
+  },
+  "proofs": [
+    {
+      "file": "compiler_no_copy_pe_summary.json",
+      "sha256": "785297212f265e7648dbf6f39d0ecc182a2b238237efe2e4f0c967f4f450a9cc",
+      "unchanged_original_kernels": 38,
+      "new_resources": [
+        "REG:255 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:255 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      ]
+    },
+    {
+      "file": "compiler_no_copy_pe_normal_summary.json",
+      "sha256": "984cf59bae627aacba0670b9a7bd6ac93812c4318b77e64f9989126e3afb4753",
+      "unchanged_original_kernels": 76,
+      "new_resources": [
+        "REG:255 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:255 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:255 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:255 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      ]
+    },
+    {
+      "file": "compiler_no_copy_pe_fixed_summary.json",
+      "sha256": "0dacc3cd44230ca3b096e26fb893b9abc98d31568f397c8233428ef94007bc5f",
+      "unchanged_original_kernels": 38,
+      "new_resources": [
+        "REG:255 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:255 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      ]
+    },
+    {
+      "file": "compiler_no_copy_pe_fixed_normal_summary.json",
+      "sha256": "4acb5c9df83b8d427256b1d1fcdd94311b21edaa107f9a73d4e24e67e9aa8f65",
+      "unchanged_original_kernels": 76,
+      "new_resources": [
+        "REG:255 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:255 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:255 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:255 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      ]
+    },
+    {
+      "file": "compiler_half_ring_summary.json",
+      "sha256": "40a971b062e5234b89a1017a2115ae146817f1c0302f2f1c78ce4815014e691f",
+      "unchanged_original_kernels": 38,
+      "new_resources": [
+        "REG:255 STACK:32 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:255 STACK:32 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      ]
+    },
+    {
+      "file": "compiler_half_ring_normal_summary.json",
+      "sha256": "ccd9853d3795e41af10d686ee4050fbe6395be3ff4e98ba657fa6a2cfce66c9e",
+      "unchanged_original_kernels": 76,
+      "new_resources": [
+        "REG:255 STACK:32 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:255 STACK:32 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:255 STACK:32 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:255 STACK:32 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      ]
+    }
+  ],
+  "probes": [
+    {
+      "variant": "no_copy_pe_fixed",
+      "captures": 4,
+      "dispatch_sha256": "f08651254a47d56a2cb9b8c1cd1b0140aa123986e4e27c5a9f707dbb509397a1"
+    },
+    {
+      "variant": "half_ring",
+      "captures": 4,
+      "dispatch_sha256": "a0988aae2dd10748d41efd3cc9506ca97a4f1469948f05252726cb2b3ab83e2b"
+    }
+  ],
+  "valid_fixed_cohort": {
+    "rows": 9,
+    "pairs": 6,
+    "timed_launches": 1728,
+    "segments": 108,
+    "numerical_tests": 222
+  },
+  "archived_first_cohort": {
+    "rows": 9,
+    "pairs": 6,
+    "timed_launches": 1728,
+    "segments": 108,
+    "numerical_tests_including_reused_half_ring": 222,
+    "unique_additional_tests": 111,
+    "scope": "one-buffer control is numerically/memory valid; it changed fetch policy and cannot isolate unused QPE copy removal"
+  },
+  "total_unique_numerical_tests": 333,
+  "production_unchanged": true,
+  "limitation": "Short256position/3coldpass GPU3 screen. No fulltrace/nativeNVLink/SXM or adoption proof.",
+  "parent_cached_pe_state": "sxm_full_confirmation"
+}

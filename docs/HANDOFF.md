@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-01 07:27 JQ已保留并完成生产验证；QPE复用本地完成、SXM等待，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-01 08:14 JQ生产保持；attention半环与copy控制已拒绝，CPE仍等待SXM，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -30,9 +30,21 @@ CPE通过105+6=111正常测试，新增K2048/63tile奇尾、128池/512和4096容
 
 CPE其他handles95227/36824/61566/49401/66271/66530/62457/40637均terminal0。最初generator签名空格断言在生成候选前失败；编译前又修正const数组引用与原MMA签名不兼容，未编译28d149源/manifest和说明都保留。只有a436被编译测量，没有GPU失败或重试。当前生产7193已独立验证，不要安装未完成的CPE。
 
-CPU-only真实trace抽样另核验简单prepare交错：原row32重复率0，2row×16col约1.355%，8row×4col约1.734%，不是性能或实际atomic节省；不值得按这个简单布局直接实现/扫参数。followup_resource_review.json还列了尚未实现的attention五个16row半buffer思路：利用不再读取的shared QPE8KB和原余量，计算dynamic158336+static2304=160640B；但P half的32B行映射、寄存器255和所有权/cp.async生命周期均待设计/验证。它不是旧fetch四缓冲或N9架构，不要把分析写成已有实现/收益。下一步优先处理15217已有验证及负差，再推进真正的新机制。
+CPU-only真实trace抽样另核验简单prepare交错：原row32重复率0，2row×16col约1.355%，8row×4col约1.734%，不是性能或实际atomic节省；不值得按这个简单布局直接实现/扫参数。followup_resource_review.json的五个16row attention半buffer现已具体实现并测量，结论为拒绝，详见下段HR；该旧分析中“未实现”的状态已过时。
 
 H800本轮07:29只读复查原五任务仍Priority/Dependency，两个原watcher4160646/1174145 live；AGENTS/MEMORY哈希不变，CPE/h800_context_hashes.txt、h800_queue.txt及带最新哈希/时间的h800_queue_latest.txt保存原件，无新Slurm提交、排队源码或远端临时目录写入。
+
+**本轮新HR=`temp/glm_trace/tune_half_ring_20261101/`已完成，五half attention环和恢复双fetch缓冲的copy控制均拒绝。** 直接基线为冻结CPEa436（仍未采用），不是生产7193。五个16row物理half组成两个32KV tile和一个提前half，hi/lo PV释放后旋转，提前加载仅near/resident/staged HBM，host chunk等待点、f24/64row双fetch缓冲、真实LRU/FAR post-read hooks及单kernel均保留。私有P half映射`uint4_offset=row*2+(column^((row/4)&1))`，保持量化P、rowsum、PE→CKV MMA/降序PV；半环dynamic158336/static2304、REG255/STACK32/LOCAL0，实际单108CTA/block32x4x2/active1。每版本原38EMU/76normal实例全部指令/资源/机器字/控制字相同。
+
+HR首版no_copy_pe移除未用sharedQPE后，sizeof storage139904让通用fetch **安全地自动选择单缓冲**，不能隔离QPEcopy移除。最初以为越界的假设已明确撤回，原错误判断存档；memcheck首次25错中打印的16项均cuGetProcAddress_v2 API查询错误，其余9项未打印，exit86/log保留，关闭API错误报告但保留设备检查的复查零错。新冻结no_copy_pe_fixed **7ff39d…f6e53** 用union padding恢复原sizeof/dynamic147968和fetch双缓冲，不能只改host allocation。新控制REG255、EMU STACK8/normal STACK0/static2304。原控制a051与半环0c444保持冻结，首轮九格完整移入历史名invalid_budget/raw/，实际分类为意外单fetchbuffer策略，不宣称内存越界；archived_policy_audit使用归档后路径验证，原半环100GB约19%负差保留。
+
+修正后固定base→fixedcontrol→half_ring、GPU3/NUMA1、MTP8R128/LRU4096/f24off/256位置×3冷pass：100GB0/20µs半环相对CPE慢**18.520%/18.334%**，50GB20慢1.018%；copy控制慢0.258%/1.044%，50GB快0.0067%，没有采用信号。修正后9格6配对/1728计时launch108segment，两参考完整；首轮另9格6配对/1728launch108segment，不能删负差或把直接CPE收益写成生产收益。三版本各105+6，共333独立数值测试；半环测试跨两轮复用只计一次。新控制和半环实际Graph/synccheck/racecheck/memcheck全部通过，sanitizer限定首匹配BF16/K97launch，不是全部trace证明。32B栈/packing/loader/地址控制是可能开销，未测得各自因果份额。
+
+HR所有自有handles **37515/15219/66285/39156/28263/90521/96143/77771/81297/12596/80121/62278均已terminal0**；首memcheck23782为terminal86且保留。不要重启任何HR runner，不扩full/native/跨形状、不扫half数/unroll/fetch/cadence。checkpoint_audit通过，生产7193/math34af/模拟器5e409/原5304矩阵e3fd保持。[HR报告](mla_host_a100_half_ring_20261101.md)、decision、continuation和全部原始证据已保存。本轮为progress，主目标仍active。
+
+下一机制CPU-only复核保存在HR/next_mechanism_review.json：同CTA内分QK/softmax四warp与PV八warp，384线程，尝试减少跨warpgroup重复Q加载并分离O和score活跃区间；区别于旧取数/计算warp分工。Ampere统一寄存器分配需全kernel≤约168reg/thread，PV仅O已有128reg；共享内存粗预算140288B、需padding保留147968B双fetch策略。**尚未实现/编译/测试/测量**，所有权、named barrier和空/奇尾协议待设计，不能当成性能或可行性证明。后续先检查原CPE15217实际状态并推进新机制，勿重复已拒绝HR或旧WR。
+
+08:11再次确认CPE父2084930/子2104175仍live，GPU0/1外部2101252/2101253继续占用，phase仍sxm_full_confirmation，无CPE SXM性能结果；不可终止他人或重复启动。HR/h800_queue.txt记录本轮07:54只读核验，原五Slurm作业Priority/Dependency、两watcher和AGENTS/MEMORY哈希不变，无远端提交/排队源码写入。
 
 下面WH/N9/LD/JP等记录保留当时的失败/拒绝证据，其中“生产b6”“72075/1398等待”等是旧时间快照；当前采用状态和活动进程以上述入口及实际文件为准。
 

@@ -1,0 +1,25 @@
+{
+  "positions": 256,
+  "passes": 3,
+  "mtp": 8,
+  "requests": 128,
+  "fetch_ctas": 24,
+  "host_split": "off",
+  "settings": [
+    "g100_l0",
+    "g100_l20000",
+    "g50_l20000"
+  ],
+  "order": [
+    "base",
+    "no_copy_pe_fixed",
+    "half_ring"
+  ],
+  "headers": {
+    "base": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+    "no_copy_pe_fixed": "7ff39d969821de571717c9fa1960243c407d233a38bcc7b8fb214f0ce7df6e53",
+    "half_ring": "0c44476e29faaea84a37ab1f953fbc30cc8dc52ae78b382e9d801f624e7393ab"
+  },
+  "comparison_base": "Frozen cachedPEa436, equivalent parent of productionJQ7193 plus pending itemQPEreuse",
+  "limitation": "Short screen only. Control restores original147968B/two64row fetch buffers; half-ring changes attention storage/layout/loader. No fulltrace or adoption."
+}

@@ -1,0 +1,94 @@
+{
+  "timestamp": "2026-11-01T08:13:10+0800",
+  "complete": true,
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "handles": [
+    {
+      "handle": 37515,
+      "task": "original no-copy normal compile/test",
+      "exit_code": 0,
+      "terminal": true
+    },
+    {
+      "handle": 15219,
+      "task": "half-ring normal compile/test",
+      "exit_code": 0,
+      "terminal": true
+    },
+    {
+      "handle": 66285,
+      "task": "original no-copy EMU compile",
+      "exit_code": 0,
+      "terminal": true
+    },
+    {
+      "handle": 39156,
+      "task": "half-ring EMU compile",
+      "exit_code": 0,
+      "terminal": true
+    },
+    {
+      "handle": 28263,
+      "task": "original no-copy stress",
+      "exit_code": 0,
+      "terminal": true
+    },
+    {
+      "handle": 90521,
+      "task": "half-ring stress",
+      "exit_code": 0,
+      "terminal": true
+    },
+    {
+      "handle": 96143,
+      "task": "original validation/short screen",
+      "exit_code": 0,
+      "terminal": true
+    },
+    {
+      "handle": 23782,
+      "task": "first memcheck diagnostic with API reports",
+      "exit_code": 86,
+      "terminal": true
+    },
+    {
+      "handle": 77771,
+      "task": "original one-buffer memcheck with API reports disabled",
+      "exit_code": 0,
+      "terminal": true
+    },
+    {
+      "handle": 81297,
+      "task": "fixed control normal compile/test",
+      "exit_code": 0,
+      "terminal": true
+    },
+    {
+      "handle": 12596,
+      "task": "fixed control EMU compile",
+      "exit_code": 0,
+      "terminal": true
+    },
+    {
+      "handle": 80121,
+      "task": "fixed control stress",
+      "exit_code": 0,
+      "terminal": true
+    },
+    {
+      "handle": 62278,
+      "task": "fixed validation/sanitizers/short screen",
+      "exit_code": 0,
+      "terminal": true
+    }
+  ],
+  "original_handle_status_source": "Original seven terminal0 statuses established before context compaction; new six statuses directly observed via write_stdin in this continuation.",
+  "active_parent_cached_pe": {
+    "handle": 15217,
+    "pid": 2084930,
+    "phase": "sxm_full_confirmation",
+    "do_not_duplicate": true
+  },
+  "no_live_half_ring_producer": true
+}

@@ -1,0 +1,58 @@
+{
+  "variant": "half_ring",
+  "header_sha256": "0c44476e29faaea84a37ab1f953fbc30cc8dc52ae78b382e9d801f624e7393ab",
+  "stress_source_sha256": "3df59ef56cf98c2c95748a6a5b8f1e7948b5f63c4e027c467043429c762342a2",
+  "helper_source_sha256": "5845ad3cf3f5fe1193011e707002b774faebaa3f9c70ab345b95db845d2d74a8",
+  "start": "2026-11-01T07:48:51+0800",
+  "resources_start": {
+    "timestamp": "2026-11-01T07:48:51+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "complete": true,
+  "tests": 6,
+  "performance_claim": false,
+  "command": [
+    "numactl",
+    "-N1",
+    "-m1",
+    "/mnt/data/mhy-vllm-venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "-p",
+    "jitpaths",
+    "-p",
+    "candidatepaths",
+    "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_half_ring_20261101/test_cofetch_progress.py"
+  ],
+  "pid": 2144185,
+  "exit_code": 0,
+  "end": "2026-11-01T07:48:57+0800",
+  "resources_end": {
+    "timestamp": "2026-11-01T07:48:57+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "log_sha256": "2527e45d400baa2e90dbd8e3cda055af8c5eb8cad5bbbbb78303cbc3191c26ef"
+}

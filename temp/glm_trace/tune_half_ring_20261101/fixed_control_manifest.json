@@ -1,0 +1,16 @@
+{
+  "variant": "no_copy_pe_fixed",
+  "header_sha256": "7ff39d969821de571717c9fa1960243c407d233a38bcc7b8fb214f0ce7df6e53",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "original_control_header_sha256": "a05122ada68293e0968d9622b15a0d67900668aa9a303c558dcfe47600a4c086",
+  "compute_layout_bytes": 139904,
+  "storage_bytes": 147968,
+  "dynamic_shared_bytes": 147968,
+  "fetch_payload_bytes": 147456,
+  "fetch_buffers": 2,
+  "original_control_fetch_buffers": 1,
+  "original_control_is_out_of_bounds": false,
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "change": "Add union fetch-budget padding, restoring sizeof(SharedStorage)>=147456 and original double-buffer fetch. Original139904 storage caused a safe one-buffer specialization; allocation-only change would not restore double buffering."
+}

@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-11-01T08:10:42+0800",
+  "implemented": false,
+  "performance_evidence": false,
+  "goal_complete": false,
+  "mechanism": "Separate QK/softmax warps from PV accumulator warps inside the same cooperative CTA; distinct from the rejected loader/compute warp-role prototype.",
+  "hypothesis": "Four QK warps handle all32KV columns for64Q heads, reusing each Q fragment across both16KV halves and both staged tiles. Eight PV warps retain128 output registers/lane but no score/QPE fragments. This may reduce duplicate Q loads and shorten live ranges; Tensor Core contention and named-barrier overhead may erase the gain.",
+  "proposed_block": [
+    32,
+    4,
+    3
+  ],
+  "same_single_kernel": true,
+  "not_a_parameter_sweep": true,
+  "conservative_shared": {
+    "query_nope": 65536,
+    "two_ckv_stages": 65536,
+    "two_kpe_alias_p_stages": 8192,
+    "scale_two64float_slots": 512,
+    "other_state_allowance": 512,
+    "sum_before_fetch_padding": 140288,
+    "required_fetch_two_buffers": 147456,
+    "proposed_union_padding": 147968
+  },
+  "register_constraints": {
+    "register_file_32bit": 65536,
+    "threads": 384,
+    "uniform_register_allocation": true,
+    "practical_upper_bound_per_thread_if_rounding_to8": 168,
+    "pv_output_lower_bound": 128,
+    "note": "Ampere does not donate unused QK-role registers to PV roles. A compiler-wide register allocation above168 needs spills or fewer active blocks; CPU arithmetic is not a compiler/resource proof."
+  },
+  "unresolved": [
+    "Define exact per-role lane/warp mapping without modifying original template instances.",
+    "All32KV QK must preserve PE->CKV MMA order, fullscore masks and quantized-P denominator; grouping/FP32 reduction differences must be explicit.",
+    "Publish both P tiles and per-row O scale only after KPE consumers finish; PV acknowledgments protect overwrite and stage refill. Named barriers must have exact participating thread counts, including empty/odd-tail paths.",
+    "All384threads must participate in unchanged prepare/LRU/grid-sync/last-CTA protocol; fetch remains original64rowdoublebuffer/f24 with actual post-read FAR semantics.",
+    "Need isolated traits/helpers, all original38EMU/76normal machine/control words, measured no-spill/resources/onekernel,105+6normal numerical/fullcachepayload/Graph and sanitizers before timing.",
+    "No benchmark or adopted status can be inferred from this memory/register arithmetic."
+  ],
+  "relation_to_failed_half_ring": "Use fixed and original short results to reject the five-half implementation if its overhead persists; do not scan its buffer count/unroll/fetch numbers."
+}

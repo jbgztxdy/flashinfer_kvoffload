@@ -1,0 +1,68 @@
+{
+  "recorded_at": "2026-11-01T07:57:42+0800",
+  "valid_for_retention": false,
+  "candidate_adopted": false,
+  "invalid_variant": "no_copy_pe",
+  "header_sha256": "a05122ada68293e0968d9622b15a0d67900668aa9a303c558dcfe47600a4c086",
+  "compute_shared_bytes": 139904,
+  "required_fetch_dynamic_bytes": 73728,
+  "missing_dynamic_bytes": 0,
+  "reason": "The fetch helper selects BUFFERS using sizeof(SharedStorage).139904 bytes safely selects one73728-byte buffer, not two. Initial bounds hypothesis was incorrect. This cohort changes fetch policy and is unsuitable for isolating unused-QPE removal.",
+  "original_raw": [
+    {
+      "original_path": "temp/glm_trace/tune_half_ring_20261101/gpu3/raw/half256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "a4e63c32640d4057d191b8023bd5a64ba4f0b30777f50c2879ff4b427a161285",
+      "archive_path": "temp/glm_trace/tune_half_ring_20261101/invalid_budget/raw/half256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json"
+    },
+    {
+      "original_path": "temp/glm_trace/tune_half_ring_20261101/gpu3/raw/half256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "839bac073cdb5f77c23c543b6648361d03cfe70a376fd5f62fab6f33814c387d",
+      "archive_path": "temp/glm_trace/tune_half_ring_20261101/invalid_budget/raw/half256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json"
+    },
+    {
+      "original_path": "temp/glm_trace/tune_half_ring_20261101/gpu3/raw/half256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "sha256": "035e5e67bc145d8ebff95b6533c6c167f3c24b28a0b114e9bd721056ed7f2250",
+      "archive_path": "temp/glm_trace/tune_half_ring_20261101/invalid_budget/raw/half256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json"
+    },
+    {
+      "original_path": "temp/glm_trace/tune_half_ring_20261101/gpu3/raw/half256_f24_half_ring_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "8def236eb9fdebe4592d1a1f645f747f5ff45c5fc1a000761739a057d3a12688",
+      "archive_path": "temp/glm_trace/tune_half_ring_20261101/invalid_budget/raw/half256_f24_half_ring_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json"
+    },
+    {
+      "original_path": "temp/glm_trace/tune_half_ring_20261101/gpu3/raw/half256_f24_half_ring_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "53ee42449dcb62dbecf36fe0e97e3d9a08d338e632e5375f5baa6b1ddef3d4d7",
+      "archive_path": "temp/glm_trace/tune_half_ring_20261101/invalid_budget/raw/half256_f24_half_ring_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json"
+    },
+    {
+      "original_path": "temp/glm_trace/tune_half_ring_20261101/gpu3/raw/half256_f24_half_ring_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "sha256": "e990da68a8bf7814774fa586b36a068352679aabf53ec76fe1f78124cdc198e6",
+      "archive_path": "temp/glm_trace/tune_half_ring_20261101/invalid_budget/raw/half256_f24_half_ring_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json"
+    },
+    {
+      "original_path": "temp/glm_trace/tune_half_ring_20261101/gpu3/raw/half256_f24_no_copy_pe_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "3cee2c6930cef8bb773e6345cd11e7ff36181027db98d06e1a12c62755f5b396",
+      "archive_path": "temp/glm_trace/tune_half_ring_20261101/invalid_budget/raw/half256_f24_no_copy_pe_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json"
+    },
+    {
+      "original_path": "temp/glm_trace/tune_half_ring_20261101/gpu3/raw/half256_f24_no_copy_pe_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "fbbfb092380a21501ac096baa463d21ccd9cd06b0556ad499a3e2b4d96ae8028",
+      "archive_path": "temp/glm_trace/tune_half_ring_20261101/invalid_budget/raw/half256_f24_no_copy_pe_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json"
+    },
+    {
+      "original_path": "temp/glm_trace/tune_half_ring_20261101/gpu3/raw/half256_f24_no_copy_pe_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "sha256": "7de844d3599c600a477b0972654871cee177d13ebe5965eb171902cf1107155b",
+      "archive_path": "temp/glm_trace/tune_half_ring_20261101/invalid_budget/raw/half256_f24_no_copy_pe_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json"
+    }
+  ],
+  "correction": "New control adds union padding to restore sizeof storage147968 and the original two-buffer fetch; an allocation-only host fix would still select one buffer. Preserve all original nine rows and their one-buffer policy, numerical tests and negative half-ring timings.",
+  "corrected_at": "2026-11-01T08:03:55+0800",
+  "out_of_bounds_claim_retracted": true,
+  "original_fetch_buffers": 1,
+  "intended_fetch_buffers": 2,
+  "memcheck_first_attempt": {
+    "exit_code": 86,
+    "log": "memcheck_invalid_no_copy_pe.log",
+    "errors": "25 reported errors. First16printed errors were cuGetProcAddress_v2 invalid-argument CUDA API calls;9 were suppressed. No printed device memory error. Device-only-reporting repeat passed."
+  }
+}
