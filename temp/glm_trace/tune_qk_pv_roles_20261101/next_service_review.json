@@ -1,0 +1,34 @@
+{
+  "timestamp": "2026-11-01T08:33:20+0800",
+  "implemented": false,
+  "compiled": false,
+  "performance_evidence": false,
+  "goal_complete": false,
+  "mechanism": "QK-role progress performs bounded far-service work during PV and while waiting for host flags, within the existing384-thread cooperative CTA. Standalone QK/PV negative result remains a required control.",
+  "evidence": {
+    "qkpv_header_sha256": "1252cdee93be85dd74f9fdd9a922b28e5327c3929dfbece1811021bf015648f4",
+    "qkpv_resource": "REG168/STACK8 withLDL/STL;111tests and38/76 original words passed;100GB slower3.836%/2.936%",
+    "old_nine_static": "Independent single service warp+8compute warps;REG168/STACK248 and~54%-55%100GB regression. Explicit18uint4 did not remove stack; not evidence that register count alone caused the slowdown.",
+    "old_regpipe3": "Historical three64row fetch buffers included one register buffer usingldcg;12/16/20fetch configurations were rejected. Do not repeat that prototype or merely scan its counts."
+  },
+  "new_distinction": "QK4warps already separate from PV output state. An8row service payload is576uint4s across128producers:at most5uint4/thread(20payload registers), versus18uint4(72registers)perthread in the old one-service-warp design. Those QK lanes also perform QK/softmax; service must be incremental,not a new independent dedicated loop.",
+  "derived_budget": {
+    "compute_fields": 140032,
+    "two8row_shared_service_buffers": 18432,
+    "dynamic_sum": 158464,
+    "prior_static": 2304,
+    "total_if_static_same": 160768,
+    "third8row_register_payload_per_lane_upper_bound_uint4": 5,
+    "simultaneous_rows_all108CTA": 2592,
+    "original24dedicatedCTA_rows": 3072,
+    "note": "2592vs3072 in-flight rows is a policy difference. No same-budget or faster-throughput claim. Uniform384thread register allocation still applies."
+  },
+  "unresolved": [
+    "Service context must survive tile/item boundaries without overlapping PV O state or spilling payload arrays through address-taking.",
+    "Blocking wait_host_batch_tile cannot remain unchanged: if all QK roles wait for flags and none progresses service, the kernel deadlocks. All128producer lanes must execute matching progress/barrier steps while readiness is pending.",
+    "Retain post-read FAR timing hooks,64row readiness flags,actualstaging/cache payload,LRU protection/victim selection and bounded deferred cachefill. Subjobs must finish before64row release.",
+    "End-of-items producers must finish assigned far jobs/cachefill and meet the original exit protocol; consumers cannot leave barriers early. Empty/masked/odd-tail paths need exact participating counts.",
+    "All original38/76 words,actualsingle384threadkernel,normal105+6cachepayload/Graph tests and targetedsanitizers before performance.",
+    "If implemented,compare CPE,unchangedQKPV1252 and service with frozen parameters; do not assign any improvement solely to lower stack or Q reuse. Fulltrace/native/shapegates remain required before adoption."
+  ]
+}

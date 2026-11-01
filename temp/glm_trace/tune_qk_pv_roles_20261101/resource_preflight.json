@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-11-01T08:25:01+0800",
+  "header_sha256": "1252cdee93be85dd74f9fdd9a922b28e5327c3929dfbece1811021bf015648f4",
+  "records": [
+    {
+      "build": "EMU",
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "Function _ZN10flashinfer3mla18BatchMLAQKPVKernelINS0_10QKPVTraitsI13__nv_bfloat16S3_S3_iEENS0_14QKPVHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_:",
+      "resource": "REG:168 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "build": "EMU",
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "Function _ZN10flashinfer3mla18BatchMLAQKPVKernelINS0_10QKPVTraitsI13__nv_bfloat16S3_S3_iEENS0_14QKPVHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_:",
+      "resource": "REG:168 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "build": "_normal",
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "Function _ZN10flashinfer3mla18BatchMLAQKPVKernelINS0_10QKPVTraitsI13__nv_bfloat16S3_S3_iEENS0_14QKPVHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_:",
+      "resource": "REG:168 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "build": "_normal",
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "Function _ZN10flashinfer3mla18BatchMLAQKPVKernelINS0_10QKPVTraitsI13__nv_bfloat16S3_S3_iEENS0_14QKPVHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_:",
+      "resource": "REG:168 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "build": "_normal",
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "Function _ZN10flashinfer3mla18BatchMLAQKPVKernelINS0_10QKPVTraitsI6__halfS3_S3_iEENS0_14QKPVHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_:",
+      "resource": "REG:168 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "build": "_normal",
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "Function _ZN10flashinfer3mla18BatchMLAQKPVKernelINS0_10QKPVTraitsI6__halfS3_S3_iEENS0_14QKPVHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_:",
+      "resource": "REG:168 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    }
+  ],
+  "caveat": "Resource preview only. Original code equivalence, numerical/cache/dispatch/sanitizer and performance gates remain independent. STACK8 EMU is not no-spill proof.",
+  "goal_complete": false,
+  "candidate_adopted": false
+}

@@ -1,0 +1,15 @@
+# Frozen QK/softmax and PV warp roles
+
+Direct baseline is pending CPE `a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15`. Production remains JQ7193. `decision.json` rejects this standalone role prototype after the fixed same-parameter short screen; it is not an adoption record.
+
+The same cooperative kernel uses four full32-column QK/softmax warps plus eight native256-feature PV warps: block32×4×3,384threads,108CTA,active1. Producer refill of the next-hi tile overlaps current-lo PV. Query fragments are reused across two16-KV halves and both stages. Math equation, PE→CKV MMA order, quantizedP/native rowsum, true LRU/cache payload and post-read FAR model remain; FP32 reduction/grouping and384-thread work distribution change. Union padding preserves original147968B/two64row/f24 fetch policy.
+
+`qkpv.inc` and `make_candidate.py` generate the isolated header. The initial incomplete KPE→P barrier version was never compiled: `precompile_review/` and its SHA review preserve it. The frozen tested candidate includes a128-thread producer barrier before P overwrite. `setup_recovery.json` preserves a relative-path dependency-copy error repaired while the original validation parent was waiting; no duplicate producer was launched.
+
+`restore_includes.py` recreates only missing include trees and refuses different contents. Compile with Python `/mnt/data/mhy-vllm-venv/bin/python`, CUDA13.1, `FLASHINFER_CUDA_ARCH_LIST=8.0`, empty `CUDA_VISIBLE_DEVICES`, `TUNE_VARIANT=qkpv_roles`, and an isolated `FLASHINFER_WORKSPACE_BASE=.../jit_qkpv_roles[_normal]`. EMU adds `FLASHINFER_EXTRA_CUDAFLAGS=-DFLASHINFER_FAR_EMU`; normal BF16/FP16 uses an empty value. `compile.py` lists exact module builds. Includes/JIT/shared libraries are ignored; complete codegen archives, machine/control-word proofs and library hashes are tracked.
+
+`test_candidate.py` runs105 normal tests; `stress_candidate.py` adds6 long/odd/empty/payload/LSE/Graph tests under the shared GPU3 correctness lock. `validate_candidate.py` records exact commands/PIDs/exits for the38/76 original-word proofs, actual single384-thread Graph, firstmatched-launch synccheck/racecheck/memcheck and fixed benchmark. Normal and EMU target REG168/STACK8; static SASS includesLDL/STL, no zero-spill claim.
+
+Short comparison is GPU3 A100-PCIE/NUMA1, EMU far in separate same-card HBM, MTP8/R128/LRU4096/f24/off, base→candidate,256positions×3coldpasses,100GB0/20us and50GB20us. This is not fulltrace or NVLink evidence. All six rows, three pairs,1152timed launches/72segments, actual hit rates and both unchanged references are preserved. All original producers are terminal0; inspect artifacts instead of restarting them. Parent CPE's existing SXM producer is independent.
+
+CPU inspection commands: `audit_performance.py`, `checkpoint_audit.py`, `report.py`. The checkpoint verifies hashes against built original libraries when present. The original5304-cell matrix, production header/math/simulator and other users' changes remain untouched.

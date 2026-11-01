@@ -1,0 +1,82 @@
+{
+  "complete": true,
+  "timestamp": "2026-11-01T08:30:28+0800",
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "headers": {
+    "base": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+    "candidate": "1252cdee93be85dd74f9fdd9a922b28e5327c3929dfbece1811021bf015648f4",
+    "math": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3"
+  },
+  "proofs": [
+    {
+      "path": "compiler_qkpv_roles_summary.json",
+      "sha256": "a40ef5492ba6551c155975de5934ef27853184e4e21afe9dc6489b48838717ec",
+      "originals": 38,
+      "new_resources": [
+        "REG:168 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:168 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      ]
+    },
+    {
+      "path": "compiler_qkpv_roles_normal_summary.json",
+      "sha256": "eeaaac6ab0a1aa1a8b7fe57290d75f0a1c2107009a2e0407dee649428ee8e6e9",
+      "originals": 76,
+      "new_resources": [
+        "REG:168 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:168 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:168 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:168 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      ]
+    }
+  ],
+  "dispatch": {
+    "sha256": "06be81e36139a9aec659d25ae0f6dd4acd5be492d5eac1269b3ccb2fcfbe1ca4",
+    "launch": {
+      "grid": [
+        1,
+        108,
+        1
+      ],
+      "block": [
+        32,
+        4,
+        3
+      ],
+      "dynamic_shared_bytes": 147968,
+      "active_blocks_per_SM": 1,
+      "kernel_name": "_ZN10flashinfer3mla18BatchMLAQKPVKernelINS0_10QKPVTraitsI13__nv_bfloat16S3_S3_iEENS0_14QKPVHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    },
+    "captures": 4
+  },
+  "sanitizers": [
+    {
+      "tool": "synccheck",
+      "log": "synccheck_qkpv_roles.log",
+      "sha256": "03447266abe49b68f6ce989aaec276c43e079aa18ca2129c0796186ef5d38ba1",
+      "scope": "first matched BF16 K97 QKPV kernel; memcheck API-error reporting disabled, device checks enabled"
+    },
+    {
+      "tool": "racecheck",
+      "log": "racecheck_qkpv_roles.log",
+      "sha256": "25013bceb2969009277df07cfe6e3854e5e7aee6942b3048fe5acae6e7d6662d",
+      "scope": "first matched BF16 K97 QKPV kernel; memcheck API-error reporting disabled, device checks enabled"
+    },
+    {
+      "tool": "memcheck",
+      "log": "memcheck_qkpv_roles.log",
+      "sha256": "e3344f704581f56938fa1db24d3ef01260cb89d3342762cf4beed0858ff9f806",
+      "scope": "first matched BF16 K97 QKPV kernel; memcheck API-error reporting disabled, device checks enabled"
+    }
+  ],
+  "rows": 6,
+  "pairs": 3,
+  "timed_launches": 1152,
+  "accepted_segments": 72,
+  "numerical_tests": 111,
+  "precompile_barrier_review_preserved": true,
+  "setup_dependency_path_failure_preserved": true,
+  "production_unchanged": true,
+  "limitation": "Fixed short GPU3 A100-PCIe/NUMA1 screen256positions/3coldpasses. No fulltrace/nativeNVLink/SXM/adoption proof.",
+  "parent_cached_pe_phase": "sxm_full_confirmation"
+}

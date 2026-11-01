@@ -1,0 +1,175 @@
+{
+  "pid": 2185662,
+  "start": "2026-11-01T08:22:16+0800",
+  "phase": "short_screen_complete",
+  "complete": true,
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_pv_roles_20261101/compiler.py"
+      ],
+      "log": "compiler.log",
+      "start": "2026-11-01T08:24:46+0800",
+      "pid": 2188955,
+      "exit_code": 0,
+      "end": "2026-11-01T08:25:13+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_pv_roles_20261101/compiler.py",
+        "--normal"
+      ],
+      "log": "compiler_normal.log",
+      "start": "2026-11-01T08:25:13+0800",
+      "pid": 2189629,
+      "exit_code": 0,
+      "end": "2026-11-01T08:26:05+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_pv_roles_20261101/probe_qkpv_roles.py"
+      ],
+      "log": "probe_qkpv_roles.log",
+      "start": "2026-11-01T08:26:05+0800",
+      "pid": 2190723,
+      "exit_code": 0,
+      "end": "2026-11-01T08:26:09+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "synccheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLAQKPVKernel",
+        "--launch-count",
+        "1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_pv_roles_20261101/probe_qkpv_roles.py"
+      ],
+      "log": "synccheck_qkpv_roles.log",
+      "start": "2026-11-01T08:26:09+0800",
+      "pid": 2190861,
+      "exit_code": 0,
+      "end": "2026-11-01T08:26:14+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "racecheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLAQKPVKernel",
+        "--launch-count",
+        "1",
+        "--racecheck-num-workers",
+        "8",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_pv_roles_20261101/probe_qkpv_roles.py"
+      ],
+      "log": "racecheck_qkpv_roles.log",
+      "start": "2026-11-01T08:26:14+0800",
+      "pid": 2191034,
+      "exit_code": 0,
+      "end": "2026-11-01T08:26:31+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "memcheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLAQKPVKernel",
+        "--launch-count",
+        "1",
+        "--report-api-errors",
+        "no",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_pv_roles_20261101/probe_qkpv_roles.py"
+      ],
+      "log": "memcheck_qkpv_roles.log",
+      "start": "2026-11-01T08:26:31+0800",
+      "pid": 2191504,
+      "exit_code": 0,
+      "end": "2026-11-01T08:26:46+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_pv_roles_20261101/screen.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "qkpv_roles",
+        "--variants",
+        "base",
+        "qkpv_roles",
+        "--settings",
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--tag",
+        "qkpv256_f24_"
+      ],
+      "log": "screen_gpu3.log",
+      "start": "2026-11-01T08:26:46+0800",
+      "pid": 2191898,
+      "exit_code": 0,
+      "end": "2026-11-01T08:28:19+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_pv_roles_20261101/audit_performance.py"
+      ],
+      "log": "audit_performance.log",
+      "start": "2026-11-01T08:28:19+0800",
+      "pid": 2193969,
+      "exit_code": 0,
+      "end": "2026-11-01T08:28:19+0800"
+    }
+  ],
+  "end": "2026-11-01T08:28:19+0800"
+}

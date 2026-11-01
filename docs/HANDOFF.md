@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-01 08:14 JQ生产保持；attention半环与copy控制已拒绝，CPE仍等待SXM，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-01 08:34 JQ生产保持；QK/PV分工已拒绝，CPE仍等待SXM，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -42,9 +42,21 @@ HR首版no_copy_pe移除未用sharedQPE后，sizeof storage139904让通用fetch 
 
 HR所有自有handles **37515/15219/66285/39156/28263/90521/96143/77771/81297/12596/80121/62278均已terminal0**；首memcheck23782为terminal86且保留。不要重启任何HR runner，不扩full/native/跨形状、不扫half数/unroll/fetch/cadence。checkpoint_audit通过，生产7193/math34af/模拟器5e409/原5304矩阵e3fd保持。[HR报告](mla_host_a100_half_ring_20261101.md)、decision、continuation和全部原始证据已保存。本轮为progress，主目标仍active。
 
-下一机制CPU-only复核保存在HR/next_mechanism_review.json：同CTA内分QK/softmax四warp与PV八warp，384线程，尝试减少跨warpgroup重复Q加载并分离O和score活跃区间；区别于旧取数/计算warp分工。Ampere统一寄存器分配需全kernel≤约168reg/thread，PV仅O已有128reg；共享内存粗预算140288B、需padding保留147968B双fetch策略。**尚未实现/编译/测试/测量**，所有权、named barrier和空/奇尾协议待设计，不能当成性能或可行性证明。后续先检查原CPE15217实际状态并推进新机制，勿重复已拒绝HR或旧WR。
+HR/next_mechanism_review.json提出的四QK/八PV warp分工现已实现、完整短筛选并拒绝，详见下段QP。该CPU-only旧文件中的“尚未实现”已过时；不要重新实现相同独立分工或重复HR/旧WR。
 
 08:11再次确认CPE父2084930/子2104175仍live，GPU0/1外部2101252/2101253继续占用，phase仍sxm_full_confirmation，无CPE SXM性能结果；不可终止他人或重复启动。HR/h800_queue.txt记录本轮07:54只读核验，原五Slurm作业Priority/Dependency、两watcher和AGENTS/MEMORY哈希不变，无远端提交/排队源码写入。
+
+**本轮新QP=`temp/glm_trace/tune_qk_pv_roles_20261101/`已完成拒绝。** 冻结头 **1252cdee93be85dd74f9fdd9a922b28e5327c3929dfbece1811021bf015648f4**，直接基线CPEa436（未保留），生产7193不变。单cooperative/108CTA/block32x4x3：z0四warp做完整32KV列的QK/softmax，z1/2八warp做两组256feature PV；同Q片段用于两个16KV列块和两个stage，QK不持O、PV不持score/QPE。生产角色补下一hi与当前lo-PV重叠。完整PE→CKV MMA和量化P/native rowsum保持，jointMDO的max/denominator在四QKwarp完整列内归约并广播，FP32分组变化而方程相同。空item d初始2对应旧两组之和。384线程改变prepare/LRU/fetch工作分配，明确为组合变更，未单独归因Q复用。
+
+QP计算字段140032B、union padding保留147968B dynamic/sizeof和原64row双fetchbuffer/f24/3072在途行。namedbarrier1/all384保护initial/Ppublish/hi-free/lo-free，barrier2/QK128保护acquire/cp.async和KPE→P生命周期；全部384线程参加原prepare/LRU/grid/lastCTA协议。编译前静查补齐paired/odd QK→P的128线程同步，未编译旧头及SHA保存在precompile_review/，无GPU失败；依赖复制初次Path(.)相对parent错误保存在setup_recovery.json，修正绝对cwd时原父78438仍等待已有build/test，只补依赖、不重复启动。
+
+QP正常BF16/FP16及EMU均**REG168/STACK8/static2304/LOCAL0**，有LDL/STL，不称无栈；实际单108CTA/384thread/active1。原38EMU/76normal指令/资源/完整机器字与控制字均相同，105+6=111正常数值/cache-payload/LSE/Graph/长K2048及K65stride80等测试通过；实际Graph和首匹配BF16/K97launch的synccheck/racecheck/memcheck全通过，memcheck关闭API错误报告而保留设备检查，不冒称全部trace穷尽验证。新静态EMU7128条/HMMA230/LDSM124/BAR59/LDL7/STL3、normal6920/BAR58，其余计数相同；不是动态性能或因果分摊。
+
+固定GPU3/NUMA1/CPE→QP、MTP8R128/LRU4096/f24off/256位置×3冷pass：100GB0/20µs **3390.325→3520.373、3438.176→3539.104µs（慢3.836%/2.936%）**，50GB20 **5271.488→5258.517（快0.246%）**。6格/3对CPE配对、1152计时launch/72segment、两参考与实际命中率/逐步逐pass完整。拒绝独立分工，不扩full/native/全形状、不扫warp/unroll/fetch；全部负差和源保留，不能声称生产收益。handles **15541/92506/38976/78438全部已terminal0**，不要重启。checkpoint_audit通过，[QP报告](mla_host_a100_qk_pv_roles_20261101.md)、decision和continuation保存最终状态。本轮为progress，主目标约25%–27%差距仍未解决。
+
+QP/next_service_review.json只记录**未实现**的下一机制：把有界far-service progress放进四QKwarp的PV空档和host等待中。每8row payload分到128producer lane最多5uint4/20reg，区别于旧N9单servicewarp的18uint4/72reg；当前QP已测168reg/8Bstack可作资源和性能控制，但不能推断加入service后仍无大spill。两块8row共享buffer加计算区为158464B，若static不变总160768B；第三块8row拟寄存器，全108CTA的24row在途2592，小于原f24×128=3072，是策略变化。必须将阻塞host wait改为全128producer一致参与的progress，否则所有QK等待flag会死锁；还需跨tile/item状态、64row ready/真实cachefill、bounded defer和退出drain。旧regpipe3三块64row/ldcg/f12/16/20已失败，不能只重扫。尚未生成/编译/测量service候选，不能拿预算证明性能或可行性。
+
+08:32原CPE15217再次实际poll为live，父2084930/子2104175仍live，外部GPU0/1的2101252/2101253继续占用；phase仍sxm_full_confirmation，没有CPE SXM新数据，不重复或终止他人。QP/h800_queue.txt记录08:17只读查询，原五Slurm作业仍Priority/Dependency、watcher4160646/1174145活、AGENTS/MEMORY哈希91b070/e3df236不变，无新远端提交或排队源改写。
 
 下面WH/N9/LD/JP等记录保留当时的失败/拒绝证据，其中“生产b6”“72075/1398等待”等是旧时间快照；当前采用状态和活动进程以上述入口及实际文件为准。
 

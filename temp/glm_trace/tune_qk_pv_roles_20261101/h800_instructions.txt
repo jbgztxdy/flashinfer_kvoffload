@@ -1,0 +1,279 @@
+# rtx 工作目录约定
+
+本文件适用于本目录及其所有子目录。
+
+## 项目记忆
+
+- 项目记忆统一存放在本目录的 `MEMORY.md`（`/WORK/PUBLIC/luyouy_work/rtx/MEMORY.md`）。
+- 开始本目录下的工作前，先阅读 `MEMORY.md`；后续将需要跨会话保留的用户偏好、关键决策、已验证结论和待办更新到该文件。
+- 不将项目记忆写入用户主目录或 `~/WORK` 根目录，也不在这些位置创建记忆副本。
+- 记忆保持简洁，注明重要结论的日期和验证依据；更新或删除过时内容，避免重复堆积会话记录。当前用户指令优先于历史记忆。
+
+## GPU 任务
+
+- 所有 GPU 任务必须通过 Slurm 调度，遵守集群的 Slurm 使用规范。
+- 批处理任务使用 `sbatch` 提交；交互式任务通过 `salloc` / `srun` 申请并使用资源。仅在 Slurm 分配的 GPU 资源内运行 GPU 程序，禁止绕过调度直接占用 GPU 或在登录节点运行 GPU 任务。
+- 按实际需求声明 GPU、CPU、内存和运行时限；分区、账户、QoS 及 GPU 申请方式以集群配置为准，不猜测配置。
+- 提交前检查任务的工作目录、环境和日志路径，确保符合下述存储要求。
+
+## 文件存储
+
+- `~/WORK` 是分布式文件系统，所有文件必须存储在该目录下。本目录是 rtx 的工作目录，相关文件默认存储在本目录及其子目录中。
+- 代码、数据集、模型权重、检查点、实验结果、日志、下载文件、环境、缓存和临时文件均须遵守上述要求。
+- 不将文件写入 `~/WORK` 之外的路径，例如节点本地磁盘、`/tmp`、`/var/tmp` 或主目录中的默认缓存目录。
+- 运行工具或任务前，将其输出、缓存和临时目录显式配置到 `~/WORK` 下；必要时设置 `TMPDIR`、`XDG_CACHE_HOME` 以及工具专用的缓存变量。
+- Slurm 脚本中的工作目录和标准输出、标准错误日志路径也必须位于 `~/WORK` 下；运行前创建所需目录，确保计算节点可访问。
+
+## 当前 Slurm 资源（检查于 2026-09-18）
+
+- 当前可见分区及 GPU 资源如下：
+  - `a01`：27 个节点，每节点 `gpu:a800:8(S:0-1)`
+  - `a02`：10 个节点，每节点 `gpu:a800:8`
+  - `a03`、`a04`、`a05`：各 1 个节点，每节点 `gpu:a800:8(S:0-1)`
+  - `j01`：8 个节点，每节点 `gpu:a800:8(S:0-1)`
+  - `j02`：4 个节点，每节点 `gpu:a800:8(S:0-1)`
+  - `j03`：4 个节点，每节点 `gpu:a800:8(S:0-1)`
+  - `j04`：1 个节点，每节点 `gpu:a800:8(S:0-1)`
+  - `j05`：28 个节点，每节点 `gpu:a800:8(S:0-1)`
+  - `h01`：1 个节点，每节点 `gpu:h800:8(S:0-1)`
+  - `h02`：2 个节点，每节点 `gpu:h800:8(S:0-1)`
+  - `h03`：1 个节点，每节点 `gpu:h800:8(S:0-1)`
+- 所有上述分区当前状态为 `up`，时间限制显示为 `infinite`。资源实际可用性仍以提交时调度器状态为准。
+- H800 节点映射：`h01` → `g40`；`h02` → `g42,g46`；`h03` → `g44`。当前账户关联为 `users`，可用 QoS 查询结果为 `normal`。
+
+- 分区可见不等于有权限使用：当前 `users` 账户优先使用 `a01`、`a02`（A800）或 `h01`（H800），这三个分区的 `AllowAccounts=ALL`。
+- 专用分区账户限制：`a03=lujiw`、`a04=sheke`、`a05=yangtao`、`j01=test07`、`j02=test16`、`j03=test17`、`j04=yyk`、`j05=shiqi`、`h02/h03=baoyue`。不要向无权使用的分区提交；本次 `users` 向 `h02` 提交后处于 `PENDING (PartitionConfig)`。
+
+## Slurm 查询与提交
+
+- 查看分区和 GPU：`sinfo -o '%P %a %l %D %G'`
+- 查看自己的任务：`squeue -u "$USER"`
+- 查看账户、分区和 QoS：`sacctmgr show assoc where user="$USER"`
+- 示例（按实际账户、QoS 和分区调整）：
+
+  ```bash
+  mkdir -p "$HOME/WORK/rtx/logs"
+  sbatch --partition=h01 --gres=gpu:h800:1 --cpus-per-task=4 --mem=32G --time=00:10:00 \
+    --output="$HOME/WORK/rtx/logs/%x-%j.out" --wrap='cd "$HOME/WORK/rtx" && nvidia-smi'
+  ```
+
+- `S:0-1` 表示 GPU 关联的 CPU socket 编号为 0–1，不代表 GPU 共享配置。
+- 上述资源清单可直接用于选择分区，无需每次重复全量查询；排队、提交失败或需要确认空闲资源时再查询实时状态。
+- CUDA 编译器：`/usr/local/cuda/bin/nvcc`，当前版本 12.4。
+
+## INT4 验证记录
+
+- H800 最小验证脚本：`checks/int4/run.sbatch`；通过 Slurm 提交，输出写入 `logs/`，缓存和临时文件写入 `checks/int4/`。
+- 已于 2026-09-18 在 `h01/g40` 的 NVIDIA H800（SM 9.0，驱动 610.43.02）通过验证，作业 `543589`：INT4 打包权重解量化后矩阵向量乘法的 16 个结果与 CPU 完全一致；带负数的 INT4 PTX MMA 的 128 个结果全部正确。
+- 反汇编显示 INT4 PTX MMA 被转换为 `IMMA.16832.S8.S8` 指令。因此确认的是 INT4 量化计算可以执行，不能把 PTX 支持等同于原生 INT4 Tensor Core 加速；本测试不评估模型推理性能。
+- 复现：在本目录执行 `sbatch --output="$PWD/logs/%x-%j.out" checks/int4/run.sbatch`。日志见 `logs/h800-int4-check-543589.out`，反汇编见 `checks/int4/native.sass`。
+
+## SGLang 开发环境
+
+- 使用本目录的 uv 环境 `.venv`；先 `source env.sh`，同时设置工作区内的缓存、临时目录及工具链路径。
+- 源码位置 `src/sglang`，editable 安装目标为 `src/sglang/python`。首次安装版本为 `0.5.20.dev859+g826d5170a`（2026-09-18 的 main）。Python 3.12.14，PyTorch 2.13.0，依赖快照见 `requirements.snapshot.txt`。
+- 修改 Python 源码后重启服务即可；修改 Rust/C++/CUDA 扩展需要按相应构建流程重编译。
+- 安装命令及 Slurm 环境检查脚本见根目录 `README.md`。不要未经验证把宿主机 CUDA 12.4 工具链用于最新 CUDA 13 依赖的扩展编译。
+- 安装后验证：`uv pip check` 全部通过；Slurm 作业 `543724` 在 H800 上通过 editable 路径、CUDA 矩阵乘法、FlashInfer 导入和启动命令帮助检查，日志 `logs/sglang-env-check-543724.out`。尚未验证完整模型推理。
+
+## 当前目标模型：GLM 5.2 FP8
+
+- 2026-09-18 用户取消 DeepSeek V3.2，随后取消 GLM 5.2 BF16；两者模型数据已删除。当前目标是官方 `zai-org/GLM-5.2-FP8`。
+- config 已核实 FP8 E4M3、动态激活、128×128 权重块；本地目录 `models/zai-org--GLM-5.2-FP8`，仓库约 756 GB，仍超过单机八卡 H800 显存总量。
+- 下载使用 `checks/download_glm52.sh`，hf-mirror.com、无代理、禁用 Xet；tmux 会话 `glm52`，socket `tmp/tmux/download.sock`，日志 `logs/glm-5.2-fp8-download.log`。
+- 推理框架保持 SGLang，允许接入第三方算子库；尚未验证完整模型推理。
+# rtx 项目记忆
+
+更新日期：2026-09-18。
+
+## 用户偏好与目标
+
+- `rtx` 是用户的工作目录；项目记忆仅保存在本文件，不写到用户主目录或 `~/WORK` 根目录。
+- 所有 GPU 任务通过 Slurm；所有文件（含环境、缓存、临时文件）存放在分布式文件系统 `~/WORK` 下，本项目默认使用 `rtx` 内的路径。
+- 计划使用 SGLang 运行 GLM 5.2 FP8，并修改 SGLang 源码；可接入第三方算子库。
+
+## 已完成与验证
+
+- 已创建 `.venv`（uv，Python 3.12.14），源码位于 `src/sglang`，以 editable 模式安装。使用前在本目录执行 `source env.sh`。
+- 安装时版本：SGLang `0.5.20.dev859+g826d5170a`，PyTorch `2.13.0+cu130`。完整 commit 见 `logs/sglang-source-commit.txt`；依赖快照见 `requirements.snapshot.txt`。
+- 2026-09-18：205 个包的依赖检查通过；Slurm 作业 `543724` 在 H800 上通过源码导入路径、CUDA 矩阵乘法、FlashInfer 导入及启动命令帮助检查。日志：`logs/sglang-env-check-543724.out`。
+- H800 INT4 最小计算验证通过（作业 `543589`）。INT4 PTX MMA 编译为 INT8 Tensor Core 指令，不能据此认定原生 INT4 硬件加速或完整模型兼容。日志：`logs/h800-int4-check-543589.out`。
+- 当前账户 `users`，H800 优先使用 `h01/g40`；`h02/h03` 限制为 `baoyue` 账户。资源及提交方式详见 `AGENTS.md`。
+
+## 后续事项
+
+- 2026-09-18 用户取消 DeepSeek V3.2：已停止下载，删除模型目录及专属 HF 仓库缓存。
+- 2026-09-18 用户改为 FP8：已停止并删除 GLM 5.2 BF16 下载（约 49 GiB）及专属缓存。
+- 当前模型为官方 `zai-org/GLM-5.2-FP8`，config 核实 fp8/e4m3、动态激活、128×128 权重块；revision `f33c6dc501ee5a2c7e35155653b1b1abbc320951`，仓库总计 755,663,676,193 字节。单机 8×80 GB 仍不能容纳全部权重及运行开销。
+- 下载目录 `models/zai-org--GLM-5.2-FP8`；脚本 `checks/download_glm52.sh` / `.py`；hf-mirror.com、无代理、HF_HUB_DISABLE_XET=1，失败最多重试 20 次。
+- tmux 会话 `glm52`，socket `tmp/tmux/download.sock`；日志 `logs/glm-5.2-fp8-download.log`。下载与完整模型推理尚未完成。
+- 宿主机 CUDA Toolkit 为 12.4，环境使用 CUDA 13 依赖；修改原生扩展前需确认匹配的编译工具链。
+
+以下 AWQ 调研为已取消模型的历史记录，不作为 GLM FP8 部署结论。
+
+## DP8 / EP8 源码检查（2026-09-18）
+
+- 用户计划 Attention DP8 + MoE EP8。配置骨架为 `--tp 8 --dp 8 --enable-dp-attention --ep 8`，Attention TP=1，256 个 routed experts 分为每卡 32 个；不是 64 卡或 8 份完整模型。
+- 当前 AWQMarlin MoE 强制要求 runner 参数为 auto，再内部选择 Marlin。Marlin 仅注册 `(none, marlin)` fused func；没有 DeepEP 对接，不能直接启用 `--moe-a2a-backend deepep`。
+- 候选基线：`--quantization awq_marlin --moe-runner-backend auto --moe-a2a-backend none --disable-shared-experts-fusion`；仅源码候选，尚未验证整模型和 EP 数值正确性。StandardDispatcher 将非本地专家映射为 -1，但 AWQMoEKernel 没有传 expert_map/global_num_experts 到 Marlin，需要重点验证该路径。
+- DP8 会复制 Attention 权重，显存不能简单按模型总量除以 8 估计；需要实测峰值及 KV cache 容量。
+
+## 算子库调研（2026-09-18）
+
+- 用户偏好有影响力、GitHub stars 较多的开源算子库；调研见 `research/awq-moe-kernels.md`，星数快照见 `research/kernel-repos.json`。
+- 2026-09-18 用户明确：推理框架保持 SGLang，可以接入第三方算子库；参考 vLLM 算子实现不代表改用 vLLM 框架。
+- 优先参考 vLLM 的 Marlin MoE（非对称 INT4、BatchedMarlinExperts）补 SGLang AWQ/EP 适配；DeepEP 提供通信，不提供 AWQ GEMM。
+- Humming 虽仅 233 stars，但当前 SGLang 已有 DeepEP normal/LL 的 Humming pre/post-permute 实现，是值得验证的备选。之前“AWQ + DeepEP 缺接口”的结论针对当前 AWQMarlin 路径，不应扩展为所有量化后端均不支持。
+- FlashInfer/CUTLASS 有影响力，但 FP4 W4A16 不等于当前带 zero-point 的 AWQ INT4；不能据名称宣称无需改代码即可运行。
+
+## GLM-5.2 FP8 前 20 层 DP8/EP8 实验（2026-09-24）
+
+- 用户指定：测试脚本和结果统一放在 `yjw/test/`。集群登录节点 login21 没有 GPU；`shownode` 可查看各节点剩余的 CPU 和 GPU。
+- NCCL 走 IB：不要设置 `NCCL_SOCKET_IFNAME=ens14f0`（低速以太网口）；需设置 `NCCL_IB_HCA=mlx5_0,mlx5_1,mlx5_2,mlx5_3,mlx5_4,mlx5_6,mlx5_7,mlx5_8`。
+- 模型已下载完整（141 个分片，704 GiB）。DSA 注意力后端和 FP8 需要 SM90，因此要用 H800；users 账户可用的 H800 只有 h01/g40。预检结论见 `yjw/test/00_env_precheck.md`。
+- 2026-09-24 已下载 cc trace 数据集 `intelchen/claudecode-trace`（revision `0bdabd7a`，hf-mirror）到 `yjw/data/claudecode-trace`：共 326 个文件，6.1 MB，与仓库清单一致；13 个 traces.sqlite（表名 `requests`）合计 182 条请求，prompt 最长约 9.5k tokens。下载脚本为 `yjw/test/01_download_cc_trace.sh`。
+  注意 parquet 中的 token_id 是 Llama-3.3 词表，回放 GLM 时应使用 `request_body_json`（Anthropic Messages 请求体）重新编码。
+- 2026-09-24 已下载 `semianalysisai/cc-traces-weka-with-subagents-051826`（revision `4f319ace`，hf-mirror），存放在 `yjw/data/cc-traces-weka-with-subagents-051826`，7 个文件共 651,098,461 字节。下载脚本为 `yjw/test/02_download_weka_trace.sh`。
+  数据共 96 个会话、37,766 条请求（含 subagent 内部请求）。每条请求只有 hash_ids（64 token/块，o200k 分词）、in/out 长度和时间，没有文本。ISL p50 约 101k，p99 约 803k，最大 953k。
+  sglang 的 `--dataset-name mooncake` 格式不兼容（要求扁平的 timestamp/hash_ids/output_length，每个 hash 约 128 token），需要自己写转换/回放脚本：按 hash_id 生成固定的合成 token 块，以保持前缀复用。
+- 2026-09-24 前 20 层实验准备（脚本均位于 `yjw/test/`）：
+  - `03_make_model_first20.py` 生成 `yjw/data/GLM-5.2-FP8-first20`：用软链接指向 38/141 个分片（189 GiB），config 中层数设为 20，逐层列表同步截断；sglang 加载时会跳过 layer>=end_layer 的权重。
+  - `04_replay_weka.py`：16 个线程闭环回放，每个线程处理一整个会话；主请求和 subagent 请求按 t 展平后依次发送，不插入 think time。每个 64-token 块由 (trace, hash_id) 确定性生成，以保留原 trace 的前缀复用；用 `routed_dp_rank` 固定会话所在 rank。已用模拟服务验证逻辑。登录节点有代理变量，客户端已设置 trust_env=False。
+  - `05_glm52_first20_dp8ep8_weka.sbatch`：h01、8 卡、24 小时；启动参数 tp8/dp8/enable-dp-attention/ep8，a2a 先尝试 deepep，失败则回退到 none；chunked-prefill 65536（DP 下每个 rank 实际 8192）。结果写入 `yjw/test/results/<jobid>/`，日志写入 `yjw/test/logs/`。
+  - 首次提交作业 568573，状态 PD（Priority），排队等待 g40。
+- 2026-10-05 作业 568573 于 10-05 03:20 在 g40 上拿到 8 卡，运行 11 分钟后失败，日志在 `yjw/test/logs/` 和 `results/568573/`。原因：JIT 编译时用到了宿主机的 `/usr/local/cuda/bin/nvcc` 12.4。DeepGEMM 断言要求 NVCC>=12.9；sglang JIT 编译 `ipc.cuh` 时，nvcc 12.4 无法推导模板，报错。失败发生在加载权重之前。
+  修复：venv 自带 nvcc 13.4（`nvidia/cu13`）。新建软链接目录 `cache/cuda13_home`（补齐 lib64 和 libcudart.so），sbatch 中设置 CUDA_HOME/CUDA_PATH/PATH 指向它。已在登录节点验证：nvcc 13.4 能编译 ipc.cuh，能链接 cudart。
+- 前 20 层权重实际为 161 GiB，其中路由专家 153 GiB，其余约 8 GiB 每个 DP rank 各存一份。每卡权重约为：EP8 27 GiB、EP4 46 GiB、EP2 85 GiB（放不下）。
+- A800（SM80）在当前 sglang 上无法运行 GLM-5.2：CUDA 上的 DSA indexer 只调用 DeepGEMM fp8_mqa_logits（仅支持 SM90+）；DSA 注意力的 flashmla_sparse/fa3 也仅支持 SM90+；triton DSA 后端仅限 ROCm，在 CUDA 上会直接报错。FP8 线性层虽可回退到 Marlin，但上述限制仍阻断运行。
+- 2026-10-05 用户决定改用 4 卡，不再提交 8 卡作业。脚本改名为 `yjw/test/05_glm52_first20_dp4ep4_weka.sbatch`，配置为 h800:4、tp/dp/ep=4、mem-fraction 0.85、chunked-prefill 32768（每个 rank 8192），已加入 CUDA 13 修复。启动后从 /server_info 读取每个 rank 的 token 容量，传给 `--max-input-len`，超长请求跳过并记为 skipped。已在登录节点用模拟服务验证。提交作业 629458（PD，Priority）。g40 为 NV8 全互联，可任选 4 卡。
+- 2026-10-06 作业 629458（4 卡）于 10-05 23:26 在 g40 上开始运行，约 12 分钟后失败。
+  - 已验证正常：4 卡权重加载约 45 GiB/卡，加载后剩余约 32.5 GiB；DeepEP 初始化通过。
+  - 失败原因：JIT 编译 `dpsk_v4_topk_v2` 时 CCCL 报 "CUDA compiler and CUDA toolkit headers are incompatible"。venv 中 nvcc 为 13.4，但 cuda-runtime 头文件为 13.0（由 torch cu130 固定）。两次启动（deepep / none）都卡在 prefill CUDA graph capture 这一步。
+  - 修复：从清华镜像下载自洽的 CUDA 13.0 工具链到 `cache/cuda130_toolkit`（不改动 venv），通过软链接目录 `cache/cuda130_home` 作为 CUDA_HOME。在登录节点用相同编译参数编译了 4 个已生成的 JIT 模块，全部通过；作为对照，13.4 仍然报错。
+  - 另外发现 sglang 的 JIT 缓存默认写入 `~/.cache/sglang/jit`，`SGLANG_CACHE_DIR` 对它无效，需要单独设置 `SGLANG_JIT_CACHE_DIR`。已在脚本中修正，并删除了主目录下本项目生成的缓存。
+- 2026-10-06 CPU 预检（脚本均在 `yjw/test/precheck/`），全部通过：
+  - p1：tokenizer 可离线加载，合成 token 不含特殊 id。
+  - p2/p6：用 CUDA 13.0 工具链编译 27 个 SM90 DeepGEMM 实例，覆盖全部线性层和 MoE 的 N/K 形状、Normal/Contig/Masked 三种类型，以及 indexer 的 mqa/paged logits 和 metadata。
+  - p5：模型路径上的全部 19 个 sglang JIT 模块（由子 agent 梳理）都能编译，包括 topk_v2、indexer 融合、rope、concat_mla、ptgq 三个变体和 all-reduce。用 `override_jit_cuda_arch(9,0)` 即可在无 GPU 的机器上编译。
+  - FlashInfer：所有请求都是 greedy（temperature 0），不会触发 FlashInfer JIT。Triton 使用自带的 ptxas，不受 CUDA_HOME 影响。
+  - p3/p4：客户端的崩溃中止和断点续跑、sbatch 编排（deepep 失败后回退、冒烟测试门控、自动重启续跑、汇总）都已用模拟服务演练通过。旧作业 634361 的脚本配合新客户端也能正常运行。
+  - 对新版 sbatch（尚未提交）做的改动：启动时选取空闲端口段（port, port+1, port+233..240），工具链 fail-fast，`--cuda-graph-max-bs-decode 64`，健康检查等待 150 分钟，最多自动重启 3 次并断点续跑，最后由 `06_summarize_parts.py` 汇总。
+  - 无法在 CPU 上验证：DeepEP 的 NVSHMEM/IBGDA 运行时、CUDA graph 显存（上次 KV 分配后剩余 11.4 GB）、首次运行 DeepGEMM 预编译的耗时。
+- 2026-10-06 取消 634361（24h，一直卡在 Priority 状态：前面有看不见的高优先级作业占着预留）。将时限改为 4h 后提交 635801，立即通过 backfill 在 g40 卡 0-3 上开始运行（15:50）。教训：h01 被预留时，缩短 --time 有机会靠 backfill 插空运行。
+  - 新 sbatch 根据作业剩余时间计算 deadline，回放在截止前 20 分钟停止发送新请求（`--duration`），确保结果能写盘。
+  - 635801 已越过上次的失败点：权重加载完成，DeepGEMM warmup 正在进行。
+- 2026-10-06 作业 635801（mem-fraction 0.85）失败。已越过 JIT/工具链问题，但出现 OOM：KV 分配后每卡只剩约 11.5 GB 余量，DeepEP 路径在 DeepGEMM warmup 申请 1 GB 时失败；none 路径首个 8 万 token 的长 prompt 在 MoE ptgq 申请 3 GB 时失败。另外发现，同配置自动重启 3 次只会重复失败。
+  已用 `MEM_FRACTION=0.75` 重新提交作业 635872，并立即在 g40 上开始运行。
+- 2026-10-06 作业 635872（mem-fraction 0.75）**首次跑通**：DeepEP 启动成功，约 3 分钟就绪（DeepGEMM 和 JIT 使用缓存）。每卡 KV 为 13.04 GB，容量 584,256 token，剩余 19.4 GB；4 个 rank 冒烟测试全部通过。16:24 开始回放，前 300 条请求 0 失败，缓存命中率约 0.91，TTFT p50 0.13 s，TPOT p50 14 ms，输出约 730 tok/s。
+- 2026-10-06 开始 peer-GPU KV 实验（Step 1）。peer_gpu.py 写在 sglang 源码 srt/mem_cache/pool_host/peer_gpu.py，monkey-patch build_kv_host_pool。启动器 yjw/test/07_peer_gpu_launch_server.py。Index-K 留在本地，主 KV offload 到 GPU1-3（按层轮流）。
+EOF; date
+- 2026-10-07 peer-GPU HiCache 在 GPU 上首次跑通（验证作业 642904，16 并发）。rank0 本地 KV 为 584,256 token，peer tier 195 万 token，三张 peer 卡分别占 15.75/15.75/13.5 GB。index-K 省略开启（`PEER_GPU_HICACHE_ELIDE_INDEX_K=1`），只有 7/20 层存 index-K。命中率约 93%（同配置 baseline 642438 为 0%），TTFT p50 约 10 s（baseline 约 39 s），输出吞吐约 3.5 倍。但命中 100% 来自 peer（device=0）：16 并发时会话之间互相把本地 KV 挤掉。
+- 下一轮改为 4 并发配对对比。固定子集 `yjw/test/data/weka_c4_subset17.jsonl` 取 17 条 trace（排除 10/16/18 三条），共 3272 条请求、约 4.9 亿 token，最长请求 468k token，元信息见同目录 meta.json。baseline 643086 在 642904 之后运行，peer 实验 643087 在 643086 之后运行。sbatch 的 TRACE 和 CONCURRENCY 可通过环境变量覆盖。
+- 2026-10-07 4 并发配对实验完成，结果见 `yjw/test/RESULTS_peer_gpu_c4.md`。
+  - baseline 643086：3.5 小时只跑完 2496/3272 条请求，命中率 41.6%。peer 组 643087：1.9 小时跑完全部 3272 条，命中率 98%。
+  - 同一批 2496 条请求，peer 组耗时 3796 s（baseline 12760 s），快 3.36 倍。TTFT p50 0.61 s（baseline 7.53 s），p99 23.5 s（baseline 64.3 s）；TPOT 基本不变。
+  - 本地/peer 命中比例约 40/60，没有达到 80/20，原因是本地 58 万 token 对 4 个长会话来说偏小。
+- 2026-10-08 第二步：层内 overlap（split attention）已实现，开关为 `PEER_GPU_HICACHE_SPLIT_ATTN=1`，默认关闭。
+  - load-back 时先把所有层的 index-K 拷回（本地，量很小），每层单独记录 index event；之后再逐层拷主 KV。拷贝前在 load stream 上标记本批正在拉回的 slot（remote mask）。
+  - indexer 只等 index event。flashmla_sparse 在 extend 时把 top-k 拆成本地/远端两组：先算本地部分，同时等待该层主 KV 拉回，再算远端部分，最后用 base-2 LSE 合并（Triton kernel 实现，见 `layers/attention/dsa/peer_split.py`）。
+  - 不走 split 的情况：MHA、RAGGED、verify/draft、attention sink、hisparse、CUDA graph capture。
+  - `PEER_GPU_HICACHE_SPLIT_VERIFY=n`：前 n 次与不拆分的结果对比并记日志。`PEER_GPU_HICACHE_STALL_PROFILE=1`：统计 forward stream 等待 load 的时间。
+  - CPU 检查 `yjw/test/precheck/p8_split_attn.py` 通过：split kernel 与参考实现一致；拆分后合并与不拆分的误差为 1.8e-7（float），bf16 下 8e-3。
+  - 作业：645767（split + verify 200 + stall profiling），之后接 645769（不 split + stall profiling），均为 4 并发、子集 subset17。
+- 2026-10-08 层内 overlap 对比完成（4 并发，3272 条全部跑完，详见 `yjw/test/RESULTS_peer_gpu_c4.md`）。
+  - split 645913：用时 6912 s，主 KV 等待 352 ms，index-K 等待 312 ms。不 split 645914：用时 6740 s，主 KV 等待 630 ms。
+  - 两组 forward 总等待都约 0.65 s，不到总时间的 0.01%。HiCache 自带的逐层流水已经把 peer 拉取掩盖掉了。split 本身带来额外开销，端到端反而慢约 2.6%。
+  - 在这个配置下，远端拉取不是瓶颈。
+- 2026-10-08 补测 646891（split，不开 profiling）：用时 6942 s。不 split 的 643087 为 6829 s，split 慢 1.7%，结论与带 profiling 的那组一致：在 NVLink 下 split 没有收益。profiling 本身的开销在噪声范围内。
+
+## FlashInfer 稀疏 MLA 远端 KV 算子（yjw/flashinfer，2026-10-19）
+
+- 仓库从本地迁移到 `yjw/flashinfer`（git 历史完整），改动前基线 worktree 在 `yjw/flashinfer_base`（commit 52f289a1）。
+- 环境：`source yjw/flashinfer/temp/h800/env_job.sh`（rtx/.venv + CUDA 13.0 shim，JIT 在 `temp/h800/jit`，pytest 在 `temp/h800/pydeps`）。
+- 用户要求：只用 g40（h01），单作业最多 4 卡、尽量 1–2 卡、短时限；通用作业模板 `temp/h800/job.sbatch`，批量提交 `temp/h800/submit_all.sh`；host 作业串成一条依赖链，避免 PCIe 互相干扰。
+- 结果在 `temp/h800/results/<job>-<id>/`，日志在 `temp/h800/logs/`。
+- 2026-10-19 g40 满载，作业 697235–697252 排队，调度预估开始 2026-10-23。
+
+## GLM-5.3 top-k trace 接续（2026-10-28）
+
+- 新语料为 SWE-rebench OpenHands resolved 轨迹，单轨迹/文档、GLM 原生 tools 模板，作业 1040732 成功生成 4×65536 token。路径 yjw/test/glm_trace/corpus_swe.pt，SHA-256 f82182b02107b998bf87a95fa855890a919fd9cb6f3438a4e8f73b5fbf67bbaa。前 5675 token 是 system，不能用 4K 前缀验证 assistant loss。
+- 8K 验证 1040816（2×A800）成功完成，21 个 indexer 层和 78 层映射完整，保存行的数据检查全部通过；assistant target loss 0.827（793 token），tool 4.367。严格检查 1040870 返回 1：唯一高块 [1536,1792) loss 6.3025，256 token 全为 system 工具说明中的转义 JSON。保留失败；上下文复核后按原 trace 授权继续采集，没有改阈值或语料。证据 yjw/test/glm_trace/results/swe_check{,_with_roles,_decision}_20261028.json。
+- 单篇64K采集1040875已COMPLETED 0:0，g08、8×A800、17分59秒（计算952秒）、峰值8.7GiB/卡；原始traces/swe64k_doc0_20261028/doc0.pt为5.3GiB。21层全部top-k/score/统计及78层映射检查通过，assistant7635 token mean loss0.550；tool51272 token mean9.842。严格CPU作业1079470仍FAILED 1:0：154个高块（1纯system、138纯tool含末块），没有assistant占多数的高块。保留失败，不改阈值/语料，按原授权继续四篇完整assistant窗口采集；证据results/swe64k_doc0_{inspection,roles,decision}_20261028.json。
+- 本机 A100 已用 8K trace 完成 256 位置接入（PCIe MTP1 1/4 请求、NVLink MTP8 1/4/16 请求）；每步采样行校验通过 max abs≤0.006066，逐步耗时/去重页命中率/两下限及原始 JSON 见 yjw/test/glm_trace/results/a100_8k_smoke*。它包含 system/user/tool 且上下文短，不能替代正式结果；朴素基线仍为原计时口径。
+- H800三作业1004362/1004363/1040680仍Priority，不重复提交。用户已授权持续常规调优；单kernel融合保留，拆kernel仍需确认，具体H800实现待硬件实验结果。
+- 静默轮询每600s：原H800 PID4160646仍存活，旧trace65160和full1788755已退出。新版H800 watcher PID1174145观察1089379/1089380，日志/PID为yjw/test/glm_trace/logs/watch_tuned_20261029.{log,pid}。先核实进程再续接。
+- 全4篇64K采集1079524已COMPLETED 0:0，g03、8×A800、23分44秒（计算1296秒）、峰值34.1GiB/卡。1079527 CPU严格检查FAILED 1:0（2分38秒）：四篇全部top-k/score/层映射/窗口及assistant loss gate通过，block gate均失败；assistant mean0.553/0.422/0.647/0.533。窗口计划GPU全流程已验证，失败报告保留、阈值不变。
+
+## A100 100 GB/s 高延迟与小 batch 调优（2026-10-28）
+
+- 用户后续明确认可在本机 A100 优化 100 GB/s＋高延迟及单独优化小 batch，这两项已获授权并执行；单 kernel 融合 LRU 保留，拆 kernel 仍需先确认。
+- 本机提交 d92e7e83：fetch CTA>8 时更早选64行搬运块（每CTA一块即切换，此前为三块）；<=8沿用原规则。模拟器不变。75项完整测试通过；最终13份JSON/63个batch配置，7次冷启动，每步采样行max abs 0.006007。
+- 100GB/s＋20us：MTP8单请求同参数f16/h64为125.95→101.89us（耗时−19.1%）；128请求结合f24为5609.98→4444.16us（−20.8%）；MTP1四请求结合f32为101.18→79.36us（−21.6%）。基线是旧版固定f16/h64，不是旧版所有参数的最优值。部分小batch仍慢于Memcpy+LRU，MTP8两请求几乎不变；128请求仍为纯device下限1.81倍。
+- 数据/未采用补丁/哈希在 yjw/flashinfer/temp/sim_link/tune_100/，报告 yjw/flashinfer/docs/mla_host_a100_100gb_tuning.md。代码与基线使用此前代理top-k，正式GLM64K trace仍未到。更深流水、单warp扫描、缩grid候选未采用，原始数据保留。
+- 本轮报告、脚本和数据已同步集群；H800生产header及排队作业源码未改，以保留原测量基线。待原H800调优作业结果出来后再应用最终改动并实测；不要用含本机模拟钩子的整份header覆盖集群。
+
+## A100 第二轮 LRU / 小 batch 调优（2026-10-28）
+
+- 用户已授权持续调优以逼近理论下限，同范围常规改动不再重复确认；单kernel融合LRU保留，拆kernel仍须先问。
+- 本机提交614655f1：staged缓存映射绑定移到fetch CTA，与attention重叠；空miss池跳过LRU扫描；less/equal两次prefix合并（各16bit，pool<=8192）；staged+cache+host_split小batch的HBM分块预留Host任务并行空间。不改模拟器、缓存容量、trace及精确LRU语义。
+- 相对d92e7e83同参数f16/h64，7-pass正向及反向顺序复核：100GB/s无附加延迟MTP8 1/2请求约快10%-11%，MTP1四请求约快9%；GLM8K真实256位置回放四请求61.29→54.21us（快11.6%，纯HBM下限46.08us）。100GB/s20us的MTP8四请求约快9%；f24下两请求151.55→140.80us（7.1%）。f24大batch本轮接近不变。不能把默认参数改进宣称为相对旧版所有调参最优。
+- 79项完整测试通过，含8192槽和混合池全命中/全淘汰边界。最终45份JSON/198个batch配置，每步采样行max abs0.006596。两下限和所有更慢格子见yjw/flashinfer/temp/sim_link/tune_lru/results_{forward,reverse,tuned}.md，报告docs/mla_host_a100_lru_tuning.md，manifest存哈希及覆盖。
+- PCIe小batch有可见波动：第二组staged 1/4请求约慢6%，额外9-pass旧新新旧交替后旧版本身也有明显波动，未证明稳定收益或完全无回退；完整原始数据保留。50GB/s大batch近似不变，高延迟MTP1小batch改善有限，继续优化。
+- CPU launcher初版误调device-only helper导致首个kernel启动前退出，已修为直接读取参数后重跑完整对照，失败无计时JSON。试验override仅存patch，未进入最终正常构建。
+- 报告/脚本/结果已同步集群，H800排队作业header仍保留原基线，未覆盖本机模拟钩子版本。GLM单篇64K后已完成，四篇1079524及H800三作业仍须实时查队列；下轮重点单请求prepare/同步/merge成本，再评估跨层复用。
+## GLM 64K A100回放完成（2026-10-28 晚）
+
+- 本机提交aeca4403，32份报告/源码/原始数据已同步yjw/flashinfer并核对全部文件SHA；未改H800生产header。新导出08_export_replay.py仅保留未改top-k及出处、scores留原始trace，可选assistant-only只保留完整窗口。CPU导出1079523成功；本机2.7GiB副本temp/glm_trace/replay64k/doc0.pt的SHA为15b21ce91eeeb40b48d6d77db708f912a40a4259ffcef301d3ee681a41690d72，不入git。
+- run_64k_replay.py已完成真实NVLink、PCIe MTP1、50/100GB/s+20us：1024连续位置、7pass、6份JSON/15个batch配置、4096槽/请求、f16/h64。两模式共14592次launch逐步采样行校验通过，max abs0.004352；每个请求保存实际文档/层/窗口及查询角色计数。原始样本、命中率、两下限和manifest在temp/glm_trace/results/a100_64k_doc0/，自包含报告docs/mla_host_glm53_trace.md。
+- 100GB/s20us MTP8 16请求（128行）staged685.25us，Memcpy867.33us（快21%），纯HBM最好494.59us（1.39倍）；50GB/s20us同批次722.05us，Memcpy1122.06us，a522.30/b494.59us（1.38/1.46倍）。真实NVLink16请求原地读543.15us（下限1.10倍）；PCIe MTP1四请求75.74us，Memcpy96.28us。100GB/s高延迟单请求/四请求仍有输给Memcpy的格子，不能隐去。
+- 第0篇没有完整assistant窗口，这批是混合角色性能证据，不能替代1079524的assistant回放，也不是旧新kernel提升对照。模拟下限a使用设置带宽，不能用物理NVLink DMA读数；b用同trace正常构建最快样本，固定延迟未计入a。报告06支持--hbm-runs，原8K报告重生成逐字一致。
+
+## A100第三轮与正式assistant回放（2026-10-29）
+
+- 本机提交109b1c76，224份自有报告/源码/原始结果已同步yjw/flashinfer并核对SHA。H800生产header、原bench_rounds和tests未覆盖，原三作业1004362/1004363/1040680仍Priority。新独立worktree yjw/flashinfer_tuned_20261029从dbbc02c6移植三轮性能补丁（没有模拟钩子），与本机去钩子版本独立推导逐行一致；该worktree已提交2b782ed3。SOURCE_MANIFEST.json存全部源码SHA，H800 header SHA c82ecaa7ce1b97e26d699c521f3f6d65186ddf0a962bd5fbaf467b84c952cf02。
+- 单query（num_rows==1）给每head一CTA，四组线程并行合并状态，批量预读4个状态。MTP8单请求为8行不启用；87项完整测试通过，含新8个单query输出/LSE数学参考用例。100GB/s20us代理单请求staged68.10→63.87us（6.2%），GLM64K混合角色85.51→80.92us（5.4%）；真实NVLink54.67→50.49us（7.6%）。四请求±0.5%，PCIe受波动影响；较慢格子全部保留。报告docs/mla_host_a100_single_query_tuning.md，temp/sim_link/tune_small保存75份成功timing JSON、未采用补丁/失败，最终guarded旧新+floor为30个batch配置，max abs0.004450。
+- 发现并修复长trace计时污染：1024步一次排队可碰CUDA队列回压，延长等待也失败。bench_rounds改为最多32步一段，段间同步不重置LRU，每pass仍冷启动；记录CPU入队/GPU guard，若失败整pass从冷重测且不保留失败样本。旧mixed-role a100_64k_doc0及single_query/base_repeat长trace绝对计时有污染，不再作为最终性能证据；原件保留。最终旧新为guarded_candidate/guarded_base。不要误把新的排队方式当kernel速度提升。
+- assistant导出1089312/1089313成功，文档1三窗口35184/41887/48296、文档3窗口50621，query及target各1024位置全assistant，loss0.123/0.300/0.190/0.269。top-k不变，scores留21GiB原件traces/swe64k_full_20261028，replay在yjw/test/glm_trace/replay/swe64k_assistant_doc{1,3}_20261029.pt。本机副本temp/glm_trace/assistant64k不入git。
+- 正式A100 assistant 64K/1024回放完成：6份JSON/15配置/7pass，4096槽f16/h64；7980段guard全部通过、14592次launch采样行max abs0.007131。100GB/s20us MTP8 16请求staged667.10us对Memcpy867.70us（快23%，纯HBM494.59us，1.35倍）；50GB/s20us759.66对1122.58us（快32%，a564.16/b494.59us，1.35/1.54倍）。真实NVLink同批次原地读531.46us（下限1.07倍）；单/四请求仍有输给Memcpy格子。每步命中率、两下限、窗口出处和原始pass在temp/glm_trace/results/a100_64k_assistant_20261029，报告docs/mla_host_glm53_trace.md。
+- 已提交H800新版验证链：1089379（h01、1卡、8核/64G/20分钟，依赖afterany:1004362:1004363:1040680）先87项pytest再PCIe；1089380（2卡/20分钟）依赖afterok:1089379跑NVLink。两者MTP1/8、1/4/16请求、1024位置、7pass，含ours两模式/Memcpy/Direct/HiSparse/FA2/FlashMLA floor。新tree、JIT、pytest路径插件独立，不改原排队基线；未实测H800，仍须读硬件结果和继续优化。
+
+## A100第四轮高延迟等待优化（2026-10-29）
+
+- 用户继续授权在限定50/100GB/s和延迟下逼近纯device。提交5c44fd70：小staged cache batch（至多32 query/head tiles）逐行完成后即可merge，独立每行完成计数（workspace新增一int32/行、最后CTA清零）；fetch>8时小batch超过一轮16行块即改64行块，减少串行等待轮数。单kernel/精确LRU/容量/top-k/模拟器不变。必须连同csrc和Python workspace分配移植，不能只覆盖header。
+- 91项最终正确性测试通过（70.35秒），新增完成计数在staging不足、128头、nosplit、空padding后恢复的边界。初版新增测试错误复用被padding覆盖的索引原件，修为先clone后91通过；早期row_merge/row_fetch原型复用prepare计数有竞争隐患，最终使用独立计数，原型只留诊断证据不当最终结果。
+- 100GB/s20us代理反向复测，f16/h64同参：MTP1四请求94.14→77.38us（快17.8%）；MTP8单请求101.89→90.11us（快11.6%）、四请求246.78→231.42us（快6.2%）。真实assistant64K/1024同参：MTP1单/四请求69.35→65.74us（5.2%）、92.51→85.35us（7.7%），纯HBM下限30.72/46.08us，比值2.14/1.85；MTP8四请求261.31→252.46us（3.4%）；50GB/s20us四请求297.28→287.71us（3.2%）。大batch收益有限。
+- 所有回退保留：100GB/s20us代理MTP8 16请求慢约1.7%、128请求5554.69→5713.92us（慢2.9%），虽较大batch不启用新规则，仍需下轮优先检查代码生成/调度影响；50GB/s128请求近似不变。PCIe代理MTP1 16请求有5%-8%回退（原地读也变慢，Host波动存在）。原推荐f32单请求约慢1%，四请求真实assistant快约7%、代理快3.8%；不可把默认f16约18%说成相对旧版所有参数最优收益。自动h256的实验未采用。
+- 同次朴素对照：100GB/s20us真实assistant MTP1四请求本文85.8/ memcpy92.6us，单请求65.1/65.0us近持平；MTP8四请求252.1/246.8us仍输，16请求669.3/865.4us领先。最终旧新/原推荐/大batch/反向/floor/naive共150配置、19992段有效入队检查、74448次launch采样行max abs0.007677。全轮107份成功timing JSON，源码SHA/patch/未采用候选/逐步命中率/两下限在temp/sim_link/tune_latency，报告docs/mla_host_a100_latency_tuning.md。
+- 255份自有报告/脚本/原始结果已同步yjw/flashinfer并核对全部SHA；生产kernel/csrc/Python/tests未覆盖，原H800三作业及2b782ed3的独立第三轮快照/1089379/1089380均未改变（仍排队）。第四轮完整移植补丁temp/sim_link/tune_latency/final.patch已同步，等原硬件结果后再应用，不能误以为H800已测第四轮。目标仍未完成，后续先减少大batch回退，再继续小batch高延迟/准备同步开销。
+
+## A100第五轮：第四轮大batch回退修复（2026-10-29）
+
+- 用户“请解决”指第四轮大batch约3%回退。本机提交f78ac492，将ROW_MERGE改为编译期参数，launcher按形状选一个cooperative kernel；大batch完全删除逐行计数/fence/等待及小batch取数阈值。单kernel/精确LRU/缓存/top-k/模拟器不变，代价为额外编译实例。模拟构建2-stage/32-KV指令13800→13544（与109b相同），REG246、无spill，不宣称SASS逐字节相同。原始f16/h64简写指fetch_ctas=16/host_item_entries=64，数据BF16/64头。
+- 93项测试通过（154.23秒），新增持久缓存48→24→48行跨实例切换。100GB/s20us代理MTP8 128请求：优化前5543.94/回退5690.88/修复5541.38us；再次测修复5529.60/回退5688.83us。16请求848.38/862.21/847.36us。单/四请求相对优化前仍快11%/6%；真实assistant MTP1单/四请求69.06→65.55、92.53→85.69us（5.1%/7.4%）。完整旧新55配置/110模式格，>32行30格最慢约+0.47%（物理PCIe原地读）；原3%回退消除，未外推到未测参数/H800。
+- 44份成功timing JSON/152配置、13552段有效guard、411712次计时launch，采样行max abs0.006596。temp/sim_link/fix_large保存全部数据/两下限/源码恢复补丁/压缩SASS/manifest，audit.py可核验；报告docs/mla_host_a100_regression_fix.md。初筛误标specialized因生成候选先断言退出、实际测5c，已按源码SHA更名regressed_screen并留元数据，不作为最终对照。
+- 120份自有报告/脚本/补丁/数据已同步并核对SHA，生产header和独立第三轮快照2b782ed3均保持；1004362/1004363/1040680仍Priority，1089379/1089380仍等依赖，不重复提交。移植先用第四轮完整补丁（含csrc/Python workspace）再用fix_large/fixed.patch；不能只覆盖header，也不能误称H800已测第五轮。原目标仍未达成，后续继续减少小batch准备/等待开销，部分100GB/s20us格子仍距纯device约1.8–2倍。
+
+## H800比较口径与原生HiSparse确认（2026-10-29）
+
+- 用户再次明确：不优化HiSparse，只按部署打开开关的原生方式比较。当前SGLang faafa9810生产coordinator调用单步load_cache_to_device_buffer_mla；srt无独立spec API引用。默认没有显式跨MTP query批量去重，但LRU命中会复用，不能说重复引用都重读；独立2–4步API存在不代表默认接入，不替它接入。
+- 已提交H800审计报告docs/mla_host_h800_benchmark_audit.md，证据temp/h800/audit_20261029；旧19配置benchmark SHA对应67d13373。Memcpy/Direct是CPU oracle LRU＋未验证完整缓存输出的计时替身，PCIe CPU gather不计时，NVLink GPU gather计时但缓存维护缺项仍在。不能把旧表直接当完整HiSparse不如完整Memcpy的结论。HiSparse元数据/最新token适配copy在计时内，我们索引copy在外；旧guard无acceptance记录，不能排除CPU间隙，也未证明已污染。
+- NVLink已核对NV8和远端GPU1物理分配，约177/167GB/s；旧MTP8只有4步，HiSparse串行8次swap-in＋attention，不能把差距全部归因搬运。当前外部源码有SHA/摘录，但旧数据缺SGLang源码SHA，不能证明历史字节一致。审计不改排队版本、不产生新H800计时；后续修正口径并补完整正确Memcpy，HiSparse仍原生。
+
+## A100第六轮：准备优化与取数流水筛选（2026-10-29）
+
+- 用户授权继续优化我们kernel的小batch准备/高延迟取数，暂不补Memcpy基线，HiSparse仍原生。提交2d3414e7增加FLASHINFER_HOST_BATCH_SMALL_PREPARE编译选项，默认关闭。开启时小staged cache batch每线程1条prepare＋单warp prefix scan；通用函数原样保留，关闭时源码token与f78基线一致，模拟/正常构建六个主kernel反汇编指令文本也均一致。单kernel/LRU/容量/top-k/workspace/API保持。
+- 开启选项101项测试通过（175.76秒）。GPU0/1被其他服务占用，未干预；本轮只用GPU3 A100-PCIE，far是同卡独立HBM分配，经未改模拟器限制50/100GB/s＋20us，另测零延迟及物理Host。这不是物理NVLink，不与SXM绝对时间拼接；tiers.py只防止同卡重复设备访问描述符，异卡/Host不变。
+- 最终同源码开/关44配置/88模式格：100GB/s20us完整assistant MTP1单/四请求61.89→60.15、82.34→80.55us（2.8%/2.2%），MTP8单/四请求100.51→98.03、249.58→246.10us（2.5%/1.4%）。纯device比值1.96/1.75/2.04/2.25；MTP8 16请求约+0.2%。>32行28格最大+0.55%；最慢格原地读+1.85%，不能称普遍提升。
+- 32行四缓冲曾在高延迟快2%-6%，但零延迟慢15.4%，只保留实验patch，不在最终kernel。中间版本Host MTP1 16请求原地读多次慢6%；一次恢复后完整矩阵又变慢，隔离前后主kernel指令相同，不能声称隔离已修复。最终用显式准备优化选项，默认保留原实现；开启后仍需按目标链路实测。全部反向复测和慢格保留。
+- 全轮107份成功timing JSON/372配置/34146段有效guard/1009764次计时launch，采样行max abs0.006855。最终enabled_*/default_*，其余accepted_*/retained_*/final_*为中间或流水候选。docs/mla_host_a100_prepare_tuning.md、temp/sim_link/tune_prepare保存结果、两下限、4份输入trace SHA、补丁恢复、压缩SASS与audit；guarded_full.patch基于ac507996（kernel与f78相同），迁移须先用第四轮workspace/csrc/Python补丁和第五轮修复。
+- 317份自有报告/脚本/证据已同步并核对SHA，H800生产header及2b782ed3第三轮快照保持，三个原作业仍Priority、两个assistant作业仍等依赖，不重复提交。仍未验证H800该选项，目标未完成。
+
+## GLM53 kernel全矩阵完成（2026-10-30 12:24）
+
+- 本机提交8c624445，用户本次kernel-only报告任务已完成：无LRU4641/4641、真实assistant trace＋LRU663/663、本地参考312/312。audit complete=true，1955940次计时launch、143745段有效队列；15组链路校准、11组波动复测通过，采样最大绝对误差0.00692034。仅A100-SXM4结果，不是H800新实测；生产kernel未改。
+- 完整MD及自包含HTML为docs/mla_host_glm53_kernel_matrix_20261029.*，全部逐格表、CSV/JSON/逐步样本/命中率/失败历史/源码快照在temp/glm_trace/kernel_report_20261029。check_report.json逐格核对5304格，并实际验证离线浏览器筛选、CSV导出和6个报告产物SHA；无缺失。run_resume11.log含ALL_MATRIX_COMPLETE，监督器记录12:17:11 exit0、signals=[]，runner/report watcher均已结束，不重复启动。
+- LRU538/663格严格快于Memcpy；100GB/s＋20us快36/39、几何平均加速1.217倍，50GB/s＋20us快39/39、1.374倍。MTP8 128请求100GB/s20us本文4450.15/Memcpy6287.30/本地2467.18us；50GB/s20us5679.23/8968.73/2467.18us，理想传输5191.78us，本文距理想重叠9.4%。无LRU2643/4641格快于Memcpy；仍有小batch和NVLink输的场景。本文固定staged配置，不逐格选赢家。
+- 3pass全步骤算术平均、LRU每pass冷启动完整1024位置/4096槽；无LRU四个间隔位置×7个原始远端比例。Memcpy真实缓存payload、未命中搬运、必要scatter和完整attention计时，CPU规划/Host packing/输入上传在外。原始远端比例约99.95%的LRU回放引用命中67.44%–87.37%，非生产直接采集；4窗口×21层组合合成batch，>84复用capture，>128 near物理alias，Q/KV随机BF16，非整模型生成。无LRU与LRU原始驻留不同，不能两表直接相减当cache收益。
+- 512 Host已用8GiB限额、16步独立pinned源缓冲成功完成。历史session23217 exit143原因仍未确定，不归因OOM；supervise.py记录并转发终止信号，诊断证据保留。旧检查点28050653/0482e016仍保留，当前应读完整最终版。
+- 全部结果独立归档于yjw/test/glm_trace/kernel_matrix_final_20261030，压缩包kernel_matrix_final_20261030.tar.gz SHA256 914e5e97e3801d9d670577d0875631613c46af70db7103f5e81b153b2fd6fcbf。已在集群核对1404份正式原始JSON、全部源码快照和6份报告产物SHA，见ARCHIVE_MANIFEST.json。原H800生产树、排队脚本、第三轮独立快照2b782ed3未覆盖。
+- H800原三任务1004362/1004363/1040680于10/30 11:51仍Priority、1089379/1089380仍Dependency；未提交重复GPU任务。后续若继续调优，先看本次全矩阵和H800硬件作业结果；本次报告完成不等于整体H800性能目标已达成。

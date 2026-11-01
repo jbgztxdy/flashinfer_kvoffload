@@ -1,0 +1,18 @@
+{
+  "base_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "candidate_sha256": "1252cdee93be85dd74f9fdd9a922b28e5327c3929dfbece1811021bf015648f4",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "mechanism": "Four full32column QK/softmax warps and eight256feature PV warps, within one384-thread cooperative CTA. Share eachQ fragment across both16KV halves and both staged tiles. QK-role loads next-hi while PV-role computes current-lo. Original64row/f24 dedicatedfetch/realLRU/post-read FAR unchanged.",
+  "block": [
+    32,
+    4,
+    3
+  ],
+  "dynamic_shared_bytes": 147968,
+  "compute_fields_bytes": 140032,
+  "change": "Joint softmax across full32KV/two tiles local to four QK warps; denominator uses original quantizedP/native rowsum then total state broadcast. Same attention equation and PE->CKV per-score MMA order; FP32 reduction/grouping differs.",
+  "protocol": "Namedbarrier1/all384:initialstate,Ppublication,PVhi-release,PVlo-release. Namedbarrier2/QK128:waiterandcp.async visibility. All384 originalprepare/LRU/grid/exit barriers remain outside divergent roles.",
+  "risks": "Uniform168-register budget; possible spills, producer load issue cost, synchronization overhead and TensorCore contention. No performance or correctness claim before actual validation."
+}
