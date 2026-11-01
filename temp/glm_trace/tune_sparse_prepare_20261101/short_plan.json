@@ -1,0 +1,23 @@
+{
+  "variants": [
+    "base",
+    "sparse_prepare"
+  ],
+  "positions": 256,
+  "passes": 3,
+  "mtp": 8,
+  "requests": 128,
+  "fetch_ctas": 24,
+  "host_split": "off",
+  "settings": [
+    "g100_l0",
+    "g100_l20000",
+    "g50_l20000"
+  ],
+  "headers": {
+    "base": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+    "sparse_prepare": "f998f8317eaf283d3c433f927aba959faf98034d576a0df9649bc35c713d37ec"
+  },
+  "baseline": "FrozenCPEa436",
+  "claim": "shortscreenonly; no fulltrace/native/adoption proof"
+}

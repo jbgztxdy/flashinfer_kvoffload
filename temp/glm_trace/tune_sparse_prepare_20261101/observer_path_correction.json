@@ -1,0 +1,6 @@
+{
+  "cpu_only": true,
+  "error": "Firstobserver used Path(.) parent, looked in wrongrelativefolder.",
+  "correction": "Resolve currentcwd first; no kernel/header/build/test edits or GPU effects.",
+  "second_observer": "Latermanualmetricobserver also used unresolved Path(.) parents[2], corrected to Path.cwd(); noGPU/raweffects."
+}

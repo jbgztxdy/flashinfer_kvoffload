@@ -1,0 +1,96 @@
+PROGRESS_CHECKPOINT_VERIFIED 115 []
+{
+  "comparison_base": "ProductionCPEa436",
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "pairs": [
+    {
+      "hardware": "GPU3",
+      "cohort": "destination256_f24_",
+      "variant": "sparse_prepare",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l0",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3410.7093289494514,
+      "new_us": 3410.336010158062,
+      "reduction": 0.00010945488324698438,
+      "old_raw": "temp/glm_trace/tune_sparse_prepare_20261101/gpu3/raw/destination256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_sparse_prepare_20261101/gpu3/raw/destination256_f24_sparse_prepare_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "memcpy_us": 6077.205345034599,
+      "local_us": 2556.959974269072,
+      "reference_us": 2685.907269229851,
+      "over_reference": 0.2697147251609813
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "destination256_f24_",
+      "variant": "sparse_prepare",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3431.8506692846618,
+      "new_us": 3455.92533548673,
+      "reduction": -0.007015068113988221,
+      "old_raw": "temp/glm_trace/tune_sparse_prepare_20261101/gpu3/raw/destination256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_sparse_prepare_20261101/gpu3/raw/destination256_f24_sparse_prepare_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "memcpy_us": 6095.370675126712,
+      "local_us": 2556.959974269072,
+      "reference_us": 2685.7775492298506,
+      "over_reference": 0.2867503998898644
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "destination256_f24_",
+      "variant": "sparse_prepare",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g50_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 5270.218643049399,
+      "new_us": 5106.922658781211,
+      "reduction": 0.030984669769545614,
+      "old_raw": "temp/glm_trace/tune_sparse_prepare_20261101/gpu3/raw/destination256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_sparse_prepare_20261101/gpu3/raw/destination256_f24_sparse_prepare_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "memcpy_us": 8489.30132885774,
+      "local_us": 2556.959974269072,
+      "reference_us": 4785.22848,
+      "over_reference": 0.06722650342104686
+    }
+  ],
+  "tests": [
+    {
+      "variant": "sparse_prepare",
+      "tests": 105,
+      "sha256": "308ab5f9409fc046b559327676b3c4df6236b324358643a78b15878e611f6119"
+    }
+  ],
+  "stress_tests": [
+    {
+      "variant": "sparse_prepare",
+      "tests": 10,
+      "sha256": "290800306f8200f675831c71d4ba9d67ddc80d12f6c0fe039be9d83f620ce33c",
+      "scope": "BF16/FP16 longK2048/63tileodd-tail,128pools,capacity512/4096,empty/single/padding,LSE/fullcachepayload/Graph;K65QPEstride80;crossCTAidentical97pages/disjoint2048pages andclaimclearacrosslaunches"
+    }
+  ],
+  "pending_references": [],
+  "pending_reference_pairs": [],
+  "timed_launches": 1152,
+  "accepted_segments": 72,
+  "incomplete": [],
+  "production_header_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "original_matrix_sha256": "e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99"
+}

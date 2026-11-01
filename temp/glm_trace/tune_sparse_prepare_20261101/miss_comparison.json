@@ -1,0 +1,71 @@
+{
+  "pairs": [
+    {
+      "setting": "g100_l0",
+      "reduction": 0.00010945488324698438,
+      "sides": [
+        {
+          "side": "old",
+          "mean_unique_misses": 215242.90625,
+          "reference_hit_rate": 0.7673001464654743,
+          "unique_hit_rate": 0.6173750664532756,
+          "mean_us": 3410.7093289494514,
+          "mean_unique_MB": 247.959828
+        },
+        {
+          "side": "new",
+          "mean_unique_misses": 207714.1875,
+          "reference_hit_rate": 0.7838441049269128,
+          "unique_hit_rate": 0.6307584367189831,
+          "mean_us": 3410.336010158062,
+          "mean_unique_MB": 239.286744
+        }
+      ]
+    },
+    {
+      "setting": "g100_l20000",
+      "reduction": -0.007015068113988221,
+      "sides": [
+        {
+          "side": "old",
+          "mean_unique_misses": 215245.83333333334,
+          "reference_hit_rate": 0.7672978953217366,
+          "unique_hit_rate": 0.6173698631456013,
+          "mean_us": 3431.8506692846618,
+          "mean_unique_MB": 247.9632
+        },
+        {
+          "side": "new",
+          "mean_unique_misses": 207704.26041666666,
+          "reference_hit_rate": 0.7838281829301466,
+          "unique_hit_rate": 0.6307760835240133,
+          "mean_us": 3455.92533548673,
+          "mean_unique_MB": 239.275308
+        }
+      ]
+    },
+    {
+      "setting": "g50_l20000",
+      "reduction": 0.030984669769545614,
+      "sides": [
+        {
+          "side": "old",
+          "mean_unique_misses": 215267.84375,
+          "reference_hit_rate": 0.7672485888136483,
+          "unique_hit_rate": 0.6173307364939447,
+          "mean_us": 5270.218643049399,
+          "mean_unique_MB": 247.988556
+        },
+        {
+          "side": "new",
+          "mean_unique_misses": 207692.20833333334,
+          "reference_hit_rate": 0.7838461672329858,
+          "unique_hit_rate": 0.6307975078193122,
+          "mean_us": 5106.922658781211,
+          "mean_unique_MB": 239.261424
+        }
+      ]
+    }
+  ],
+  "limitation": "Changedpooladmissionorder changesactualcachecounts; reportactualunique andreferencehit. Do notattribute allspeedup topassfusion."
+}

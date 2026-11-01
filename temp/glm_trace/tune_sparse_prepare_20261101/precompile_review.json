@@ -1,0 +1,6 @@
+{
+  "old_header_sha256": "eea2a04805d3845a5e2d87131ad524fd4a374dffc6b0ef815d706e1841424dce",
+  "fixed_header_sha256": "f998f8317eaf283d3c433f927aba959faf98034d576a0df9649bc35c713d37ec",
+  "old_compiled": false,
+  "reason": "Code review found original host_batch_fetch_rows can select16 for lowunique. Densejobscan/map must use the same derived16or64rows instead ofhardcoded64. Adaptedbefore anyGPU build, archived oldsource/generator/manifest."
+}

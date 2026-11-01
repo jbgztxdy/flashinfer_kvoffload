@@ -1,0 +1,11 @@
+{
+  "base_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "candidate_sha256": "f998f8317eaf283d3c433f927aba959faf98034d576a0df9649bc35c713d37ec",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "mechanism": "Bounded pool staging ranges; warp owner rank allocation, publish all own pages beforewaiting, prepare writes final staging remap. Poolcount scan replaces fullreference resolve pass; dense fetchjobs map to sparsephysicalslots. Original LRU/cachecopy overlap remains.",
+  "scope": "Production CPElargecachedfullystaged dispatch plus positive maxK multiple256. All other paths literaloriginal; math/FAR/reference unmodified.",
+  "invariants": "Poolrange begins pool_row_start*maxK, enough space since poolunique<=poolrows*maxK. maxK multiple256 makes everypoolbase64aligned, no readyflag alias. Counts copied before originalclaimreset. All cooperative CTAs resident; all8ownedpages published beforeanyawait.",
+  "risks": "Inline owner waits/newfetchjob binarysearch/poolallocation contention/changedstage locality may outweigh savedresolve. Must check exactLRU/payload, old38/76machinewords, actualnewbranch and timing."
+}

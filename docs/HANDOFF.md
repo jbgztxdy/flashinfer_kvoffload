@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-01 17:16 CPE已保留且生产验证完成；预解析目标槽短测拒绝，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-01 17:37 CPE已保留；稀疏staging融合prepare/resolve已验证拒绝，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -13,6 +13,14 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**新SP=`temp/glm_trace/tune_sparse_prepare_20261101/`已完成拒绝，生产仍CPEa436。** 冻结头f998f831…37ec，直接以当前CPE生产为基线。临时batch pool有从pool_row_start×maxK起始的有界稀疏staging区间，warp一次分配pool内rank，先发布自己全部8候选中的owner，再等待其他owner的物理slot；prepare直接写负staging索引。后续pool计数扫描替代遍历全部远端reference的resolve，dense fetchjob二分映射物理槽；保留原LRU/fetch重叠、shared→staging→cache双写、16/64行选择，不增workspace/kernel/grid barrier。派发额外要求maxK正且整除256，保证prepare_parts1/segment=maxK/区间对齐；其他原路径literal不变。stamp精确LRU选择及current-hit保护保持，但pool内miss admission顺序从row-rank变为warp到达，不宣称各次cache状态相同。
+
+SP正常105+10=**115项**通过，新增不等长pool/零miss前缀、K256/padding奇尾/淘汰/全部payload/LSE/Graph/QPE stride80；原CPE38EMU/76normal指令/资源/机器字与控制字全部相同。新EMU及正常BF16/FP16均REG255/**STACK8**/static2304/LOCAL0，不称零栈。实际新kernel单108CTA/block32x4x2/dynamic147968/active1 Graph和首匹配BF16/**K256**的三sanitizer零错；不是K97或全trace穷尽证明。CPU72case核对给定poolcounts下物理区间、job二分/16-64行flags和实际FAR行数；八个mathhelper规范化命名后与CPE逐字相同。首未编译eea2稿固定64job，编译前修为原16/64选择，旧header/generator/manifest保存在precompile_review/；两个CPU观察Path(.)路径错误记录，无GPU影响。
+
+SP固定GPU3/NUMA1/CPE→SP、MTP8R128/LRU4096/f24off、256位置×3冷pass：100GB0 **3410.709→3410.336µs（+0.0109%）**，100GB20 **3431.851→3455.925（−0.7015%）**，50GB20 **5270.219→5106.923（+3.0985%）**。实际unique从约215243–215268/步降到207692–207714/步（约少3.5%），reference命中约76.73%→78.38%，50GB收益包含admission顺序变动的流量影响，不能归为纯准备优化。两参考仍按原公式和各自实际unique计算，全部正负时间/命中/逐步逐pass保留；不是修改模拟器或参考。
+
+**SP原验证54327/PID3378954和确认10845/PID3393485均已实际terminal0**；确认state=rejected_short_screen，预设两100GB均需正收益门槛失败，未扩full/native/SXM/矩阵，不扫pool/chunk/fetch/spin参数。编译5533、正常测试21723、stress40797也均terminal0；GPU3曾等待外部3382102/3390931自然结束，未终止他人。6格/3配对、1152计时launch/72segment、两参考及合法原阈值reference诊断齐全；不同于此前destination坏诊断，SP负索引仍指staging区。报告[SP](mla_host_a100_sparse_prepare_20261101.md)、decision/checkpoint/continuation保存证据。所有本轮自有runner已结束，主目标仍active；不要重复本轮SP或destination/claim/HR/QP/QS等已拒绝机制。
 
 **当前生产已升级为实测CPE原件，SHA=`a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15`。** 原JQ7193已冻结为生产前基线，不要回退。11:23:52保留父28985/PID2351788实际terminal0，补矩阵父36222/PID2351762亦terminal0：156矩阵完整、GPU3/SXM完整1024×5pass两顺序及正常链路确认通过；先冻结审计再逐字节安装a436，没有未测清理。生产root独立jit_production_cached_pe_normal正常BF16/FP16重建、**111项测试、76个全部原与新实例指令/资源/机器字及控制字、实际单108CTA/block32x4x2/dynamic147968/active1 Graph均通过**。[CPE最终保留审计](../temp/glm_trace/tune_cached_pe_20261101/final_retention_audit.json)、cached_pe_retention和completion_resume_state绑定原件SHA；17:11再次核对通过。canonical math34af/模拟器5e409/原5304矩阵e3fd保持，整体goal active。
 

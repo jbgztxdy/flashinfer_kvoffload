@@ -56,11 +56,13 @@ assert cfg['dynamic_shared_bytes'] == 147968 and cfg['active_blocks_per_SM'] == 
 assert 'BatchMLACachedPEKernel' in cfg['kernel_name']
 for name, digest in r['production_validation'].items():
     assert sha(p / name) == digest
-result = dict(complete=True, timestamp=time.strftime('%FT%T%z'), candidate_adopted=True, goal_complete=False,
+previous = read(p / 'final_retention_audit.json') if (p / 'final_retention_audit.json').exists() else {}
+result = dict(complete=True, timestamp=previous.get('timestamp', time.strftime('%FT%T%z')), candidate_adopted=True, goal_complete=False,
     production_header_sha256=r['candidate_header_sha256'], matrix_cells=156, rows=200, pairs=97,
     production_tests=111, production_kernel_instances=76, single_kernel_graph=True,
     retained_source='Exact measured a436 bytes, no unmeasured cleanup.',
     remaining_goal='Large100GB still clearly above device/per-step max reference; H800 not validated; continue optimization.',
     historical_failure_preserved='Original15217/47513 terminal1 at native resourcepreflight; resumed missing20 separately.')
-(p / 'final_retention_audit.json').write_text(json.dumps(result, indent=2) + '\n')
+if result != previous:
+    (p / 'final_retention_audit.json').write_text(json.dumps(result, indent=2) + '\n')
 print('FINAL_RETENTION_VERIFIED', result['rows'], result['production_tests'])

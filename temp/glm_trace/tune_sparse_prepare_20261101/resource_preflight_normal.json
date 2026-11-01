@@ -1,0 +1,18 @@
+{
+  "candidate_sha256": "f998f8317eaf283d3c433f927aba959faf98034d576a0df9649bc35c713d37ec",
+  "records": [
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "library_sha256": "1bf3ab5d27aa3f09905f580f7641c3a8e101f7a4f30104ee889acf499921df17",
+      "symbol": "_ZN10flashinfer3mla27BatchMLASparsePrepareKernelINS0_19SparsePrepareTraitsI13__nv_bfloat16S3_S3_iEENS0_23SparsePrepareHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "resource": "REG:255 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "library_sha256": "a28e7d190ff8678a3c9bfd788e89332ae8ca63a33def2ef4a4e972c598127d7f",
+      "symbol": "_ZN10flashinfer3mla27BatchMLASparsePrepareKernelINS0_19SparsePrepareTraitsI6__halfS3_S3_iEENS0_23SparsePrepareHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "resource": "REG:255 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    }
+  ],
+  "scope": "Resource preflight only; complete oldinstanceidentity and actualGraph pending originalproducer."
+}

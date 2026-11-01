@@ -1,0 +1,48 @@
+{
+  "cpu_only": true,
+  "candidate_sha256": "f998f8317eaf283d3c433f927aba959faf98034d576a0df9649bc35c713d37ec",
+  "math_helpers_exactly_preserved": [
+    {
+      "helper": "qk_pair_fragments",
+      "normalized_text_sha256": "55553b34ee6f85c80db5a965ed15b323863bcd692d75a793e82f6dbd7074f403"
+    },
+    {
+      "helper": "load_query",
+      "normalized_text_sha256": "191c599d75df76b55e3180e4e55bf88cb401efccf272f541fb9de3ba741602a1"
+    },
+    {
+      "helper": "compute_pe",
+      "normalized_text_sha256": "89755af0b9472b11b85ea48cbb7989004ac295cd544eec6f4a3f5021d7c1dcf2"
+    },
+    {
+      "helper": "compute_one",
+      "normalized_text_sha256": "3d7f5fc892c78855d782815a87fa1a1a2f2805b2b9c7afca2a7d73abd1a03026"
+    },
+    {
+      "helper": "compute_qk_pair",
+      "normalized_text_sha256": "58c591822519c73b7c160e5d02731e23255c6aa7bb9adaea2fba5d0d1b04b5f3"
+    },
+    {
+      "helper": "update_joint_host_mdo",
+      "normalized_text_sha256": "f2a51287061f03106b06f4c07a7d31e79de34110d0e4b18c019af038bd20c69f"
+    },
+    {
+      "helper": "attend_joint_host_tiles",
+      "normalized_text_sha256": "8cdb895bb4e2856a8f64f744fac1589bf961ed8179ef022a876a3d4d7e2bcd5a"
+    },
+    {
+      "helper": "run_joint_host_item",
+      "normalized_text_sha256": "46062f76d3aefbd6992b182bb8ee59efa0af7340737482932ee24624e65af6bf"
+    }
+  ],
+  "scope": "MaxKmultiple256, originallargecachedfullystagedCPEdispatch. Negative32bitphysicalstagingencodingunchanged, legacyreferencehitdiagnostic remainscompatible unlikefinal_destination.",
+  "ordering_review": [
+    "Everywarp publishes all owned pages before anyowner wait; all participating CTAs concurrently resident in cooperative108CTAlaunch.",
+    "Each CAS0->1 has oneowner; nonowner acquire sees its eventualphysicalslot+2. Unique_pages/slot_pool consumed onlyafteroriginalgridbarriers.",
+    "Poolunique<=poolrowcount*maxK; rowstarts*maxKaligned256, noflagaliasfororiginal16/64choices.",
+    "CTA0 copiespoolcounts/jobprefixes afterallclaimincrements; originalsecondgridbarrier beforeclaimcountreset/fetch/LRU.",
+    "ExactLRUstampselector/hitprotection retained; poolmissadmissionorder changes rowranktowarparrival, noidenticalfullcachestateclaim.",
+    "FARrows perjobvalidrows; everyclaimedpage fetched/clearedonce, holesneverread/transferred."
+  ],
+  "limitation": "Source/structural review only, no GPU/performance proof."
+}
