@@ -1,0 +1,38 @@
+{
+  "complete": true,
+  "numerical_helpers_after_rename_identical": [
+    {
+      "helper": "write_o",
+      "normalized_sha256": "952e17dc1368c9497e4220973912afe68e0d250900e06394f9fb337fa70c9167"
+    },
+    {
+      "helper": "load_query",
+      "normalized_sha256": "7c2503771912a8e8c16e5b8d91a9dfc56b9da3923a954faaa306a3934c50e505"
+    },
+    {
+      "helper": "load_q",
+      "normalized_sha256": "b505975f3a5e2be7365940205cb9404b01312da2215c758fb843b10b994300c9"
+    },
+    {
+      "helper": "load_kv",
+      "normalized_sha256": "fb31d423e5b4d43329e42f0e872a3fc42eb8788f57fc6eb3e0ff528232fffacc"
+    },
+    {
+      "helper": "compute_qk",
+      "normalized_sha256": "6aa7cfc548c037882be59e0e0fd0c1999f421d19555b6a44f277d222f70b9712"
+    },
+    {
+      "helper": "softmax_publish",
+      "normalized_sha256": "282a1301528233b5a8d5397fabd360536ef63a254777cca3c001468a3c0eb462"
+    },
+    {
+      "helper": "compute_pv",
+      "normalized_sha256": "ad138138dc5fee7c1063f091dfeba852e3d5e85de2ba1134a64063e64714f667"
+    },
+    {
+      "helper": "consume",
+      "normalized_sha256": "889d2ab1f415088ab5eed3ba4a73dfada7fb47960b51b35ea1df4078b0cb606f"
+    }
+  ],
+  "limitation": "Does not claim schedule/storage/FP32 equivalence to productionJQ or CPE; QP already changes grouping. Produce/progress/lifetime/commonwork differences require actual CUDA gates."
+}

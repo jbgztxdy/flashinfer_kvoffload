@@ -1,0 +1,23 @@
+{
+  "variant": "qks_shared",
+  "candidate_sha256": "f3964bfb7dc6f0897e7e60ce6b492c11bf2116fd72589ea8edae602e4c989cba",
+  "control_sha256": "1252cdee93be85dd74f9fdd9a922b28e5327c3929dfbece1811021bf015648f4",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "parent_service_sha256": "cabe65e10626720653dc8596c3cf5347833b9ff902729ae5a40bc4bd4bc9f4b4",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "reason": "Observed oldserviceREG168/STACK152 and74staticLDL-STLsites. Move thirdpayload from registers to shared memory; driver166912Bblock limit and measured1408Bstatic permit largest equal three-stage packing7rows. Not a parameter sweep.",
+  "dynamic_shared_bytes": 164224,
+  "compute_bytes": 140032,
+  "payload_shared_bytes": 24192,
+  "register_payload_bytes": 0,
+  "progress": "One bounded subjob per actual PV tile(two per paired tile,one odd),plus host-wait/enddrain. Increased from originaloneperjointpair to keep7row producer throughput with the smaller stage.",
+  "jobs": "Ten subjobs per64rowchunk:nine7row plus one1row;lastsubjobboundedbychunk/count and only publishesafterallsubcopies. All64rowflag semantics/FARpost-readhooks remain.",
+  "policy": "SameupfrontLRU/gridbarrier/staticall108workers as oldservice;nominal21inflightrows/CTA(2268total),lowerwhen1rowtailstagepresent,notold2592ororiginal3072.",
+  "dispatch": "Query actual cudaFuncAttributes.sharedSizeBytes and device maxblockoptin before setting164224B. Old+4096conservative gate would reject a fitting kernel; actualdispatchmustbeprobed.",
+  "original_codegen_required": {
+    "EMU": 40,
+    "normal": 80,
+    "base": "QP1252"
+  }
+}

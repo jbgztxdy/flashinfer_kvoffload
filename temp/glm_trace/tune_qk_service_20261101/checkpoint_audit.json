@@ -1,0 +1,106 @@
+{
+  "complete": true,
+  "timestamp": "2026-11-01T09:02:59+0800",
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "production_unchanged": true,
+  "headers": {
+    "base": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+    "control_qp": "1252cdee93be85dd74f9fdd9a922b28e5327c3929dfbece1811021bf015648f4",
+    "qks": "cabe65e10626720653dc8596c3cf5347833b9ff902729ae5a40bc4bd4bc9f4b4",
+    "qks_shared": "f3964bfb7dc6f0897e7e60ce6b492c11bf2116fd72589ea8edae602e4c989cba"
+  },
+  "proofs": [
+    {
+      "file": "compiler_qks_summary.json",
+      "sha256": "c2e58f9b48fd937ac00cdcf87bebbae9fc817444b764a5cbe1cee3d27d6abb67",
+      "original_kernels": 40,
+      "resources": [
+        "REG:168 STACK:152 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:168 STACK:152 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      ]
+    },
+    {
+      "file": "compiler_qks_normal_summary.json",
+      "sha256": "2d3672b8836fc5b3abaca370c13e7f0c5b9842b5cf00380ceac72961da33802b",
+      "original_kernels": 80,
+      "resources": [
+        "REG:168 STACK:152 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:168 STACK:152 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:168 STACK:152 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:168 STACK:152 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      ]
+    },
+    {
+      "file": "compiler_qks_shared_summary.json",
+      "sha256": "cf42cbb64ab9fb1783e3e795118dd6a90285087a10ffbfbc37158d5eb2135476",
+      "original_kernels": 40,
+      "resources": [
+        "REG:168 STACK:32 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:168 STACK:32 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      ]
+    },
+    {
+      "file": "compiler_qks_shared_normal_summary.json",
+      "sha256": "c1d8d0593e05a69e8115df5bb3939b0c65b8e9a917ed2cdb1efee7e32f090f5f",
+      "original_kernels": 80,
+      "resources": [
+        "REG:168 STACK:72 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:168 STACK:72 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:168 STACK:72 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+        "REG:168 STACK:72 SHARED:1408 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+      ]
+    }
+  ],
+  "probes": [
+    {
+      "file": "dispatch_probe_qks.json",
+      "sha256": "53675d256217e7bab6730fa1905bb5a20ef488fd3574da934ae7994d7be33368",
+      "launch": {
+        "grid": [
+          1,
+          108,
+          1
+        ],
+        "block": [
+          32,
+          4,
+          3
+        ],
+        "dynamic_shared_bytes": 158464,
+        "active_blocks_per_SM": 1,
+        "kernel_name": "_ZN10flashinfer3mla24BatchMLAQKSServiceKernelINS0_9QKSTraitsI13__nv_bfloat16S3_S3_iEENS0_13QKSHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+      },
+      "captures": 4
+    },
+    {
+      "file": "dispatch_probe_qks_shared.json",
+      "sha256": "cd1ea4474be12ef0f2481b5cac47dec837a2085891eae5aa6346d235208e4b12",
+      "launch": {
+        "grid": [
+          1,
+          108,
+          1
+        ],
+        "block": [
+          32,
+          4,
+          3
+        ],
+        "dynamic_shared_bytes": 164224,
+        "active_blocks_per_SM": 1,
+        "kernel_name": "_ZN10flashinfer3mla30BatchMLAQKSSharedServiceKernelINS0_15QKSSharedTraitsI13__nv_bfloat16S3_S3_iEENS0_19QKSSharedHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+      },
+      "captures": 4
+    }
+  ],
+  "rows": 21,
+  "pairs": 15,
+  "timed_launches": 4032,
+  "accepted_segments": 252,
+  "numerical_tests": 222,
+  "reused_control_tests_counted": 0,
+  "transitive_identity": "Eachcandidate preserves QP40/80 literally; verified reusedQPproof preserves CPE38/76 literally.",
+  "limitations": "Short256position/3coldpass GPU3 screen; no fulltrace/nativeNVLink/SXM/adoption proof. Sanitizers firstmatched BF16/K97 only; memcheck API reporting disabled,device checks retained.",
+  "parent_cached_pe_phase": "sxm_full_confirmation"
+}

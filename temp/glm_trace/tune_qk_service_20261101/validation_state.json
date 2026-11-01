@@ -1,0 +1,176 @@
+{
+  "pid": 2213948,
+  "start": "2026-11-01T08:43:22+0800",
+  "phase": "short_screen_complete",
+  "complete": true,
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_service_20261101/compiler.py"
+      ],
+      "log": "compiler.log",
+      "start": "2026-11-01T08:46:12+0800",
+      "pid": 2218299,
+      "exit_code": 0,
+      "end": "2026-11-01T08:46:42+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_service_20261101/compiler.py",
+        "--normal"
+      ],
+      "log": "compiler_normal.log",
+      "start": "2026-11-01T08:46:42+0800",
+      "pid": 2218965,
+      "exit_code": 0,
+      "end": "2026-11-01T08:47:32+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_service_20261101/probe_qks.py"
+      ],
+      "log": "probe_qks.log",
+      "start": "2026-11-01T08:47:32+0800",
+      "pid": 2220803,
+      "exit_code": 0,
+      "end": "2026-11-01T08:47:36+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "synccheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLAQKSServiceKernel",
+        "--launch-count",
+        "1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_service_20261101/probe_qks.py"
+      ],
+      "log": "synccheck_qks.log",
+      "start": "2026-11-01T08:47:36+0800",
+      "pid": 2221072,
+      "exit_code": 0,
+      "end": "2026-11-01T08:47:41+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "racecheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLAQKSServiceKernel",
+        "--launch-count",
+        "1",
+        "--racecheck-num-workers",
+        "8",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_service_20261101/probe_qks.py"
+      ],
+      "log": "racecheck_qks.log",
+      "start": "2026-11-01T08:47:41+0800",
+      "pid": 2221251,
+      "exit_code": 0,
+      "end": "2026-11-01T08:47:46+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "memcheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLAQKSServiceKernel",
+        "--launch-count",
+        "1",
+        "--report-api-errors",
+        "no",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_service_20261101/probe_qks.py"
+      ],
+      "log": "memcheck_qks.log",
+      "start": "2026-11-01T08:47:46+0800",
+      "pid": 2221423,
+      "exit_code": 0,
+      "end": "2026-11-01T08:48:01+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_service_20261101/screen.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "qks",
+        "--variants",
+        "base",
+        "control_qp",
+        "qks",
+        "--settings",
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--tag",
+        "qks256_f24_"
+      ],
+      "log": "screen_gpu3.log",
+      "start": "2026-11-01T08:48:01+0800",
+      "pid": 2221879,
+      "exit_code": 0,
+      "end": "2026-11-01T08:49:48+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_service_20261101/audit_performance.py"
+      ],
+      "log": "audit_performance.log",
+      "start": "2026-11-01T08:49:48+0800",
+      "pid": 2226416,
+      "exit_code": 0,
+      "end": "2026-11-01T08:49:48+0800"
+    }
+  ],
+  "end": "2026-11-01T08:49:48+0800"
+}

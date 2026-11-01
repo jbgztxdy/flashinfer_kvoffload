@@ -1,0 +1,79 @@
+{
+  "timestamp": "2026-11-01T09:01:17+0800",
+  "summary": "\u4e24\u79cdQK\u89d2\u8272\u8fdc\u7aef\u670d\u52a1\u5b9e\u73b0\u5747\u62d2\u7edd\uff0c\u672a\u65b0\u589e\u751f\u4ea7\u6536\u76ca\u3002",
+  "decision": {
+    "qks": "rejected",
+    "qks_shared": "rejected"
+  },
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "detail": "\u9996\u7248qks\u76f8\u5bf9CPE\u7684100GB0/20\u00b5s\u61629.922%/13.554%\uff0c50GB20\u00b5s\u616210.756%\u3002\u4fee\u6b63\u7248shared-only\u5728\u72ec\u7acb\u56db\u65b9\u540c\u53c2cohort\u4e2d100GB0/20\u00b5s\u616221.137%/31.734%\uff0c50GB20\u00b5s\u616222.798%\uff1b\u867d\u7136EMU\u6808\u7531152B\u964d\u523032B\u3001normal\u964d\u523072B\uff0c\u6574\u4f53\u6027\u80fd\u66f4\u5dee\uff0c\u4e0d\u80fd\u5c06\u6808\u51cf\u5c11\u5199\u6210\u4f18\u5316\u6536\u76ca\u3002\u4e24\u7248\u90fd\u505c\u6b62\uff0c\u4e0d\u6269\u5b8c\u6574trace/native/\u5168\u5f62\u72b6\u77e9\u9635\uff0c\u4e0d\u518d\u626b\u63cf\u670d\u52a1stage\u884c\u6570\u3001warp\u3001unroll\u6216fetch/cadence\u3002\u66f4\u591abarrier\u3001\u8f83\u5c0f\u5b50\u5757\u3001\u670d\u52a1\u63a8\u8fdb\u4e0e\u6a21\u62df\u7b49\u5f85\u3001upfrontLRU\u3001\u9759\u6001row\u5c3e\u90e8\u53caspill\u662f\u7ec4\u5408\u5f00\u9500\uff0c\u672a\u6d4b\u5f97\u5404\u81ea\u56e0\u679c\u4efd\u989d\u3002\u751f\u4ea7JQ\u4fdd\u6301\uff0c\u4e3b\u76ee\u6807\u7ea625%\u201327%\u5dee\u8ddd\u4ecd\u672a\u89e3\u51b3\u3002",
+  "direct_baseline": "FrozenCPEa436,pendingretention,notproductionJQ7193",
+  "same_cohort_comparisons": [
+    {
+      "setting": "g100_l0",
+      "variant": "control_qp",
+      "base_us": 3405.0879975159964,
+      "new_us": 3525.983989238739,
+      "reduction": -0.03550451319053605
+    },
+    {
+      "setting": "g100_l0",
+      "variant": "qks",
+      "base_us": 3405.0879975159964,
+      "new_us": 3776.309328774611,
+      "reduction": -0.10901959994262111
+    },
+    {
+      "setting": "g100_l0",
+      "variant": "qks_shared",
+      "base_us": 3405.0879975159964,
+      "new_us": 4124.810673296452,
+      "reduction": -0.21136683583669225
+    },
+    {
+      "setting": "g100_l20000",
+      "variant": "control_qp",
+      "base_us": 3416.2559881806374,
+      "new_us": 3556.224008401235,
+      "reduction": -0.040971174497710594
+    },
+    {
+      "setting": "g100_l20000",
+      "variant": "qks",
+      "base_us": 3416.2559881806374,
+      "new_us": 3905.120000243187,
+      "reduction": -0.14309935021084264
+    },
+    {
+      "setting": "g100_l20000",
+      "variant": "qks_shared",
+      "base_us": 3416.2559881806374,
+      "new_us": 4500.383988022804,
+      "reduction": -0.31734390033796345
+    },
+    {
+      "setting": "g50_l20000",
+      "variant": "control_qp",
+      "base_us": 5269.535983602206,
+      "new_us": 5258.495981494586,
+      "reduction": 0.0020950615276135176
+    },
+    {
+      "setting": "g50_l20000",
+      "variant": "qks",
+      "base_us": 5269.535983602206,
+      "new_us": 5834.047997991244,
+      "reduction": -0.1071274617244653
+    },
+    {
+      "setting": "g50_l20000",
+      "variant": "qks_shared",
+      "base_us": 5269.535983602206,
+      "new_us": 6470.869347453117,
+      "reduction": -0.22797706811173368
+    }
+  ],
+  "scope": "21rows/15basepairs,4032timedlaunch/252segments,222newtests;reusedQP111notcounted",
+  "next": "Do not repeat these service designs. Current evidence supports examining common preparation/resolve overhead and query-row locality without changing attention/FAR or LRU semantics; no next candidate implemented in this record."
+}

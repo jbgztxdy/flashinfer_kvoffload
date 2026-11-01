@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-11-01T09:03:12+0800",
+  "parent_handle": 15217,
+  "handle_poll": "write_stdin returned running session15217 in this continuation",
+  "parent_pid": 2084930,
+  "parent_phase": "sxm_full_confirmation",
+  "parent_complete": false,
+  "process_observation": "    PID ELAPSED COMMAND\n2084930    7423 /mnt/data/mhy-vllm-venv/bin/python -u temp/glm_trace/tune_cached_pe_20261101/validate_more.py\n2101252    6593 /mnt/raid/ny_work/envs/flashcheck/bin/python /mnt/raid/ny_work/FlashCheck-main/benchmark/fig1_frequency_20261030_a1/checkfreq_formal_runner.py --mode formal --timed-steps 192 --k 1 --repeat 1 --run-dir /mnt/raid/ny_work/FlashCheck-main/benchmark/fig1_frequency_20261030_a1/checkfreq_formal_k1_r1\n2101253    6593 /mnt/raid/ny_work/envs/flashcheck/bin/python /mnt/raid/ny_work/FlashCheck-main/benchmark/fig1_frequency_20261030_a1/checkfreq_formal_runner.py --mode formal --timed-steps 192 --k 1 --repeat 1 --run-dir /mnt/raid/ny_work/FlashCheck-main/benchmark/fig1_frequency_20261030_a1/checkfreq_formal_k1_r1\n2104175    6469 /mnt/data/mhy-vllm-venv/bin/python -u /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/screen.py --hardware sxm --candidate cached_pe --variants cached_pe base --positions 1024 --passes 5 --requests 128 --mtp 8 --fetch-ctas 24 --host-split off --tag cachedsxmreverse1024_f24_ --settings g100_l0 g100_l20000 g50_l20000\n",
+  "goal_complete": false
+}

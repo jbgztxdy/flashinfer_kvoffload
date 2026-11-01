@@ -1,0 +1,21 @@
+{
+  "base_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "control_sha256": "1252cdee93be85dd74f9fdd9a922b28e5327c3929dfbece1811021bf015648f4",
+  "candidate_sha256": "4a57e6ff350ba9ecba3ee7783e8b158806435cddeb1741b9050da4fb86144a97",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "mechanism": "Four QK warps progress three8row service stages(two shared,one fiveuint4/lane register intent), during each PV-hi and while hostflags pending. EightPVwarps retain128output registers. Same384threadsinglecooperativekernel,upfrontallpoolLRUandgridbarrier,all108CTAworkerswithstaticrows,drainservicebeforeexit.",
+  "policy_change": "All108CTA*24rows=2592inflight,notoriginal24fetchCTA*128rows=3072. API f24 is retained input but no dedicatedCTA partition. UpfrontLRU removes cachefill wait/defer because every victim is ready before service. Attention row assignment is staticstrided108 instead of claims/stealing.",
+  "dynamic_shared_bytes": 158464,
+  "compute_fields_bytes": 140032,
+  "service_shared_bytes": 18432,
+  "register_payload_uint4_per_producer_lane_upper_bound": 5,
+  "original_codegen_required": {
+    "EMU": 40,
+    "normal": 80,
+    "base_header": "control_qp1252"
+  },
+  "math": "Copied unchanged QP attention helpers except service-progress parameters/calls;same equation/quantizedP/PE->CKV/jointmax. QP already changesFP32 grouping vsCPE.",
+  "risks": "Incrementalservice may serializeonFARwait,uniform168regcapmaystillspill,contextaddressescapingandupfrontLRU/staticrowtailmayoffsetreuse. Every original40/80word and normalcache/Graph/sanitizer gate precedes timing."
+}

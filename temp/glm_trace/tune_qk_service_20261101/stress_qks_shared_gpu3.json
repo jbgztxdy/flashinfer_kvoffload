@@ -1,0 +1,58 @@
+{
+  "variant": "qks_shared",
+  "header_sha256": "f3964bfb7dc6f0897e7e60ce6b492c11bf2116fd72589ea8edae602e4c989cba",
+  "stress_source_sha256": "3df59ef56cf98c2c95748a6a5b8f1e7948b5f63c4e027c467043429c762342a2",
+  "helper_source_sha256": "5845ad3cf3f5fe1193011e707002b774faebaa3f9c70ab345b95db845d2d74a8",
+  "start": "2026-11-01T08:56:08+0800",
+  "resources_start": {
+    "timestamp": "2026-11-01T08:56:08+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "complete": true,
+  "tests": 6,
+  "performance_claim": false,
+  "command": [
+    "numactl",
+    "-N1",
+    "-m1",
+    "/mnt/data/mhy-vllm-venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "-p",
+    "jitpaths",
+    "-p",
+    "candidatepaths",
+    "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_qk_service_20261101/test_cofetch_progress.py"
+  ],
+  "pid": 2234693,
+  "exit_code": 0,
+  "end": "2026-11-01T08:56:14+0800",
+  "resources_end": {
+    "timestamp": "2026-11-01T08:56:14+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "log_sha256": "c1ebd814ed73dbf177c26e77cf5d2777bd945c68d993c0e39f1b85d9c6230825"
+}

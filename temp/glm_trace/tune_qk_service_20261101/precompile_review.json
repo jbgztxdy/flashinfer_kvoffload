@@ -1,0 +1,10 @@
+{
+  "compiled": false,
+  "old_header_sha256": "4a57e6ff350ba9ecba3ee7783e8b158806435cddeb1741b9050da4fb86144a97",
+  "archive": "precompile_review/",
+  "fixes": [
+    "Capture sharedtile_ready in registers and add128-thread barrier before next iteration may overwrite it.",
+    "Pass register payload to constexpr shared-stage write lambdas by const reference so uninitialized unused registers are not read as value arguments."
+  ],
+  "gpu_failure": false
+}

@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-11-01T08:47:35+0800",
+  "physical_gpu": 3,
+  "name": "NVIDIA A100-PCIE-40GB",
+  "device_attributes": {
+    "max_registers_per_block": 65536,
+    "max_shared_per_sm": 167936,
+    "max_registers_per_sm": 65536,
+    "max_shared_per_block_optin": 166912
+  },
+  "no_context_created": true,
+  "no_gpu_work_launched": true,
+  "packing_review": {
+    "current_compute": 140032,
+    "current_measured_static": 1408,
+    "current_two8row_shared": 18432,
+    "largest_three_equal_shared_rows_if_static_same": 7,
+    "warning": "Packing arithmetic is not a compiled-resource,dispatch,correctness or performance proof. Any future implementation must query actual kernel shared attributes and max-block limit before setting dynamic allocation."
+  }
+}
