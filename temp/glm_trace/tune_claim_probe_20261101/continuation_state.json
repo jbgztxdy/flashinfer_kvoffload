@@ -1,0 +1,48 @@
+{
+  "recorded_at": "2026-11-01T09:39:54+0800",
+  "goal_status": "active",
+  "candidates_adopted": false,
+  "production_header_sha256": "7193255e2fdf83d3baa9347dea1a02b892c29ed746da719818e30fdf4066d469",
+  "own_active_runners": [],
+  "completed_handles": {
+    "2754": 1,
+    "39460": 1,
+    "33241": 0,
+    "17635": 0,
+    "95617": 0,
+    "35797": 0,
+    "7386": 0,
+    "84611": 0,
+    "59338": 0,
+    "92036": 0,
+    "13111": 0,
+    "34409": 1
+  },
+  "unretained_immediate_failure": "Repaired validator read old failed stress state before corrected record was written; exit1. Log/state retained; no persistent handle recorded.",
+  "rows": 28,
+  "pairs": 14,
+  "unique_tests": 226,
+  "timed_launches": 22784,
+  "accepted_segments": 1424,
+  "extension_result": "Predefined full-forward positive100GB gate failed. No matrix or SXM expansion.",
+  "original_CPE": {
+    "session_id": 15217,
+    "pid": 2084930,
+    "phase": "sxm_matrix",
+    "complete": false,
+    "active_step": {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cached_pe_20261101/validate_sxm.py",
+        "--cohort",
+        "limited"
+      ],
+      "log": "matrix_sxm_limited.log",
+      "start": "2026-11-01T09:29:25+0800",
+      "pid": 2304430
+    }
+  },
+  "actual_CPE_process": "    PID    PPID ELAPSED COMMAND\n2084930 2084923    9625 /mnt/data/mhy-vllm-venv/bin/python -u temp/glm_trace/tune_cached_pe_20261101/validate_more.py\n",
+  "next_action": "Finish originalCPE156matrix; audit all negatives and fullSXM confirmations, then frozenretention/freshrootvalidation if eligible. Never restart rejectedclaim experiments. Goal active."
+}

@@ -1,0 +1,1654 @@
+{
+  "complete": true,
+  "build": "normal BF16/FP16",
+  "base_header_sha256": "7193255e2fdf83d3baa9347dea1a02b892c29ed746da719818e30fdf4066d469",
+  "candidate_header_sha256": "95ff4054a653135668daa8dc41b6fe6abbcb285b82da1254eb66c795be4f5c1c",
+  "math_header_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "unchanged_original_kernels": 72,
+  "all_original_instruction_and_control_words_identical": true,
+  "unchanged": [
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "645486c5ff2e593d3da4765fe3efc471f9ea9ce08250c399bca87c0e52e2d00a"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "machine_word_sha256": "921d7a419c71d1941198a38c1586304b5077f1cb0563c8a563a6391d97d35fb7"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "machine_word_sha256": "e0f0377e9cf9c936289a781d12316242e760289a524903c34b1d65f74129abc2"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "7a1c70da0e2e2974207eca92e41d0792d5c51dfa18e106092fae810231a7309f"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "3048818ba08d1c8bca3da81e4f2d2a4b49ef97284760270e42ca6ea264b8187f"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "machine_word_sha256": "eb06c053f6ae815b81a32fb04f8f93470769de43a0e8c56fe2885d40c83e4e8c"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "machine_word_sha256": "acd162a098c2287e626b0276205c90ace87fd65259329c047a6005561150a176"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "1c9ae5cc2eec980bf9dc15b0994c9e7e0159617dfbe3f5d1be847273ce1fae68"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "machine_word_sha256": "afdccb47dd7441ad2e824f0c92248078b6ef2c927ed8e28d13bfb4601202a076"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "machine_word_sha256": "e44262d1cbab496b1064380d44bd998ce06c0c0c735cd52f4c1c779f922e5adb"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI13__nv_bfloat16S3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "b56336892025cd6fc039f983d80eef6a1849ddf22ec28f3da20c29e54f9a26be"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "262d8c944762352a3a569bd856d9ca9adabc699a34ae9820d530a4e02003b21f"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "aaabc7c5e45ab7c33cd7796e09267a912e743a4d2aa4c4cf0c05467060c8f849"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "4513d27139f515428551fe454ebdb9a9a00e0e5d9a657ca515225ff930bab4af"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "e1602cd84c32b3a263e2ecc9e1a3826036ce1668654a8fc0a1a00ef95cf506ff"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "fa5abf404d3405020539964ad51543e0e23e2ca010590a77743462d941f4cda9"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "965366cae031a7b2b185bbaee6015a7d4383ca56b3d275a786291d3ecba4cce5"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+      "machine_word_sha256": "59edbaa3864b0081c0a09ce6c4a1288816fcc6832d911af138af8b98757d85d7"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "645486c5ff2e593d3da4765fe3efc471f9ea9ce08250c399bca87c0e52e2d00a"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "machine_word_sha256": "921d7a419c71d1941198a38c1586304b5077f1cb0563c8a563a6391d97d35fb7"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "machine_word_sha256": "e0f0377e9cf9c936289a781d12316242e760289a524903c34b1d65f74129abc2"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "7a1c70da0e2e2974207eca92e41d0792d5c51dfa18e106092fae810231a7309f"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "3048818ba08d1c8bca3da81e4f2d2a4b49ef97284760270e42ca6ea264b8187f"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "machine_word_sha256": "eb06c053f6ae815b81a32fb04f8f93470769de43a0e8c56fe2885d40c83e4e8c"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "machine_word_sha256": "acd162a098c2287e626b0276205c90ace87fd65259329c047a6005561150a176"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "1c9ae5cc2eec980bf9dc15b0994c9e7e0159617dfbe3f5d1be847273ce1fae68"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "machine_word_sha256": "afdccb47dd7441ad2e824f0c92248078b6ef2c927ed8e28d13bfb4601202a076"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "machine_word_sha256": "e44262d1cbab496b1064380d44bd998ce06c0c0c735cd52f4c1c779f922e5adb"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI13__nv_bfloat16S3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "b56336892025cd6fc039f983d80eef6a1849ddf22ec28f3da20c29e54f9a26be"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "262d8c944762352a3a569bd856d9ca9adabc699a34ae9820d530a4e02003b21f"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "aaabc7c5e45ab7c33cd7796e09267a912e743a4d2aa4c4cf0c05467060c8f849"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "4513d27139f515428551fe454ebdb9a9a00e0e5d9a657ca515225ff930bab4af"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "e1602cd84c32b3a263e2ecc9e1a3826036ce1668654a8fc0a1a00ef95cf506ff"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "fa5abf404d3405020539964ad51543e0e23e2ca010590a77743462d941f4cda9"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "965366cae031a7b2b185bbaee6015a7d4383ca56b3d275a786291d3ecba4cce5"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+      "machine_word_sha256": "59edbaa3864b0081c0a09ce6c4a1288816fcc6832d911af138af8b98757d85d7"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "9009d5f3d402708aa4334bdfab1883222d419bec80fbc9d48f82b8b6bbcf3453"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "machine_word_sha256": "40288f37a6970799f95d8be6540c4abef7c00d2b704432983de70dbef00ab440"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "machine_word_sha256": "e944a2f05851b68942c566cafd07631787fa5f9edb733cbca13e3f5a2c5cc3dd"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "b1e9f6fb2cb77eac0262570cc98f33f472a63d52b4a42ec4d4469cac46940597"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "9ed463172262615d6a72f89a2c18a28f28500a985cf050a68c72db003a293251"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "machine_word_sha256": "307324a3038dcc7b88e6ffefb14fca9b52bb86a6968e0ac2160244427d64bcd8"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "machine_word_sha256": "2dbb5e8418fef92e5ca27621ddbbc833429778376b7762224ae770de4d9bb701"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "a779da4cbe74cb04e80819a9284396efb558f43e1c1ec0820c051199caedf4db"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "machine_word_sha256": "e2b4d25abc1e68bed08d9abc1ca827a557fca33a70ab284455ecea333d5e6047"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "machine_word_sha256": "f277d9389698a0470812b77697b062fbd758f9e4cbd3501e09a57c4d4d46305f"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI6__halfS3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "b562bf52d66ad9130a317c214f0d6fc6632aacc7798affc5c473e7222411e96f"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "9121ef19e9b518bb8930141eb68db5437dd09e8f5e5296e180dd3cf99b4d7022"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "dd50c00130f56b3c67a8d58e85344ffa1d2f56b72a977ad5e28cdac7d5126ba3"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "0820335b564b24f19a08b90a3bb2f5cfab8771577a5974d9f28417bbaf0641c2"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "33a8bcbf5b661d422d7052bd9bea62acecc796e13cf7a7354e14d7de68864766"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "772bcc5433ec4a428814822668b6831cba0554982fe28539af617963ed0a0757"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "335fd7b80f1f84571f097d37a51bba0ad288cc5f80163e68157399ce50fd7651"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+      "machine_word_sha256": "a56cb4150a47370cd66bd174be446c409f256a38bc0b68b40d2c5976e2cf5bf1"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "9009d5f3d402708aa4334bdfab1883222d419bec80fbc9d48f82b8b6bbcf3453"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "machine_word_sha256": "40288f37a6970799f95d8be6540c4abef7c00d2b704432983de70dbef00ab440"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "machine_word_sha256": "e944a2f05851b68942c566cafd07631787fa5f9edb733cbca13e3f5a2c5cc3dd"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "b1e9f6fb2cb77eac0262570cc98f33f472a63d52b4a42ec4d4469cac46940597"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "9ed463172262615d6a72f89a2c18a28f28500a985cf050a68c72db003a293251"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "machine_word_sha256": "307324a3038dcc7b88e6ffefb14fca9b52bb86a6968e0ac2160244427d64bcd8"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "machine_word_sha256": "2dbb5e8418fef92e5ca27621ddbbc833429778376b7762224ae770de4d9bb701"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "a779da4cbe74cb04e80819a9284396efb558f43e1c1ec0820c051199caedf4db"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+      "machine_word_sha256": "e2b4d25abc1e68bed08d9abc1ca827a557fca33a70ab284455ecea333d5e6047"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+      "machine_word_sha256": "f277d9389698a0470812b77697b062fbd758f9e4cbd3501e09a57c4d4d46305f"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI6__halfS3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "machine_word_sha256": "b562bf52d66ad9130a317c214f0d6fc6632aacc7798affc5c473e7222411e96f"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "9121ef19e9b518bb8930141eb68db5437dd09e8f5e5296e180dd3cf99b4d7022"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "dd50c00130f56b3c67a8d58e85344ffa1d2f56b72a977ad5e28cdac7d5126ba3"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "0820335b564b24f19a08b90a3bb2f5cfab8771577a5974d9f28417bbaf0641c2"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "33a8bcbf5b661d422d7052bd9bea62acecc796e13cf7a7354e14d7de68864766"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "772bcc5433ec4a428814822668b6831cba0554982fe28539af617963ed0a0757"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+      "machine_word_sha256": "335fd7b80f1f84571f097d37a51bba0ad288cc5f80163e68157399ce50fd7651"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+      "machine_word_sha256": "a56cb4150a47370cd66bd174be446c409f256a38bc0b68b40d2c5976e2cf5bf1"
+    }
+  ],
+  "new_kernels": [
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla24BatchMLAClaimProbeKernelINS0_16ClaimProbeTraitsI13__nv_bfloat16S3_S3_iEENS0_20ClaimProbeHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "instructions": 6824,
+      "instruction_sha256": "739a08e6b57a4babc39b4203a1f62a97f017fc014f52a725f6e9db92c863e4fb",
+      "machine_word_sha256": "7a95619e34cac1ae71b15889f3013f6b3ddf54e356acd0db9ddbc01c6619f727",
+      "machine_words": 13648,
+      "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla24BatchMLAClaimProbeKernelINS0_16ClaimProbeTraitsI13__nv_bfloat16S3_S3_iEENS0_20ClaimProbeHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "instructions": 6824,
+      "instruction_sha256": "739a08e6b57a4babc39b4203a1f62a97f017fc014f52a725f6e9db92c863e4fb",
+      "machine_word_sha256": "7a95619e34cac1ae71b15889f3013f6b3ddf54e356acd0db9ddbc01c6619f727",
+      "machine_words": 13648,
+      "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "symbol": "_ZN10flashinfer3mla24BatchMLAClaimProbeKernelINS0_16ClaimProbeTraitsI6__halfS3_S3_iEENS0_20ClaimProbeHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "instructions": 6824,
+      "instruction_sha256": "33e75a9ab9a5ea9a2531431a748ddf72ceddf445e28538a01bcf185dd4d9a51e",
+      "machine_word_sha256": "1ca3e457bc40fd64ad19e92ebd13f4fc06ae0ddd2081e5c44d62ef62b4841f77",
+      "machine_words": 13648,
+      "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    {
+      "library": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "symbol": "_ZN10flashinfer3mla24BatchMLAClaimProbeKernelINS0_16ClaimProbeTraitsI6__halfS3_S3_iEENS0_20ClaimProbeHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+      "instructions": 6824,
+      "instruction_sha256": "33e75a9ab9a5ea9a2531431a748ddf72ceddf445e28538a01bcf185dd4d9a51e",
+      "machine_word_sha256": "1ca3e457bc40fd64ad19e92ebd13f4fc06ae0ddd2081e5c44d62ef62b4841f77",
+      "machine_words": 13648,
+      "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    }
+  ],
+  "all_new_stack_and_local_zero": true,
+  "libraries": {
+    "base": [
+      {
+        "name": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "bb15aecd9dc3d15e3fa547900b088c7a35f6fa5e75ad50b0402d45e798382167"
+      },
+      {
+        "name": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "7f03ca0555e20174ba6e8dd79f8661a9a546d27dbf8e8132fea09edb77ca7df4"
+      },
+      {
+        "name": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "2f6b25ce91727d03b6fd2470c4379ea7bc5babd6df43f62f1965f864e1802fd9"
+      },
+      {
+        "name": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "a9b4c20cc0fe9e7057898ad0f05506d0d2355f4693130870a24b2e331d287a6f"
+      }
+    ],
+    "claim_probe": [
+      {
+        "name": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "5512a26fc5d2113b825a1a8168c6bb5a6628dc9bdf96f5ca7b6fe0450f7ad4d9"
+      },
+      {
+        "name": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "22141c59fa41f6c9abe37d0602a9fb27a6393bcdcdb28b975bf80e275344b6ef"
+      },
+      {
+        "name": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "aeeb5612d391b89ed1afadef34a4e75d75aad8ff890f47212d01d3c8dc17a303"
+      },
+      {
+        "name": "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "c34a07beeae8a96ab2eec67ba5d918c06f2a23e319dd938d1e404f7aa31a513b"
+      }
+    ]
+  },
+  "records": {
+    "base": {
+      "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "5e3d5ce97a4af565e40d29fc1ca4578271eee32f5495bcc3a5f0d9ee55b5d71a",
+          "machine_word_sha256": "645486c5ff2e593d3da4765fe3efc471f9ea9ce08250c399bca87c0e52e2d00a",
+          "machine_words": 14304,
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "9b243ed56cfd6c37137d1914dfa4dc41b8c9fe0647d7cbcbb4a1bab2b246f2c8",
+          "machine_word_sha256": "921d7a419c71d1941198a38c1586304b5077f1cb0563c8a563a6391d97d35fb7",
+          "machine_words": 24640,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "50791f851bce109d083adcfb6a69c8d1100483559ff23dd29de77c0b9cbb8ac7",
+          "machine_word_sha256": "e0f0377e9cf9c936289a781d12316242e760289a524903c34b1d65f74129abc2",
+          "machine_words": 24928,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "f1113410651b61b2d47fa3e7460e9ec6f0d3fd39ec3539ef64d830994596af8a",
+          "machine_word_sha256": "7a1c70da0e2e2974207eca92e41d0792d5c51dfa18e106092fae810231a7309f",
+          "machine_words": 15424,
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "9dd2dd36429f4a00f1e08163c86735e3a9bf5280a8d56ce3e51bfafdd426b5f8",
+          "machine_word_sha256": "3048818ba08d1c8bca3da81e4f2d2a4b49ef97284760270e42ca6ea264b8187f",
+          "machine_words": 15200,
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "206644c6d03c94bb4b69f56d888dc47897fdb64d6deacf2e65e75771d5459e02",
+          "machine_word_sha256": "eb06c053f6ae815b81a32fb04f8f93470769de43a0e8c56fe2885d40c83e4e8c",
+          "machine_words": 25376,
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "2c5eb961752643e984ee3d7d31726f5d966304b134e32d01ec4190e76c31a3df",
+          "machine_word_sha256": "acd162a098c2287e626b0276205c90ace87fd65259329c047a6005561150a176",
+          "machine_words": 25648,
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "1ab7911440c129280df077517f65e7e376557871d8695c3e3112ab9370f0d016",
+          "machine_word_sha256": "1c9ae5cc2eec980bf9dc15b0994c9e7e0159617dfbe3f5d1be847273ce1fae68",
+          "machine_words": 18288,
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "78bfc59cb188fea18ca1fe67920d8e9751a5dc0721ed8811981fcc62405cc66d",
+          "machine_word_sha256": "afdccb47dd7441ad2e824f0c92248078b6ef2c927ed8e28d13bfb4601202a076",
+          "machine_words": 28688,
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "d89167d89f98b124553c9a448e73bf5577a1683dc229612833a22c8e7ebc91d2",
+          "machine_word_sha256": "e44262d1cbab496b1064380d44bd998ce06c0c0c735cd52f4c1c779f922e5adb",
+          "machine_words": 28960,
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI13__nv_bfloat16S3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI13__nv_bfloat16S3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 6776,
+          "instruction_sha256": "389af8ec6fa0abf58655b6cce6b6791f8b5b8c40c7404dc1006c7b3a23e5ba34",
+          "machine_word_sha256": "b56336892025cd6fc039f983d80eef6a1849ddf22ec28f3da20c29e54f9a26be",
+          "machine_words": 13552,
+          "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "5f92d69babc0142fe78a6e4958741dd473d6453c90da089e3d65cc3a8a0674ce",
+          "machine_word_sha256": "262d8c944762352a3a569bd856d9ca9adabc699a34ae9820d530a4e02003b21f",
+          "machine_words": 7776,
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "bde195a3fe423f6398243f4146ba2046edc3b900de1c364b665503bff3a6be36",
+          "machine_word_sha256": "aaabc7c5e45ab7c33cd7796e09267a912e743a4d2aa4c4cf0c05467060c8f849",
+          "machine_words": 8352,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "c618bd107d593845e42c368edd78d6b274d77c5b26ae6703142fa868dd992719",
+          "machine_word_sha256": "4513d27139f515428551fe454ebdb9a9a00e0e5d9a657ca515225ff930bab4af",
+          "machine_words": 11216,
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "076c4a987c4021f8c01801e3794379b103dc0c7c47233425bcb54ebbeddb6327",
+          "machine_word_sha256": "e1602cd84c32b3a263e2ecc9e1a3826036ce1668654a8fc0a1a00ef95cf506ff",
+          "machine_words": 7536,
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "f872c09b685a86baf5daedccfa4ff81412acc6343cfb260422bb662083cce6e6",
+          "machine_word_sha256": "fa5abf404d3405020539964ad51543e0e23e2ca010590a77743462d941f4cda9",
+          "machine_words": 8192,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "b77ab4cbdfb8fe02499701fd790cbb178acbd6d71d9406213fb6af54c8425ede",
+          "machine_word_sha256": "965366cae031a7b2b185bbaee6015a7d4383ca56b3d275a786291d3ecba4cce5",
+          "machine_words": 11008,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "93f3c13619393fada76887007a8ef22d565d10251b1a849d8995c4fc7ff61174",
+          "machine_word_sha256": "59edbaa3864b0081c0a09ce6c4a1288816fcc6832d911af138af8b98757d85d7",
+          "machine_words": 18512,
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      },
+      "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "5e3d5ce97a4af565e40d29fc1ca4578271eee32f5495bcc3a5f0d9ee55b5d71a",
+          "machine_word_sha256": "645486c5ff2e593d3da4765fe3efc471f9ea9ce08250c399bca87c0e52e2d00a",
+          "machine_words": 14304,
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "9b243ed56cfd6c37137d1914dfa4dc41b8c9fe0647d7cbcbb4a1bab2b246f2c8",
+          "machine_word_sha256": "921d7a419c71d1941198a38c1586304b5077f1cb0563c8a563a6391d97d35fb7",
+          "machine_words": 24640,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "50791f851bce109d083adcfb6a69c8d1100483559ff23dd29de77c0b9cbb8ac7",
+          "machine_word_sha256": "e0f0377e9cf9c936289a781d12316242e760289a524903c34b1d65f74129abc2",
+          "machine_words": 24928,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "f1113410651b61b2d47fa3e7460e9ec6f0d3fd39ec3539ef64d830994596af8a",
+          "machine_word_sha256": "7a1c70da0e2e2974207eca92e41d0792d5c51dfa18e106092fae810231a7309f",
+          "machine_words": 15424,
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "9dd2dd36429f4a00f1e08163c86735e3a9bf5280a8d56ce3e51bfafdd426b5f8",
+          "machine_word_sha256": "3048818ba08d1c8bca3da81e4f2d2a4b49ef97284760270e42ca6ea264b8187f",
+          "machine_words": 15200,
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "206644c6d03c94bb4b69f56d888dc47897fdb64d6deacf2e65e75771d5459e02",
+          "machine_word_sha256": "eb06c053f6ae815b81a32fb04f8f93470769de43a0e8c56fe2885d40c83e4e8c",
+          "machine_words": 25376,
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "2c5eb961752643e984ee3d7d31726f5d966304b134e32d01ec4190e76c31a3df",
+          "machine_word_sha256": "acd162a098c2287e626b0276205c90ace87fd65259329c047a6005561150a176",
+          "machine_words": 25648,
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "1ab7911440c129280df077517f65e7e376557871d8695c3e3112ab9370f0d016",
+          "machine_word_sha256": "1c9ae5cc2eec980bf9dc15b0994c9e7e0159617dfbe3f5d1be847273ce1fae68",
+          "machine_words": 18288,
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "78bfc59cb188fea18ca1fe67920d8e9751a5dc0721ed8811981fcc62405cc66d",
+          "machine_word_sha256": "afdccb47dd7441ad2e824f0c92248078b6ef2c927ed8e28d13bfb4601202a076",
+          "machine_words": 28688,
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "d89167d89f98b124553c9a448e73bf5577a1683dc229612833a22c8e7ebc91d2",
+          "machine_word_sha256": "e44262d1cbab496b1064380d44bd998ce06c0c0c735cd52f4c1c779f922e5adb",
+          "machine_words": 28960,
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI13__nv_bfloat16S3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI13__nv_bfloat16S3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 6776,
+          "instruction_sha256": "389af8ec6fa0abf58655b6cce6b6791f8b5b8c40c7404dc1006c7b3a23e5ba34",
+          "machine_word_sha256": "b56336892025cd6fc039f983d80eef6a1849ddf22ec28f3da20c29e54f9a26be",
+          "machine_words": 13552,
+          "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "5f92d69babc0142fe78a6e4958741dd473d6453c90da089e3d65cc3a8a0674ce",
+          "machine_word_sha256": "262d8c944762352a3a569bd856d9ca9adabc699a34ae9820d530a4e02003b21f",
+          "machine_words": 7776,
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "bde195a3fe423f6398243f4146ba2046edc3b900de1c364b665503bff3a6be36",
+          "machine_word_sha256": "aaabc7c5e45ab7c33cd7796e09267a912e743a4d2aa4c4cf0c05467060c8f849",
+          "machine_words": 8352,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "c618bd107d593845e42c368edd78d6b274d77c5b26ae6703142fa868dd992719",
+          "machine_word_sha256": "4513d27139f515428551fe454ebdb9a9a00e0e5d9a657ca515225ff930bab4af",
+          "machine_words": 11216,
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "076c4a987c4021f8c01801e3794379b103dc0c7c47233425bcb54ebbeddb6327",
+          "machine_word_sha256": "e1602cd84c32b3a263e2ecc9e1a3826036ce1668654a8fc0a1a00ef95cf506ff",
+          "machine_words": 7536,
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "f872c09b685a86baf5daedccfa4ff81412acc6343cfb260422bb662083cce6e6",
+          "machine_word_sha256": "fa5abf404d3405020539964ad51543e0e23e2ca010590a77743462d941f4cda9",
+          "machine_words": 8192,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "b77ab4cbdfb8fe02499701fd790cbb178acbd6d71d9406213fb6af54c8425ede",
+          "machine_word_sha256": "965366cae031a7b2b185bbaee6015a7d4383ca56b3d275a786291d3ecba4cce5",
+          "machine_words": 11008,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "93f3c13619393fada76887007a8ef22d565d10251b1a849d8995c4fc7ff61174",
+          "machine_word_sha256": "59edbaa3864b0081c0a09ce6c4a1288816fcc6832d911af138af8b98757d85d7",
+          "machine_words": 18512,
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      },
+      "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "559e64d05bd5233d1e398ae4092e10e392ece3ed5ea6fab010d167ac1f3b538f",
+          "machine_word_sha256": "9009d5f3d402708aa4334bdfab1883222d419bec80fbc9d48f82b8b6bbcf3453",
+          "machine_words": 14304,
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "fc06028e485363ff74e906283fb406a29227e3223c6fce26416669c67d71927e",
+          "machine_word_sha256": "40288f37a6970799f95d8be6540c4abef7c00d2b704432983de70dbef00ab440",
+          "machine_words": 24640,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "d49cdac25c0c0f2a917797bf2f005695655d3b89fdbb9811f67d9e78cf2dd48e",
+          "machine_word_sha256": "e944a2f05851b68942c566cafd07631787fa5f9edb733cbca13e3f5a2c5cc3dd",
+          "machine_words": 24928,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "36c01e5bc1280eba37e43b8407545f66baa933882c2545a5021d1733c65050a8",
+          "machine_word_sha256": "b1e9f6fb2cb77eac0262570cc98f33f472a63d52b4a42ec4d4469cac46940597",
+          "machine_words": 15424,
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "cf64c1b820ee1ed377dec8cc47cadee66eb8dd4d4c42b2d47844df0bac507f6a",
+          "machine_word_sha256": "9ed463172262615d6a72f89a2c18a28f28500a985cf050a68c72db003a293251",
+          "machine_words": 15200,
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "b8c9b1fb0d4e58f4a97469c33f415261453aa5cbc03b74dbce910af23d7a84d3",
+          "machine_word_sha256": "307324a3038dcc7b88e6ffefb14fca9b52bb86a6968e0ac2160244427d64bcd8",
+          "machine_words": 25376,
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "c6d66b6cc652577c76efd864c2a174dbe191c011b2b0513efe6afc395a039ed4",
+          "machine_word_sha256": "2dbb5e8418fef92e5ca27621ddbbc833429778376b7762224ae770de4d9bb701",
+          "machine_words": 25648,
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "0b10f895e4f66284379734cec4cf54ea3702b1df7bfd0fea87d855ade80aa9f9",
+          "machine_word_sha256": "a779da4cbe74cb04e80819a9284396efb558f43e1c1ec0820c051199caedf4db",
+          "machine_words": 18288,
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "0e938d45776a8898f0bab5df29fa68e71113b5e9d5d6e5c3405029c1ef759e93",
+          "machine_word_sha256": "e2b4d25abc1e68bed08d9abc1ca827a557fca33a70ab284455ecea333d5e6047",
+          "machine_words": 28688,
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "239bb8c965bceb7cba52aace4529d114b66adf27f062e93fa8068d1e0b48c41b",
+          "machine_word_sha256": "f277d9389698a0470812b77697b062fbd758f9e4cbd3501e09a57c4d4d46305f",
+          "machine_words": 28960,
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI6__halfS3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI6__halfS3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 6776,
+          "instruction_sha256": "7ae8778d50adae680f885786a73b30e7613af5e8d15cd11520f81d30073f167b",
+          "machine_word_sha256": "b562bf52d66ad9130a317c214f0d6fc6632aacc7798affc5c473e7222411e96f",
+          "machine_words": 13552,
+          "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "1ad5dde04c010ff3674617ce322d000197407005559d5dd2f0ecb3339c42c545",
+          "machine_word_sha256": "9121ef19e9b518bb8930141eb68db5437dd09e8f5e5296e180dd3cf99b4d7022",
+          "machine_words": 7776,
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "dffbb47c14d36cb9ad882f2df32896264064bc5afb86c898dc2f5c6a77168a4a",
+          "machine_word_sha256": "dd50c00130f56b3c67a8d58e85344ffa1d2f56b72a977ad5e28cdac7d5126ba3",
+          "machine_words": 8352,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "a5ee95d2d3ff1753081697ed000553484677a680e6f186ac7bd9c7837f8d892e",
+          "machine_word_sha256": "0820335b564b24f19a08b90a3bb2f5cfab8771577a5974d9f28417bbaf0641c2",
+          "machine_words": 11216,
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "1bf80cbb796d64e370efd4c71682edc8365acdd6c96e293b572b004ad4efaa99",
+          "machine_word_sha256": "33a8bcbf5b661d422d7052bd9bea62acecc796e13cf7a7354e14d7de68864766",
+          "machine_words": 7536,
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "0504e74648330a4b73a5d909cc3ef2f95f000cb2b3f7383694dc1a526897417a",
+          "machine_word_sha256": "772bcc5433ec4a428814822668b6831cba0554982fe28539af617963ed0a0757",
+          "machine_words": 8192,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "065cb81400c895cca2bcdf110991ecd21d04b259780c0f5d1437f66f878bfe62",
+          "machine_word_sha256": "335fd7b80f1f84571f097d37a51bba0ad288cc5f80163e68157399ce50fd7651",
+          "machine_words": 11008,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "4a0f2d17c63bdaa4863da1ea32809bcc21aa536570db21943c8b45cce5604b6a",
+          "machine_word_sha256": "a56cb4150a47370cd66bd174be446c409f256a38bc0b68b40d2c5976e2cf5bf1",
+          "machine_words": 18512,
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      },
+      "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "559e64d05bd5233d1e398ae4092e10e392ece3ed5ea6fab010d167ac1f3b538f",
+          "machine_word_sha256": "9009d5f3d402708aa4334bdfab1883222d419bec80fbc9d48f82b8b6bbcf3453",
+          "machine_words": 14304,
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "fc06028e485363ff74e906283fb406a29227e3223c6fce26416669c67d71927e",
+          "machine_word_sha256": "40288f37a6970799f95d8be6540c4abef7c00d2b704432983de70dbef00ab440",
+          "machine_words": 24640,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "d49cdac25c0c0f2a917797bf2f005695655d3b89fdbb9811f67d9e78cf2dd48e",
+          "machine_word_sha256": "e944a2f05851b68942c566cafd07631787fa5f9edb733cbca13e3f5a2c5cc3dd",
+          "machine_words": 24928,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "36c01e5bc1280eba37e43b8407545f66baa933882c2545a5021d1733c65050a8",
+          "machine_word_sha256": "b1e9f6fb2cb77eac0262570cc98f33f472a63d52b4a42ec4d4469cac46940597",
+          "machine_words": 15424,
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "cf64c1b820ee1ed377dec8cc47cadee66eb8dd4d4c42b2d47844df0bac507f6a",
+          "machine_word_sha256": "9ed463172262615d6a72f89a2c18a28f28500a985cf050a68c72db003a293251",
+          "machine_words": 15200,
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "b8c9b1fb0d4e58f4a97469c33f415261453aa5cbc03b74dbce910af23d7a84d3",
+          "machine_word_sha256": "307324a3038dcc7b88e6ffefb14fca9b52bb86a6968e0ac2160244427d64bcd8",
+          "machine_words": 25376,
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "c6d66b6cc652577c76efd864c2a174dbe191c011b2b0513efe6afc395a039ed4",
+          "machine_word_sha256": "2dbb5e8418fef92e5ca27621ddbbc833429778376b7762224ae770de4d9bb701",
+          "machine_words": 25648,
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "0b10f895e4f66284379734cec4cf54ea3702b1df7bfd0fea87d855ade80aa9f9",
+          "machine_word_sha256": "a779da4cbe74cb04e80819a9284396efb558f43e1c1ec0820c051199caedf4db",
+          "machine_words": 18288,
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "0e938d45776a8898f0bab5df29fa68e71113b5e9d5d6e5c3405029c1ef759e93",
+          "machine_word_sha256": "e2b4d25abc1e68bed08d9abc1ca827a557fca33a70ab284455ecea333d5e6047",
+          "machine_words": 28688,
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "239bb8c965bceb7cba52aace4529d114b66adf27f062e93fa8068d1e0b48c41b",
+          "machine_word_sha256": "f277d9389698a0470812b77697b062fbd758f9e4cbd3501e09a57c4d4d46305f",
+          "machine_words": 28960,
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI6__halfS3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI6__halfS3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 6776,
+          "instruction_sha256": "7ae8778d50adae680f885786a73b30e7613af5e8d15cd11520f81d30073f167b",
+          "machine_word_sha256": "b562bf52d66ad9130a317c214f0d6fc6632aacc7798affc5c473e7222411e96f",
+          "machine_words": 13552,
+          "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "1ad5dde04c010ff3674617ce322d000197407005559d5dd2f0ecb3339c42c545",
+          "machine_word_sha256": "9121ef19e9b518bb8930141eb68db5437dd09e8f5e5296e180dd3cf99b4d7022",
+          "machine_words": 7776,
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "dffbb47c14d36cb9ad882f2df32896264064bc5afb86c898dc2f5c6a77168a4a",
+          "machine_word_sha256": "dd50c00130f56b3c67a8d58e85344ffa1d2f56b72a977ad5e28cdac7d5126ba3",
+          "machine_words": 8352,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "a5ee95d2d3ff1753081697ed000553484677a680e6f186ac7bd9c7837f8d892e",
+          "machine_word_sha256": "0820335b564b24f19a08b90a3bb2f5cfab8771577a5974d9f28417bbaf0641c2",
+          "machine_words": 11216,
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "1bf80cbb796d64e370efd4c71682edc8365acdd6c96e293b572b004ad4efaa99",
+          "machine_word_sha256": "33a8bcbf5b661d422d7052bd9bea62acecc796e13cf7a7354e14d7de68864766",
+          "machine_words": 7536,
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "0504e74648330a4b73a5d909cc3ef2f95f000cb2b3f7383694dc1a526897417a",
+          "machine_word_sha256": "772bcc5433ec4a428814822668b6831cba0554982fe28539af617963ed0a0757",
+          "machine_words": 8192,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "065cb81400c895cca2bcdf110991ecd21d04b259780c0f5d1437f66f878bfe62",
+          "machine_word_sha256": "335fd7b80f1f84571f097d37a51bba0ad288cc5f80163e68157399ce50fd7651",
+          "machine_words": 11008,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "4a0f2d17c63bdaa4863da1ea32809bcc21aa536570db21943c8b45cce5604b6a",
+          "machine_word_sha256": "a56cb4150a47370cd66bd174be446c409f256a38bc0b68b40d2c5976e2cf5bf1",
+          "machine_words": 18512,
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      }
+    },
+    "claim_probe": {
+      "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "5e3d5ce97a4af565e40d29fc1ca4578271eee32f5495bcc3a5f0d9ee55b5d71a",
+          "machine_word_sha256": "645486c5ff2e593d3da4765fe3efc471f9ea9ce08250c399bca87c0e52e2d00a",
+          "machine_words": 14304,
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "9b243ed56cfd6c37137d1914dfa4dc41b8c9fe0647d7cbcbb4a1bab2b246f2c8",
+          "machine_word_sha256": "921d7a419c71d1941198a38c1586304b5077f1cb0563c8a563a6391d97d35fb7",
+          "machine_words": 24640,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "50791f851bce109d083adcfb6a69c8d1100483559ff23dd29de77c0b9cbb8ac7",
+          "machine_word_sha256": "e0f0377e9cf9c936289a781d12316242e760289a524903c34b1d65f74129abc2",
+          "machine_words": 24928,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "f1113410651b61b2d47fa3e7460e9ec6f0d3fd39ec3539ef64d830994596af8a",
+          "machine_word_sha256": "7a1c70da0e2e2974207eca92e41d0792d5c51dfa18e106092fae810231a7309f",
+          "machine_words": 15424,
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "9dd2dd36429f4a00f1e08163c86735e3a9bf5280a8d56ce3e51bfafdd426b5f8",
+          "machine_word_sha256": "3048818ba08d1c8bca3da81e4f2d2a4b49ef97284760270e42ca6ea264b8187f",
+          "machine_words": 15200,
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "206644c6d03c94bb4b69f56d888dc47897fdb64d6deacf2e65e75771d5459e02",
+          "machine_word_sha256": "eb06c053f6ae815b81a32fb04f8f93470769de43a0e8c56fe2885d40c83e4e8c",
+          "machine_words": 25376,
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "2c5eb961752643e984ee3d7d31726f5d966304b134e32d01ec4190e76c31a3df",
+          "machine_word_sha256": "acd162a098c2287e626b0276205c90ace87fd65259329c047a6005561150a176",
+          "machine_words": 25648,
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "1ab7911440c129280df077517f65e7e376557871d8695c3e3112ab9370f0d016",
+          "machine_word_sha256": "1c9ae5cc2eec980bf9dc15b0994c9e7e0159617dfbe3f5d1be847273ce1fae68",
+          "machine_words": 18288,
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "78bfc59cb188fea18ca1fe67920d8e9751a5dc0721ed8811981fcc62405cc66d",
+          "machine_word_sha256": "afdccb47dd7441ad2e824f0c92248078b6ef2c927ed8e28d13bfb4601202a076",
+          "machine_words": 28688,
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "d89167d89f98b124553c9a448e73bf5577a1683dc229612833a22c8e7ebc91d2",
+          "machine_word_sha256": "e44262d1cbab496b1064380d44bd998ce06c0c0c735cd52f4c1c779f922e5adb",
+          "machine_words": 28960,
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI13__nv_bfloat16S3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI13__nv_bfloat16S3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 6776,
+          "instruction_sha256": "389af8ec6fa0abf58655b6cce6b6791f8b5b8c40c7404dc1006c7b3a23e5ba34",
+          "machine_word_sha256": "b56336892025cd6fc039f983d80eef6a1849ddf22ec28f3da20c29e54f9a26be",
+          "machine_words": 13552,
+          "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla24BatchMLAClaimProbeKernelINS0_16ClaimProbeTraitsI13__nv_bfloat16S3_S3_iEENS0_20ClaimProbeHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla24BatchMLAClaimProbeKernelINS0_16ClaimProbeTraitsI13__nv_bfloat16S3_S3_iEENS0_20ClaimProbeHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 6824,
+          "instruction_sha256": "739a08e6b57a4babc39b4203a1f62a97f017fc014f52a725f6e9db92c863e4fb",
+          "machine_word_sha256": "7a95619e34cac1ae71b15889f3013f6b3ddf54e356acd0db9ddbc01c6619f727",
+          "machine_words": 13648,
+          "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "5f92d69babc0142fe78a6e4958741dd473d6453c90da089e3d65cc3a8a0674ce",
+          "machine_word_sha256": "262d8c944762352a3a569bd856d9ca9adabc699a34ae9820d530a4e02003b21f",
+          "machine_words": 7776,
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "bde195a3fe423f6398243f4146ba2046edc3b900de1c364b665503bff3a6be36",
+          "machine_word_sha256": "aaabc7c5e45ab7c33cd7796e09267a912e743a4d2aa4c4cf0c05467060c8f849",
+          "machine_words": 8352,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "c618bd107d593845e42c368edd78d6b274d77c5b26ae6703142fa868dd992719",
+          "machine_word_sha256": "4513d27139f515428551fe454ebdb9a9a00e0e5d9a657ca515225ff930bab4af",
+          "machine_words": 11216,
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "076c4a987c4021f8c01801e3794379b103dc0c7c47233425bcb54ebbeddb6327",
+          "machine_word_sha256": "e1602cd84c32b3a263e2ecc9e1a3826036ce1668654a8fc0a1a00ef95cf506ff",
+          "machine_words": 7536,
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "f872c09b685a86baf5daedccfa4ff81412acc6343cfb260422bb662083cce6e6",
+          "machine_word_sha256": "fa5abf404d3405020539964ad51543e0e23e2ca010590a77743462d941f4cda9",
+          "machine_words": 8192,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "b77ab4cbdfb8fe02499701fd790cbb178acbd6d71d9406213fb6af54c8425ede",
+          "machine_word_sha256": "965366cae031a7b2b185bbaee6015a7d4383ca56b3d275a786291d3ecba4cce5",
+          "machine_words": 11008,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "93f3c13619393fada76887007a8ef22d565d10251b1a849d8995c4fc7ff61174",
+          "machine_word_sha256": "59edbaa3864b0081c0a09ce6c4a1288816fcc6832d911af138af8b98757d85d7",
+          "machine_words": 18512,
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      },
+      "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "5e3d5ce97a4af565e40d29fc1ca4578271eee32f5495bcc3a5f0d9ee55b5d71a",
+          "machine_word_sha256": "645486c5ff2e593d3da4765fe3efc471f9ea9ce08250c399bca87c0e52e2d00a",
+          "machine_words": 14304,
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "9b243ed56cfd6c37137d1914dfa4dc41b8c9fe0647d7cbcbb4a1bab2b246f2c8",
+          "machine_word_sha256": "921d7a419c71d1941198a38c1586304b5077f1cb0563c8a563a6391d97d35fb7",
+          "machine_words": 24640,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "50791f851bce109d083adcfb6a69c8d1100483559ff23dd29de77c0b9cbb8ac7",
+          "machine_word_sha256": "e0f0377e9cf9c936289a781d12316242e760289a524903c34b1d65f74129abc2",
+          "machine_words": 24928,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "f1113410651b61b2d47fa3e7460e9ec6f0d3fd39ec3539ef64d830994596af8a",
+          "machine_word_sha256": "7a1c70da0e2e2974207eca92e41d0792d5c51dfa18e106092fae810231a7309f",
+          "machine_words": 15424,
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "9dd2dd36429f4a00f1e08163c86735e3a9bf5280a8d56ce3e51bfafdd426b5f8",
+          "machine_word_sha256": "3048818ba08d1c8bca3da81e4f2d2a4b49ef97284760270e42ca6ea264b8187f",
+          "machine_words": 15200,
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "206644c6d03c94bb4b69f56d888dc47897fdb64d6deacf2e65e75771d5459e02",
+          "machine_word_sha256": "eb06c053f6ae815b81a32fb04f8f93470769de43a0e8c56fe2885d40c83e4e8c",
+          "machine_words": 25376,
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "2c5eb961752643e984ee3d7d31726f5d966304b134e32d01ec4190e76c31a3df",
+          "machine_word_sha256": "acd162a098c2287e626b0276205c90ace87fd65259329c047a6005561150a176",
+          "machine_words": 25648,
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "1ab7911440c129280df077517f65e7e376557871d8695c3e3112ab9370f0d016",
+          "machine_word_sha256": "1c9ae5cc2eec980bf9dc15b0994c9e7e0159617dfbe3f5d1be847273ce1fae68",
+          "machine_words": 18288,
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "78bfc59cb188fea18ca1fe67920d8e9751a5dc0721ed8811981fcc62405cc66d",
+          "machine_word_sha256": "afdccb47dd7441ad2e824f0c92248078b6ef2c927ed8e28d13bfb4601202a076",
+          "machine_words": 28688,
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "d89167d89f98b124553c9a448e73bf5577a1683dc229612833a22c8e7ebc91d2",
+          "machine_word_sha256": "e44262d1cbab496b1064380d44bd998ce06c0c0c735cd52f4c1c779f922e5adb",
+          "machine_words": 28960,
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI13__nv_bfloat16S3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI13__nv_bfloat16S3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 6776,
+          "instruction_sha256": "389af8ec6fa0abf58655b6cce6b6791f8b5b8c40c7404dc1006c7b3a23e5ba34",
+          "machine_word_sha256": "b56336892025cd6fc039f983d80eef6a1849ddf22ec28f3da20c29e54f9a26be",
+          "machine_words": 13552,
+          "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla24BatchMLAClaimProbeKernelINS0_16ClaimProbeTraitsI13__nv_bfloat16S3_S3_iEENS0_20ClaimProbeHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla24BatchMLAClaimProbeKernelINS0_16ClaimProbeTraitsI13__nv_bfloat16S3_S3_iEENS0_20ClaimProbeHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 6824,
+          "instruction_sha256": "739a08e6b57a4babc39b4203a1f62a97f017fc014f52a725f6e9db92c863e4fb",
+          "machine_word_sha256": "7a95619e34cac1ae71b15889f3013f6b3ddf54e356acd0db9ddbc01c6619f727",
+          "machine_words": 13648,
+          "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "5f92d69babc0142fe78a6e4958741dd473d6453c90da089e3d65cc3a8a0674ce",
+          "machine_word_sha256": "262d8c944762352a3a569bd856d9ca9adabc699a34ae9820d530a4e02003b21f",
+          "machine_words": 7776,
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "bde195a3fe423f6398243f4146ba2046edc3b900de1c364b665503bff3a6be36",
+          "machine_word_sha256": "aaabc7c5e45ab7c33cd7796e09267a912e743a4d2aa4c4cf0c05467060c8f849",
+          "machine_words": 8352,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "c618bd107d593845e42c368edd78d6b274d77c5b26ae6703142fa868dd992719",
+          "machine_word_sha256": "4513d27139f515428551fe454ebdb9a9a00e0e5d9a657ca515225ff930bab4af",
+          "machine_words": 11216,
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "076c4a987c4021f8c01801e3794379b103dc0c7c47233425bcb54ebbeddb6327",
+          "machine_word_sha256": "e1602cd84c32b3a263e2ecc9e1a3826036ce1668654a8fc0a1a00ef95cf506ff",
+          "machine_words": 7536,
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "f872c09b685a86baf5daedccfa4ff81412acc6343cfb260422bb662083cce6e6",
+          "machine_word_sha256": "fa5abf404d3405020539964ad51543e0e23e2ca010590a77743462d941f4cda9",
+          "machine_words": 8192,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "b77ab4cbdfb8fe02499701fd790cbb178acbd6d71d9406213fb6af54c8425ede",
+          "machine_word_sha256": "965366cae031a7b2b185bbaee6015a7d4383ca56b3d275a786291d3ecba4cce5",
+          "machine_words": 11008,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "93f3c13619393fada76887007a8ef22d565d10251b1a849d8995c4fc7ff61174",
+          "machine_word_sha256": "59edbaa3864b0081c0a09ce6c4a1288816fcc6832d911af138af8b98757d85d7",
+          "machine_words": 18512,
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      },
+      "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "559e64d05bd5233d1e398ae4092e10e392ece3ed5ea6fab010d167ac1f3b538f",
+          "machine_word_sha256": "9009d5f3d402708aa4334bdfab1883222d419bec80fbc9d48f82b8b6bbcf3453",
+          "machine_words": 14304,
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "fc06028e485363ff74e906283fb406a29227e3223c6fce26416669c67d71927e",
+          "machine_word_sha256": "40288f37a6970799f95d8be6540c4abef7c00d2b704432983de70dbef00ab440",
+          "machine_words": 24640,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "d49cdac25c0c0f2a917797bf2f005695655d3b89fdbb9811f67d9e78cf2dd48e",
+          "machine_word_sha256": "e944a2f05851b68942c566cafd07631787fa5f9edb733cbca13e3f5a2c5cc3dd",
+          "machine_words": 24928,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "36c01e5bc1280eba37e43b8407545f66baa933882c2545a5021d1733c65050a8",
+          "machine_word_sha256": "b1e9f6fb2cb77eac0262570cc98f33f472a63d52b4a42ec4d4469cac46940597",
+          "machine_words": 15424,
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "cf64c1b820ee1ed377dec8cc47cadee66eb8dd4d4c42b2d47844df0bac507f6a",
+          "machine_word_sha256": "9ed463172262615d6a72f89a2c18a28f28500a985cf050a68c72db003a293251",
+          "machine_words": 15200,
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "b8c9b1fb0d4e58f4a97469c33f415261453aa5cbc03b74dbce910af23d7a84d3",
+          "machine_word_sha256": "307324a3038dcc7b88e6ffefb14fca9b52bb86a6968e0ac2160244427d64bcd8",
+          "machine_words": 25376,
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "c6d66b6cc652577c76efd864c2a174dbe191c011b2b0513efe6afc395a039ed4",
+          "machine_word_sha256": "2dbb5e8418fef92e5ca27621ddbbc833429778376b7762224ae770de4d9bb701",
+          "machine_words": 25648,
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "0b10f895e4f66284379734cec4cf54ea3702b1df7bfd0fea87d855ade80aa9f9",
+          "machine_word_sha256": "a779da4cbe74cb04e80819a9284396efb558f43e1c1ec0820c051199caedf4db",
+          "machine_words": 18288,
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "0e938d45776a8898f0bab5df29fa68e71113b5e9d5d6e5c3405029c1ef759e93",
+          "machine_word_sha256": "e2b4d25abc1e68bed08d9abc1ca827a557fca33a70ab284455ecea333d5e6047",
+          "machine_words": 28688,
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "239bb8c965bceb7cba52aace4529d114b66adf27f062e93fa8068d1e0b48c41b",
+          "machine_word_sha256": "f277d9389698a0470812b77697b062fbd758f9e4cbd3501e09a57c4d4d46305f",
+          "machine_words": 28960,
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI6__halfS3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI6__halfS3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 6776,
+          "instruction_sha256": "7ae8778d50adae680f885786a73b30e7613af5e8d15cd11520f81d30073f167b",
+          "machine_word_sha256": "b562bf52d66ad9130a317c214f0d6fc6632aacc7798affc5c473e7222411e96f",
+          "machine_words": 13552,
+          "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla24BatchMLAClaimProbeKernelINS0_16ClaimProbeTraitsI6__halfS3_S3_iEENS0_20ClaimProbeHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla24BatchMLAClaimProbeKernelINS0_16ClaimProbeTraitsI6__halfS3_S3_iEENS0_20ClaimProbeHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 6824,
+          "instruction_sha256": "33e75a9ab9a5ea9a2531431a748ddf72ceddf445e28538a01bcf185dd4d9a51e",
+          "machine_word_sha256": "1ca3e457bc40fd64ad19e92ebd13f4fc06ae0ddd2081e5c44d62ef62b4841f77",
+          "machine_words": 13648,
+          "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "1ad5dde04c010ff3674617ce322d000197407005559d5dd2f0ecb3339c42c545",
+          "machine_word_sha256": "9121ef19e9b518bb8930141eb68db5437dd09e8f5e5296e180dd3cf99b4d7022",
+          "machine_words": 7776,
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "dffbb47c14d36cb9ad882f2df32896264064bc5afb86c898dc2f5c6a77168a4a",
+          "machine_word_sha256": "dd50c00130f56b3c67a8d58e85344ffa1d2f56b72a977ad5e28cdac7d5126ba3",
+          "machine_words": 8352,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "a5ee95d2d3ff1753081697ed000553484677a680e6f186ac7bd9c7837f8d892e",
+          "machine_word_sha256": "0820335b564b24f19a08b90a3bb2f5cfab8771577a5974d9f28417bbaf0641c2",
+          "machine_words": 11216,
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "1bf80cbb796d64e370efd4c71682edc8365acdd6c96e293b572b004ad4efaa99",
+          "machine_word_sha256": "33a8bcbf5b661d422d7052bd9bea62acecc796e13cf7a7354e14d7de68864766",
+          "machine_words": 7536,
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "0504e74648330a4b73a5d909cc3ef2f95f000cb2b3f7383694dc1a526897417a",
+          "machine_word_sha256": "772bcc5433ec4a428814822668b6831cba0554982fe28539af617963ed0a0757",
+          "machine_words": 8192,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "065cb81400c895cca2bcdf110991ecd21d04b259780c0f5d1437f66f878bfe62",
+          "machine_word_sha256": "335fd7b80f1f84571f097d37a51bba0ad288cc5f80163e68157399ce50fd7651",
+          "machine_words": 11008,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "4a0f2d17c63bdaa4863da1ea32809bcc21aa536570db21943c8b45cce5604b6a",
+          "machine_word_sha256": "a56cb4150a47370cd66bd174be446c409f256a38bc0b68b40d2c5976e2cf5bf1",
+          "machine_words": 18512,
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      },
+      "batch_mla_attention_dtype_q_f16_dtype_kv_f16_dtype_o_f16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so": {
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7152,
+          "instruction_sha256": "559e64d05bd5233d1e398ae4092e10e392ece3ed5ea6fab010d167ac1f3b538f",
+          "machine_word_sha256": "9009d5f3d402708aa4334bdfab1883222d419bec80fbc9d48f82b8b6bbcf3453",
+          "machine_words": 14304,
+          "resource": "REG:254 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12320,
+          "instruction_sha256": "fc06028e485363ff74e906283fb406a29227e3223c6fce26416669c67d71927e",
+          "machine_word_sha256": "40288f37a6970799f95d8be6540c4abef7c00d2b704432983de70dbef00ab440",
+          "machine_words": 24640,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12464,
+          "instruction_sha256": "d49cdac25c0c0f2a917797bf2f005695655d3b89fdbb9811f67d9e78cf2dd48e",
+          "machine_word_sha256": "e944a2f05851b68942c566cafd07631787fa5f9edb733cbca13e3f5a2c5cc3dd",
+          "machine_words": 24928,
+          "resource": "REG:214 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_30CachedSharedIdsHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7712,
+          "instruction_sha256": "36c01e5bc1280eba37e43b8407545f66baa933882c2545a5021d1733c65050a8",
+          "machine_word_sha256": "b1e9f6fb2cb77eac0262570cc98f33f472a63d52b4a42ec4d4469cac46940597",
+          "machine_words": 15424,
+          "resource": "REG:244 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 7600,
+          "instruction_sha256": "cf64c1b820ee1ed377dec8cc47cadee66eb8dd4d4c42b2d47844df0bac507f6a",
+          "machine_word_sha256": "9ed463172262615d6a72f89a2c18a28f28500a985cf050a68c72db003a293251",
+          "machine_words": 15200,
+          "resource": "REG:244 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 12688,
+          "instruction_sha256": "b8c9b1fb0d4e58f4a97469c33f415261453aa5cbc03b74dbce910af23d7a84d3",
+          "machine_word_sha256": "307324a3038dcc7b88e6ffefb14fca9b52bb86a6968e0ac2160244427d64bcd8",
+          "machine_words": 25376,
+          "resource": "REG:245 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 12824,
+          "instruction_sha256": "c6d66b6cc652577c76efd864c2a174dbe191c011b2b0513efe6afc395a039ed4",
+          "machine_word_sha256": "2dbb5e8418fef92e5ca27621ddbbc833429778376b7762224ae770de4d9bb701",
+          "machine_words": 25648,
+          "resource": "REG:244 STACK:0 SHARED:2048 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS0_23WholeRowHostBatchParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 9144,
+          "instruction_sha256": "0b10f895e4f66284379734cec4cf54ea3702b1df7bfd0fea87d855ade80aa9f9",
+          "machine_word_sha256": "a779da4cbe74cb04e80819a9284396efb558f43e1c1ec0820c051199caedf4db",
+          "machine_words": 18288,
+          "resource": "REG:247 STACK:0 SHARED:1792 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb0EEEvT0_",
+          "instructions": 14344,
+          "instruction_sha256": "0e938d45776a8898f0bab5df29fa68e71113b5e9d5d6e5c3405029c1ef759e93",
+          "machine_word_sha256": "e2b4d25abc1e68bed08d9abc1ca827a557fca33a70ab284455ecea333d5e6047",
+          "machine_words": 28688,
+          "resource": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla23BatchMLAHostBatchKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_18MLAHostBatchParamsIS3_S3_S3_iEELb1EEEvT0_",
+          "instructions": 14480,
+          "instruction_sha256": "239bb8c965bceb7cba52aace4529d114b66adf27f062e93fa8068d1e0b48c41b",
+          "machine_word_sha256": "f277d9389698a0470812b77697b062fbd758f9e4cbd3501e09a57c4d4d46305f",
+          "machine_words": 28960,
+          "resource": "REG:253 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI6__halfS3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla21BatchMLAJointQKKernelINS0_13JointQKTraitsI6__halfS3_S3_iEENS0_17JointQKHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 6776,
+          "instruction_sha256": "7ae8778d50adae680f885786a73b30e7613af5e8d15cd11520f81d30073f167b",
+          "machine_word_sha256": "b562bf52d66ad9130a317c214f0d6fc6632aacc7798affc5c473e7222411e96f",
+          "machine_words": 13552,
+          "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla24BatchMLAClaimProbeKernelINS0_16ClaimProbeTraitsI6__halfS3_S3_iEENS0_20ClaimProbeHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla24BatchMLAClaimProbeKernelINS0_16ClaimProbeTraitsI6__halfS3_S3_iEENS0_20ClaimProbeHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+          "instructions": 6824,
+          "instruction_sha256": "33e75a9ab9a5ea9a2531431a748ddf72ceddf445e28538a01bcf185dd4d9a51e",
+          "machine_word_sha256": "1ca3e457bc40fd64ad19e92ebd13f4fc06ae0ddd2081e5c44d62ef62b4841f77",
+          "machine_words": 13648,
+          "resource": "REG:251 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3888,
+          "instruction_sha256": "1ad5dde04c010ff3674617ce322d000197407005559d5dd2f0ecb3339c42c545",
+          "machine_word_sha256": "9121ef19e9b518bb8930141eb68db5437dd09e8f5e5296e180dd3cf99b4d7022",
+          "machine_words": 7776,
+          "resource": "REG:203 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4176,
+          "instruction_sha256": "dffbb47c14d36cb9ad882f2df32896264064bc5afb86c898dc2f5c6a77168a4a",
+          "machine_word_sha256": "dd50c00130f56b3c67a8d58e85344ffa1d2f56b72a977ad5e28cdac7d5126ba3",
+          "machine_words": 8352,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb1ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5608,
+          "instruction_sha256": "a5ee95d2d3ff1753081697ed000553484677a680e6f186ac7bd9c7837f8d892e",
+          "machine_word_sha256": "0820335b564b24f19a08b90a3bb2f5cfab8771577a5974d9f28417bbaf0641c2",
+          "machine_words": 11216,
+          "resource": "REG:253 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj1ELb0ELj512ELj64ELj64ELj16E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 3768,
+          "instruction_sha256": "1bf80cbb796d64e370efd4c71682edc8365acdd6c96e293b572b004ad4efaa99",
+          "machine_word_sha256": "33a8bcbf5b661d422d7052bd9bea62acecc796e13cf7a7354e14d7de68864766",
+          "machine_words": 7536,
+          "resource": "REG:251 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 4096,
+          "instruction_sha256": "0504e74648330a4b73a5d909cc3ef2f95f000cb2b3f7383694dc1a526897417a",
+          "machine_word_sha256": "772bcc5433ec4a428814822668b6831cba0554982fe28539af617963ed0a0757",
+          "machine_words": 8192,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_": {
+          "symbol": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj64E6__halfS3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_",
+          "instructions": 5504,
+          "instruction_sha256": "065cb81400c895cca2bcdf110991ecd21d04b259780c0f5d1437f66f878bfe62",
+          "machine_word_sha256": "335fd7b80f1f84571f097d37a51bba0ad288cc5f80163e68157399ce50fd7651",
+          "machine_words": 11008,
+          "resource": "REG:254 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        },
+        "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_": {
+          "symbol": "_ZN10flashinfer3mla25BatchMLAPrivateHostKernelILj32ENS0_21HostSplitKernelTraitsINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E6__halfS4_S4_iEEEENS_9MLAParamsIS4_S4_S4_iEELj16EEEvT1_",
+          "instructions": 9256,
+          "instruction_sha256": "4a0f2d17c63bdaa4863da1ea32809bcc21aa536570db21943c8b45cce5604b6a",
+          "machine_word_sha256": "a56cb4150a47370cd66bd174be446c409f256a38bc0b68b40d2c5976e2cf5bf1",
+          "machine_words": 18512,
+          "resource": "REG:242 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:640 TEXTURE:0 SURFACE:0 SAMPLER:0"
+        }
+      }
+    }
+  }
+}

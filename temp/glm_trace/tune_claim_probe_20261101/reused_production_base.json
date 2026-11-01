@@ -1,0 +1,30 @@
+{
+  "complete": true,
+  "header_sha256": "7193255e2fdf83d3baa9347dea1a02b892c29ed746da719818e30fdf4066d469",
+  "proofs": [
+    {
+      "path": "temp/glm_trace/tune_joint_qk_20261101/retained_codegen_summary.json",
+      "sha256": "cb38dfa80ddc1b50190e9226f165c09c006829cb16f48bbe4f9e147867c3885e"
+    },
+    {
+      "path": "temp/glm_trace/tune_joint_qk_20261101/production_codegen_normal_summary.json",
+      "sha256": "d04e510df1b9241cb88df0cf47316e59c21d4bcf828f97cb96428acb2c13a676"
+    },
+    {
+      "path": "temp/glm_trace/tune_joint_qk_20261101/tests_production_gpu3.json",
+      "sha256": "59ae1660675e552717a7600ba3223e4010d7d2072a3957f1902e6703f200e65e"
+    },
+    {
+      "path": "temp/glm_trace/tune_joint_qk_20261101/dispatch_probe_production_joint_qk.json",
+      "sha256": "a86ebaf5c15867fe873c210ad1b94b896f0daeb4853e831e0158e30872bbd650"
+    },
+    {
+      "path": "temp/glm_trace/tune_joint_qk_20261101/final_retention_audit.json",
+      "sha256": "ccfa04a7b31bcf2fa130047d0132f513d5d7005353c5117391cdc4ed4a4a111f"
+    }
+  ],
+  "EMUworkspace": "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_qk_20261101/jit_retained_joint_qk",
+  "normalworkspace": "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_joint_qk_20261101/jit_production_joint_normal",
+  "additional_tests_counted": 0,
+  "scope": "Exact retained7193 source; existing fullyverifiedproductionJQbinary used as sameparameterbaseline,all36/72originalidentityrecheckedagainforthisnewcandidate."
+}

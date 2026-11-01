@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-01 09:04 JQ生产保持；QK增量搬运两版已拒绝，CPE仍等待SXM，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-01 09:40 JQ生产保持；claim原子两版拒绝，CPE已通过SXM完整确认、矩阵运行中，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -13,6 +13,16 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**最新claim实验 `temp/glm_trace/tune_claim_probe_20261101/` 已完成，两版均拒绝，生产7193不变。** 直接基线是当前生产7193，不是尚未采用的CPE。claim_probe头95ff4054…f5c1c，仅prepare先GPU scope relaxed原子load，非零跳过CAS；claim_store头15aa954a…c81e保留全部原CAS，仅唯一owner发布编码row/rank时用relaxed GPU原子store替代无返回值atomicExch。0→1→编码及原grid阶段保持；规范化新kernel名/prepare调用后，整个cooperative生命周期与JQ逐字相同。数学、LRU/FAR/payload、256线程/108CTA、147968dynamic/2304static/32KV双stage/f24双fetch保持；每版REG251/STACK0/LOCAL0，原36EMU/72normal机器字/控制字及资源全同。
+
+两版各105+8，共226项独立正常测试通过，新增两项覆盖跨CTA全共享97页/互斥2048页及跨launch清空；全部cache载荷/LSE/Graph/K2048及K65 stride80保持。每版实际单108CTA/block32x4x2/active1和首匹配BF16/K97三sanitizer均通过。初generator边界断言在header生成前失败；新增两stress漏Graph预warmup导致接口拒绝，修复后8项全过；validator抢先读取旧失败state的一次立即退出亦存档。原105+6的重复成功不重复计数；原失败source/log/state均保存test_fixture_failure/，包括nested失败log的gitignore已修正。
+
+GPU3/NUMA1/MTP8R128/LRU4096/f24off短256×3：probe在100GB0/20慢2.091%/1.481%、50GB20慢0.961%，停止。store短快0.262%/0.434%，full反向1024×5快1.010%/0.704%，但full正向慢0.291%/0.058%；50GB两序快约0.1%，正常HBM慢0.123%、PCIe快0.055%。**原扩测父34409/PID2305614已实际terminal1，预设正向100GB收益gate拒绝，所有测量子步骤exit0；不重启、不放宽gate、不扩156矩阵或SXM。** 28格/14配对、22784计时launch/1424segment、两参考/逐步逐pass/命中率/全部正负差齐全；checkpoint_verified，完整矩阵明确未做。[claim报告](mla_host_a100_claim_atomics_20261101.md)、decisions及continuation保存证据。静态CAS/EXCH/load/store数只证明操作变化，非动态次数或因果分摊。
+
+**CPE原父15217/PID2084930在外部2101252/2101253自然结束后，已做完SXM反向/正向/正常完整确认，现phase=sxm_matrix。** 100GB0/20反向快1.732%/1.869%，正向快0.965%/0.899%；50GB近持平、正常真实NVLink快2.537%、PCIe快0.077%。原子验证器2304430运行limited60格，前R64/R128已完成，MTP1R512进行中，然后自动native20格；原父会刷新审计/报告但不安装。先查15217和实际ps，**不要再等已结束外部PID、不要重复启动**。完整156矩阵/全部负差门槛和冻结保留后，还要新的生产root编译/测试/代码及实际Graph验证；不能仅凭这些正信号安装。09:06 H800只读查询仍原五任务Priority/Dependency、两个watcher活、AGENTS/MEMORY哈希不变，无新提交/排队源写入。
+
+下面旧“CPE等待、无SXM数据”是当时时间快照，以上述最新进度及实际原件为准。主目标继续active，100GB大batch主差距仍未解决。
 
 ### 2.0 最新生产：JQ已保留；QPE全item片段复用验证中
 

@@ -1,0 +1,14 @@
+{
+  "source_and_data_diff_check": "pass excluding two verbatim raw outputs",
+  "preserved_raw_whitespace": [
+    {
+      "path": "temp/glm_trace/tune_claim_probe_20261101/h800_queue.txt",
+      "sha256": "eeffe28872f043d1118b695214dd0aace4e98a336dc4604598874be48f4f402f"
+    },
+    {
+      "path": "temp/glm_trace/tune_claim_probe_20261101/test_fixture_failure/pytest_stress_claim_probe.log",
+      "sha256": "db8cb93ddaf853c3b28968e81d19a2f91f23e90d4767f31a71ae0844d1c8f9b9"
+    }
+  ],
+  "reason": "Fixed-width squeue and pytest failure traceback whitespace preserved verbatim; no source whitespace errors."
+}

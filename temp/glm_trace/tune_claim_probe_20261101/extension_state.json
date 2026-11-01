@@ -1,0 +1,108 @@
+{
+  "start": "2026-11-01T09:30:00+0800",
+  "pid": 2305614,
+  "phase": "failed",
+  "complete": false,
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_claim_probe_20261101/audit_performance.py"
+      ],
+      "log": "audit_extension.log",
+      "start": "2026-11-01T09:30:00+0800",
+      "pid": 2305616,
+      "exit_code": 0,
+      "end": "2026-11-01T09:30:00+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_claim_probe_20261101/screen_store.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "claim_store",
+        "--variants",
+        "base",
+        "claim_store",
+        "--positions",
+        "1024",
+        "--passes",
+        "5",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--settings",
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000",
+        "--tag",
+        "claim_store_forward1024_f24_"
+      ],
+      "log": "claim_store_forward1024_f24_screen.log",
+      "start": "2026-11-01T09:30:00+0800",
+      "pid": 2305621,
+      "exit_code": 0,
+      "end": "2026-11-01T09:32:06+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_claim_probe_20261101/screen_store.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "claim_store",
+        "--variants",
+        "base",
+        "claim_store",
+        "--positions",
+        "1024",
+        "--passes",
+        "5",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--settings",
+        "native_hbm",
+        "pcie",
+        "--tag",
+        "claim_store_native1024_f24_",
+        "--native"
+      ],
+      "log": "claim_store_native1024_f24_screen.log",
+      "start": "2026-11-01T09:32:06+0800",
+      "pid": 2309719,
+      "exit_code": 0,
+      "end": "2026-11-01T09:36:19+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_claim_probe_20261101/audit_performance.py"
+      ],
+      "log": "audit_extension.log",
+      "start": "2026-11-01T09:36:19+0800",
+      "pid": 2319061,
+      "exit_code": 0,
+      "end": "2026-11-01T09:36:20+0800"
+    }
+  ],
+  "error": "('claim_store_forward1024_f24_', [{'hardware': 'GPU3', 'cohort': 'claim_store_forward1024_f24_', 'variant': 'claim_store', 'kind': 'lru', 'fraction': None, 'mtp': 8, 'requests': 128, 'fetch_ctas': 24, 'setting': 'g100_l0', 'positions': 1024, 'passes': 5, 'old_us': 3491.8352015316486, 'new_us': 3501.9984032958746, 'reduction': -0.0029105616896718534, 'old_raw': 'temp/glm_trace/tune_claim_probe_20261101/gpu3/raw/claim_store_forward1024_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json', 'new_raw': 'temp/glm_trace/tune_claim_probe_20261101/gpu3/raw/claim_store_forward1024_f24_claim_store_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json', 'memcpy_us': 6284.044799953699, 'local_us': 2561.847986653447, 'reference_us': 2744.362163644738, 'over_reference': 0.27607006454459126}, {'hardware': 'GPU3', 'cohort': 'claim_store_forward1024_f24_', 'variant': 'claim_store', 'kind': 'lru', 'fraction': None, 'mtp': 8, 'requests': 128, 'fetch_ctas': 24, 'setting': 'g100_l20000', 'positions': 1024, 'passes': 5, 'old_us': 3523.3503956347704, 'new_us': 3525.388799980283, 'reduction': -0.0005785414780312692, 'old_raw': 'temp/glm_trace/tune_claim_probe_20261101/gpu3/raw/claim_store_forward1024_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json', 'new_raw': 'temp/glm_trace/tune_claim_probe_20261101/gpu3/raw/claim_store_forward1024_f24_claim_store_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json', 'memcpy_us': 6313.542386889458, 'local_us': 2561.847986653447, 'reference_us': 2744.8316036447377, 'over_reference': 0.28437343671614634}, {'hardware': 'GPU3', 'cohort': 'claim_store_forward1024_f24_', 'variant': 'claim_store', 'kind': 'lru', 'fraction': None, 'mtp': 8, 'requests': 128, 'fetch_ctas': 24, 'setting': 'g50_l20000', 'positions': 1024, 'passes': 5, 'old_us': 5507.4015982449055, 'new_us': 5502.256003394723, 'reduction': 0.0009343053631357678, 'old_raw': 'temp/glm_trace/tune_claim_probe_20261101/gpu3/raw/claim_store_forward1024_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json', 'new_raw': 'temp/glm_trace/tune_claim_probe_20261101/gpu3/raw/claim_store_forward1024_f24_claim_store_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json', 'memcpy_us': 8888.313610106707, 'local_us': 2561.847986653447, 'reference_us': 5187.602952, 'over_reference': 0.06065480614190277}])",
+  "end": "2026-11-01T09:36:20+0800"
+}

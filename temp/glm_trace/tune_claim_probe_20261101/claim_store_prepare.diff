@@ -1,0 +1,16 @@
+--- productionprepare
++++ claim_store
+@@ -82,8 +82,11 @@
+       for (uint32_t i = 0; i < PER_THREAD; ++i) {
+         if (fresh_masks[i] >> lane & 1) {
+           const uint32_t rank = first + __popc(fresh_masks[i] & lower);
+-          atomicExch(params.host_slot + (pages[i] - params.host_page_start),
+-                     (row << kHostBatchRankBits | rank) + 2);
++          uint32_t* claim_slot = params.host_slot + (pages[i] - params.host_page_start);
++          const uint32_t encoded = (row << kHostBatchRankBits | rank) + 2;
++          // The CAS winner is the only writer. Other CAS(0->1) calls cannot modify nonzero.
++          // GPU-scope atomic store keeps per-location coherence; resolve follows grid.sync.
++          asm volatile("st.relaxed.gpu.global.u32 [%0], %1;" :: "l"(claim_slot), "r"(encoded) : "memory");
+         }
+         if (pages[i] >= params.host_page_start) {
+           params.remap[begin + host_first + __popc(host_masks[i] & lower)] = pages[i];

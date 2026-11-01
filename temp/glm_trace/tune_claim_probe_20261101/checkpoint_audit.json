@@ -1,0 +1,81 @@
+{
+  "checkpoint_verified": true,
+  "timestamp": "2026-11-01T09:38:09+0800",
+  "core_validation_complete": true,
+  "experiment_complete": true,
+  "regression_measurements_complete": false,
+  "candidates_adopted": false,
+  "goal_complete": false,
+  "production_unchanged": true,
+  "headers": {
+    "base": "7193255e2fdf83d3baa9347dea1a02b892c29ed746da719818e30fdf4066d469",
+    "claim_probe": "95ff4054a653135668daa8dc41b6fe6abbcb285b82da1254eb66c795be4f5c1c",
+    "claim_store": "15aa954ac63ce52024439446ca9dde583875eaf5afa24fd8df343075ecd9c81e"
+  },
+  "proofs": [
+    {
+      "path": "compiler_claim_probe_summary.json",
+      "sha256": "3c618e7fa1896b40cc11ca67cc2429e09e668aa3680b6b8945c6fdf821aa9893",
+      "count": 36
+    },
+    {
+      "path": "compiler_claim_probe_normal_summary.json",
+      "sha256": "05f8e1706760b0c078bc800772ab86e8d11b6466afb962c61e5616c7f4178965",
+      "count": 72
+    },
+    {
+      "path": "compiler_claim_store_summary.json",
+      "sha256": "01e52f51fe2b3008b07a9f7739ab30a497bb6a68701ffb7f251e0f50daa84c58",
+      "count": 36
+    },
+    {
+      "path": "compiler_claim_store_normal_summary.json",
+      "sha256": "b2d8e1b6a49d496d35aa7e23f6e06068db97df1fcee6129ff62333add8f4e3bc",
+      "count": 72
+    }
+  ],
+  "rows": 28,
+  "pairs": 14,
+  "timed_launches": 22784,
+  "accepted_segments": 1424,
+  "unique_tests": 226,
+  "extension_result": "Rejected by positive100GB forward confirmation gate; preserve terminal1, do not restart.",
+  "missing_for_adoption": [
+    "No broad matrix or SXM validation for either rejected candidate."
+  ],
+  "failures": [
+    {
+      "path": "test_fixture_failure/pytest_stress_claim_probe.log",
+      "sha256": "db8cb93ddaf853c3b28968e81d19a2f91f23e90d4767f31a71ae0844d1c8f9b9"
+    },
+    {
+      "path": "test_fixture_failure/stress_claim_probe.log",
+      "sha256": "91c87d4518ed2d9fee290c3fdd173bdb4ba626f2b1792104fdea921722e10611"
+    },
+    {
+      "path": "test_fixture_failure/stress_claim_probe_gpu3.json",
+      "sha256": "3987690aa972860023e4e0178c52819f9d6f7f8c2f7487b8b943fb3a05a6d260"
+    },
+    {
+      "path": "test_fixture_failure/test_cofetch_progress.py",
+      "sha256": "290ebe08780e0e2b0366d06c7eea1220e9cde1623bcfd1d2e0dc9f1718f3901d"
+    },
+    {
+      "path": "test_fixture_failure/validate_candidate.log",
+      "sha256": "88ced7bd3fb19118aa2f527bce144c10c0ccc120c66077c27ae1c7a0407febcf"
+    },
+    {
+      "path": "test_fixture_failure/validation_stale_failure_state.json",
+      "sha256": "afeb39df79371a2e9b91f4018bce2921194e9261432281b9d4ba554d53bd112a"
+    },
+    {
+      "path": "test_fixture_failure/validation_state.json",
+      "sha256": "448d29cfb581c5d1369223d2acaef091e6f05d7677ef1fc1f27d98a056059f3d"
+    },
+    {
+      "path": "test_fixture_failure/validator_stale_failure.log",
+      "sha256": "88ced7bd3fb19118aa2f527bce144c10c0ccc120c66077c27ae1c7a0407febcf"
+    }
+  ],
+  "limitation": "GPU3 HBM/PCIe only. Sanitizers first matched BF16/K97 launch. Static atomic counts are not dynamic performance causality."
+}

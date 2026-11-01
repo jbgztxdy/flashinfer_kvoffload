@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-11-01T09:25:27+0800",
+  "variants": [
+    "claim_store",
+    "base"
+  ],
+  "positions": 1024,
+  "passes": 5,
+  "settings": [
+    "g100_l0",
+    "g100_l20000",
+    "g50_l20000"
+  ],
+  "mtp": 8,
+  "requests": 128,
+  "fetch_ctas": 24,
+  "host_split": "off",
+  "tag": "claim_store_reverse1024_f24_",
+  "headers": {
+    "base": "7193255e2fdf83d3baa9347dea1a02b892c29ed746da719818e30fdf4066d469",
+    "claim_store": "15aa954ac63ce52024439446ca9dde583875eaf5afa24fd8df343075ecd9c81e"
+  },
+  "purpose": "Fulltrace reversed-order confirmation of smallpositive shortsignal. No install; smallscreenalone doesnotprove benefit.",
+  "decision_scope": "If fullreverse fails to support a repeatable improvement at100GB, stop this candidate. Any retention still requires furtherforward/native/shape/SXM gates; no bypass."
+}

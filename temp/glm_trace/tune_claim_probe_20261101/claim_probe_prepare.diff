@@ -1,0 +1,21 @@
+--- productionprepare
++++ claim_probe
+@@ -51,9 +51,15 @@
+       // host_slot: 0 free, 1 claiming, (row << kHostBatchRankBits | rank) + 2 claimed.
+ #pragma unroll
+       for (uint32_t i = 0; i < PER_THREAD; ++i) {
+-        claimed[i] = pages[i] >= params.host_page_start
+-                         ? atomicCAS(params.host_slot + (pages[i] - params.host_page_start), 0u, 1u)
+-                         : 2u;
++        claimed[i] = 2u;
++        if (pages[i] >= params.host_page_start) {
++          uint32_t* slot = params.host_slot + (pages[i] - params.host_page_start);
++          uint32_t observed;
++          // This is a GPU-scope relaxed atomic load, not a non-atomic C++ data race.
++          // Claim state cannot become zero again until prepare/resolve/grid barriers finish.
++          asm volatile("ld.relaxed.gpu.global.u32 %0, [%1];" : "=r"(observed) : "l"(slot) : "memory");
++          claimed[i] = observed != 0 ? observed : atomicCAS(slot, 0u, 1u);
++        }
+       }
+       uint32_t fresh_masks[PER_THREAD], host_masks[PER_THREAD], local_masks[PER_THREAD];
+       uint32_t fresh_total = 0, host_total = 0, local_total = 0;

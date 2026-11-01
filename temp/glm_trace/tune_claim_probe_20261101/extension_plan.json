@@ -1,0 +1,36 @@
+{
+  "headers": {
+    "base": "7193255e2fdf83d3baa9347dea1a02b892c29ed746da719818e30fdf4066d469",
+    "claim_store": "15aa954ac63ce52024439446ca9dde583875eaf5afa24fd8df343075ecd9c81e"
+  },
+  "tasks": [
+    {
+      "tag": "claim_store_forward1024_f24_",
+      "variants": [
+        "base",
+        "claim_store"
+      ],
+      "native": false,
+      "settings": [
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ]
+    },
+    {
+      "tag": "claim_store_native1024_f24_",
+      "variants": [
+        "base",
+        "claim_store"
+      ],
+      "native": true,
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ]
+    }
+  ],
+  "positions": 1024,
+  "passes": 5,
+  "goal_complete": false
+}

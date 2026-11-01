@@ -1,0 +1,331 @@
+......FF                                                                 [100%]
+=================================== FAILURES ===================================
+_________________ test_shared_claims_reset_and_replay[dtype0] __________________
+
+dtype = torch.bfloat16
+
+    @pytest.mark.parametrize('dtype', [torch.bfloat16, torch.float16])
+    def test_shared_claims_reset_and_replay(dtype):
+        """Many CTA rows claim the same pages, then switch to disjoint pages across launches."""
+        _skip_if_unsupported()
+        rows, length, pages, host_start = 432, 97, 8192, 4096
+        torch.manual_seed(20261103)
+        kv = torch.randn(pages, 1, 576, device='cuda', dtype=dtype)
+        q = torch.randn(rows, 64, 512, device='cuda', dtype=dtype)
+        qp = torch.randn(rows, 64, 64, device='cuda', dtype=dtype)
+        indices = torch.empty(rows * length, device='cuda', dtype=torch.int32)
+        w = _plan(rows, length, indices, dtype=dtype)
+        w.host_stage, w.host_split, w.host_fetch_ctas = True, False, 24
+        w.host_staging_rows = indices.numel()
+        w.set_host_cache(torch.tensor([0, rows], dtype=torch.int32), 512)
+        for round_id in range(4):
+            if round_id % 2 == 0:
+                selected = (torch.arange(length, dtype=torch.int32)[None, :].expand(rows, -1).clone() + host_start + 1024 * round_id)
+            else:
+                selected = (torch.arange(rows * length, dtype=torch.int32).view(rows, length) % 2048 + host_start)
+            selected[0] = -1
+            selected[1, 1:] = -1
+            indices.copy_(selected.flatten().cuda())
+            graph = torch.cuda.CUDAGraph()
+            with torch.cuda.graph(graph):
+>               out, lse = w.run(q, qp, kv[..., :512], kv[..., 512:], return_lse=True, host_page_start=host_start)
+
+temp/glm_trace/tune_claim_probe_20261101/test_cofetch_progress.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+flashinfer/mla/_core.py:659: in run
+    return self._run_host_batch(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <flashinfer.mla._core.BatchMLAPagedAttentionWrapper object at 0x7f738da3e570>
+q_nope = tensor([[[ 1.5703, -0.1748,  0.0586,  ..., -1.7578, -0.0593, -0.8750],
+         [-0.6641, -0.2812, -0.8672,  ..., -0.5...
+         [-0.7188,  0.4727,  0.3262,  ..., -0.4805, -0.3613,  1.6719]]],
+       device='cuda:0', dtype=torch.bfloat16)
+q_pe = tensor([[[ 1.9922e+00,  1.3594e+00, -1.2734e+00,  ...,  1.0078e+00,
+          -5.1953e-01, -1.1523e-01],
+         [ 1....8750e-01,  5.2344e-01,  ..., -1.2988e-01,
+           7.8125e-01, -1.9434e-01]]], device='cuda:0', dtype=torch.bfloat16)
+ckv_cache = tensor([[[-0.4141,  1.7188,  0.9375,  ..., -0.0581, -1.6797,  1.3438]],
+
+        [[ 1.7578, -2.0312, -0.1621,  ...,  1...
+        [[ 0.4785,  0.8477,  1.1016,  ..., -0.1631,  0.6367, -0.3672]]],
+       device='cuda:0', dtype=torch.bfloat16)
+kpe_cache = tensor([[[ 1.1250,  0.0537, -0.2432,  ..., -0.3613,  1.2891, -0.1875]],
+
+        [[-1.0391,  0.8672, -1.7578,  ...,  0...
+        [[ 1.0625,  1.5000, -1.0391,  ..., -0.4258, -0.3438, -0.4043]]],
+       device='cuda:0', dtype=torch.bfloat16)
+out = tensor([[[0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., ...0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.]]], device='cuda:0',
+       dtype=torch.bfloat16)
+lse = tensor([[0., 0., 0.,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.]....,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.]], device='cuda:0')
+return_lse = True, return_lse_base_on_e = False, host_page_start = 4096
+
+    def _run_host_batch(
+        self,
+        q_nope: torch.Tensor,
+        q_pe: torch.Tensor,
+        ckv_cache: torch.Tensor,
+        kpe_cache: torch.Tensor,
+        out: torch.Tensor,
+        lse: Optional[torch.Tensor],
+        return_lse: bool,
+        return_lse_base_on_e: bool,
+        host_page_start: int,
+    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+        rows, num_heads = q_nope.shape[:2]
+        if (
+            self._backend != "fa2"
+            or self._causal
+            or self._page_size != 1
+            or self._use_profiler
+            or self._host_batch_shape is None
+            or self._host_batch_shape[0] != rows
+            or num_heads % 64
+            or tuple(q_nope.shape) != (rows, num_heads, 512)
+            or tuple(q_pe.shape) != (rows, num_heads, 64)
+        ):
+            raise ValueError(
+                "Batched Host MLA requires FA2 noncausal page-size-one decode with "
+                "one query per row, int32 indices and a multiple of 64 heads"
+            )
+        if (
+            ckv_cache.ndim != 3
+            or tuple(ckv_cache.shape[1:]) != (1, 512)
+            or tuple(kpe_cache.shape) != (ckv_cache.shape[0], 1, 64)
+        ):
+            raise ValueError("Host overlap requires page-size-one 512+64 KV tensors")
+        if (
+            ckv_cache.stride(0) != 576
+            or kpe_cache.stride(0) != 576
+            or kpe_cache.data_ptr() != ckv_cache.data_ptr() + 512 * ckv_cache.element_size()
+        ):
+            raise ValueError(
+                "Batched Host MLA requires ckv/kpe views of one [num_pages, 1, 576] cache"
+            )
+        if not isinstance(host_page_start, int) or not (
+            0 <= host_page_start <= ckv_cache.shape[0]
+        ):
+            raise ValueError("host_page_start must be an integer within the KV cache")
+        if (
+            q_nope.dtype not in (torch.bfloat16, torch.float16)
+            or q_nope.dtype != self._module_args[0]
+            or ckv_cache.dtype != self._module_args[1]
+            or any(t.dtype != q_nope.dtype for t in (q_pe, ckv_cache, kpe_cache))
+        ):
+            raise ValueError("Host overlap requires matching planned BF16 or FP16 inputs")
+        if any(
+            t.device != self.device
+            or t.stride(-1) != 1
+            or t.stride(0) % 8
+            or t.data_ptr() % 16
+            for t in (q_nope, q_pe, ckv_cache, kpe_cache, out)
+        ):
+            raise ValueError(
+                "Host overlap requires aligned CUDA tensors with unit feature stride"
+            )
+        _, nnz, max_kv_len = self._host_batch_shape
+        stage = self.host_stage
+        staging_rows = (self.host_staging_rows or max(64, (nnz + 1) // 2)) if stage else 0
+        cache = self._host_cache
+        if cache is not None and cache["num_rows"] != rows:
+            raise ValueError("set_host_cache pools must cover exactly the planned rows")
+        num_pools = cache["num_pools"] if cache is not None else 0
+        pool_capacity = cache["capacity"] if cache is not None else 0
+        max_pools = cache["max_pools"] if cache is not None else 0
+        host_pages = ckv_cache.shape[0] - host_page_start
+        key = (
+            ckv_cache.dtype,
+            host_pages,
+            nnz,
+            rows,
+            num_heads,
+            staging_rows,
+            num_pools,
+            pool_capacity,
+            max_pools,
+            stage,
+        )
+        if self._host_batch_buffers is None or self._host_batch_buffers[0] != key:
+            if torch.cuda.is_current_stream_capturing():
+>               raise RuntimeError("Warm up batched Host MLA before CUDA Graph capture")
+E               RuntimeError: Warm up batched Host MLA before CUDA Graph capture
+
+flashinfer/mla/_core.py:969: RuntimeError
+_________________ test_shared_claims_reset_and_replay[dtype1] __________________
+
+dtype = torch.float16
+
+    @pytest.mark.parametrize('dtype', [torch.bfloat16, torch.float16])
+    def test_shared_claims_reset_and_replay(dtype):
+        """Many CTA rows claim the same pages, then switch to disjoint pages across launches."""
+        _skip_if_unsupported()
+        rows, length, pages, host_start = 432, 97, 8192, 4096
+        torch.manual_seed(20261103)
+        kv = torch.randn(pages, 1, 576, device='cuda', dtype=dtype)
+        q = torch.randn(rows, 64, 512, device='cuda', dtype=dtype)
+        qp = torch.randn(rows, 64, 64, device='cuda', dtype=dtype)
+        indices = torch.empty(rows * length, device='cuda', dtype=torch.int32)
+        w = _plan(rows, length, indices, dtype=dtype)
+        w.host_stage, w.host_split, w.host_fetch_ctas = True, False, 24
+        w.host_staging_rows = indices.numel()
+        w.set_host_cache(torch.tensor([0, rows], dtype=torch.int32), 512)
+        for round_id in range(4):
+            if round_id % 2 == 0:
+                selected = (torch.arange(length, dtype=torch.int32)[None, :].expand(rows, -1).clone() + host_start + 1024 * round_id)
+            else:
+                selected = (torch.arange(rows * length, dtype=torch.int32).view(rows, length) % 2048 + host_start)
+            selected[0] = -1
+            selected[1, 1:] = -1
+            indices.copy_(selected.flatten().cuda())
+            graph = torch.cuda.CUDAGraph()
+            with torch.cuda.graph(graph):
+>               out, lse = w.run(q, qp, kv[..., :512], kv[..., 512:], return_lse=True, host_page_start=host_start)
+
+temp/glm_trace/tune_claim_probe_20261101/test_cofetch_progress.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+flashinfer/mla/_core.py:659: in run
+    return self._run_host_batch(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <flashinfer.mla._core.BatchMLAPagedAttentionWrapper object at 0x7f738da3d460>
+q_nope = tensor([[[ 1.5693, -0.1744,  0.0587,  ..., -1.7578, -0.0594, -0.8750],
+         [-0.6646, -0.2805, -0.8672,  ..., -0.5...,
+         [-0.7197,  0.4719,  0.3259,  ..., -0.4800, -0.3618,  1.6719]]],
+       device='cuda:0', dtype=torch.float16)
+q_pe = tensor([[[ 1.9893e+00,  1.3584e+00, -1.2754e+00,  ...,  1.0049e+00,
+          -5.2002e-01, -1.1523e-01],
+         [ 1.....8701e-01,  5.2197e-01,  ..., -1.3025e-01,
+           7.7930e-01, -1.9421e-01]]], device='cuda:0', dtype=torch.float16)
+ckv_cache = tensor([[[-0.4131,  1.7217,  0.9385,  ..., -0.0582, -1.6816,  1.3438]],
+
+        [[ 1.7607, -2.0254, -0.1620,  ...,  1...
+
+        [[ 0.4790,  0.8477,  1.0977,  ..., -0.1628,  0.6353, -0.3672]]],
+       device='cuda:0', dtype=torch.float16)
+kpe_cache = tensor([[[ 1.1289,  0.0536, -0.2434,  ..., -0.3611,  1.2891, -0.1877]],
+
+        [[-1.0381,  0.8657, -1.7598,  ...,  0...
+
+        [[ 1.0596,  1.5020, -1.0430,  ..., -0.4253, -0.3440, -0.4041]]],
+       device='cuda:0', dtype=torch.float16)
+out = tensor([[[0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., ...[0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.]]], device='cuda:0',
+       dtype=torch.float16)
+lse = tensor([[0., 0., 0.,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.]....,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.],
+        [0., 0., 0.,  ..., 0., 0., 0.]], device='cuda:0')
+return_lse = True, return_lse_base_on_e = False, host_page_start = 4096
+
+    def _run_host_batch(
+        self,
+        q_nope: torch.Tensor,
+        q_pe: torch.Tensor,
+        ckv_cache: torch.Tensor,
+        kpe_cache: torch.Tensor,
+        out: torch.Tensor,
+        lse: Optional[torch.Tensor],
+        return_lse: bool,
+        return_lse_base_on_e: bool,
+        host_page_start: int,
+    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+        rows, num_heads = q_nope.shape[:2]
+        if (
+            self._backend != "fa2"
+            or self._causal
+            or self._page_size != 1
+            or self._use_profiler
+            or self._host_batch_shape is None
+            or self._host_batch_shape[0] != rows
+            or num_heads % 64
+            or tuple(q_nope.shape) != (rows, num_heads, 512)
+            or tuple(q_pe.shape) != (rows, num_heads, 64)
+        ):
+            raise ValueError(
+                "Batched Host MLA requires FA2 noncausal page-size-one decode with "
+                "one query per row, int32 indices and a multiple of 64 heads"
+            )
+        if (
+            ckv_cache.ndim != 3
+            or tuple(ckv_cache.shape[1:]) != (1, 512)
+            or tuple(kpe_cache.shape) != (ckv_cache.shape[0], 1, 64)
+        ):
+            raise ValueError("Host overlap requires page-size-one 512+64 KV tensors")
+        if (
+            ckv_cache.stride(0) != 576
+            or kpe_cache.stride(0) != 576
+            or kpe_cache.data_ptr() != ckv_cache.data_ptr() + 512 * ckv_cache.element_size()
+        ):
+            raise ValueError(
+                "Batched Host MLA requires ckv/kpe views of one [num_pages, 1, 576] cache"
+            )
+        if not isinstance(host_page_start, int) or not (
+            0 <= host_page_start <= ckv_cache.shape[0]
+        ):
+            raise ValueError("host_page_start must be an integer within the KV cache")
+        if (
+            q_nope.dtype not in (torch.bfloat16, torch.float16)
+            or q_nope.dtype != self._module_args[0]
+            or ckv_cache.dtype != self._module_args[1]
+            or any(t.dtype != q_nope.dtype for t in (q_pe, ckv_cache, kpe_cache))
+        ):
+            raise ValueError("Host overlap requires matching planned BF16 or FP16 inputs")
+        if any(
+            t.device != self.device
+            or t.stride(-1) != 1
+            or t.stride(0) % 8
+            or t.data_ptr() % 16
+            for t in (q_nope, q_pe, ckv_cache, kpe_cache, out)
+        ):
+            raise ValueError(
+                "Host overlap requires aligned CUDA tensors with unit feature stride"
+            )
+        _, nnz, max_kv_len = self._host_batch_shape
+        stage = self.host_stage
+        staging_rows = (self.host_staging_rows or max(64, (nnz + 1) // 2)) if stage else 0
+        cache = self._host_cache
+        if cache is not None and cache["num_rows"] != rows:
+            raise ValueError("set_host_cache pools must cover exactly the planned rows")
+        num_pools = cache["num_pools"] if cache is not None else 0
+        pool_capacity = cache["capacity"] if cache is not None else 0
+        max_pools = cache["max_pools"] if cache is not None else 0
+        host_pages = ckv_cache.shape[0] - host_page_start
+        key = (
+            ckv_cache.dtype,
+            host_pages,
+            nnz,
+            rows,
+            num_heads,
+            staging_rows,
+            num_pools,
+            pool_capacity,
+            max_pools,
+            stage,
+        )
+        if self._host_batch_buffers is None or self._host_batch_buffers[0] != key:
+            if torch.cuda.is_current_stream_capturing():
+>               raise RuntimeError("Warm up batched Host MLA before CUDA Graph capture")
+E               RuntimeError: Warm up batched Host MLA before CUDA Graph capture
+
+flashinfer/mla/_core.py:969: RuntimeError
+=============================== warnings summary ===============================
+temp/glm_trace/tune_claim_probe_20261101/test_cofetch_progress.py::test_shared_claims_reset_and_replay[dtype0]
+temp/glm_trace/tune_claim_probe_20261101/test_cofetch_progress.py::test_shared_claims_reset_and_replay[dtype1]
+  /mnt/data/mhy-vllm-venv/lib/python3.12/site-packages/torch/cuda/graphs.py:126: UserWarning: The CUDA Graph is empty. This usually means that the graph was attempted to be captured on wrong device or stream. (Triggered internally at /pytorch/aten/src/ATen/cuda/CUDAGraph.cpp:147.)
+    super().capture_end()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED temp/glm_trace/tune_claim_probe_20261101/test_cofetch_progress.py::test_shared_claims_reset_and_replay[dtype0]
+FAILED temp/glm_trace/tune_claim_probe_20261101/test_cofetch_progress.py::test_shared_claims_reset_and_replay[dtype1]
+2 failed, 6 passed, 2 warnings in 3.07s

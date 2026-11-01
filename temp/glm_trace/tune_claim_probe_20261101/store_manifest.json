@@ -1,0 +1,11 @@
+{
+  "base_sha256": "7193255e2fdf83d3baa9347dea1a02b892c29ed746da719818e30fdf4066d469",
+  "candidate_sha256": "15aa954ac63ce52024439446ca9dde583875eaf5afa24fd8df343075ecd9c81e",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "mechanism": "Keep every original claimingCAS. Only successful owner publishes encoded(row,rank) using st.relaxed.gpu.global.u32 instead of unused-result atomicExch. No claim-state probe,extra read or spin.",
+  "correctness": "Owner CAS0->1 is unique. FailedCAS(0->1)cannotmodify nonzero. Owner is sole encodedclaim writer; fetchclearing occurs only afterprepare/resolve gridbarriers. RelaxedGPU atomicstore remains aligned32bitcoherent; everyowner finishes publicationbeforegrid.sync exposesrank toresolve.",
+  "scope": "SamecurrentproductionJQ7193cachedwhole32KV2stageSM80dispatch;unchangedmath/fetch/LRU/barriers/256threads/147968dynamic/f24. Preservealloriginal36-72words.",
+  "risk": "GPU store vsRMW may change compiler scheduling; exactresources/actualbranch/numerics/cachepayload/performance mustbe measured. No promisedbenefit."
+}
