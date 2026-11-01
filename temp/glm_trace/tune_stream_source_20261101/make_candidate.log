@@ -1,0 +1,11 @@
+{
+  "base_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "candidate_sha256": "48c2a724548c2ac554400b26592a1212e159cd279cd1a48da191b5139cd86f73",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "mechanism": "Private dedicated fetch cp.async uses L2 evict_first cache policy for deduplicated far-source KV lines. No attention, staging/cache-store or metadata load policy changes.",
+  "invariants": "Same64rowdoublebuffer/f24, actual1152bytes/uniquepage, FARpostreadhooks, commit/wait/barriers, LRU/payload/prepare/remap, claims, mathematics and dispatch. Onlyfar-source hardwarecacheevictionhint plus its setup changes.",
+  "rationale": "Source rows read once perlaunch afterdedup; fullystagedattention reads staging/cache instead. Streaming source may displace repeatedlyusedHBM, but cachepolicy is onlyhint and no gain promised.",
+  "scope": "SameproductionCPElargecachedfullystagedSM80dispatch;256thread108CTA32KV2stage147968B. No parameter scans orreference/simulator changes."
+}

@@ -1,0 +1,26 @@
+--- basefetch
++++ streamsourcefetch
+@@ -20,6 +20,9 @@
+   __shared__ typename Params::IdType page_ids[BUFFERS][kHostBatchFetchRows];
+   __shared__ uint32_t deferred[kHostBatchMaxDeferred], deferred_count;
+   if (tid == 0) deferred_count = 0;
++  uint64_t stream_source_policy;
++  asm volatile("createpolicy.fractional.L2::evict_first.b64 %0, 1.0;"
++               : "=l"(stream_source_policy));
+   FAR_EMU_INIT(2);
+   FAR_EMU_SYNC();
+   auto issue = [&](uint32_t chunk, uint32_t buf) {
+@@ -43,8 +46,11 @@
+         }();
+         const auto* source = reinterpret_cast<const uint4*>(
+             params.ckv + static_cast<int64_t>(page) * ROW);
+-        cp_async::load_128b<PrefetchMode::kNoPrefetch>(buffer + buf * CHUNK_VECS + v,
+-                                                       source + v % VECS_PER_ROW);
++        const uint32_t destination = static_cast<uint32_t>(
++            __cvta_generic_to_shared(buffer + buf * CHUNK_VECS + v));
++        asm volatile("cp.async.cg.shared.global.L2::cache_hint [%0], [%1], 16, %2;"
++                     :: "r"(destination), "l"(source + v % VECS_PER_ROW),
++                        "l"(stream_source_policy));
+       }
+     }
+     FAR_EMU_TILE(2, buf, tid == 0 ? min(rows, count - chunk * rows) : 0, ROW * sizeof(DTypeKV));

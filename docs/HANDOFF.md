@@ -1,8 +1,10 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-01 18:17 CPE生产保持；resident/near排序已拒绝，远端源evict-first提示验证中，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-01 18:36 已按轻量迭代偏好保留远端源evict-first，当前生产48c2a724，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
+
+**最新用户约束（2026-11-01 18:32）："每次不用验证这么多，确认机制有效、在不断优化就行"。** 后续迭代优先实现与少量有针对性的正确性、关键场景同参数对照；不再为每个候选重复105+stress全套、全部sanitizer、双顺序五pass和156格矩阵。已有验证可复用；发现具体疑点才补针对性检查。有效信号可先保留为当前优化，明确未覆盖范围，持续推进；不要把本文件旧全面门槛机械套成每轮必做或据此询问许可。单kernel、数学/LRU/载荷正确、真实计时和不改模拟器/参考仍保持。
 
 持续优化 FlashInfer 的远端 KV sparse MLA decode **单 cooperative kernel**，融合跨query去重、跨步LRU、远端读取、attention及结果合并。在指定带宽/延迟下显著优于正确的先搬后算Memcpy，尽量接近逐步`max(纯device计算, 必需远端搬运)`的完美重叠参考；低远端流量时尽量接近纯device。
 
@@ -13,6 +15,14 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**当前生产为SS实测原件，SHA=`48c2a724548c2ac554400b26592a1212e159cd279cd1a48da191b5139cd86f73`，已保留。** SS=`temp/glm_trace/tune_stream_source_20261101/`，直接基线为已保留CPEa436；原CPE冻结为SS/base.cuh，不要回退。唯一机制为dedicated fetch去重far-source cp.async的L2 evict_first固定fraction1.0提示，attention/staging/cachestore/元数据策略及数学/精确LRU/实际字节/FAR模型/ready/claim/barrier完全保持；九个attentionhelper逐字等价、fetch_policy.diff隔离两处hint设置/调用。实际三构建各36条带desc的LDGSTS，描述符高字0x12f00000/低0，非动态cache命中或因果份额。原38EMU/76normal实例全部指令/资源/机器字与控制字相同；新REG255/EMU STACK8/normalBF16FP16 STACK0/static2304/LOCAL0、实际单108CTA/256thread/dynamic147968/active1 Graph。115项数值/全载荷/LSE/Graph测试和首BF16/K97三sanitizer均通过。
+
+SS关键对照GPU3/NUMA1/MTP8R128/LRU4096/f24off，短256×3：100GB0/20快0.416%/0.128%，50GB慢0.021%；完整1024×5反向100GB0/20 **3478.936→3455.752、3509.139→3481.059µs（+0.666%/+0.800%）**，正向 **3480.251→3463.062、3500.221→3486.115（+0.494%/+0.403%）**，50GB两序快0.015%/0.080%。正常HBM3247.563→3236.062（+0.354%）、真实PCIe9967.752→9951.293（+0.165%）。22格/11配对、两参考/全部正负差/实际miss/命中/逐步逐pass/guard/源码与binary SHA保存，[SS报告](mla_host_a100_stream_source_20261101.md)。GPU3同卡独立far HBM不是NVLink；没有本轮SS SXM/H800结论，不拼不同时轮CPE/JQ绝对时间。
+
+**18:32用户明确要求减少逐轮验证后，停止SS尚在等待的CPU矩阵父58746/PID3545628，terminal143；当时无子进程、无矩阵/SXM启动，没有信号给GPU任务或他人。** scope_change.json及原state保存；已经进行的native对照自然完成。原验证55492和完整确认64042均terminal0，compile19576/test83290/stress45910亦terminal0。按新偏好，用已有115测试/38-76等价/实际路径/关键完整两序与native证据保留**逐字节实测48c2头**，focused_retention冻结原件并绑定安装SHA；没有重复新生产root编译/整套测试、没有156矩阵/SXM。这个局部改进可继续迭代，不能再机械套旧全面门槛。所有SS runner已结束，详continuation。canonical math34af、模拟器5e409、原5304矩阵e3fd保持；整体目标未完成。
+
+**后续默认：每机制用针对性正确性和少数关键新旧对照，复用既有证据，发现疑点才增测；不再逐轮105+stress/三san/full两序五pass/156矩阵。** 本文下方及旧runner的全面验证要求是历史，不得据此增加新用户未要求的大验证流程或反复询问。当前未发现待处理GPU故障，无需重启任何LO/SS/SP旧runner。
 
 **新LO=`temp/glm_trace/tune_local_order_20261101/`已实现并拒绝，生产CPEa436不变。** 头7f891959…0d6d1，只在原CPE大cached fully-staged且1<maxK≤2048派发新typed实例。whole-row item成功claim后、load_q前，用动态shared做resident/near尾部bitonic排序；miss前缀和prepare/resolve/LRU准入/淘汰/fetch/flags/payload/grid协议全部原样。query的KV多重集合保持，在线FP32/P量化分组随顺序改变，不声称逐位相同。原38EMU/76normal指令/资源/全部机器字及控制字相同；新REG255/STACK8/static2304/LOCAL0、dynamic147968/108CTA/256thread/active1。正常105+12=117项通过（新增K129逐行解码全部remap multiset/重复页/padding/尾部有序/命中槽保护/全部cache载荷/LSE/Graph），实际新单kernel和首BF16/K97三sanitizer均通过。
 

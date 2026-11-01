@@ -1,0 +1,11 @@
+# Streaming far-source cache priority
+
+Current status: retained as exact tested48c2a724 bytes under the user's focused iteration preference. Full key100GB pairs improved0.403%–0.800%; nativeHBM improved0.354%, PCIe0.165%. Existing115tests, original38/76 code identities, actual Graph and sanitizer evidence were reused. `focused_retention.json` freezes evidence and binds the installed header; no broad matrix/SXM or repeated fresh root compilation/tests were run. All producer handles are terminal; see continuation_state.
+
+User scope update18:32: use focused correctness and a few matched key comparisons per iteration; do not repeat full suites and broad matrices for every mechanism. The waiting CPU-only extension parent58746/PID3545628 was stopped before any child/matrix launched; `scope_change.json` and the preserved prior state record this. The already-running native pair finishes normally. Existing larger evidence remains valid, but no156matrix/SXM claim is made. This explicit preference supersedes older exhaustive-gate prose below.
+
+Only the dedicated fetch cp.async gets a fixed L2 evict-first policy for the deduplicated source lines. Attention mathematics, actual payload bytes, LRU, staging/cache writes, commit/wait/barriers, readiness and FAR hooks remain unchanged. `cache_policy_review.md` cites the NVIDIA PTX specification; policy hints do not imply measured cache behavior.
+
+`source_review.json` verifies nine attention helpers literally after name normalization. `fetch_policy.diff` isolates the only fetch edits. `cache_hint_codegen_preflight.json` records actual descriptor loads and resources for EMU/BF16/FP16. The original38/76 kernels remain fully identical. Core105+stress10 tests, actual Graph and first-match sanitizers gate the fixed short screen. `confirmation_state.json` tracks the sole original full reverse/forward/native producer; inspect it and actual PIDs before any restart.
+
+All positive/negative raw timings, two references, real misses/hit rates, per-step/per-pass and SHA bindings are preserved. GPU3 far HBM is not NVLink. Older exhaustive-gate instructions in original runner snapshots predate the explicit user preference; they are not prerequisites for every subsequent iteration. See [the report](../../../docs/mla_host_a100_stream_source_20261101.md).

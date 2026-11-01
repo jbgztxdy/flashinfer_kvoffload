@@ -1,0 +1,175 @@
+{
+  "pid": 3521307,
+  "start": "2026-11-01T18:20:21+0800",
+  "phase": "short_screen_complete",
+  "complete": true,
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_stream_source_20261101/compiler.py"
+      ],
+      "log": "compiler.log",
+      "start": "2026-11-01T18:23:01+0800",
+      "pid": 3526842,
+      "exit_code": 0,
+      "end": "2026-11-01T18:23:29+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_stream_source_20261101/compiler.py",
+        "--normal"
+      ],
+      "log": "compiler_normal.log",
+      "start": "2026-11-01T18:23:29+0800",
+      "pid": 3528020,
+      "exit_code": 0,
+      "end": "2026-11-01T18:24:20+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_stream_source_20261101/probe_stream_source.py"
+      ],
+      "log": "probe_stream_source.log",
+      "start": "2026-11-01T18:24:20+0800",
+      "pid": 3529727,
+      "exit_code": 0,
+      "end": "2026-11-01T18:24:24+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "synccheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLAStreamSourceKernel",
+        "--launch-count",
+        "1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_stream_source_20261101/probe_stream_source.py"
+      ],
+      "log": "synccheck_stream_source.log",
+      "start": "2026-11-01T18:24:24+0800",
+      "pid": 3529891,
+      "exit_code": 0,
+      "end": "2026-11-01T18:24:41+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "racecheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLAStreamSourceKernel",
+        "--launch-count",
+        "1",
+        "--racecheck-num-workers",
+        "8",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_stream_source_20261101/probe_stream_source.py"
+      ],
+      "log": "racecheck_stream_source.log",
+      "start": "2026-11-01T18:24:41+0800",
+      "pid": 3530582,
+      "exit_code": 0,
+      "end": "2026-11-01T18:24:57+0800"
+    },
+    {
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/usr/local/cuda-13.1/bin/compute-sanitizer",
+        "--tool",
+        "memcheck",
+        "--launch-timeout",
+        "0",
+        "--error-exitcode",
+        "86",
+        "--kernel-name",
+        "regex=BatchMLAStreamSourceKernel",
+        "--launch-count",
+        "1",
+        "--report-api-errors",
+        "no",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_stream_source_20261101/probe_stream_source.py"
+      ],
+      "log": "memcheck_stream_source.log",
+      "start": "2026-11-01T18:24:57+0800",
+      "pid": 3531253,
+      "exit_code": 0,
+      "end": "2026-11-01T18:25:02+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_stream_source_20261101/screen.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "stream_source",
+        "--variants",
+        "base",
+        "stream_source",
+        "--settings",
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--tag",
+        "streamsource256_f24_"
+      ],
+      "log": "screen_gpu3.log",
+      "start": "2026-11-01T18:25:02+0800",
+      "pid": 3531462,
+      "exit_code": 0,
+      "end": "2026-11-01T18:26:35+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_stream_source_20261101/audit_performance.py"
+      ],
+      "log": "audit_performance.log",
+      "start": "2026-11-01T18:26:35+0800",
+      "pid": 3534837,
+      "exit_code": 0,
+      "end": "2026-11-01T18:26:35+0800"
+    }
+  ],
+  "end": "2026-11-01T18:26:35+0800"
+}

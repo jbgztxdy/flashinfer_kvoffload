@@ -1,0 +1,53 @@
+{
+  "recorded_at": "2026-11-01T18:26:43+0800",
+  "base_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "candidate_sha256": "48c2a724548c2ac554400b26592a1212e159cd279cd1a48da191b5139cd86f73",
+  "short_audit_sha256": "f91727ca2a2cf160eb1d718d2b2e75b2cc5bee280b84f298e8a741b7e2c7349e",
+  "gate": "Both100GB short reductions>0; every setting>=-1%. Full confirmation same rule. No installation.",
+  "positions": 1024,
+  "passes": 5,
+  "mtp": 8,
+  "requests": 128,
+  "fetch_ctas": 24,
+  "host_split": "off",
+  "tasks": [
+    {
+      "tag": "streamsource_reverse1024_f24_",
+      "variants": [
+        "stream_source",
+        "base"
+      ],
+      "settings": [
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ],
+      "native": false
+    },
+    {
+      "tag": "streamsource_forward1024_f24_",
+      "variants": [
+        "base",
+        "stream_source"
+      ],
+      "settings": [
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000"
+      ],
+      "native": false
+    },
+    {
+      "tag": "streamsource_native1024_f24_",
+      "variants": [
+        "base",
+        "stream_source"
+      ],
+      "settings": [
+        "native_hbm",
+        "pcie"
+      ],
+      "native": true
+    }
+  ]
+}

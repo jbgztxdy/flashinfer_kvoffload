@@ -1,0 +1,95 @@
+{
+  "comparison_base": "ProductionCPEa436",
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "pairs": [
+    {
+      "hardware": "GPU3",
+      "cohort": "streamsource256_f24_",
+      "variant": "stream_source",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l0",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3419.3066706260047,
+      "new_us": 3405.0986717144647,
+      "reduction": 0.004155228027247659,
+      "old_raw": "temp/glm_trace/tune_stream_source_20261101/gpu3/raw/streamsource256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_stream_source_20261101/gpu3/raw/streamsource256_f24_stream_source_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "memcpy_us": 6075.6799678007765,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.7213211410967,
+      "over_reference": 0.26127783821599215
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "streamsource256_f24_",
+      "variant": "stream_source",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3434.6026654044786,
+      "new_us": 3430.218661824862,
+      "reduction": 0.0012764223424662768,
+      "old_raw": "temp/glm_trace/tune_stream_source_20261101/gpu3/raw/streamsource256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_stream_source_20261101/gpu3/raw/streamsource256_f24_stream_source_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "memcpy_us": 6098.5706597566605,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.8690411410967,
+      "over_reference": 0.2705129802796227
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "streamsource256_f24_",
+      "variant": "stream_source",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g50_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 5268.93866310517,
+      "new_us": 5270.0479850173,
+      "reduction": -0.00021053991763042568,
+      "old_raw": "temp/glm_trace/tune_stream_source_20261101/gpu3/raw/streamsource256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_stream_source_20261101/gpu3/raw/streamsource256_f24_stream_source_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "memcpy_us": 8484.511996308962,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.88464,
+      "over_reference": 0.0625343868919701
+    }
+  ],
+  "tests": [
+    {
+      "variant": "stream_source",
+      "tests": 105,
+      "sha256": "c747aed08f7867b3f0a1d944d74dcf5971a9ed2749aa9cdb234d112e815d95a3"
+    }
+  ],
+  "stress_tests": [
+    {
+      "variant": "stream_source",
+      "tests": 10,
+      "sha256": "fe4de56d41b2835c3ec361afce50bc8d459c32e11709962b5b1f684d4d0bf602",
+      "scope": "BF16/FP16 longK2048/63tileodd-tail,128pools,capacity512/4096,empty/single/padding,LSE/fullcachepayload/Graph;K65QPEstride80;crossCTAidentical97pages/disjoint2048pages andclaimclearacrosslaunches"
+    }
+  ],
+  "pending_references": [],
+  "pending_reference_pairs": [],
+  "timed_launches": 1152,
+  "accepted_segments": 72,
+  "incomplete": [],
+  "production_header_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "original_matrix_sha256": "e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99"
+}

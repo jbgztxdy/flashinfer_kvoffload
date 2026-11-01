@@ -1,0 +1,161 @@
+{
+  "pid": 3521344,
+  "start": "2026-11-01T18:20:22+0800",
+  "phase": "local_confirmation_complete",
+  "complete": true,
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "steps": [
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_stream_source_20261101/screen.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "stream_source",
+        "--variants",
+        "stream_source",
+        "base",
+        "--positions",
+        "1024",
+        "--passes",
+        "5",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--settings",
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000",
+        "--tag",
+        "streamsource_reverse1024_f24_"
+      ],
+      "log": "streamsource_reverse1024_f24_screen.log",
+      "start": "2026-11-01T18:26:43+0800",
+      "pid": 3535141,
+      "exit_code": 0,
+      "end": "2026-11-01T18:28:16+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_stream_source_20261101/audit_performance.py"
+      ],
+      "log": "audit_confirmation.log",
+      "start": "2026-11-01T18:28:16+0800",
+      "pid": 3538236,
+      "exit_code": 0,
+      "end": "2026-11-01T18:28:16+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_stream_source_20261101/screen.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "stream_source",
+        "--variants",
+        "base",
+        "stream_source",
+        "--positions",
+        "1024",
+        "--passes",
+        "5",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--settings",
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000",
+        "--tag",
+        "streamsource_forward1024_f24_"
+      ],
+      "log": "streamsource_forward1024_f24_screen.log",
+      "start": "2026-11-01T18:28:16+0800",
+      "pid": 3538237,
+      "exit_code": 0,
+      "end": "2026-11-01T18:30:48+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_stream_source_20261101/audit_performance.py"
+      ],
+      "log": "audit_confirmation.log",
+      "start": "2026-11-01T18:30:48+0800",
+      "pid": 3543528,
+      "exit_code": 0,
+      "end": "2026-11-01T18:30:49+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_stream_source_20261101/screen.py",
+        "--hardware",
+        "gpu3",
+        "--candidate",
+        "stream_source",
+        "--variants",
+        "base",
+        "stream_source",
+        "--positions",
+        "1024",
+        "--passes",
+        "5",
+        "--requests",
+        "128",
+        "--mtp",
+        "8",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--settings",
+        "native_hbm",
+        "pcie",
+        "--tag",
+        "streamsource_native1024_f24_",
+        "--native"
+      ],
+      "log": "streamsource_native1024_f24_screen.log",
+      "start": "2026-11-01T18:30:49+0800",
+      "pid": 3543537,
+      "exit_code": 0,
+      "end": "2026-11-01T18:34:38+0800"
+    },
+    {
+      "command": [
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_stream_source_20261101/audit_performance.py"
+      ],
+      "log": "audit_confirmation.log",
+      "start": "2026-11-01T18:34:38+0800",
+      "pid": 3551705,
+      "exit_code": 0,
+      "end": "2026-11-01T18:34:39+0800"
+    }
+  ],
+  "last_observation": "2026-11-01T18:26:23+0800",
+  "original_phase": "fixed_short_screen",
+  "original_pid": 3521307,
+  "end": "2026-11-01T18:34:39+0800",
+  "remaining": [
+    "Full156 matrix, actualNVLink/SXM confirmations and negativecontrols required before any retention."
+  ]
+}

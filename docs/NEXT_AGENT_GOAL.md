@@ -1,5 +1,7 @@
 接手 `/mnt/data/rtx/projects/flashinfer` 的远端KV sparse MLA单kernel持续优化。先完整阅读 `docs/HANDOFF.md`，按引用检查未提交源码、实验数据、已完成阶段诊断和H800队列，再自主推进，不要只给计划或重复已完成实验。
 
+最新用户偏好优先：**“每次不用验证这么多，确认机制有效、在不断优化就行。”** 后续每个机制用针对性正确性检查和少量关键场景同参数新旧对照判断；复用已有验证，不再逐轮重复全套pytest、三sanitizer、完整双顺序五pass和156矩阵。发现具体疑点才补专项检查。可先保留有证据的局部改进、明确未覆盖范围并持续迭代，不因旧全面验证门槛停下来。下面早期状态是历史，当前生产SHA/进程/结果以HANDOFF及实际状态为准。
+
 目标：保持单cooperative kernel、数学计算与LRU语义正确，使kernel在小/中/大batch、MTP1/8、有/无LRU、50/100 GB/s及0–20µs延迟、物理PCIe/NVLink下都表现更好，显著优于正确Memcpy基线，并持续缩小到纯device及逐步max(计算,unique搬运)重叠参考的差距。当前100GB大batch仍高参考约32%–34%，目标尚未达成。
 
 继续当前dirty工作区，不要只checkout HEAD：上一轮整行优化、103项测试和报告尚未提交。`temp/glm_trace/tune_general_20261031/`的三组阶段诊断已完成；本机没有本项目GPU任务留跑，状态仍需复查。基于诊断实现候选，用独立include/JIT隔离，在同参数新旧对照、完整trace冷启动多pass、正确CUDA计时及跨场景回归后保留有效改进。记录缓存命中率、每步/每pass、两参考、源码SHA、失败和更慢格子，更新自包含Markdown及可复现审计，只提交本任务文件。
