@@ -1,0 +1,303 @@
+{
+  "comparison_base": "ProductionCPEa436",
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "rows": [
+    {
+      "hardware": "GPU3",
+      "cohort": "localorder256_f24_",
+      "variant": "base",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g100_l0",
+      "ours_us": 3411.5839997927346,
+      "memcpy_us": 6067.829325795174,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.761401141097,
+      "over_reference": 0.2636612992358416,
+      "reference_hit_rate": 0.7673295604164292,
+      "unique_miss_MB": 247.9452,
+      "pass_mean_us": [
+        3377.887986600399,
+        3412.927992641926,
+        3443.9360201358795
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "localorder256_f24_",
+      "variant": "base",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g100_l20000",
+      "ours_us": 3419.4666668772697,
+      "memcpy_us": 6083.722646037738,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.8899211410967,
+      "over_reference": 0.2665207718661533,
+      "reference_hit_rate": 0.7672803880824709,
+      "unique_miss_MB": 247.975104,
+      "pass_mean_us": [
+        3403.2960012555122,
+        3385.471999645233,
+        3469.631999731064
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "localorder256_f24_",
+      "variant": "base",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g50_l20000",
+      "ours_us": 5269.845334192117,
+      "memcpy_us": 8484.640007217726,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.63,
+      "over_reference": 0.06254808003663914,
+      "reference_hit_rate": 0.7672564454543748,
+      "unique_miss_MB": 247.9815,
+      "pass_mean_us": [
+        5269.407972693443,
+        5267.616033554077,
+        5272.511996328831
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "localorder256_f24_",
+      "variant": "local_order",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g100_l0",
+      "ours_us": 3883.040008445581,
+      "memcpy_us": 6058.026646574338,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.6723611410966,
+      "over_reference": 0.43833750507572655,
+      "reference_hit_rate": 0.7673982376933675,
+      "unique_miss_MB": 247.926408,
+      "pass_mean_us": [
+        3850.432001054287,
+        3893.9520120620728,
+        3904.7360122203827
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_local_order_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "7f891959e2da8d2307dd10eb3b36b96506fbf524509629a3c27557cf0d20d6d1"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "localorder256_f24_",
+      "variant": "local_order",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g100_l20000",
+      "ours_us": 3903.8506597280502,
+      "memcpy_us": 6072.480008006096,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.9333611410966,
+      "over_reference": 0.445906301212609,
+      "reference_hit_rate": 0.7673011950114536,
+      "unique_miss_MB": 247.965108,
+      "pass_mean_us": [
+        3870.8799928426743,
+        3897.375985980034,
+        3943.2960003614426
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_local_order_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "7f891959e2da8d2307dd10eb3b36b96506fbf524509629a3c27557cf0d20d6d1"
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "localorder256_f24_",
+      "variant": "local_order",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g50_l20000",
+      "ours_us": 5283.7120071053505,
+      "memcpy_us": 8485.301295916239,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.87648,
+      "over_reference": 0.06529104674504937,
+      "reference_hit_rate": 0.767234217273496,
+      "unique_miss_MB": 247.993824,
+      "pass_mean_us": [
+        5287.136010825634,
+        5280.0000086426735,
+        5284.000001847744
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_local_order_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+      "header_sha256": "7f891959e2da8d2307dd10eb3b36b96506fbf524509629a3c27557cf0d20d6d1"
+    }
+  ],
+  "pairs": [
+    {
+      "hardware": "GPU3",
+      "cohort": "localorder256_f24_",
+      "variant": "local_order",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l0",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3411.5839997927346,
+      "new_us": 3883.040008445581,
+      "reduction": -0.13819270130282257,
+      "old_raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_local_order_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "memcpy_us": 6058.026646574338,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.6723611410966,
+      "over_reference": 0.43833750507572655
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "localorder256_f24_",
+      "variant": "local_order",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3419.4666668772697,
+      "new_us": 3903.8506597280502,
+      "reduction": -0.14165483686177605,
+      "old_raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_local_order_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "memcpy_us": 6072.480008006096,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.9333611410966,
+      "over_reference": 0.445906301212609
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "localorder256_f24_",
+      "variant": "local_order",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g50_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 5269.845334192117,
+      "new_us": 5283.7120071053505,
+      "reduction": -0.002631324457145423,
+      "old_raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_local_order_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "memcpy_us": 8485.301295916239,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.87648,
+      "over_reference": 0.06529104674504937
+    }
+  ],
+  "tests": [
+    {
+      "variant": "local_order",
+      "tests": 105,
+      "sha256": "4930cba4a8c7b46723ace8466ec3dde10126224711374fea1f9e993627fabc27"
+    }
+  ],
+  "stress_tests": [
+    {
+      "variant": "local_order",
+      "tests": 12,
+      "sha256": "9092d7a2b6cd3eb9300e53bc2efb9493bec139e119eef20b7fd338d3f17151a3",
+      "scope": "BF16/FP16 longK2048/63tileodd-tail,128pools,capacity512/4096,empty/single/padding,LSE/fullcachepayload/Graph;K65QPEstride80;crossCTAidentical97pages/disjoint2048pages andclaimclearacrosslaunches;raggedpools/K256;K129decode/multiset/sort/protectedhits"
+    }
+  ],
+  "pending_references": [],
+  "pending_reference_pairs": [],
+  "timed_launches": 1152,
+  "accepted_segments": 72,
+  "files": [
+    {
+      "path": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "68d0c501eb370ed8806da78906945aa993db3ad0aff0a753c1fcfdc3e7dc1c72"
+    },
+    {
+      "path": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "92623235f1184bf07882fa76586743c5e3bcde8de9c3fffbd2ed5b2fcadc53f0"
+    },
+    {
+      "path": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "sha256": "309a47c072db3d5156ca40832dd836dcb30a32ad65c224eade4d051a42ae24b2"
+    },
+    {
+      "path": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_local_order_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "1141907413e6fcdb56c1bbb5f1b086044ce891a5dc516965aa5efc76520203fb"
+    },
+    {
+      "path": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_local_order_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "aa28ff60731347497c7eaecd342c5e7521fc303f78a8c229f37ab99a75a4986e"
+    },
+    {
+      "path": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_local_order_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "sha256": "8d7ade7dacbd8d4a18338cdbed2112509988194c8bbd7a012753fe34a9f9205a"
+    }
+  ],
+  "incomplete": [],
+  "production_header_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "original_matrix_sha256": "e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99"
+}

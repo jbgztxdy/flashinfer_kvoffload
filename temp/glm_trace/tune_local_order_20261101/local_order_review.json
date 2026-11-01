@@ -1,0 +1,76 @@
+{
+  "complete": true,
+  "timestamp": "2026-11-01T18:03:49+0800",
+  "performance_claim": false,
+  "header_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "source_sha256": "f98b5609e80aff98e2e1e5314e34339c705dafc5a4c6ea77656e4949a4034ee7",
+  "raw_sha256": "45370c65631c870b0c7ae8cb267ff0de9ca92f55db6c6f2c32e83226a9878efb",
+  "physical_gpu": 3,
+  "hardware": "A100-PCIE NUMA1, independent same-card farHBM; not NVLink",
+  "resources_start": {
+    "timestamp": "2026-11-01T18:03:44+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "resources_end": {
+    "timestamp": "2026-11-01T18:03:49+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 23933,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": false
+  },
+  "steps": 16,
+  "snapshots": [
+    0,
+    7,
+    15
+  ],
+  "sample_requests": [
+    0,
+    8,
+    16,
+    24,
+    32,
+    40,
+    48,
+    56,
+    64,
+    72,
+    80,
+    88,
+    96,
+    104,
+    112,
+    120
+  ],
+  "summary": {
+    "original": {
+      "references": 389557,
+      "window_unique_pages": 366714,
+      "windows": 1790
+    },
+    "sorted": {
+      "references": 389557,
+      "window_unique_pages": 261335,
+      "windows": 1790
+    }
+  },
+  "relative_window_footprint_reduction": 0.2873601771407691,
+  "limitation": "Actual CPE remap, real trace and full cache payload checked. Aligned32row windows across8queries are a locality proxy, not measured cache transactions, misses, stall, concurrency or latency. Sorting cost and numerical grouping require a new candidate."
+}

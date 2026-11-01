@@ -1,0 +1,11 @@
+{
+  "base_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "candidate_sha256": "7f891959e2da8d2307dd10eb3b36b96506fbf524509629a3c27557cf0d20d6d1",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "mechanism": "The sole claiming whole-row attention CTA bitonic-sorts only resident/near suffix by signed physical row index, using pre-query dynamic shared memory; miss prefix untouched.",
+  "invariants": "Original prepare, resolve, LRU admission/victim selection, farfetch, cache payload, flags, claims and grid synchronization are literal unchanged. Same query and KV multiset; online FP32 grouping changes after permutation.",
+  "scope": "Original large cached fully-staged CPE dispatch plus1<maxK<=2048; same256threads108CTA/32KV2stage/147968B/f24; all original definitions kept.",
+  "costs": "Per-item sorting, up to66 CTA comparison phases at2048 plus load/store barriers, global suffix write/reread. Locality proxy not a speedup; resources, numerical error and measured cost must decide."
+}

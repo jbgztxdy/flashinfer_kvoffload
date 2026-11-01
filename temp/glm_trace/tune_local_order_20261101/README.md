@@ -1,0 +1,11 @@
+# Resident/near suffix ordering
+
+Final status: rejected. The locality proxy improved28.736%, but the fixed GPU3 short screen regressed13.819%/14.165% at100GB0/20us and0.263% at50GB20us. All117 tests, original38/76 full word/resource identities, actual single-kernel Graph and three sanitizers passed. Both original screen/confirmation producers are terminal0; no full/native/SXM expansion or sorting parameter scan. Complete decisions/checkpoint/continuation and all raw timings are preserved.
+
+This isolated candidate starts from retained production CPEa436 and is not adopted. The sole CTA claiming each whole-row item sorts only its resident/near suffix before loading query/KV data. The miss prefix and all prepare, LRU, fetch, payload and grid protocols remain unchanged. KV multiplicity remains exact; online numerical order changes. Sorting costs and actual timings must decide whether aligned physical page order helps.
+
+`manifest.json` binds the candidate/source scope. `local_order_review.json` and compressed actual CPE remap snapshots record a locality proxy on real trace, with sampled output and all active cache payloads checked. The proxy is not measured cache transactions or performance. `source_review.json` verifies eight attention helpers after normalizing names/removing the sort call, and six unchanged prepare/LRU/fetch/address helpers. `reused_cached_pe_control.json` binds existing baseline evidence without counting its tests again.
+
+The new branch additionally requires1<maxK<=2048; original kernels and dispatch remain available. Private include/JIT trees preserve the production header. Core105 and additional12 tests include full-row decoded multiset/order invariants, duplicate pages, padding, LSE, protected hits, all cache payloads, Graph and long queues. Old38/76 kernel identity, actual Graph and sanitizer gates precede performance. The fixed short screen can trigger full reverse/forward/native confirmation only after both100GB cases improve; it never installs a candidate.
+
+Inspect `validation_state.json`, `confirmation_state.json` and actual producer PIDs before any restart. Preserve all raw timings, positive/negative comparisons and failures. The root header, canonical math, simulator and original5304 matrix remain unchanged. See [the report](../../../docs/mla_host_a100_local_order_20261101.md).

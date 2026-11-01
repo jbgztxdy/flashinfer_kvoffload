@@ -1,0 +1,20 @@
+{
+  "recorded_at": "2026-11-01T18:20:23+0800",
+  "status": "rejected_short_screen",
+  "candidate_adopted": false,
+  "goal_complete": false,
+  "audit_sha256": "47fc399e2eb2e452dec5f0583faa05afb57e5230ed2d9b2fb177ecfe858bd27e",
+  "rows": 6,
+  "pairs": 3,
+  "tests": 117,
+  "timed_launches": 1152,
+  "accepted_segments": 72,
+  "reduction_percent": {
+    "g100_l0": -13.819270130282257,
+    "g100_l20000": -14.165483686177605,
+    "g50_l20000": -0.2631324457145423
+  },
+  "locality_proxy_reduction": 0.2873601771407691,
+  "interpretation": "BetterCPUwindowlocalityproxy didnottranslate tokernelperformance; actualsorting/globalwrite/barriers and changednumericalorder remain costs, not isolatedcausalshares.",
+  "no_expansion": "No fulltrace/native/SXM/matrix or sortingparameter scan."
+}

@@ -1,0 +1,96 @@
+PROGRESS_CHECKPOINT_VERIFIED 117 []
+{
+  "comparison_base": "ProductionCPEa436",
+  "goal_complete": false,
+  "candidate_adopted": false,
+  "pairs": [
+    {
+      "hardware": "GPU3",
+      "cohort": "localorder256_f24_",
+      "variant": "local_order",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l0",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3411.5839997927346,
+      "new_us": 3883.040008445581,
+      "reduction": -0.13819270130282257,
+      "old_raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_local_order_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "memcpy_us": 6058.026646574338,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.6723611410966,
+      "over_reference": 0.43833750507572655
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "localorder256_f24_",
+      "variant": "local_order",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3419.4666668772697,
+      "new_us": 3903.8506597280502,
+      "reduction": -0.14165483686177605,
+      "old_raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_local_order_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "memcpy_us": 6072.480008006096,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.9333611410966,
+      "over_reference": 0.445906301212609
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "localorder256_f24_",
+      "variant": "local_order",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g50_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 5269.845334192117,
+      "new_us": 5283.7120071053505,
+      "reduction": -0.002631324457145423,
+      "old_raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_local_order_20261101/gpu3/raw/localorder256_f24_local_order_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "memcpy_us": 8485.301295916239,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.87648,
+      "over_reference": 0.06529104674504937
+    }
+  ],
+  "tests": [
+    {
+      "variant": "local_order",
+      "tests": 105,
+      "sha256": "4930cba4a8c7b46723ace8466ec3dde10126224711374fea1f9e993627fabc27"
+    }
+  ],
+  "stress_tests": [
+    {
+      "variant": "local_order",
+      "tests": 12,
+      "sha256": "9092d7a2b6cd3eb9300e53bc2efb9493bec139e119eef20b7fd338d3f17151a3",
+      "scope": "BF16/FP16 longK2048/63tileodd-tail,128pools,capacity512/4096,empty/single/padding,LSE/fullcachepayload/Graph;K65QPEstride80;crossCTAidentical97pages/disjoint2048pages andclaimclearacrosslaunches;raggedpools/K256;K129decode/multiset/sort/protectedhits"
+    }
+  ],
+  "pending_references": [],
+  "pending_reference_pairs": [],
+  "timed_launches": 1152,
+  "accepted_segments": 72,
+  "incomplete": [],
+  "production_header_sha256": "a43617290e405fdcd54b09140dbc29b357d2923e17a3d99a193caf5f7d592b15",
+  "original_matrix_sha256": "e3fd023ef4f39adc0cf23146d665b1e8f7a4fbe17d7854c246c452ba2d679f99"
+}

@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-01 17:37 CPE已保留；稀疏staging融合prepare/resolve已验证拒绝，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-01 18:17 CPE生产保持；resident/near排序已拒绝，远端源evict-first提示验证中，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -13,6 +13,12 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**新LO=`temp/glm_trace/tune_local_order_20261101/`已实现并拒绝，生产CPEa436不变。** 头7f891959…0d6d1，只在原CPE大cached fully-staged且1<maxK≤2048派发新typed实例。whole-row item成功claim后、load_q前，用动态shared做resident/near尾部bitonic排序；miss前缀和prepare/resolve/LRU准入/淘汰/fetch/flags/payload/grid协议全部原样。query的KV多重集合保持，在线FP32/P量化分组随顺序改变，不声称逐位相同。原38EMU/76normal指令/资源/全部机器字及控制字相同；新REG255/STACK8/static2304/LOCAL0、dynamic147968/108CTA/256thread/active1。正常105+12=117项通过（新增K129逐行解码全部remap multiset/重复页/padding/尾部有序/命中槽保护/全部cache载荷/LSE/Graph），实际新单kernel和首BF16/K97三sanitizer均通过。
+
+LO实际CPE正常构建观测连续16epoch、MTP8R128/LRU4096，采样epoch0/7/15×每8请求中1个，共48组remap。output及全部有效cache载荷检查通过。原8query/32页对齐窗口的总页集合366714→261335（少28.736%），references389557保持；只是CPU局部性代理，非实测L2事务/命中/stall/性能。实际固定GPU3/NUMA1/CPE→LO/256位置×3冷pass/f24off：100GB0 **3411.584→3883.040µs（−13.819%）**、20 **3419.467→3903.851（−14.165%）**、50GB20 **5269.845→5283.712（−0.263%）**。排序/同步/global回写的组合未取得收益，不能据代理改善声称加速或精确归因开销份额。6格/3对/1152计时launch/72segment、两参考和全部正负raw保存，[LO报告](mla_host_a100_local_order_20261101.md)。handles5272/81111/1240/85028/63486/59927均实际terminal0，确认rejected_short_screen，不扩full/native/SXM、不扫排序数字。
+
+18:08 H800只读复查原五任务仍Priority/Dependency、两个原watcher活、AGENTS/MEMORY91b070/e3df236不变，无新提交/排队源写入。后继SS=`temp/glm_trace/tune_stream_source_20261101/`正在独立编译/验证，头48c2a724…86f73：仅给dedicated fetch的去重far-source cp.async加L2 evict_first hint，未改attention/staging/cache的策略或任何数学/LRU/FAR字节/同步/参数。原源页每launch去重后只读一次，attention读staging/cache，因此测试其cache污染假说；不预承诺收益。实际父/handle见该目录continuation和ps，不能从cachehint或静态代码推断改善。
 
 **新SP=`temp/glm_trace/tune_sparse_prepare_20261101/`已完成拒绝，生产仍CPEa436。** 冻结头f998f831…37ec，直接以当前CPE生产为基线。临时batch pool有从pool_row_start×maxK起始的有界稀疏staging区间，warp一次分配pool内rank，先发布自己全部8候选中的owner，再等待其他owner的物理slot；prepare直接写负staging索引。后续pool计数扫描替代遍历全部远端reference的resolve，dense fetchjob二分映射物理槽；保留原LRU/fetch重叠、shared→staging→cache双写、16/64行选择，不增workspace/kernel/grid barrier。派发额外要求maxK正且整除256，保证prepare_parts1/segment=maxK/区间对齐；其他原路径literal不变。stamp精确LRU选择及current-hit保护保持，但pool内miss admission顺序从row-rank变为warp到达，不宣称各次cache状态相同。
 

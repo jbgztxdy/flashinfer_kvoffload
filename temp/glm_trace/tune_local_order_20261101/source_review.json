@@ -1,0 +1,49 @@
+{
+  "cpu_only": true,
+  "candidate_sha256": "7f891959e2da8d2307dd10eb3b36b96506fbf524509629a3c27557cf0d20d6d1",
+  "attention_helpers_exact": [
+    {
+      "helper": "qk_pair_fragments",
+      "normalized_text_sha256": "55553b34ee6f85c80db5a965ed15b323863bcd692d75a793e82f6dbd7074f403"
+    },
+    {
+      "helper": "load_query",
+      "normalized_text_sha256": "191c599d75df76b55e3180e4e55bf88cb401efccf272f541fb9de3ba741602a1"
+    },
+    {
+      "helper": "compute_pe",
+      "normalized_text_sha256": "89755af0b9472b11b85ea48cbb7989004ac295cd544eec6f4a3f5021d7c1dcf2"
+    },
+    {
+      "helper": "compute_one",
+      "normalized_text_sha256": "3d7f5fc892c78855d782815a87fa1a1a2f2805b2b9c7afca2a7d73abd1a03026"
+    },
+    {
+      "helper": "compute_qk_pair",
+      "normalized_text_sha256": "58c591822519c73b7c160e5d02731e23255c6aa7bb9adaea2fba5d0d1b04b5f3"
+    },
+    {
+      "helper": "update_joint_host_mdo",
+      "normalized_text_sha256": "f2a51287061f03106b06f4c07a7d31e79de34110d0e4b18c019af038bd20c69f"
+    },
+    {
+      "helper": "attend_joint_host_tiles",
+      "normalized_text_sha256": "8cdb895bb4e2856a8f64f744fac1589bf961ed8179ef022a876a3d4d7e2bcd5a"
+    },
+    {
+      "helper": "run_joint_host_item",
+      "normalized_text_sha256": "46062f76d3aefbd6992b182bb8ee59efa0af7340737482932ee24624e65af6bf"
+    }
+  ],
+  "unchanged_helpers": [
+    "prepare_host_batch_rows",
+    "resolve_host_batch_slots",
+    "run_host_batch_lru",
+    "fetch_host_batch_pages",
+    "wait_host_batch_tile",
+    "resolve_host_batch_row"
+  ],
+  "lifetime": "Claim item ends in CTAbarrier; sortbeforevariant/init/load_q; sort shared region no longer used beforeoriginalcompute union; CTAbarrier beforethreadsread newremap. Eachrowwholeoneheadtileandclaimedonce, so no otherCTA reads thatrowremap concurrently.",
+  "policy": "Only local suffix permutes afterprepare/resolve; newmissprefix and alladmission/eviction/fetchmetadata remain unchanged. No claimthat separatelyscheduledpassesproduceidenticalcacheentries.",
+  "numeric": "Same KV multiset, but order changes onlineFP32 scaling/quantization grouping; compareoutput/LSEtofullmathreference."
+}
