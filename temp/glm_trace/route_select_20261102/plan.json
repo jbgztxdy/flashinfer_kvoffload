@@ -1,0 +1,184 @@
+[
+  {
+    "kind": "lru",
+    "requests": 16,
+    "native": true,
+    "route": "inplace",
+    "positions": 1024,
+    "passes": 3,
+    "settings": [
+      "nvlink"
+    ],
+    "fetch": 16,
+    "split": "on"
+  },
+  {
+    "kind": "lru",
+    "requests": 16,
+    "native": true,
+    "route": "staged",
+    "positions": 1024,
+    "passes": 3,
+    "settings": [
+      "nvlink"
+    ],
+    "fetch": 16,
+    "split": "on"
+  },
+  {
+    "kind": "lru",
+    "requests": 16,
+    "native": false,
+    "route": "inplace",
+    "positions": 1024,
+    "passes": 3,
+    "settings": [
+      "g100_l0",
+      "g100_l20000"
+    ],
+    "fetch": 16,
+    "split": "on"
+  },
+  {
+    "kind": "lru",
+    "requests": 16,
+    "native": false,
+    "route": "staged",
+    "positions": 1024,
+    "passes": 3,
+    "settings": [
+      "g100_l0",
+      "g100_l20000"
+    ],
+    "fetch": 16,
+    "split": "on"
+  },
+  {
+    "kind": "lru",
+    "requests": 128,
+    "native": true,
+    "route": "staged",
+    "positions": 1024,
+    "passes": 3,
+    "settings": [
+      "nvlink"
+    ],
+    "fetch": 24,
+    "split": "off"
+  },
+  {
+    "kind": "lru",
+    "requests": 128,
+    "native": true,
+    "route": "inplace",
+    "positions": 1024,
+    "passes": 3,
+    "settings": [
+      "nvlink"
+    ],
+    "fetch": 24,
+    "split": "off"
+  },
+  {
+    "kind": "lru",
+    "requests": 128,
+    "native": false,
+    "route": "staged",
+    "positions": 1024,
+    "passes": 3,
+    "settings": [
+      "g100_l0",
+      "g100_l20000"
+    ],
+    "fetch": 24,
+    "split": "off"
+  },
+  {
+    "kind": "lru",
+    "requests": 128,
+    "native": false,
+    "route": "inplace",
+    "positions": 1024,
+    "passes": 3,
+    "settings": [
+      "g100_l0",
+      "g100_l20000"
+    ],
+    "fetch": 24,
+    "split": "off"
+  },
+  {
+    "kind": "nocache",
+    "requests": 16,
+    "native": true,
+    "route": "staged",
+    "positions": 1024,
+    "passes": 3,
+    "settings": [
+      "nvlink"
+    ],
+    "fetch": 16,
+    "split": "on",
+    "fractions": [
+      0,
+      0.1,
+      0.3
+    ]
+  },
+  {
+    "kind": "nocache",
+    "requests": 16,
+    "native": true,
+    "route": "inplace",
+    "positions": 1024,
+    "passes": 3,
+    "settings": [
+      "nvlink"
+    ],
+    "fetch": 16,
+    "split": "on",
+    "fractions": [
+      0,
+      0.1,
+      0.3
+    ]
+  },
+  {
+    "kind": "nocache",
+    "requests": 16,
+    "native": false,
+    "route": "staged",
+    "positions": 1024,
+    "passes": 3,
+    "settings": [
+      "g100_l0",
+      "g100_l20000"
+    ],
+    "fetch": 16,
+    "split": "on",
+    "fractions": [
+      0,
+      0.1,
+      0.3
+    ]
+  },
+  {
+    "kind": "nocache",
+    "requests": 16,
+    "native": false,
+    "route": "inplace",
+    "positions": 1024,
+    "passes": 3,
+    "settings": [
+      "g100_l0",
+      "g100_l20000"
+    ],
+    "fetch": 16,
+    "split": "on",
+    "fractions": [
+      0,
+      0.1,
+      0.3
+    ]
+  }
+]

@@ -1,0 +1,84 @@
+{
+  "old_nvlink_case": {
+    "raw": "temp/glm_trace/results/a100_64k_assistant_20261029/peer_mtp8.json",
+    "sha256": "f5d37d2270e4d022394deaa2d85c077baf47f362aa7e0becabc53ad8a2adf58a",
+    "requests": 16,
+    "mtp": 8,
+    "capacity": 4096,
+    "positions": 1024,
+    "passes": 7,
+    "ours_inplace_allstep_sample_mean_us": 536.3051416352391,
+    "ours_inplace_last_half_median_mean_us": 531.4560011029243,
+    "floor_allstep_sample_mean_us": 499.2800021677145,
+    "floor_min_sample_us": 494.59201097488403,
+    "scope": "Historical7percent uses16requests,steady latterhalf and fastest-normal-compute reference. Not128requests and not same cohort as current."
+  },
+  "old_low_far_cases": [
+    {
+      "kind": "nocache",
+      "setting": "g100_l0",
+      "mtp": 8,
+      "requests": 16,
+      "host_fraction_target": 0.1,
+      "ours_mean_us": 569.5999960104624,
+      "local_mean_us": 501.9306739171346,
+      "ours_to_local_mean": 1.1348180647443347,
+      "raw": "temp/glm_trace/kernel_report_20261029/raw/nocache_g100_l0_mtp8_b16.json"
+    },
+    {
+      "kind": "nocache",
+      "setting": "g100_l0",
+      "mtp": 8,
+      "requests": 16,
+      "host_fraction_target": 0.3,
+      "ours_mean_us": 591.3600077231725,
+      "local_mean_us": 503.4666806459427,
+      "ours_to_local_mean": 1.1745762539130964,
+      "raw": "temp/glm_trace/kernel_report_20261029/raw/nocache_g100_l0_mtp8_b16.json"
+    },
+    {
+      "kind": "nocache",
+      "setting": "g100_l20000",
+      "mtp": 8,
+      "requests": 16,
+      "host_fraction_target": 0.1,
+      "ours_mean_us": 574.2079963286718,
+      "local_mean_us": 501.9306739171346,
+      "ours_to_local_mean": 1.143998616078741,
+      "raw": "temp/glm_trace/kernel_report_20261029/raw/nocache_g100_l20000_mtp8_b16.json"
+    },
+    {
+      "kind": "nocache",
+      "setting": "g100_l20000",
+      "mtp": 8,
+      "requests": 16,
+      "host_fraction_target": 0.3,
+      "ours_mean_us": 599.8933364947637,
+      "local_mean_us": 503.4666806459427,
+      "ours_to_local_mean": 1.1915253969241948,
+      "raw": "temp/glm_trace/kernel_report_20261029/raw/nocache_g100_l20000_mtp8_b16.json"
+    },
+    {
+      "kind": "nocache",
+      "setting": "nvlink",
+      "mtp": 8,
+      "requests": 16,
+      "host_fraction_target": 0.1,
+      "ours_mean_us": 512.4266644318899,
+      "local_mean_us": 501.9306739171346,
+      "ours_to_local_mean": 1.0209112354756946,
+      "raw": "temp/glm_trace/kernel_report_20261029/raw/nocache_nvlink_mtp8_b16.json"
+    },
+    {
+      "kind": "nocache",
+      "setting": "nvlink",
+      "mtp": 8,
+      "requests": 16,
+      "host_fraction_target": 0.3,
+      "ours_mean_us": 541.0986741383871,
+      "local_mean_us": 503.4666806459427,
+      "ours_to_local_mean": 1.0747457477109765,
+      "raw": "temp/glm_trace/kernel_report_20261029/raw/nocache_nvlink_mtp8_b16.json"
+    }
+  ]
+}

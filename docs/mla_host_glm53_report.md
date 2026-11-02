@@ -4,6 +4,8 @@
 
 **最新更新（11月2日）**：当前生产在远端源evict-first之上保留QK地址游标；GPU3/A100-PCIE同卡受限far、MTP8/128请求、LRU4096、完整1024位置×3冷pass同轮对照，100GB/s0/20µs快1.49%/1.28%，正常物理PCIe持平。按用户偏好采用定向验证，未重跑完整矩阵或新测SXM/H800，整体目标仍未完成；机制、失败候选及H800队列新结果见[11月2日报告](mla_host_a100_followup_20261102.md)，接手以[HANDOFF最新入口](HANDOFF.md)为准。图1–6及原5304格仍是原固定参数基准。
 
+**11月2日路由复核**：已按用户要求在当前754706f8源码上同轮比较staged/direct并择优，覆盖真实SXM NVLink、100GB0/20µs、MTP8/16与128请求LRU及16请求无LRU低远端比例。NVLink16请求LRU选direct、128请求LRU选staged；无LRU16请求远端10%–30%距参考约1.9%–7.2%（NVLink）和13.4%–18.8%（100GB），大128请求LRU仍差约22%–23%。完整路径/参考/正负格和启动前选择器见[路由择优报告](mla_host_route_selection_20261102.md)，不能用固定staged大batch的差距概括全场景。公共默认及CUDA源码保持，择优配置单列。
+
 ## 1. 工作成果与核心结论
 
 本阶段完成了远端 KV sparse MLA decode 的单 kernel 融合方案，将**跨 query 去重、跨步 LRU、远端取数、attention 计算及结果合并**放入同一次 cooperative kernel 启动。目标是在 KV 放到Host DRAM 或其他 GPU 后，尽量把传输隐藏在计算期间，减少相对纯 device 计算增加的耗时。

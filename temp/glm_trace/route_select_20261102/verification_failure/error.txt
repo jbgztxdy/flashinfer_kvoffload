@@ -1,0 +1,1 @@
+Initial standalone verify_selected failed before CUDA work while importing tests/attention/test_mla_host_batch.py: ModuleNotFoundError: No module named 'pytest'. No performance run failed. Repaired by extracting only the two existing fixture helper functions with ast, without importing pytest or installing dependencies.

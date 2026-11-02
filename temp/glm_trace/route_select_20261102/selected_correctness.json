@@ -1,0 +1,68 @@
+{
+  "timestamp": "2026-11-02T17:30:05+0800",
+  "complete": true,
+  "header_sha256": "754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79",
+  "resources_start": {
+    "timestamp": "2026-11-02T17:30:01+0800",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "resources_end": {
+    "timestamp": "2026-11-02T17:30:05+0800",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+        "used_mib": 681,
+        "total_mib": 40960,
+        "utilization": 16
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81",
+        "used_mib": 4,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": false
+  },
+  "cases": [
+    {
+      "requests": 16,
+      "mtp": 8,
+      "selected_route": "inplace",
+      "epochs": 3,
+      "graph_replays_per_epoch": 2,
+      "all_valid_cache_payloads_equal": true,
+      "output_lse_checked": true
+    },
+    {
+      "requests": 128,
+      "mtp": 8,
+      "selected_route": "staged",
+      "epochs": 3,
+      "graph_replays_per_epoch": 2,
+      "all_valid_cache_payloads_equal": true,
+      "output_lse_checked": true
+    }
+  ],
+  "scope": "Short97fixture validates selector/Graph/payload on homogeneous device memory, not physical NVLink performance or full4096capacity."
+}

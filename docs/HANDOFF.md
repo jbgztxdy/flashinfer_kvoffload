@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-02 15:25 QK地址游标已按轻量证据保留，当前生产754706f8；H800原host/peer均完成，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-02 17:34 当前源码staged/direct择优已完成，生产仍754706f8；真实SXM0/1对照，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -15,6 +15,14 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**最新路由核对：用户要求两条路径按场景择优，并追问历史接近参考的记录。** `temp/glm_trace/route_select_20261102/`已完成当前生产754706f8、SXM0/1真实NV12/NUMA0的30格/15对。源码及既有正常/EMU BF16库SHA都保持，只有host_stage开关；MTP8/h64/K2048，LRU16/128请求完整1024位置×3冷pass，另无LRU16请求四原快照×0/10%/30%×3pass，正常NVLink及100GB0/20µs。16请求f16/split on，128请求f24/off，不做参数扫描。
+
+择优结果：NVLink/R16/LRU4096 **direct557.725µs vs staged622.968，参考502.995，高10.88%**；NVLink/R128/LRU **staged3016.416 vs direct3335.189，参考2467.179，高22.26%**。当前大staged已有后续优化，不能再套旧“NVLink总选direct”。100GB0/20/R128/LRU均选staged3289.824/3306.973，距逐步参考22.24%/22.89%；R16/LRU仍差34.55%/40.37%，没有切路由就解决。R16无LRU远端10/30%，NVLink择优差1.87%/7.24%，100GB两延迟差13.38%–18.76%；0%负差控制也保留，不截断。原历史NVLink约7%是16请求、后半段steady与最快device样本参考，history_review.json绑定原件，不能拿它代表128请求LRU，也不把不同输入/配置/聚合口径直接当新旧回退。
+
+`select_route.py`+`selected_routes.json`已提供启动/warmup/Graph前按实测键配置host_stage/fetch/split的选择器，仅适用测过的硬件/形状/LRU/链路/比例，未覆盖明确报错。不在计时内做选择，不在线逐launch切换已活跃cache/Graph，不擅改公共wrapper默认或全局NVLink路由。短K97/容量128两选中路径各3轮、每轮Graph两次replay，采样output/LSE和全部有效cachepayload/映射通过；性能回放实际LRU4096且原miss/命中诊断/输出检查保持。首验证pytest导入缺失发生在GPU工作前，原失败源和错误说明保留，改为抽取两个既有fixture辅助函数后只补该项。
+
+9648计时launch/684段，全部逐步逐pass/慢路径/原始字节miss/源码SHA/两同硬件参考保留；15配置最小全样本均值是实测路由选择，不是新CUDA机制收益或普适最优承诺。原5304矩阵未改，未做整套pytest/sanitizer/大矩阵。原runner71476、首验证59366、修复56797均terminal（首验证1，其余0），无活动任务；GPU0/1此次空闲窗口已完成真实SXM验证，后续仍重新预检。生产仍754706f8，无CUDA改变。[当前择优报告](mla_host_route_selection_20261102.md)。整体大batch100GB约22%–23%当前SXM差距仍未完成，不用GPU3绝对时间混拼。
 
 **最新生产为QK地址游标实测原件，SHA=`754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79`，已安装。** 从上轮SS48c2逐字节冻结基线继续，不回退到CPE/JQ。新目录`temp/glm_trace/tune_qk_cursor_20261102/`（QC）；paired CKV QK先计算Q/K起点，随后用已有xor/add推进swizzle地址，保持原unroll4/加载与MMA次序、QPE寄存器、joint MDO/PV、远端源hint、精确launch LRU、载荷/字节/FAR/ready/barrier和单kernel。16384项整数地址等价检查通过。
 
