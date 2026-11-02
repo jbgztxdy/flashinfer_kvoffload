@@ -1,0 +1,164 @@
+Disk quotas for usr luyouy (uid 32230):
+     Filesystem  kbytes   quota   limit   grace   files   quota   limit   grace
+          /WORK 1651267900  5000000000       0       -  561835       0       0       -
+Disk quotas for usr luyouy (uid 32230):
+     Filesystem  kbytes   quota   limit   grace   files   quota   limit   grace
+      /home/fit 382454244* 200000000       0    none   30527       0       0       -
+job=1040680 name=fi-bulkbw node=g44 gpus=0 tree=/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer start=2026-11-02T02:49:31+08:00
+commit=dbbc02c6caea3e80cde4f2dafb650a6a24854878 dirty=1
+index, name, pci.bus_id, memory.used [MiB], memory.total [MiB], clocks.max.sm [MHz]
+0, NVIDIA H800, 00000000:C2:00.0, 0 MiB, 81559 MiB, 1980 MHz
+	[4mGPU0	NIC0	NIC1	NIC2	NIC3	NIC4	NIC5	NIC6	NIC7	NIC8	CPU Affinity	NUMA Affinity	GPU NUMA ID[0m
+GPU0	 X 	NODE	NODE	NODE	NODE	NODE	NODE	NODE	PIX	NODE	64-71	1		N/A
+NIC0	NODE	 X 	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC1	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC2	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC3	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE				
+NIC4	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE				
+NIC5	NODE	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE				
+NIC6	NODE	NODE	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE				
+NIC7	PIX	NODE	NODE	NODE	NODE	NODE	NODE	NODE	 X 	NODE				
+NIC8	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	 X 				
+
+Legend:
+
+  X    = Self
+  SYS  = Connection traversing PCIe as well as the SMP interconnect between NUMA nodes (e.g., QPI/UPI)
+  NODE = Connection traversing PCIe as well as the interconnect between PCIe Host Bridges within a NUMA node
+  PHB  = Connection traversing PCIe as well as a PCIe Host Bridge (typically the CPU)
+  PXB  = Connection traversing multiple PCIe bridges (without traversing the PCIe Host Bridge)
+  PIX  = Connection traversing at most a single PCIe bridge
+  NV#  = Connection traversing a bonded set of # NVLinks
+
+NIC Legend:
+
+  NIC0: mlx5_0
+  NIC1: mlx5_1
+  NIC2: mlx5_2
+  NIC3: mlx5_3
+  NIC4: mlx5_4
+  NIC5: mlx5_5
+  NIC6: mlx5_6
+  NIC7: mlx5_7
+  NIC8: mlx5_8
+
+            PCIe Generation
+                Max                                    : 5
+                Current                                : 5
+--
+            Link Width
+                Max                                    : 16x
+                Current                                : 16x
+torch 2.13.0+cu130 13.0 NVIDIA H800
+Build cuda_13.0.r13.0/compiler.36424714_0
+available: 2 nodes (0-1)
+node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51
+node 0 size: 515652 MB
+node 0 free: 448833 MB
+cmd: nvcc -O3 -arch=sm_90a -o $OUT/bulk_bw temp/fetch_bw/bulk_bw.cu && numactl -N0 -m0 $OUT/bulk_bw host | tee $OUT/host.txt
+/usr/bin/ld: cannot find -lcudadevrt: No such file or directory
+/usr/bin/ld: cannot find -lcudart_static: No such file or directory
+collect2: error: ld returned 1 exit status
+end=2026-11-02T02:49:50+08:00 status=1
+job=1004362 name=fi-tune-host node=g44 gpus=0 tree=/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer start=2026-11-02T02:33:24+08:00
+commit=dbbc02c6caea3e80cde4f2dafb650a6a24854878 dirty=1
+index, name, pci.bus_id, memory.used [MiB], memory.total [MiB], clocks.max.sm [MHz]
+0, NVIDIA H800, 00000000:C2:00.0, 0 MiB, 81559 MiB, 1980 MHz
+	[4mGPU0	NIC0	NIC1	NIC2	NIC3	NIC4	NIC5	NIC6	NIC7	NIC8	CPU Affinity	NUMA Affinity	GPU NUMA ID[0m
+GPU0	 X 	NODE	NODE	NODE	NODE	NODE	NODE	NODE	PIX	NODE	64-75,88-91	1		N/A
+NIC0	NODE	 X 	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC1	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC2	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE	NODE				
+NIC3	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE	NODE				
+NIC4	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE	NODE				
+NIC5	NODE	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE	NODE				
+NIC6	NODE	NODE	NODE	NODE	NODE	NODE	NODE	 X 	NODE	NODE				
+NIC7	PIX	NODE	NODE	NODE	NODE	NODE	NODE	NODE	 X 	NODE				
+NIC8	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	NODE	 X 				
+
+Legend:
+
+  X    = Self
+  SYS  = Connection traversing PCIe as well as the SMP interconnect between NUMA nodes (e.g., QPI/UPI)
+  NODE = Connection traversing PCIe as well as the interconnect between PCIe Host Bridges within a NUMA node
+  PHB  = Connection traversing PCIe as well as a PCIe Host Bridge (typically the CPU)
+  PXB  = Connection traversing multiple PCIe bridges (without traversing the PCIe Host Bridge)
+  PIX  = Connection traversing at most a single PCIe bridge
+  NV#  = Connection traversing a bonded set of # NVLinks
+
+NIC Legend:
+
+  NIC0: mlx5_0
+  NIC1: mlx5_1
+  NIC2: mlx5_2
+  NIC3: mlx5_3
+  NIC4: mlx5_4
+  NIC5: mlx5_5
+  NIC6: mlx5_6
+  NIC7: mlx5_7
+  NIC8: mlx5_8
+
+            PCIe Generation
+                Max                                    : 5
+                Current                                : 5
+--
+            Link Width
+                Max                                    : 16x
+                Current                                : 16x
+torch 2.13.0+cu130 13.0 NVIDIA H800
+Build cuda_13.0.r13.0/compiler.36424714_0
+available: 2 nodes (0-1)
+node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51
+node 0 size: 515652 MB
+node 0 free: 448847 MB
+cmd: bash temp/h800/tune_host.sh
++ for F in 8 16 32 64
++ python temp/h800/bench_rounds.py --tier host --mtp 8 --requests 16 64 128 --passes 3 --fetch-ctas 8 --modes ours_stage memcpy_lru floor_fa2 --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp8_f8.json
++ grep steady
+tier=host requests=16 mtp=8 rows=128 steady(mean of last half, us): ours_stage=1458.0 memcpy_lru=1109.2 floor_fa2=162.3 misses={'ours_stage': 36119} unique_uncached=81267
+tier=host requests=64 mtp=8 rows=512 steady(mean of last half, us): ours_stage=5836.1 memcpy_lru=4259.5 floor_fa2=613.0 misses={'ours_stage': 150026} unique_uncached=327414
+tier=host requests=128 mtp=8 rows=1024 steady(mean of last half, us): ours_stage=11933.6 memcpy_lru=8510.5 floor_fa2=1215.1 misses={'ours_stage': 308527} unique_uncached=668922
++ python temp/h800/bench_rounds.py --tier host --mtp 1 --requests 64 512 --passes 3 --fetch-ctas 8 --modes ours_stage memcpy_lru floor_fa2 --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp1_f8.json
++ grep steady
+tier=host requests=64 mtp=1 rows=64 steady(mean of last half, us): ours_stage=987.2 memcpy_lru=663.7 floor_fa2=96.2 misses={'ours_stage': 21091} unique_uncached=131008
+tier=host requests=512 mtp=1 rows=512 steady(mean of last half, us): ours_stage=7089.2 memcpy_lru=4818.7 floor_fa2=624.4 misses={'ours_stage': 181126} unique_uncached=1048064
++ for F in 8 16 32 64
++ python temp/h800/bench_rounds.py --tier host --mtp 8 --requests 16 64 128 --passes 3 --fetch-ctas 16 --modes ours_stage memcpy_lru floor_fa2 --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp8_f16.json
++ grep steady
+tier=host requests=16 mtp=8 rows=128 steady(mean of last half, us): ours_stage=1305.6 memcpy_lru=985.7 floor_fa2=161.7 misses={'ours_stage': 36133} unique_uncached=81267
+tier=host requests=64 mtp=8 rows=512 steady(mean of last half, us): ours_stage=5290.7 memcpy_lru=4033.2 floor_fa2=615.4 misses={'ours_stage': 150190} unique_uncached=327414
+tier=host requests=128 mtp=8 rows=1024 steady(mean of last half, us): ours_stage=10658.4 memcpy_lru=8280.3 floor_fa2=1210.7 misses={'ours_stage': 308475} unique_uncached=668922
++ python temp/h800/bench_rounds.py --tier host --mtp 1 --requests 64 512 --passes 3 --fetch-ctas 16 --modes ours_stage memcpy_lru floor_fa2 --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp1_f16.json
++ grep steady
+tier=host requests=64 mtp=1 rows=64 steady(mean of last half, us): ours_stage=921.3 memcpy_lru=679.2 floor_fa2=96.1 misses={'ours_stage': 21090} unique_uncached=131008
+tier=host requests=512 mtp=1 rows=512 steady(mean of last half, us): ours_stage=6639.8 memcpy_lru=4826.0 floor_fa2=623.7 misses={'ours_stage': 181159} unique_uncached=1048064
++ for F in 8 16 32 64
++ python temp/h800/bench_rounds.py --tier host --mtp 8 --requests 16 64 128 --passes 3 --fetch-ctas 32 --modes ours_stage memcpy_lru floor_fa2 --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp8_f32.json
++ grep steady
+tier=host requests=16 mtp=8 rows=128 steady(mean of last half, us): ours_stage=1273.9 memcpy_lru=1086.1 floor_fa2=162.1 misses={'ours_stage': 36200} unique_uncached=81267
+tier=host requests=64 mtp=8 rows=512 steady(mean of last half, us): ours_stage=5188.1 memcpy_lru=4195.2 floor_fa2=615.0 misses={'ours_stage': 150235} unique_uncached=327414
+tier=host requests=128 mtp=8 rows=1024 steady(mean of last half, us): ours_stage=10492.6 memcpy_lru=8431.6 floor_fa2=1209.9 misses={'ours_stage': 308369} unique_uncached=668922
++ python temp/h800/bench_rounds.py --tier host --mtp 1 --requests 64 512 --passes 3 --fetch-ctas 32 --modes ours_stage memcpy_lru floor_fa2 --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp1_f32.json
++ grep steady
+tier=host requests=64 mtp=1 rows=64 steady(mean of last half, us): ours_stage=860.1 memcpy_lru=719.4 floor_fa2=96.2 misses={'ours_stage': 21063} unique_uncached=131008
+tier=host requests=512 mtp=1 rows=512 steady(mean of last half, us): ours_stage=6179.9 memcpy_lru=4824.1 floor_fa2=624.2 misses={'ours_stage': 181162} unique_uncached=1048064
++ for F in 8 16 32 64
++ python temp/h800/bench_rounds.py --tier host --mtp 8 --requests 16 64 128 --passes 3 --fetch-ctas 64 --modes ours_stage memcpy_lru floor_fa2 --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp8_f64.json
++ grep steady
+tier=host requests=16 mtp=8 rows=128 steady(mean of last half, us): ours_stage=1269.4 memcpy_lru=1066.4 floor_fa2=162.7 misses={'ours_stage': 36071} unique_uncached=81267
+tier=host requests=64 mtp=8 rows=512 steady(mean of last half, us): ours_stage=5211.4 memcpy_lru=4240.1 floor_fa2=613.2 misses={'ours_stage': 150562} unique_uncached=327414
+tier=host requests=128 mtp=8 rows=1024 steady(mean of last half, us): ours_stage=10429.3 memcpy_lru=8489.6 floor_fa2=1209.3 misses={'ours_stage': 308433} unique_uncached=668922
++ python temp/h800/bench_rounds.py --tier host --mtp 1 --requests 64 512 --passes 3 --fetch-ctas 64 --modes ours_stage memcpy_lru floor_fa2 --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp1_f64.json
++ grep steady
+tier=host requests=64 mtp=1 rows=64 steady(mean of last half, us): ours_stage=859.8 memcpy_lru=659.6 floor_fa2=95.8 misses={'ours_stage': 21069} unique_uncached=131008
+tier=host requests=512 mtp=1 rows=512 steady(mean of last half, us): ours_stage=6192.4 memcpy_lru=4823.6 floor_fa2=623.9 misses={'ours_stage': 181185} unique_uncached=1048064
++ python temp/h800/bench_rounds.py --tier host --mtp 8 --requests 16 64 128 --passes 3 --modes ours_inplace hisparse --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp8_inplace.json
++ grep steady
+tier=host requests=16 mtp=8 rows=128 steady(mean of last half, us): ours_inplace=4574.5 hisparse=3793.6 misses={'ours_inplace': 36217} unique_uncached=81267
+tier=host requests=64 mtp=8 rows=512 steady(mean of last half, us): ours_inplace=18152.0 hisparse=8470.3 misses={'ours_inplace': 151014} unique_uncached=327414
+tier=host requests=128 mtp=8 rows=1024 steady(mean of last half, us): ours_inplace=20402.6 hisparse=14564.3 misses={'ours_inplace': 308686} unique_uncached=668922
++ python temp/h800/bench_rounds.py --tier host --mtp 1 --requests 64 512 --passes 3 --modes ours_inplace hisparse --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp1_inplace.json
++ grep steady
+tier=host requests=64 mtp=1 rows=64 steady(mean of last half, us): ours_inplace=862.9 hisparse=909.1 misses={'ours_inplace': 21058} unique_uncached=131008
+tier=host requests=512 mtp=1 rows=512 steady(mean of last half, us): ours_inplace=6207.2 hisparse=6399.1 misses={'ours_inplace': 181137} unique_uncached=1048064
+end=2026-11-02T02:41:31+08:00 status=0

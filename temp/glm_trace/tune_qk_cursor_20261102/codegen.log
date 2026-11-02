@@ -1,0 +1,112 @@
+{
+  "emu": {
+    "unchanged": 38,
+    "changed": [
+      {
+        "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "kernel": "_ZN10flashinfer3mla26BatchMLAStreamSourceKernelINS0_18StreamSourceTraitsI13__nv_bfloat16S3_S3_iEENS0_22StreamSourceHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "base": {
+          "sha256": "510f1fb0323f115b459adf0ea099a69253e40a952b4cd660b156d11a87dfc2f0",
+          "resource": "REG:255 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+          "streaming_stores": 0
+        },
+        "candidate": {
+          "sha256": "df7d049ce289f72fdbe00ce6eec708bd5eafade78e59fa8be6c0ad90eac1a7d8",
+          "resource": "REG:255 STACK:16 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+          "streaming_stores": 0
+        }
+      },
+      {
+        "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "kernel": "_ZN10flashinfer3mla26BatchMLAStreamSourceKernelINS0_18StreamSourceTraitsI13__nv_bfloat16S3_S3_iEENS0_22StreamSourceHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "base": {
+          "sha256": "510f1fb0323f115b459adf0ea099a69253e40a952b4cd660b156d11a87dfc2f0",
+          "resource": "REG:255 STACK:8 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+          "streaming_stores": 0
+        },
+        "candidate": {
+          "sha256": "df7d049ce289f72fdbe00ce6eec708bd5eafade78e59fa8be6c0ad90eac1a7d8",
+          "resource": "REG:255 STACK:16 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+          "streaming_stores": 0
+        }
+      }
+    ],
+    "libraries": {
+      "base": [
+        {
+          "path": "jit_base/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+          "sha256": "60a544765c5b94863570cfd9258348ebe28f0c2719053449d757a85cdb18bc78"
+        },
+        {
+          "path": "jit_base/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+          "sha256": "a1be507482a38af23b60e1f04529f0e4718aaca0c6c2bae7242b746da69f1ece"
+        }
+      ],
+      "qk_cursor": [
+        {
+          "path": "jit_qk_cursor/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+          "sha256": "6c910f9661b43785b444eec2abd71fa61e61d99af8ca4bd7c54d603decef7e67"
+        },
+        {
+          "path": "jit_qk_cursor/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+          "sha256": "2e9ea8934a808a541a3668d1715c104920b0f1a147b1ebb1302731e910763485"
+        }
+      ]
+    }
+  },
+  "normal": {
+    "unchanged": 38,
+    "changed": [
+      {
+        "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "kernel": "_ZN10flashinfer3mla26BatchMLAStreamSourceKernelINS0_18StreamSourceTraitsI13__nv_bfloat16S3_S3_iEENS0_22StreamSourceHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "base": {
+          "sha256": "b6ac2afdc8aa3957123530472bdcd6ef88a79b3769a22eaddfaf134d3e2acf8b",
+          "resource": "REG:255 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+          "streaming_stores": 0
+        },
+        "candidate": {
+          "sha256": "ed325a909df91d8bff818bb2d453489309c1fc9ae9b3b5fc66a58a79334d7e45",
+          "resource": "REG:255 STACK:16 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+          "streaming_stores": 0
+        }
+      },
+      {
+        "library": "batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "kernel": "_ZN10flashinfer3mla26BatchMLAStreamSourceKernelINS0_18StreamSourceTraitsI13__nv_bfloat16S3_S3_iEENS0_22StreamSourceHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+        "base": {
+          "sha256": "b6ac2afdc8aa3957123530472bdcd6ef88a79b3769a22eaddfaf134d3e2acf8b",
+          "resource": "REG:255 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+          "streaming_stores": 0
+        },
+        "candidate": {
+          "sha256": "ed325a909df91d8bff818bb2d453489309c1fc9ae9b3b5fc66a58a79334d7e45",
+          "resource": "REG:255 STACK:16 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+          "streaming_stores": 0
+        }
+      }
+    ],
+    "libraries": {
+      "base": [
+        {
+          "path": "jit_base_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+          "sha256": "0190df025cda38dadb5e8778bf1441db152c6cb5b0f685a867a842f70e708677"
+        },
+        {
+          "path": "jit_base_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+          "sha256": "20f500911dc3bdf3c2e54c40304ce346b91df46a84399c9abafd6d4d84dba7c8"
+        }
+      ],
+      "qk_cursor": [
+        {
+          "path": "jit_qk_cursor_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+          "sha256": "9848a19a971189ed62f8da401acca3e9de55ef59c4ea541b561b00b3f626b67e"
+        },
+        {
+          "path": "jit_qk_cursor_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+          "sha256": "62558815118ddfe75e0493fe504edd9624f4b53d4c6ba0f66f1034f9f150a302"
+        }
+      ]
+    }
+  }
+}

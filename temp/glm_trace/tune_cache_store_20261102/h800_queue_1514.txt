@@ -1,0 +1,36 @@
+Disk quotas for usr luyouy (uid 32230):
+     Filesystem  kbytes   quota   limit   grace   files   quota   limit   grace
+          /WORK 1651267976  5000000000       0       -  561842       0       0       -
+Disk quotas for usr luyouy (uid 32230):
+     Filesystem  kbytes   quota   limit   grace   files   quota   limit   grace
+      /home/fit 382454244* 200000000       0    none   30527       0       0       -
+2026-11-02T15:14:06+08:00
+             JOBID                     NAME     STATE               NODELIST(REASON)           START_TIME
+           1089379     fi-tuned-assist-host   PENDING                     (Priority)  2026-11-05T00:49:44
+           1089380     fi-tuned-assist-peer   PENDING                   (Dependency)                  N/A
+JobID|State|ExitCode|Start|End
+1004362|COMPLETED|0:0|2026-11-02T02:33:03|2026-11-02T02:41:12
+1004362.batch|COMPLETED|0:0|2026-11-02T02:33:03|2026-11-02T02:41:12
+1004362.extern|COMPLETED|0:0|2026-11-02T02:33:03|2026-11-02T02:41:12
+1004363|COMPLETED|0:0|2026-11-02T14:43:22|2026-11-02T14:47:16
+1004363.batch|COMPLETED|0:0|2026-11-02T14:43:22|2026-11-02T14:47:16
+1004363.extern|COMPLETED|0:0|2026-11-02T14:43:22|2026-11-02T14:47:16
+1040680|FAILED|1:0|2026-11-02T02:49:11|2026-11-02T02:49:31
+1040680.batch|FAILED|1:0|2026-11-02T02:49:11|2026-11-02T02:49:31
+1040680.extern|COMPLETED|0:0|2026-11-02T02:49:11|2026-11-02T02:49:31
+1089379|PENDING|0:0|Unknown|Unknown
+1089380|PENDING|0:0|Unknown|Unknown
+    PID ELAPSED COMMAND
+1174145  358482 bash /WORK/PUBLIC/luyouy_work/rtx/yjw/test/glm_trace/watch_jobs.sh 1089379 1089380
++ for F in 16 32 64
++ python temp/h800/bench_rounds.py --tier peer --mtp 8 --requests 16 64 128 --passes 3 --fetch-ctas 64 --modes ours_stage memcpy_lru --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-peer-1004363/rounds_mtp8_stage_f64.json
++ grep steady
+tier=peer requests=16 mtp=8 rows=128 steady(mean of last half, us): ours_stage=445.8 memcpy_lru=431.9 misses={'ours_stage': 36238} unique_uncached=81267
+tier=peer requests=64 mtp=8 rows=512 steady(mean of last half, us): ours_stage=1471.8 memcpy_lru=1707.1 misses={'ours_stage': 150132} unique_uncached=327414
+tier=peer requests=128 mtp=8 rows=1024 steady(mean of last half, us): ours_stage=2425.8 memcpy_lru=3459.3 misses={'ours_stage': 308387} unique_uncached=668922
++ python temp/h800/bench_rounds.py --tier peer --mtp 8 --requests 16 64 128 --passes 3 --modes ours_inplace hisparse floor_fa2 --output /WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-peer-1004363/rounds_mtp8_inplace.json
++ grep steady
+tier=peer requests=16 mtp=8 rows=128 steady(mean of last half, us): ours_inplace=602.1 hisparse=1446.9 floor_fa2=162.1 misses={'ours_inplace': 36222} unique_uncached=81267
+tier=peer requests=64 mtp=8 rows=512 steady(mean of last half, us): ours_inplace=2318.2 hisparse=2598.9 floor_fa2=612.3 misses={'ours_inplace': 150852} unique_uncached=327414
+tier=peer requests=128 mtp=8 rows=1024 steady(mean of last half, us): ours_inplace=4569.8 hisparse=4388.8 floor_fa2=1228.7 misses={'ours_inplace': 309042} unique_uncached=668922
+end=2026-11-02T14:47:35+08:00 status=0

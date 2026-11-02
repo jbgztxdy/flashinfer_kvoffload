@@ -1,0 +1,566 @@
+[
+  {
+    "path": "temp/h800/results/fi-tune-host-1004362/rounds_mtp1_f16.json",
+    "sha256": "349691bb873837e5363ddc4a68af5da93bcd3ec4cb02f2e8d2387040b3596964",
+    "configuration": {
+      "tier": "host",
+      "device": 0,
+      "peer": 1,
+      "requests": [
+        64,
+        512
+      ],
+      "mtp": 1,
+      "steps": 32,
+      "fraction": 1.0,
+      "capacity": 4096,
+      "modes": [
+        "ours_stage",
+        "memcpy_lru",
+        "floor_fa2"
+      ],
+      "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+      "context": 65536,
+      "topk": 2048,
+      "near_requests": 128,
+      "passes": 3,
+      "fetch_ctas": 16,
+      "hisparse_block": 960,
+      "seed": 42,
+      "output": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp1_f16.json"
+    },
+    "source_sha256": {
+      "temp/h800/bench_rounds.py": "2f347ac7f60c0494c9be738f3538260cba22500138c8c02eaa4fa00faa57fbfd",
+      "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+      "include/flashinfer/attention/mla_host_batch.cuh": "29667eafcf7a863b4e11dec62451fee8fbeb0594e9de454787eeba8ff5493b36"
+    },
+    "bandwidth": {
+      "dma_contiguous_GBps": 55.42445968149566,
+      "sm_gather_random_GBps": 31.016029387810658
+    }
+  },
+  {
+    "path": "temp/h800/results/fi-tune-host-1004362/rounds_mtp1_f32.json",
+    "sha256": "03fbf6d078740f13acb8808d88d32ed84a4f138174b9684e0e4cc8538a805889",
+    "configuration": {
+      "tier": "host",
+      "device": 0,
+      "peer": 1,
+      "requests": [
+        64,
+        512
+      ],
+      "mtp": 1,
+      "steps": 32,
+      "fraction": 1.0,
+      "capacity": 4096,
+      "modes": [
+        "ours_stage",
+        "memcpy_lru",
+        "floor_fa2"
+      ],
+      "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+      "context": 65536,
+      "topk": 2048,
+      "near_requests": 128,
+      "passes": 3,
+      "fetch_ctas": 32,
+      "hisparse_block": 960,
+      "seed": 42,
+      "output": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp1_f32.json"
+    },
+    "source_sha256": {
+      "temp/h800/bench_rounds.py": "2f347ac7f60c0494c9be738f3538260cba22500138c8c02eaa4fa00faa57fbfd",
+      "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+      "include/flashinfer/attention/mla_host_batch.cuh": "29667eafcf7a863b4e11dec62451fee8fbeb0594e9de454787eeba8ff5493b36"
+    },
+    "bandwidth": {
+      "dma_contiguous_GBps": 55.408721451569924,
+      "sm_gather_random_GBps": 31.01365085690134
+    }
+  },
+  {
+    "path": "temp/h800/results/fi-tune-host-1004362/rounds_mtp1_f64.json",
+    "sha256": "2d849557119f1c3ae4fcf4ecb17707abc105b3b1f9d987eeb88d54f40c692f4d",
+    "configuration": {
+      "tier": "host",
+      "device": 0,
+      "peer": 1,
+      "requests": [
+        64,
+        512
+      ],
+      "mtp": 1,
+      "steps": 32,
+      "fraction": 1.0,
+      "capacity": 4096,
+      "modes": [
+        "ours_stage",
+        "memcpy_lru",
+        "floor_fa2"
+      ],
+      "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+      "context": 65536,
+      "topk": 2048,
+      "near_requests": 128,
+      "passes": 3,
+      "fetch_ctas": 64,
+      "hisparse_block": 960,
+      "seed": 42,
+      "output": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp1_f64.json"
+    },
+    "source_sha256": {
+      "temp/h800/bench_rounds.py": "2f347ac7f60c0494c9be738f3538260cba22500138c8c02eaa4fa00faa57fbfd",
+      "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+      "include/flashinfer/attention/mla_host_batch.cuh": "29667eafcf7a863b4e11dec62451fee8fbeb0594e9de454787eeba8ff5493b36"
+    },
+    "bandwidth": {
+      "dma_contiguous_GBps": 55.449375446945915,
+      "sm_gather_random_GBps": 31.00751825432164
+    }
+  },
+  {
+    "path": "temp/h800/results/fi-tune-host-1004362/rounds_mtp1_f8.json",
+    "sha256": "ce773b2e7ac5aae15f605f743dd8046a8ed0a6a72bb978904d2caa0a6d256a4b",
+    "configuration": {
+      "tier": "host",
+      "device": 0,
+      "peer": 1,
+      "requests": [
+        64,
+        512
+      ],
+      "mtp": 1,
+      "steps": 32,
+      "fraction": 1.0,
+      "capacity": 4096,
+      "modes": [
+        "ours_stage",
+        "memcpy_lru",
+        "floor_fa2"
+      ],
+      "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+      "context": 65536,
+      "topk": 2048,
+      "near_requests": 128,
+      "passes": 3,
+      "fetch_ctas": 8,
+      "hisparse_block": 960,
+      "seed": 42,
+      "output": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp1_f8.json"
+    },
+    "source_sha256": {
+      "temp/h800/bench_rounds.py": "2f347ac7f60c0494c9be738f3538260cba22500138c8c02eaa4fa00faa57fbfd",
+      "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+      "include/flashinfer/attention/mla_host_batch.cuh": "29667eafcf7a863b4e11dec62451fee8fbeb0594e9de454787eeba8ff5493b36"
+    },
+    "bandwidth": {
+      "dma_contiguous_GBps": 55.44607680717369,
+      "sm_gather_random_GBps": 31.005653330894077
+    }
+  },
+  {
+    "path": "temp/h800/results/fi-tune-host-1004362/rounds_mtp1_inplace.json",
+    "sha256": "166d023a0733e8ab463d76b905577fd7fb082f0b66848e98017654bce54afbfc",
+    "configuration": {
+      "tier": "host",
+      "device": 0,
+      "peer": 1,
+      "requests": [
+        64,
+        512
+      ],
+      "mtp": 1,
+      "steps": 32,
+      "fraction": 1.0,
+      "capacity": 4096,
+      "modes": [
+        "ours_inplace",
+        "hisparse"
+      ],
+      "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+      "context": 65536,
+      "topk": 2048,
+      "near_requests": 128,
+      "passes": 3,
+      "fetch_ctas": 8,
+      "hisparse_block": 960,
+      "seed": 42,
+      "output": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp1_inplace.json"
+    },
+    "source_sha256": {
+      "temp/h800/bench_rounds.py": "2f347ac7f60c0494c9be738f3538260cba22500138c8c02eaa4fa00faa57fbfd",
+      "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+      "include/flashinfer/attention/mla_host_batch.cuh": "29667eafcf7a863b4e11dec62451fee8fbeb0594e9de454787eeba8ff5493b36"
+    },
+    "bandwidth": {
+      "dma_contiguous_GBps": 55.445525251737536,
+      "sm_gather_random_GBps": 31.012875179303624
+    }
+  },
+  {
+    "path": "temp/h800/results/fi-tune-host-1004362/rounds_mtp8_f16.json",
+    "sha256": "bd665236b27a2e02d772648a007f481dedec9892abb82e2bb46df06ff854f15d",
+    "configuration": {
+      "tier": "host",
+      "device": 0,
+      "peer": 1,
+      "requests": [
+        16,
+        64,
+        128
+      ],
+      "mtp": 8,
+      "steps": 4,
+      "fraction": 1.0,
+      "capacity": 4096,
+      "modes": [
+        "ours_stage",
+        "memcpy_lru",
+        "floor_fa2"
+      ],
+      "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+      "context": 65536,
+      "topk": 2048,
+      "near_requests": 128,
+      "passes": 3,
+      "fetch_ctas": 16,
+      "hisparse_block": 960,
+      "seed": 42,
+      "output": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp8_f16.json"
+    },
+    "source_sha256": {
+      "temp/h800/bench_rounds.py": "2f347ac7f60c0494c9be738f3538260cba22500138c8c02eaa4fa00faa57fbfd",
+      "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+      "include/flashinfer/attention/mla_host_batch.cuh": "29667eafcf7a863b4e11dec62451fee8fbeb0594e9de454787eeba8ff5493b36"
+    },
+    "bandwidth": {
+      "dma_contiguous_GBps": 55.45578816445817,
+      "sm_gather_random_GBps": 33.5782529130991
+    }
+  },
+  {
+    "path": "temp/h800/results/fi-tune-host-1004362/rounds_mtp8_f32.json",
+    "sha256": "23553f8684f31c08f0586b9a24e3f468c14ea91809cbe91f267793808d66c0ed",
+    "configuration": {
+      "tier": "host",
+      "device": 0,
+      "peer": 1,
+      "requests": [
+        16,
+        64,
+        128
+      ],
+      "mtp": 8,
+      "steps": 4,
+      "fraction": 1.0,
+      "capacity": 4096,
+      "modes": [
+        "ours_stage",
+        "memcpy_lru",
+        "floor_fa2"
+      ],
+      "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+      "context": 65536,
+      "topk": 2048,
+      "near_requests": 128,
+      "passes": 3,
+      "fetch_ctas": 32,
+      "hisparse_block": 960,
+      "seed": 42,
+      "output": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp8_f32.json"
+    },
+    "source_sha256": {
+      "temp/h800/bench_rounds.py": "2f347ac7f60c0494c9be738f3538260cba22500138c8c02eaa4fa00faa57fbfd",
+      "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+      "include/flashinfer/attention/mla_host_batch.cuh": "29667eafcf7a863b4e11dec62451fee8fbeb0594e9de454787eeba8ff5493b36"
+    },
+    "bandwidth": {
+      "dma_contiguous_GBps": 55.44781345932362,
+      "sm_gather_random_GBps": 33.58006758590389
+    }
+  },
+  {
+    "path": "temp/h800/results/fi-tune-host-1004362/rounds_mtp8_f64.json",
+    "sha256": "cc9c8664c4f3214d628dd126248cb26b814006739c1aa71148860519642302b2",
+    "configuration": {
+      "tier": "host",
+      "device": 0,
+      "peer": 1,
+      "requests": [
+        16,
+        64,
+        128
+      ],
+      "mtp": 8,
+      "steps": 4,
+      "fraction": 1.0,
+      "capacity": 4096,
+      "modes": [
+        "ours_stage",
+        "memcpy_lru",
+        "floor_fa2"
+      ],
+      "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+      "context": 65536,
+      "topk": 2048,
+      "near_requests": 128,
+      "passes": 3,
+      "fetch_ctas": 64,
+      "hisparse_block": 960,
+      "seed": 42,
+      "output": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp8_f64.json"
+    },
+    "source_sha256": {
+      "temp/h800/bench_rounds.py": "2f347ac7f60c0494c9be738f3538260cba22500138c8c02eaa4fa00faa57fbfd",
+      "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+      "include/flashinfer/attention/mla_host_batch.cuh": "29667eafcf7a863b4e11dec62451fee8fbeb0594e9de454787eeba8ff5493b36"
+    },
+    "bandwidth": {
+      "dma_contiguous_GBps": 55.45202993544746,
+      "sm_gather_random_GBps": 33.574355835154364
+    }
+  },
+  {
+    "path": "temp/h800/results/fi-tune-host-1004362/rounds_mtp8_f8.json",
+    "sha256": "fc1a27d923ecb6feb4a86c21b368f24599906084fa35b08f3feba62018e10538",
+    "configuration": {
+      "tier": "host",
+      "device": 0,
+      "peer": 1,
+      "requests": [
+        16,
+        64,
+        128
+      ],
+      "mtp": 8,
+      "steps": 4,
+      "fraction": 1.0,
+      "capacity": 4096,
+      "modes": [
+        "ours_stage",
+        "memcpy_lru",
+        "floor_fa2"
+      ],
+      "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+      "context": 65536,
+      "topk": 2048,
+      "near_requests": 128,
+      "passes": 3,
+      "fetch_ctas": 8,
+      "hisparse_block": 960,
+      "seed": 42,
+      "output": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp8_f8.json"
+    },
+    "source_sha256": {
+      "temp/h800/bench_rounds.py": "2f347ac7f60c0494c9be738f3538260cba22500138c8c02eaa4fa00faa57fbfd",
+      "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+      "include/flashinfer/attention/mla_host_batch.cuh": "29667eafcf7a863b4e11dec62451fee8fbeb0594e9de454787eeba8ff5493b36"
+    },
+    "bandwidth": {
+      "dma_contiguous_GBps": 55.450566112002235,
+      "sm_gather_random_GBps": 33.57640439181648
+    }
+  },
+  {
+    "path": "temp/h800/results/fi-tune-host-1004362/rounds_mtp8_inplace.json",
+    "sha256": "428b4202a143d1ed02571c40ba136e43a0d87221fcb42ed56c33ed8dc9263e35",
+    "configuration": {
+      "tier": "host",
+      "device": 0,
+      "peer": 1,
+      "requests": [
+        16,
+        64,
+        128
+      ],
+      "mtp": 8,
+      "steps": 4,
+      "fraction": 1.0,
+      "capacity": 4096,
+      "modes": [
+        "ours_inplace",
+        "hisparse"
+      ],
+      "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+      "context": 65536,
+      "topk": 2048,
+      "near_requests": 128,
+      "passes": 3,
+      "fetch_ctas": 8,
+      "hisparse_block": 960,
+      "seed": 42,
+      "output": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-host-1004362/rounds_mtp8_inplace.json"
+    },
+    "source_sha256": {
+      "temp/h800/bench_rounds.py": "2f347ac7f60c0494c9be738f3538260cba22500138c8c02eaa4fa00faa57fbfd",
+      "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+      "include/flashinfer/attention/mla_host_batch.cuh": "29667eafcf7a863b4e11dec62451fee8fbeb0594e9de454787eeba8ff5493b36"
+    },
+    "bandwidth": {
+      "dma_contiguous_GBps": 55.452761876152756,
+      "sm_gather_random_GBps": 33.563340369764695
+    }
+  },
+  {
+    "path": "temp/h800/results/fi-tune-peer-1004363/rounds_mtp8_inplace.json",
+    "sha256": "79ee62cdb7eb0ec1f258678ed047b63280a1a6fbf55c648908c472264a0d8f0f",
+    "configuration": {
+      "tier": "peer",
+      "device": 0,
+      "peer": 1,
+      "requests": [
+        16,
+        64,
+        128
+      ],
+      "mtp": 8,
+      "steps": 4,
+      "fraction": 1.0,
+      "capacity": 4096,
+      "modes": [
+        "ours_inplace",
+        "hisparse",
+        "floor_fa2"
+      ],
+      "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+      "context": 65536,
+      "topk": 2048,
+      "near_requests": 128,
+      "passes": 3,
+      "fetch_ctas": 8,
+      "hisparse_block": 960,
+      "seed": 42,
+      "output": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-peer-1004363/rounds_mtp8_inplace.json"
+    },
+    "source_sha256": {
+      "temp/h800/bench_rounds.py": "2f347ac7f60c0494c9be738f3538260cba22500138c8c02eaa4fa00faa57fbfd",
+      "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+      "include/flashinfer/attention/mla_host_batch.cuh": "29667eafcf7a863b4e11dec62451fee8fbeb0594e9de454787eeba8ff5493b36"
+    },
+    "bandwidth": {
+      "dma_contiguous_GBps": 177.56381861572893,
+      "sm_gather_random_GBps": 167.32864529750813
+    }
+  },
+  {
+    "path": "temp/h800/results/fi-tune-peer-1004363/rounds_mtp8_stage_f16.json",
+    "sha256": "ffba9d2c7642585e92572e05850f447298804e4d60dc8e6ec6a07c1ab0ccf63d",
+    "configuration": {
+      "tier": "peer",
+      "device": 0,
+      "peer": 1,
+      "requests": [
+        16,
+        64,
+        128
+      ],
+      "mtp": 8,
+      "steps": 4,
+      "fraction": 1.0,
+      "capacity": 4096,
+      "modes": [
+        "ours_stage",
+        "memcpy_lru"
+      ],
+      "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+      "context": 65536,
+      "topk": 2048,
+      "near_requests": 128,
+      "passes": 3,
+      "fetch_ctas": 16,
+      "hisparse_block": 960,
+      "seed": 42,
+      "output": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-peer-1004363/rounds_mtp8_stage_f16.json"
+    },
+    "source_sha256": {
+      "temp/h800/bench_rounds.py": "2f347ac7f60c0494c9be738f3538260cba22500138c8c02eaa4fa00faa57fbfd",
+      "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+      "include/flashinfer/attention/mla_host_batch.cuh": "29667eafcf7a863b4e11dec62451fee8fbeb0594e9de454787eeba8ff5493b36"
+    },
+    "bandwidth": {
+      "dma_contiguous_GBps": 177.49525098655582,
+      "sm_gather_random_GBps": 167.08283847119233
+    }
+  },
+  {
+    "path": "temp/h800/results/fi-tune-peer-1004363/rounds_mtp8_stage_f32.json",
+    "sha256": "ceca807da9533762ee78fc0c764bef54acd5f232dbd80fed7bb7a1027d6fb341",
+    "configuration": {
+      "tier": "peer",
+      "device": 0,
+      "peer": 1,
+      "requests": [
+        16,
+        64,
+        128
+      ],
+      "mtp": 8,
+      "steps": 4,
+      "fraction": 1.0,
+      "capacity": 4096,
+      "modes": [
+        "ours_stage",
+        "memcpy_lru"
+      ],
+      "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+      "context": 65536,
+      "topk": 2048,
+      "near_requests": 128,
+      "passes": 3,
+      "fetch_ctas": 32,
+      "hisparse_block": 960,
+      "seed": 42,
+      "output": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-peer-1004363/rounds_mtp8_stage_f32.json"
+    },
+    "source_sha256": {
+      "temp/h800/bench_rounds.py": "2f347ac7f60c0494c9be738f3538260cba22500138c8c02eaa4fa00faa57fbfd",
+      "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+      "include/flashinfer/attention/mla_host_batch.cuh": "29667eafcf7a863b4e11dec62451fee8fbeb0594e9de454787eeba8ff5493b36"
+    },
+    "bandwidth": {
+      "dma_contiguous_GBps": 177.4680289771621,
+      "sm_gather_random_GBps": 167.17691406174015
+    }
+  },
+  {
+    "path": "temp/h800/results/fi-tune-peer-1004363/rounds_mtp8_stage_f64.json",
+    "sha256": "fd948712f30e843f704a49abdbab48ec70fd792b82dfa2399f6bddd79d270b98",
+    "configuration": {
+      "tier": "peer",
+      "device": 0,
+      "peer": 1,
+      "requests": [
+        16,
+        64,
+        128
+      ],
+      "mtp": 8,
+      "steps": 4,
+      "fraction": 1.0,
+      "capacity": 4096,
+      "modes": [
+        "ours_stage",
+        "memcpy_lru"
+      ],
+      "captures": "temp/mtp_overlap/rounds_ctx65536_*.pt",
+      "context": 65536,
+      "topk": 2048,
+      "near_requests": 128,
+      "passes": 3,
+      "fetch_ctas": 64,
+      "hisparse_block": 960,
+      "seed": 42,
+      "output": "/WORK/PUBLIC/luyouy_work/rtx/yjw/flashinfer/temp/h800/results/fi-tune-peer-1004363/rounds_mtp8_stage_f64.json"
+    },
+    "source_sha256": {
+      "temp/h800/bench_rounds.py": "2f347ac7f60c0494c9be738f3538260cba22500138c8c02eaa4fa00faa57fbfd",
+      "temp/h800/tiers.py": "af24173586b17e7d75db663fb6128b9a8e1f65fde04eefc89b77ee604f6601d8",
+      "include/flashinfer/attention/mla_host_batch.cuh": "29667eafcf7a863b4e11dec62451fee8fbeb0594e9de454787eeba8ff5493b36"
+    },
+    "bandwidth": {
+      "dma_contiguous_GBps": 177.55723808085457,
+      "sm_gather_random_GBps": 167.3319776774597
+    }
+  }
+]

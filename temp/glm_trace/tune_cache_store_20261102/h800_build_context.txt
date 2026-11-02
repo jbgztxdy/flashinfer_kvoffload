@@ -1,0 +1,190 @@
+Disk quotas for usr luyouy (uid 32230):
+     Filesystem  kbytes   quota   limit   grace   files   quota   limit   grace
+          /WORK 1651267900  5000000000       0       -  561835       0       0       -
+Disk quotas for usr luyouy (uid 32230):
+     Filesystem  kbytes   quota   limit   grace   files   quota   limit   grace
+      /home/fit 382454244* 200000000       0    none   30527       0       0       -
+# H800 PCIe tuning: fetch-CTA count for the staged path, and in place (all SMs read Host) vs staged.
+set -x
+for F in 8 16 32 64; do
+  python temp/h800/bench_rounds.py --tier host --mtp 8 --requests 16 64 128 --passes 3 --fetch-ctas $F --modes ours_stage memcpy_lru floor_fa2 --output $OUT/rounds_mtp8_f$F.json 2>&1 | grep steady
+  python temp/h800/bench_rounds.py --tier host --mtp 1 --requests 64 512 --passes 3 --fetch-ctas $F --modes ours_stage memcpy_lru floor_fa2 --output $OUT/rounds_mtp1_f$F.json 2>&1 | grep steady
+done
+python temp/h800/bench_rounds.py --tier host --mtp 8 --requests 16 64 128 --passes 3 --modes ours_inplace hisparse --output $OUT/rounds_mtp8_inplace.json 2>&1 | grep steady
+python temp/h800/bench_rounds.py --tier host --mtp 1 --requests 64 512 --passes 3 --modes ours_inplace hisparse --output $OUT/rounds_mtp1_inplace.json 2>&1 | grep steady
+// Purpose: can Hopper's bulk async copy (cp.async.bulk, the 1-D TMA path) read mapped Host memory
+// over PCIe faster than SM cp.async, for random 1152-byte KV rows as the fetch CTAs read them?
+// Compares, versus CTA count and bytes in flight per CTA:
+//   cpasync: 256 threads issue 16-byte cp.async (the current fetch loop's access pattern);
+//   bulk:    one thread issues one cp.async.bulk per row into shared memory, completion on an
+//            mbarrier per stage (no tensor map needed: rows are contiguous 1152-byte runs);
+//   dma:     cudaMemcpyAsync of the same number of bytes, contiguous (the copy-engine reference).
+// Usage: ./bulk_bw host|peer   (SM90; build: nvcc -O3 -arch=sm_90a -o bulk_bw bulk_bw.cu)
+#include <cuda_runtime.h>
+#include <algorithm>
+#include <cstdio>
+#include <cstdlib>
+#include <cstdint>
+#include <vector>
+#define CK(x) do { cudaError_t e = (x); if (e) { printf("%s:%d %s\n", __FILE__, __LINE__, cudaGetErrorString(e)); exit(1); } } while (0)
+constexpr int ROW = 1152, VECS = ROW / 16, THREADS = 256;
+
+__device__ __forceinline__ void cp16(void* s, const void* g) {
+  asm volatile("cp.async.cg.shared.global [%0], [%1], 16;" ::"r"((unsigned)__cvta_generic_to_shared(s)), "l"(g));
+}
+
+// Each CTA walks `per_cta` rows of `ids` in stages of R rows, S stages in flight; rows are
+// copied out to HBM when `write` (as staging does).
+template <int S>
+__global__ void fetch_cpasync(const uint4* far, const int* ids, uint4* out, int per_cta, int R, bool write) {
+  extern __shared__ uint4 buf[];
+  const int base = blockIdx.x * per_cta, stage_vecs = R * VECS, stages = per_cta / R;
+  auto issue = [&](int st) {
+    if (st < stages) {
+      uint4* b = buf + (st % S) * stage_vecs;
+      for (int v = threadIdx.x; v < stage_vecs; v += THREADS)
+        cp16(b + v, far + (long)ids[base + st * R + v / VECS] * VECS + v % VECS);
+    }
+    asm volatile("cp.async.commit_group;");
+  };
+  for (int st = 0; st < S - 1; ++st) issue(st);
+  for (int st = 0; st < stages; ++st) {
+    issue(st + S - 1);
+    asm volatile("cp.async.wait_group %0;" ::"n"(S - 1));
+    __syncthreads();
+    if (write) {
+      uint4* b = buf + (st % S) * stage_vecs;
+      for (int v = threadIdx.x; v < stage_vecs; v += THREADS) out[(long)(base + st * R) * VECS + v] = b[v];
+    }
+    __syncthreads();
+  }
+}
+
+__device__ __forceinline__ void mbar_init(uint64_t* bar, unsigned count) {
+  asm volatile("mbarrier.init.shared::cta.b64 [%0], %1;" ::"r"((unsigned)__cvta_generic_to_shared(bar)), "r"(count));
+}
+__device__ __forceinline__ void mbar_expect_tx(uint64_t* bar, unsigned bytes) {
+  asm volatile("mbarrier.arrive.expect_tx.shared::cta.b64 _, [%0], %1;" ::"r"((unsigned)__cvta_generic_to_shared(bar)), "r"(bytes));
+}
+__device__ __forceinline__ void mbar_wait(uint64_t* bar, unsigned phase) {
+  asm volatile(
+      "{\n.reg .pred p;\nW: mbarrier.try_wait.parity.shared::cta.b64 p, [%0], %1;\n@!p bra W;\n}\n" ::"r"(
+          (unsigned)__cvta_generic_to_shared(bar)), "r"(phase));
+}
+__device__ __forceinline__ void bulk_g2s(void* s, const void* g, unsigned bytes, uint64_t* bar) {
+  asm volatile("cp.async.bulk.shared::cluster.global.mbarrier::complete_tx::bytes [%0], [%1], %2, [%3];" ::"r"(
+                   (unsigned)__cvta_generic_to_shared(s)), "l"(g), "r"(bytes), "r"((unsigned)__cvta_generic_to_shared(bar))
+               : "memory");
+}
+
+// Same staging as above, but thread 0 issues one bulk copy per row; `issuers` threads share the
+// issuing of a stage (1 = a single TMA-issuing thread, 32 = a warp).
+__global__ void fetch_bulk(const uint4* far, const int* ids, uint4* out, int per_cta, int S, int R, bool write, int issuers) {
+  extern __shared__ __align__(128) uint4 buf[];
+  __shared__ __align__(8) uint64_t bars[16];
+  const int base = blockIdx.x * per_cta, stage_vecs = R * VECS, stages = per_cta / R;
+  if (threadIdx.x == 0) for (int s = 0; s < S; ++s) mbar_init(&bars[s], 1);
+  asm volatile("fence.mbarrier_init.release.cluster;");
+  __syncthreads();
+  auto issue = [&](int st) {
+    if (st >= stages) return;
+    uint4* b = buf + (st % S) * stage_vecs;
+    if (threadIdx.x == 0) mbar_expect_tx(&bars[st % S], R * ROW);
+    __syncwarp();
+    if (threadIdx.x < issuers)
+      for (int r = threadIdx.x; r < R; r += issuers)
+        bulk_g2s(b + r * VECS, far + (long)ids[base + st * R + r] * VECS, ROW, &bars[st % S]);
+  };
+  for (int st = 0; st < S - 1; ++st) issue(st);
+  for (int st = 0; st < stages; ++st) {
+    issue(st + S - 1);
+    mbar_wait(&bars[st % S], (st / S) & 1);
+    if (write) {
+      uint4* b = buf + (st % S) * stage_vecs;
+      for (int v = threadIdx.x; v < stage_vecs; v += THREADS) out[(long)(base + st * R) * VECS + v] = b[v];
+    }
+    __syncthreads();  // the slot is reused by issue(st + S) next iteration
+  }
+}
+
+int main(int argc, char** argv) {
+  const bool host = argc > 1 && argv[1][0] == 'h';
+  const long far_rows = 4L << 20;  // 4.8 GB pool
+  CK(cudaSetDevice(0));
+  cudaDeviceProp prop; CK(cudaGetDeviceProperties(&prop, 0));
+  uint4* far;
+  if (host) {
+    CK(cudaHostAlloc((void**)&far, far_rows * ROW, cudaHostAllocMapped));
+    for (long i = 0; i < far_rows * VECS; ++i) far[i] = make_uint4(i, i ^ 0x5a5a5a5a, ~i, i * 2654435761u);
+  } else {
+    CK(cudaSetDevice(1)); CK(cudaMalloc(&far, far_rows * ROW)); CK(cudaMemset(far, 1, far_rows * ROW));
+    CK(cudaSetDevice(0)); CK(cudaDeviceEnablePeerAccess(1, 0));
+  }
+  const int max_cta = prop.multiProcessorCount, per_cta = 2048;
+  std::vector<int> h_ids(max_cta * per_cta);
+  srand(1);
+  for (auto& x : h_ids) x = (int)(((long)rand() * 7919) % far_rows);
+  int* ids; uint4* out; uint4* dst;
+  CK(cudaMalloc(&ids, h_ids.size() * 4)); CK(cudaMemcpy(ids, h_ids.data(), h_ids.size() * 4, cudaMemcpyHostToDevice));
+  CK(cudaMalloc(&out, (long)h_ids.size() * ROW));
+  CK(cudaMalloc(&dst, (long)h_ids.size() * ROW));
+  cudaEvent_t a, b; CK(cudaEventCreate(&a)); CK(cudaEventCreate(&b));
+  auto timed = [&](auto launch) {
+    launch(); CK(cudaDeviceSynchronize());
+    std::vector<float> t;
+    for (int i = 0; i < 5; ++i) {
+      CK(cudaEventRecord(a)); launch(); CK(cudaEventRecord(b)); CK(cudaEventSynchronize(b));
+      float ms; CK(cudaEventElapsedTime(&ms, a, b)); t.push_back(ms);
+    }
+    std::sort(t.begin(), t.end());
+    return t[2];
+  };
+  printf("tier=%s gpu=%s sms=%d rows/CTA=%d row=%dB\n", host ? "host" : "peer", prop.name, max_cta, per_cta, ROW);
+  const double total = (double)max_cta * per_cta * ROW;
+  // Correctness of the bulk path (Host tier: rows are distinct patterns): copy out, compare.
+  if (host) {
+    const int smem = 4 * 32 * ROW;
+    CK(cudaFuncSetAttribute(fetch_bulk, cudaFuncAttributeMaxDynamicSharedMemorySize, smem));
+    CK(cudaMemset(out, 0, (long)h_ids.size() * ROW));
+    fetch_bulk<<<max_cta, THREADS, smem>>>(far, ids, out, per_cta, 4, 32, true, 32);
+    CK(cudaDeviceSynchronize());
+    std::vector<uint4> got((long)h_ids.size() * VECS);
+    CK(cudaMemcpy(got.data(), out, got.size() * 16, cudaMemcpyDeviceToHost));
+    long bad = 0;
+    for (long r = 0; r < (long)h_ids.size(); ++r)
+      for (int v = 0; v < VECS; ++v) {
+        const uint4 x = got[r * VECS + v], y = far[(long)h_ids[r] * VECS + v];
+        bad += x.x != y.x || x.y != y.y || x.z != y.z || x.w != y.w;
+      }
+    printf("bulk copy check: %ld bad vectors of %zu\n", bad, got.size());
+  }
+  float ms = timed([&] { CK(cudaMemcpyAsync(dst, far, (size_t)total, host ? cudaMemcpyHostToDevice : cudaMemcpyDeviceToDevice)); });
+  printf("dma contiguous %.0f MB: %.1f GB/s\n", total / 1e6, total / (ms * 1e-3) / 1e9);
+  printf("%-8s %4s %3s %3s %4s %10s %5s | %8s %10s\n", "path", "ctas", "S", "R", "iss", "inflightKB", "write", "GB/s", "GB/s/CTA");
+  auto row = [&](const char* path, int ctas, int S, int R, int iss, bool write, float ms) {
+    const double gbs = (double)ctas * per_cta * ROW / (ms * 1e-3) / 1e9;
+    printf("%-8s %4d %3d %3d %4d %10.0f %5d | %8.1f %10.2f\n", path, ctas, S, R, iss, S * R * ROW / 1024.0, write, gbs, gbs / ctas);
+  };
+  struct Cfg { int S, R; };
+  const Cfg cfgs[] = {{2, 64}, {4, 32}, {8, 16}, {4, 40}, {12, 16}};  // 147-184 KB of shared memory
+  for (int ctas : {8, 16, 32, 64, max_cta}) {
+    for (auto c : cfgs) {
+      const int smem = c.S * c.R * ROW;
+      auto cpk = c.S == 2 ? fetch_cpasync<2> : c.S == 4 ? fetch_cpasync<4> : c.S == 8 ? fetch_cpasync<8> : fetch_cpasync<12>;
+      CK(cudaFuncSetAttribute(cpk, cudaFuncAttributeMaxDynamicSharedMemorySize, smem));
+      CK(cudaFuncSetAttribute(fetch_bulk, cudaFuncAttributeMaxDynamicSharedMemorySize, smem));
+      row("cpasync", ctas, c.S, c.R, THREADS, false,
+          timed([&] { cpk<<<ctas, THREADS, smem>>>(far, ids, out, per_cta, c.R, false); }));
+      for (int iss : {1, 32})
+        row("bulk", ctas, c.S, c.R, iss, false,
+            timed([&] { fetch_bulk<<<ctas, THREADS, smem>>>(far, ids, out, per_cta, c.S, c.R, false, iss); }));
+      row("bulk", ctas, c.S, c.R, 32, true,
+          timed([&] { fetch_bulk<<<ctas, THREADS, smem>>>(far, ids, out, per_cta, c.S, c.R, true, 32); }));
+    }
+  }
+  CK(cudaGetLastError());
+  return 0;
+}
+-rw-r--r-- 1 luyouy fit  704288  9月 18 12:51 /WORK/PUBLIC/luyouy_work/rtx/.venv/lib/python3.12/site-packages/nvidia/cu13/lib/libcudart.so.13
+-rw-r--r-- 1 luyouy fit 1361104  9月 18 12:51 /WORK/PUBLIC/luyouy_work/rtx/.venv/lib/python3.12/site-packages/nvidia/cu13/lib/libcudart_static.a
+-rw-r--r-- 1 luyouy fit 1024340  9月 18 12:51 /WORK/PUBLIC/luyouy_work/rtx/.venv/lib/python3.12/site-packages/nvidia/cu13/lib/libcudadevrt.a

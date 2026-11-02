@@ -1,0 +1,35 @@
+--- base.cuh
++++ cache_store.cuh
+@@ -3182,10 +3182,13 @@
+           const uint32_t v = i * KTraits::NUM_THREADS + tid;
+           const int32_t victim = v < chunk_vecs ? cache_rows[v / VECS_PER_ROW] : -1;
+           if (victim >= 0) {
+-            reinterpret_cast<uint4*>(
+-                params.staging +
+-                static_cast<int64_t>(victim) * ROW)[v % VECS_PER_ROW] =
+-                buffer[buf * CHUNK_VECS + v];
++            auto* cache_destination = reinterpret_cast<uint4*>(
++                params.staging + static_cast<int64_t>(victim) * ROW) + v % VECS_PER_ROW;
++            const uint4 payload = buffer[buf * CHUNK_VECS + v];
++            // The live launch reads the staging copy; cache payload is for future launches.
++            asm volatile("st.global.cs.v4.u32 [%0], {%1, %2, %3, %4};"
++                         :: "l"(cache_destination), "r"(payload.x), "r"(payload.y),
++                            "r"(payload.z), "r"(payload.w) : "memory");
+           }
+         }
+       }
+@@ -3218,8 +3221,12 @@
+     for (uint32_t v = tid; v < chunk_vecs; v += KTraits::NUM_THREADS) {
+       const int32_t victim = cache_rows[v / VECS_PER_ROW];
+       if (victim >= 0) {
+-        reinterpret_cast<uint4*>(params.staging + static_cast<int64_t>(victim) * ROW)[v % VECS_PER_ROW] =
+-            source[v];
++        auto* cache_destination = reinterpret_cast<uint4*>(
++            params.staging + static_cast<int64_t>(victim) * ROW) + v % VECS_PER_ROW;
++        const uint4 payload = source[v];
++        asm volatile("st.global.cs.v4.u32 [%0], {%1, %2, %3, %4};"
++                     :: "l"(cache_destination), "r"(payload.x), "r"(payload.y),
++                        "r"(payload.z), "r"(payload.w) : "memory");
+       }
+     }
+     __syncthreads();

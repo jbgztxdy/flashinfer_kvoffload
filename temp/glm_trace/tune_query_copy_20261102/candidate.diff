@@ -1,0 +1,54 @@
+--- base.cuh
++++ query_copy.cuh
+@@ -3448,6 +3448,42 @@
+   }
+ }
+ 
++template <typename KTraits>
++__device__ __forceinline__ void stream_source_load_q_nope(
++    typename KTraits::SharedStorage* smem_storage, typename KTraits::DTypeQ* q_nope,
++    typename KTraits::DTypeQ* q_pe, const uint32_t q_nope_stride_n, const uint32_t q_nope_stride_h,
++    const uint32_t q_pe_stride_n, const uint32_t q_pe_stride_h, const uint32_t q_len,
++    const uint32_t packed_offset, const uint_fastdiv& num_heads) {
++  using DTypeQ = typename KTraits::DTypeQ;
++  constexpr uint32_t UPCAST_STRIDE_Q_NOPE = KTraits::UPCAST_STRIDE_Q_NOPE;
++  constexpr uint32_t NUM_MMA_D_CKV = KTraits::NUM_MMA_D_CKV;
++  const uint32_t lane_idx = threadIdx.x;
++  const uint32_t warpgroup_idx = threadIdx.z;
++  const uint32_t warp_idx_in_wg = threadIdx.y;
++
++  smem_t<KTraits::SWIZZLE_MODE_Q_NOPE> q_smem_nope(smem_storage->q_smem_nope);
++
++#pragma unroll
++  for (uint32_t mma_q = 0; mma_q < 2; ++mma_q) {
++    uint32_t q, r;
++    num_heads.divmod(
++        packed_offset + lane_idx / 8 + (warpgroup_idx + mma_q * 2) * 16 + warp_idx_in_wg * 4, q, r);
++    DTypeQ* q_nope_ptr =
++        q_nope + q * q_nope_stride_n + r * q_nope_stride_h + (lane_idx % 8) * upcast_size<DTypeQ>();
++#pragma unroll
++    for (uint32_t mma_d = 0; mma_d < KTraits::NUM_MMA_D_CKV / 4; ++mma_d) {
++      uint32_t q_smem_nope_offset_w =
++          q_smem_nope.template get_permuted_offset<UPCAST_STRIDE_Q_NOPE>(
++              32 * mma_q + warpgroup_idx * 16 + warp_idx_in_wg * 4 + lane_idx / 8,
++              mma_d * 8 + lane_idx % 8);
++      q_smem_nope.load_128b_async<SharedMemFillMode::kFillZero>(q_smem_nope_offset_w, q_nope_ptr,
++                                                                q < q_len);
++      q_nope_ptr += 8 * upcast_size<DTypeQ>();
++    }
++
++  }
++}
++
+ template <typename KTraits, typename Params, bool ROW_MERGE>
+ __device__ __forceinline__ void stream_source_run_joint_host_item(const Params& params,
+                                                     typename KTraits::SharedStorage& storage,
+@@ -3504,7 +3540,7 @@
+   // initial state (lse at its -5e4 start); it must not issue load_q, whose copies join the first
+   // KV group.
+   if (kv_len > 0) {
+-    load_q<KTraits>(&storage, params.q_nope + row * params.q_nope_stride_n,
++    stream_source_load_q_nope<KTraits>(&storage, params.q_nope + row * params.q_nope_stride_n,
+                     params.q_pe + row * params.q_pe_stride_n, params.q_nope_stride_n,
+                     params.q_nope_stride_h, params.q_pe_stride_n, params.q_pe_stride_h, 1,
+                     head_tile * CTA_TILE_Q, params.num_heads);

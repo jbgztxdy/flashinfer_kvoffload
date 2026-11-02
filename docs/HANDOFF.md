@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-01 18:36 已按轻量迭代偏好保留远端源evict-first，当前生产48c2a724，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-02 15:25 QK地址游标已按轻量证据保留，当前生产754706f8；H800原host/peer均完成，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -16,7 +16,19 @@
 
 ## 2. 当前运行状态与新一轮进度
 
-**当前生产为SS实测原件，SHA=`48c2a724548c2ac554400b26592a1212e159cd279cd1a48da191b5139cd86f73`，已保留。** SS=`temp/glm_trace/tune_stream_source_20261101/`，直接基线为已保留CPEa436；原CPE冻结为SS/base.cuh，不要回退。唯一机制为dedicated fetch去重far-source cp.async的L2 evict_first固定fraction1.0提示，attention/staging/cachestore/元数据策略及数学/精确LRU/实际字节/FAR模型/ready/claim/barrier完全保持；九个attentionhelper逐字等价、fetch_policy.diff隔离两处hint设置/调用。实际三构建各36条带desc的LDGSTS，描述符高字0x12f00000/低0，非动态cache命中或因果份额。原38EMU/76normal实例全部指令/资源/机器字与控制字相同；新REG255/EMU STACK8/normalBF16FP16 STACK0/static2304/LOCAL0、实际单108CTA/256thread/dynamic147968/active1 Graph。115项数值/全载荷/LSE/Graph测试和首BF16/K97三sanitizer均通过。
+**最新生产为QK地址游标实测原件，SHA=`754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79`，已安装。** 从上轮SS48c2逐字节冻结基线继续，不回退到CPE/JQ。新目录`temp/glm_trace/tune_qk_cursor_20261102/`（QC）；paired CKV QK先计算Q/K起点，随后用已有xor/add推进swizzle地址，保持原unroll4/加载与MMA次序、QPE寄存器、joint MDO/PV、远端源hint、精确launch LRU、载荷/字节/FAR/ready/barrier和单kernel。16384项整数地址等价检查通过。
+
+QC只做4项BF16定向检查（长queue/128池、容量512/4096、稀疏不等长池/空/奇尾、stride80、output/LSE/Graph/全部有效cache载荷），未机械重复旧全面门槛。EMU/normal各38个原BF16实例机器字/控制字/资源保持；目标REG255、STACK16、LOCAL0、static2304，EMU原STACK8/normal原0，不称无栈。实际Graph仍1kernel/108CTA/block32x4x2/dynamic147968/active1。短256×3 base→QC，100GB0/20快0.902%/0.611%、50GB20快0.041%；完整1024×3反向QC→base，100GB0 **3464.883→3413.173µs（1.492%）**、20 **3483.117→3438.675（1.276%）**、50GB **5502.875→5499.211（0.067%）**。正常256×3反向同卡HBM3157.451→3151.659（0.183%），实际HostPCIe9532.171→9531.669（0.005%，持平）。均GPU3/NUMA1/MTP8R128/LRU4096/f24off；同卡HBM不是NVLink。16格/8配对、6528计时launch/408段，两同硬件参考/所有逐步逐pass与正负数据保留。`retention.json`及snapshot绑定实测安装原件，没有FP16/SXM/NVLink/H800新验证、全矩阵、sanitizer重复或生产root再编译/测试声明。静态总指令/IMAD反而增加，不把源表达式减少当性能原因。整体100GB仍高于逐步参考约24%–25%，目标未完成。
+
+同轮两个新机制已拒绝：`tune_cache_store_20261102/`只改LRU payload为st.global.cs，3项定向检查通过但100GB0/20慢0.017%/0.908%、50GB慢0.018%；`tune_query_copy_20261102/`只去掉item已不再读取的sharedQPE上传，4项定向检查通过但三点−0.316%/+0.135%/−0.073%，没有明确收益。两者都保留原件，不安装、不与QC组合、不扩大矩阵或扫数字。本轮共11项定向测试、28格/14对，失败/负差均保留。[机制及H800报告](mla_host_a100_followup_20261102.md)。
+
+QC原handles4833/85090/31860/19193/57173、前两个候选的所有runner均已exit0，无本任务活动runner，不重启。GPU0/1仍他人flashcheck服务占用，GPU2不碰，GPU3最后空闲；后续GPU预检及共享锁保持。继续从754706f8实现新机制，用户轻量迭代偏好持续有效。
+
+**H800新状态（11/02 15:14只读查询）：**1004362 COMPLETED0（02:33–02:41）、1004363 COMPLETED0（14:43–14:47）、1040680 FAILED1（02:49，nvcc缺libcudadevrt/libcudart_static，未进入GPU实验）；1089379已解除依赖但PENDING/Priority，估计11/05不保证；1089380 PENDING/afterok依赖。原watcher4160646自然结束，1174145仍活，不重启旧watcher。原host10份+peer4份JSON和环境/脚本均下载并绑定SHA在cache_store/h800_archive_manifest.json；实际旧header29667eaf、四步旧trace/steady末半段口径，不能当当前优化/正确Memcpy或assistant1024结果。旧host大batch输旧Memcpy，旧peer大batch有正收益，均保留，不能替代当前版本H800验证。未覆盖排队源码、未重复提交。bulk失败已定位库搜索路径，不改共享CUDA shim或原queued脚本；尚未重试。
+
+以下是上轮及更早历史状态，生产/活跃任务以以上最新入口为准。
+
+**上轮生产为SS实测原件，SHA=`48c2a724548c2ac554400b26592a1212e159cd279cd1a48da191b5139cd86f73`，已保留。** SS=`temp/glm_trace/tune_stream_source_20261101/`，直接基线为已保留CPEa436；原CPE冻结为SS/base.cuh，不要回退。唯一机制为dedicated fetch去重far-source cp.async的L2 evict_first固定fraction1.0提示，attention/staging/cachestore/元数据策略及数学/精确LRU/实际字节/FAR模型/ready/claim/barrier完全保持；九个attentionhelper逐字等价、fetch_policy.diff隔离两处hint设置/调用。实际三构建各36条带desc的LDGSTS，描述符高字0x12f00000/低0，非动态cache命中或因果份额。原38EMU/76normal实例全部指令/资源/机器字与控制字相同；新REG255/EMU STACK8/normalBF16FP16 STACK0/static2304/LOCAL0、实际单108CTA/256thread/dynamic147968/active1 Graph。115项数值/全载荷/LSE/Graph测试和首BF16/K97三sanitizer均通过。
 
 SS关键对照GPU3/NUMA1/MTP8R128/LRU4096/f24off，短256×3：100GB0/20快0.416%/0.128%，50GB慢0.021%；完整1024×5反向100GB0/20 **3478.936→3455.752、3509.139→3481.059µs（+0.666%/+0.800%）**，正向 **3480.251→3463.062、3500.221→3486.115（+0.494%/+0.403%）**，50GB两序快0.015%/0.080%。正常HBM3247.563→3236.062（+0.354%）、真实PCIe9967.752→9951.293（+0.165%）。22格/11配对、两参考/全部正负差/实际miss/命中/逐步逐pass/guard/源码与binary SHA保存，[SS报告](mla_host_a100_stream_source_20261101.md)。GPU3同卡独立far HBM不是NVLink；没有本轮SS SXM/H800结论，不拼不同时轮CPE/JQ绝对时间。
 

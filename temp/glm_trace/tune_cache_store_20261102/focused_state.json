@@ -1,0 +1,126 @@
+{
+  "start": "2026-11-02T14:51:32+0800",
+  "complete": true,
+  "actions": [
+    {
+      "label": "targeted_correctness",
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "-p",
+        "jitpaths",
+        "-p",
+        "candidatepaths",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cache_store_20261102/test_cofetch_progress.py",
+        "-k",
+        "dtype0 and (long_fetch_queues or sparse_pool_unequal)"
+      ],
+      "start": "2026-11-02T14:51:33+0800",
+      "pid": 2897365,
+      "exit_code": 0,
+      "end": "2026-11-02T14:51:38+0800"
+    },
+    {
+      "label": "focused256_base",
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cache_store_20261102/bench_gpu3_native.py",
+        "--kind",
+        "lru",
+        "--mtp",
+        "8",
+        "--requests",
+        "128",
+        "--settings",
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000",
+        "--passes",
+        "3",
+        "--positions",
+        "256",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off"
+      ],
+      "start": "2026-11-02T14:51:38+0800",
+      "pid": 2897892,
+      "exit_code": 0,
+      "end": "2026-11-02T14:51:56+0800"
+    },
+    {
+      "label": "focused256_cache_store",
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_cache_store_20261102/bench_gpu3_native.py",
+        "--kind",
+        "lru",
+        "--mtp",
+        "8",
+        "--requests",
+        "128",
+        "--settings",
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000",
+        "--passes",
+        "3",
+        "--positions",
+        "256",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off"
+      ],
+      "start": "2026-11-02T14:51:56+0800",
+      "pid": 2898758,
+      "exit_code": 0,
+      "end": "2026-11-02T14:52:13+0800"
+    }
+  ],
+  "resources_start": {
+    "timestamp": "2026-11-02T14:51:33+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "resources_after_tests": {
+    "timestamp": "2026-11-02T14:51:38+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "end": "2026-11-02T14:52:13+0800"
+}
