@@ -16,6 +16,8 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**19:02澄清：**用户追问batch重叠与LRU开关。当前无LRU10/30%初始远端不是LRU几乎全远端trace的开关消融，不再横向声称LRU导致差距扩大。相同R128trace实际unique672.920→259.582MB/步（引用命中78.94%、unique命中61.42%），100GB理想参考6.729→2.691ms，缓存实测3.290ms；参考变严不等于总时变差。100GB的R16→R128gap实际34.6/40.4%→22.2/22.9%，NVLink则10.9%→22.3%确实待优化。`lru_same_input_20261102/existing_accounting.json`是CPU核算，不是容量0timing。两点同输入capacity0补测runner66610在资源预检遇他人GPU0/1flashcheck，停止仅自有CPU waiter289478（无CUDA/无raw），父289459exit1；无活动runner、不抢占。准备脚本和状态保存，按具体疑点再续，不得把尚未运行补测当结果。生产754706f8保持。
+
 **最新路由核对：用户要求两条路径按场景择优，并追问历史接近参考的记录。** `temp/glm_trace/route_select_20261102/`已完成当前生产754706f8、SXM0/1真实NV12/NUMA0的30格/15对。源码及既有正常/EMU BF16库SHA都保持，只有host_stage开关；MTP8/h64/K2048，LRU16/128请求完整1024位置×3冷pass，另无LRU16请求四原快照×0/10%/30%×3pass，正常NVLink及100GB0/20µs。16请求f16/split on，128请求f24/off，不做参数扫描。
 
 择优结果：NVLink/R16/LRU4096 **direct557.725µs vs staged622.968，参考502.995，高10.88%**；NVLink/R128/LRU **staged3016.416 vs direct3335.189，参考2467.179，高22.26%**。当前大staged已有后续优化，不能再套旧“NVLink总选direct”。100GB0/20/R128/LRU均选staged3289.824/3306.973，距逐步参考22.24%/22.89%；R16/LRU仍差34.55%/40.37%，没有切路由就解决。R16无LRU远端10/30%，NVLink择优差1.87%/7.24%，100GB两延迟差13.38%–18.76%；0%负差控制也保留，不截断。原历史NVLink约7%是16请求、后半段steady与最快device样本参考，history_review.json绑定原件，不能拿它代表128请求LRU，也不把不同输入/配置/聚合口径直接当新旧回退。

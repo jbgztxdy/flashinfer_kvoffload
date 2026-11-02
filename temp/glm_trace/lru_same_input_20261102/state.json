@@ -1,0 +1,39 @@
+{
+  "complete": false,
+  "start": "2026-11-02T19:00:07+0800",
+  "actions": [
+    {
+      "label": "capacity0_normal",
+      "command": [
+        "numactl",
+        "-N0",
+        "-m0",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/lru_same_input_20261102/bench.py",
+        "--kind",
+        "lru",
+        "--mtp",
+        "8",
+        "--requests",
+        "128",
+        "--settings",
+        "nvlink",
+        "--passes",
+        "3",
+        "--positions",
+        "1024",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off",
+        "--route",
+        "staged"
+      ],
+      "start": "2026-11-02T19:00:07+0800",
+      "pid": 289478,
+      "exit_code": -15,
+      "end": "2026-11-02T19:01:31+0800"
+    }
+  ]
+}

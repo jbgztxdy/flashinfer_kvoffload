@@ -1,0 +1,70 @@
+{
+  "cpu_only": true,
+  "records": [
+    {
+      "requests": 16,
+      "setting": "nvlink",
+      "original_far_fraction": 0.99951171875,
+      "reference_hit_rate": 0.784755699954074,
+      "unique_hit_rate": 0.6170484986308604,
+      "remote_unique_MB_without_LRU": 84.728763,
+      "remote_unique_MB_with_LRU": 32.447007,
+      "compute_us": 502.99468000109,
+      "reference_without_LRU_us": 502.99468000109,
+      "reference_with_LRU_us": 502.99468000109,
+      "measured_with_LRU_us": 622.968002067258,
+      "without_LRU_runtime_not_measured": true,
+      "source_raw": "temp/glm_trace/route_select_20261102/raw/matched_current_staged_f16_i64_son_lru_nvlink_mtp8_b16.json",
+      "source_sha256": "dc9192e13b37818335a891e4e2cee20baf67f8ede50bf8783712f5c009bfcc37"
+    },
+    {
+      "requests": 16,
+      "setting": "g100_l0",
+      "original_far_fraction": 0.99951171875,
+      "reference_hit_rate": 0.7847960620725452,
+      "unique_hit_rate": 0.6171170467813865,
+      "remote_unique_MB_without_LRU": 84.728763,
+      "remote_unique_MB_with_LRU": 32.441199,
+      "compute_us": 502.99468000109,
+      "reference_without_LRU_us": 847.28763,
+      "reference_with_LRU_us": 504.9270065197384,
+      "measured_with_LRU_us": 679.386666820695,
+      "without_LRU_runtime_not_measured": true,
+      "source_raw": "temp/glm_trace/route_select_20261102/raw/matched_current_staged_f16_i64_son_lru_g100_l0_mtp8_b16.json",
+      "source_sha256": "5a21d3e8e86723c3bd7db9b8c06b3dfae30b766c9acccebc67a5af295c35206a"
+    },
+    {
+      "requests": 128,
+      "setting": "nvlink",
+      "original_far_fraction": 0.999525148421526,
+      "reference_hit_rate": 0.789410466144065,
+      "unique_hit_rate": 0.614217063596507,
+      "remote_unique_MB_without_LRU": 672.920307,
+      "remote_unique_MB_with_LRU": 259.601172,
+      "compute_us": 2467.1786644806466,
+      "reference_without_LRU_us": 2498.683484826619,
+      "reference_with_LRU_us": 2467.1786644806466,
+      "measured_with_LRU_us": 3016.4160057902336,
+      "without_LRU_runtime_not_measured": true,
+      "source_raw": "temp/glm_trace/route_select_20261102/raw/matched_current_staged_f24_i64_soff_lru_nvlink_mtp8_b128.json",
+      "source_sha256": "3dc9a9a627ddf79a484ef94866c27e093d72b02467ea4fbb76cdefcae1e79b7f"
+    },
+    {
+      "requests": 128,
+      "setting": "g100_l0",
+      "original_far_fraction": 0.999525148421526,
+      "reference_hit_rate": 0.7894460856574296,
+      "unique_hit_rate": 0.6142461888878619,
+      "remote_unique_MB_without_LRU": 672.920307,
+      "remote_unique_MB_with_LRU": 259.581573,
+      "compute_us": 2467.1786644806466,
+      "reference_without_LRU_us": 6729.20307,
+      "reference_with_LRU_us": 2691.341554173832,
+      "measured_with_LRU_us": 3289.8240039745965,
+      "without_LRU_runtime_not_measured": true,
+      "source_raw": "temp/glm_trace/route_select_20261102/raw/matched_current_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "source_sha256": "9c8867ee13bfcc9244f2dde19104a0ee5aa5c683e14f075e90c64db0d08c2106"
+    }
+  ],
+  "warning": "No actual capacity0 timings; derived traffic/reference only. Existing lowfar nocache cases have different residency and cannot be cache toggles."
+}
