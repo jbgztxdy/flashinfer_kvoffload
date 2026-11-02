@@ -1,0 +1,119 @@
+{
+  "rows": [
+    {
+      "hardware": "SXM0/1",
+      "cohort": "sxm256_",
+      "variant": "base",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g100_l0",
+      "ours_us": 3239.007997016112,
+      "memcpy_us": 6020.08534471194,
+      "local_us": 2458.666684726874,
+      "reference_us": 2620.2398712922923,
+      "over_reference": 0.23614941994552785,
+      "reference_hit_rate": 0.7673275676821273,
+      "unique_miss_MB": 247.927596,
+      "pass_mean_us": [
+        3221.2160006165504,
+        3226.9439846277237,
+        3268.864005804062
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_shared_claim_20261102/raw/sxm256_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/kernel_report_20261029/raw/floor_floor_mtp8_b128.json",
+      "header_sha256": "754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79"
+    },
+    {
+      "hardware": "SXM0/1",
+      "cohort": "sxm256_",
+      "variant": "base",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g100_l20000",
+      "ours_us": 3255.2533373236656,
+      "memcpy_us": 6046.880001823108,
+      "local_us": 2458.666684726874,
+      "reference_us": 2620.800271292292,
+      "over_reference": 0.24208371503202364,
+      "reference_hit_rate": 0.7672190208109144,
+      "unique_miss_MB": 247.981656,
+      "pass_mean_us": [
+        3259.5520094037056,
+        3229.440003633499,
+        3276.767998933792
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_shared_claim_20261102/raw/sxm256_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/kernel_report_20261029/raw/floor_floor_mtp8_b128.json",
+      "header_sha256": "754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79"
+    },
+    {
+      "hardware": "SXM0/1",
+      "cohort": "sxm256_",
+      "variant": "base",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "positions": 256,
+      "passes": 3,
+      "fetch_ctas": 24,
+      "split": false,
+      "setting": "g50_l20000",
+      "ours_us": 5284.02132789294,
+      "memcpy_us": 8567.872002720833,
+      "local_us": 2458.666684726874,
+      "reference_us": 4959.17472,
+      "over_reference": 0.06550416676848592,
+      "reference_hit_rate": 0.7672348682664973,
+      "unique_miss_MB": 247.958736,
+      "pass_mean_us": [
+        5284.607969224453,
+        5283.264026045799,
+        5284.1919884085655
+      ],
+      "max_abs_error": 0.0019550323486328125,
+      "raw": "temp/glm_trace/tune_shared_claim_20261102/raw/sxm256_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "reference_raw": "temp/glm_trace/kernel_report_20261029/raw/floor_floor_mtp8_b128.json",
+      "header_sha256": "754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79"
+    }
+  ],
+  "pairs": [],
+  "raw_files": [
+    {
+      "path": "temp/glm_trace/tune_shared_claim_20261102/raw/sxm256_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "824bb45991bd2fbf126b917f293dee5ec6e7e953f960cd4d1ed1bd57f7298315"
+    },
+    {
+      "path": "temp/glm_trace/tune_shared_claim_20261102/raw/sxm256_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "sha256": "d714140662f18ef46915caa2a6e7732af2fa2546cafca9fcde862cd8da410189"
+    },
+    {
+      "path": "temp/glm_trace/tune_shared_claim_20261102/raw/sxm256_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "sha256": "5c1e4cd2fc775f2a33c4a11321a581ef73b4fb5eaaf4e876af7685f2da34d326"
+    }
+  ],
+  "incomplete": [
+    {
+      "path": "temp/glm_trace/tune_shared_claim_20261102/raw/sxm256_shared_claim_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "c326e01e20489362eb8ac71c8c2235031bd5f80973ba988d3448b3f974e205f8"
+    }
+  ],
+  "pending_references": [],
+  "timed_launches": 576,
+  "accepted_segments": 36,
+  "validation_scope": "Targeted BF16 payload/Graph tests; no exhaustive tests or sanitizers repeated."
+}

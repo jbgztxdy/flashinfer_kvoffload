@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-02 17:34 当前源码staged/direct择优已完成，生产仍754706f8；真实SXM0/1对照，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-02 20:08 新110%目标四机制已实现，三拒绝、一项性能待空闲GPU；生产仍754706f8，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -15,6 +15,12 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**20:00当前活动轮：用户要求更大优化，将100GB下staged/direct最优压到逐步参考110%以内。** 已完成两遍QK/PV与全局Q＋64KV双stage的GPU3/NUMA1定向筛选，均通过2项检查但100GB分别慢56%–57%和43%–44%，拒绝。新elastic_fetch经856CPU队列覆盖及normal/EMU构建；GPU3预检19:48遇外部525539，在CUDA前exit1；19:50发现GPU0/1释放，取得gpu01锁后转SXM/NUMA0完成2项定向检查和256×3三对，100GB0基本持平、20慢5.964%，也拒绝，不扫描退休边界。三版源码/原始结果及失败记录均在各`temp/glm_trace/tune_{two_pass,global_query,elastic_fetch}_20261102/`。6项定向检查/18格9对，不重跑整套测试/矩阵。生产754706f8保持，原方案不要重启。
+
+**20:08最新：shared_claim构建和两项定向检查通过，候选性能仍待有效测量。** 同pool最多4行共享hash先去重，再全局CAS，owner临时page ID放在LRU前未用的entry_victim/victim_of，原dense rowprefix resolve再复制，原fetch/math/LRU/FAR保留。`tune_shared_claim_20261102/`，最终候选a47ca8b8；首CPU稿claim_entry会alias slot_pool，GPU运行前已纠正并完整存pre_gpu_alias/，不能运行首稿。handles45564/87149均编译terminal0，35058验证父在最后候选benchmark处exit1：新SXM三格base已完整，候选100GB0µs测完后资源检查发现外部581553/581554进入，raw complete=false，3440µs不得当有效回退数据，其余两候选格未运行。2项检查加入不等长pool/跨pool重复页/padding/全有效cache载荷和output/LSE/Graph，通过；source_review确认attention/fetch helper规范化命名后逐字同生产及scratch生命周期，未重复大验证。
+
+所有本轮runner已结束，无后台等待器，不重启旧run_sxm.py或重跑基线。20:08 GPU0/1被VLLM585473/585474等占用各34495MiB，GPU3外部smoe546178仍占，GPU2不碰。后续重新预检，空闲后仅执行shared_claim的resume_candidate.py补候选三格，原不完整raw会自动归档，再audit_performance.py；同范围无需许可。当前有效21格/9对/4032计时launch/252段、共8项定向检查，另1不完整干扰格保留。canonical数学34af、FAR5e409、生产7547、原5304矩阵未改，无本轮正常链路/H800结果。110%尚未达到；已有SXM全窗口需由3289.824/3306.973降至约2960µs，仍需约10%/10.5%总时下降。[本轮报告](mla_host_a100_overlap110_20261102.md)和shared_claim/continuation_state.json为当前状态。
 
 **19:02澄清：**用户追问batch重叠与LRU开关。当前无LRU10/30%初始远端不是LRU几乎全远端trace的开关消融，不再横向声称LRU导致差距扩大。相同R128trace实际unique672.920→259.582MB/步（引用命中78.94%、unique命中61.42%），100GB理想参考6.729→2.691ms，缓存实测3.290ms；参考变严不等于总时变差。100GB的R16→R128gap实际34.6/40.4%→22.2/22.9%，NVLink则10.9%→22.3%确实待优化。`lru_same_input_20261102/existing_accounting.json`是CPU核算，不是容量0timing。两点同输入capacity0补测runner66610在资源预检遇他人GPU0/1flashcheck，停止仅自有CPU waiter289478（无CUDA/无raw），父289459exit1；无活动runner、不抢占。准备脚本和状态保存，按具体疑点再续，不得把尚未运行补测当结果。生产754706f8保持。
 

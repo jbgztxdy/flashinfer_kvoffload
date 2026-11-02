@@ -1,0 +1,9 @@
+{
+  "base_sha256": "754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79",
+  "candidate_sha256": "031277ef7e033d0f0b6135a925f05e1b7590b1d8e2ad50f5d8280423fdf55bbc",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "cpu_queue_cases": 856,
+  "mechanism": "Elastic dedicated fetch cohort: all f CTAs cover first ceil(jobs/3) rounded to f; first f/3 CTAs then retire into existing attention work walk, remaining CTAs drain tail. Same64row/double buffer and source/cache/ready ordering.",
+  "invariants": "One cooperative kernel; exact original attention/QK/PV; original prepare/resolve/LRU/capacity/bytes/FAR hooks. No worker cofetch or extra buffer, no simulator/reference change.",
+  "adopted": false
+}

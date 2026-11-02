@@ -6,6 +6,8 @@
 
 **11月2日路由复核**：已按用户要求在当前754706f8源码上同轮比较staged/direct并择优，覆盖真实SXM NVLink、100GB0/20µs、MTP8/16与128请求LRU及16请求无LRU低远端比例。NVLink16请求LRU选direct、128请求LRU选staged；无LRU16请求远端10%–30%距参考约1.9%–7.2%（NVLink）和13.4%–18.8%（100GB），大128请求LRU仍差约22%–23%。完整路径/参考/正负格和启动前选择器见[路由择优报告](mla_host_route_selection_20261102.md)，不能用固定staged大batch的差距概括全场景。公共默认及CUDA源码保持，择优配置单列。
 
+**11月2日晚110%目标迭代**：已实现并实测两遍QK/PV、全局Q＋64KV双stage、fetch提前转计算三个新机制，均未胜过当前生产，拒绝安装；共享hash先去重候选通过定向正确性，性能格因其他GPU任务进入未通过结束资源检查，尚待有效测量。累计8项定向检查，不重复全套验证，生产754706f8保持。当前大batch100GB仍需总时再降约10%–10.5%才到110%；[候选、负差及资源状态](mla_host_a100_overlap110_20261102.md)单列，不改原矩阵。
+
 ## 1. 工作成果与核心结论
 
 本阶段完成了远端 KV sparse MLA decode 的单 kernel 融合方案，将**跨 query 去重、跨步 LRU、远端取数、attention 计算及结果合并**放入同一次 cooperative kernel 启动。目标是在 KV 放到Host DRAM 或其他 GPU 后，尽量把传输隐藏在计算期间，减少相对纯 device 计算增加的耗时。

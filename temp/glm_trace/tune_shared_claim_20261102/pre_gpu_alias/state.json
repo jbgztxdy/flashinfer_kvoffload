@@ -1,0 +1,5 @@
+{
+  "timestamp": "2026-11-02T19:59:29+0800",
+  "gpu_runs": 0,
+  "reason": "claim_entry aliases slot_pool in the FFI. Use entry_victim (victim_of) for temporary page IDs, disjoint from slot_pool; resolve ends before LRU overwrites victims. No GPU run of old draft."
+}

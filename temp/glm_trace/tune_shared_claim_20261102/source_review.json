@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-11-02T20:06:14+0800",
+  "candidate_sha256": "a47ca8b87558b50b2470a9e4b470ea8116776b15bc5baea4c2b1a7e807659ec7",
+  "canonical_math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "attention_helper_section_literal_equal_after_renaming": true,
+  "fetch_source_helper_literal_equal": true,
+  "scratch": "entry_victim/victim_of: [0,staging_capacity); slot_pool: [staging_capacity,2*staging_capacity). Temp group page IDs live at original kv_indptr[groupfirst]+rank until resolve; original post-resolve grid barrier precedes LRU writes. slot_pool writes cannot clobber temporary page IDs.",
+  "bounds": "Dispatch requires staging_capacity>=numrows*maxK and maxK<=2048. A same-pool subgroup has <=4rows and <=8192unique pages; hash has16384slots, owner rank<2^16. Group source ranges disjoint, global CAS remains only crossgroup owner election.",
+  "numerical_scope": "Two BF16 targeted GPU tests passed; not an exhaustive proof of timing-dependent state or all LRU tie decisions.",
+  "performance": "Candidate raw incomplete due foreign GPU process; no valid performance pair or speedup claim."
+}

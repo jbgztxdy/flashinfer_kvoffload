@@ -1,0 +1,729 @@
+--- base.cuh
++++ shared_claim.cuh
+@@ -3712,6 +3712,688 @@
+ }
+ 
+ 
++// Deduplicate a bounded group in shared memory before issuing global claims.
++// Global claims still select one owner across groups and across cache pools.
++template <typename KTraits, typename Params>
++__device__ __forceinline__ void prepare_shared_claim_rows(
++    const Params& params, uint32_t stamp, uint8_t* smem) {
++  using Id=typename Params::IdType;
++  constexpr uint32_t THREADS=KTraits::NUM_THREADS, BATCH=8, HASH=16384, GROUP=4;
++  const uint32_t tid=(threadIdx.z*blockDim.y+threadIdx.y)*blockDim.x+threadIdx.x;
++  const uint32_t lane=tid%32,lower=(1u<<lane)-1;
++  auto* keys=reinterpret_cast<uint32_t*>(smem);
++  const uint32_t units=ceil_div(params.num_rows,GROUP);
++  for(uint32_t unit=blockIdx.y;unit<units;unit+=gridDim.y) {
++    const uint32_t end=min((unit+1)*GROUP,params.num_rows);
++    uint32_t first=unit*GROUP;
++    while(first<end) {
++      const uint32_t pool=params.row_pool[first];
++      uint32_t last=first+1;
++      while(last<end && params.row_pool[last]==pool)++last;
++      for(uint32_t j=tid;j<HASH;j+=THREADS)keys[j]=0xffffffffu;
++      __syncthreads();
++      for(uint32_t row=first;row<last;++row) {
++        const uint32_t begin=params.kv_indptr[row],length=params.kv_indptr[row+1]-begin;
++        for(uint32_t offset=0;offset<length;offset+=BATCH*THREADS) {
++          Id pages[BATCH];
++#pragma unroll
++          for(uint32_t i=0;i<BATCH;++i) {
++            const uint32_t at=offset+i*THREADS+tid;
++            pages[i]=at<length?params.kv_indices[begin+at]:kHostBatchNoEntry;
++          }
++#pragma unroll
++          for(uint32_t i=0;i<BATCH;++i) {
++            if(pages[i]>=params.host_page_start) {
++              const int32_t slot=params.resident[pages[i]-params.host_page_start];
++              if(slot>=0) {params.slot_stamp[slot]=stamp;pages[i]=kHostBatchNoEntry;}
++            }
++          }
++#pragma unroll
++          for(uint32_t i=0;i<BATCH;++i) {
++            if(pages[i]>=params.host_page_start) {
++              const uint32_t page=static_cast<uint32_t>(pages[i]);
++              uint32_t at=(page*2654435761u)&(HASH-1);
++              while(true) {
++                const uint32_t old=atomicCAS(keys+at,0xffffffffu,page);
++                if(old==0xffffffffu || old==page)break;
++                at=(at+1)&(HASH-1);
++              }
++            }
++          }
++        }
++      }
++      __syncthreads();
++      // Rank owners at the group's first row. The group's unused entry_victim range
++      // holds their page IDs; resolve copies it after the global row-prefix scan.
++      for(uint32_t offset=0;offset<HASH;offset+=BATCH*THREADS) {
++        uint32_t pages[BATCH],owned[BATCH],masks[BATCH],total=0;
++#pragma unroll
++        for(uint32_t i=0;i<BATCH;++i)pages[i]=keys[offset+i*THREADS+tid];
++#pragma unroll
++        for(uint32_t i=0;i<BATCH;++i)
++          owned[i]=pages[i]!=0xffffffffu?atomicCAS(params.host_slot+pages[i]-params.host_page_start,0u,1u):2u;
++#pragma unroll
++        for(uint32_t i=0;i<BATCH;++i) {
++          masks[i]=__ballot_sync(0xffffffff,owned[i]==0);total+=__popc(masks[i]);
++        }
++        uint32_t rank=0;
++        if(lane==0 && total)rank=atomicAdd(host_batch_row_claims(params)+first,total);
++        rank=__shfl_sync(0xffffffff,rank,0);
++#pragma unroll
++        for(uint32_t i=0;i<BATCH;++i) {
++          if(masks[i]>>lane&1) {
++            const uint32_t local=rank+__popc(masks[i]&lower);
++            params.entry_victim[params.kv_indptr[first]+local]=pages[i];
++            atomicExch(params.host_slot+pages[i]-params.host_page_start,(first<<kHostBatchRankBits|local)+2);
++          }
++          rank+=__popc(masks[i]);
++        }
++      }
++      __syncthreads();
++      // Emit the original Host-prefix/HBM-suffix layout without reclaiming pages.
++      for(uint32_t row=first;row<last;++row) {
++        const uint32_t begin=params.kv_indptr[row],length=params.kv_indptr[row+1]-begin;
++        for(uint32_t offset=0;offset<length;offset+=BATCH*THREADS) {
++          Id pages[BATCH];uint32_t hm[BATCH],lm[BATCH],hn=0,ln=0;
++#pragma unroll
++          for(uint32_t i=0;i<BATCH;++i) {
++            const uint32_t at=offset+i*THREADS+tid;
++            pages[i]=at<length?params.kv_indices[begin+at]:kHostBatchNoEntry;
++          }
++          bool dropped=false;
++#pragma unroll
++          for(uint32_t i=0;i<BATCH;++i) {
++            if(pages[i]<0 && pages[i]!=kHostBatchNoEntry) {pages[i]=kHostBatchNoEntry;dropped=true;}
++            if(pages[i]>=params.host_page_start) {
++              const int32_t slot=params.resident[pages[i]-params.host_page_start];
++              if(slot>=0) {params.slot_stamp[slot]=stamp;pages[i]=host_batch_cached_entry(params,slot);}
++            }
++          }
++          if(__any_sync(0xffffffff,dropped) && lane==0)params.state[kHostBatchGaps]=1;
++#pragma unroll
++          for(uint32_t i=0;i<BATCH;++i) {
++            hm[i]=__ballot_sync(0xffffffff,pages[i]>=params.host_page_start);
++            lm[i]=__ballot_sync(0xffffffff,pages[i]!=kHostBatchNoEntry && pages[i]<params.host_page_start);
++            hn+=__popc(hm[i]);ln+=__popc(lm[i]);
++          }
++          uint32_t h=0,l=0;
++          if(lane==0) {
++            if(hn)h=atomicAdd(params.state+kHostBatchHostCounts+row,hn);
++            if(ln)l=atomicAdd(host_batch_local_cursors(params)+row,ln);
++          }
++          h=__shfl_sync(0xffffffff,h,0);l=__shfl_sync(0xffffffff,l,0);
++#pragma unroll
++          for(uint32_t i=0;i<BATCH;++i) {
++            if(pages[i]>=params.host_page_start)params.remap[begin+h+__popc(hm[i]&lower)]=pages[i];
++            else if(pages[i]!=kHostBatchNoEntry)params.remap[begin+length-1-l-__popc(lm[i]&lower)]=pages[i];
++            h+=__popc(hm[i]);l+=__popc(lm[i]);
++          }
++        }
++      }
++      __syncthreads();first=last;
++    }
++  }
++}
++
++template <typename KTraits, typename Params>
++__device__ __forceinline__ uint32_t resolve_shared_claim_slots(const Params& params, uint8_t* smem) {
++  using IdType = typename Params::IdType;
++  constexpr uint32_t THREADS = KTraits::NUM_THREADS;
++  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
++  uint32_t* row_base = reinterpret_cast<uint32_t*>(smem);
++  const uint32_t* row_claims = host_batch_row_claims(params);
++  const uint32_t unique = host_batch_block_scan<THREADS>(
++      params.num_rows, [&](uint32_t row) { return row_claims[row]; }, row_base);
++  // No Host page anywhere: nothing to rewrite, and no Host items to list. The caller then skips
++  // the second grid barrier and the fetch entirely.
++  if (unique == 0) return 0;
++  for(uint32_t row=blockIdx.y;row<params.num_rows;row+=gridDim.y) {
++    const uint32_t begin=params.kv_indptr[row],count=row_claims[row],base=row_base[row];
++    for(uint32_t rank=tid;rank<count;rank+=THREADS) {
++      const uint32_t slot=base+rank;
++      params.unique_pages[slot]=params.entry_victim[begin+rank];
++      if(slot<params.staging_capacity)params.slot_pool[slot]=params.row_pool[row];
++    }
++  }
++
++  // Same (row, segment) units as the prepare step, so a few rows still spread over the grid. In
++  // place with the cache, prepare already marked the claiming entries (no page ids to resolve).
++  const uint32_t units = host_batch_writes_back(params) ? 0 : params.num_rows * params.prepare_parts;
++#pragma unroll 1
++  for (uint32_t unit = blockIdx.y; unit < units; unit += gridDim.y) {
++    const uint32_t row = unit / params.prepare_parts;
++    const IdType begin = params.kv_indptr[row];
++    // Host entries fill each row's leading positions, or anywhere when not staging.
++    const uint32_t host = params.stage ? params.state[kHostBatchHostCounts + row]
++                                       : host_batch_row_len(params, row);
++    const uint32_t part_begin = unit % params.prepare_parts * params.prepare_segment;
++    const uint32_t part_end = min(part_begin + params.prepare_segment, host);
++#pragma unroll 1
++    for (uint32_t j = part_begin + tid; j < part_end; j += THREADS) {
++      const IdType page = params.remap[begin + j];
++      if (!params.stage && page < params.host_page_start) continue;
++      const uint32_t claim = params.host_slot[page - params.host_page_start] - 2;
++      const uint32_t owner = claim >> kHostBatchRankBits;
++      const uint32_t slot = row_base[owner] + (claim & ((1u << kHostBatchRankBits) - 1));
++      if (params.stage && slot < params.staging_capacity) {
++        params.remap[begin + j] = host_batch_staged_entry(params, slot);
++      }
++    }
++  }
++  // CTA 0 lists the Host items of the tail rows, and publishes the row bases that delimit each
++  // LRU pool's staged pages.
++  if (blockIdx.y == 0) {
++    if (host_batch_caching(params)) {
++      for (uint32_t row = tid; row < params.num_rows; row += THREADS) {
++        params.row_slot_base[row] = row_base[row];
++      }
++      if (tid == 0) params.row_slot_base[params.num_rows] = unique;
++    }
++    const uint32_t max_items = host_batch_max_host_items(params);
++    const uint32_t tail_rows = params.num_rows - params.full_rows;
++    uint32_t* host_items = host_batch_host_items(params) + params.full_rows;
++    const auto items = [&](uint32_t t) {
++      return host_batch_host_chunks<KTraits::CTA_TILE_KV>(
++                 host_batch_split_host(params, params.full_rows + t), max_items,
++                 params.host_item_entries)
++                 .x *
++             params.num_head_tiles;
++    };
++    const uint32_t total = host_batch_block_scan<THREADS>(tail_rows, items, host_items);
++    if (tid == 0) host_batch_host_items(params)[params.num_rows] = total;
++    __threadfence_block();
++    __syncthreads();
++    uint32_t* item_rows = host_batch_host_item_rows(params);
++    // A warp per tail row.
++#pragma unroll 1
++    for (uint32_t t = tid / 32; t < tail_rows; t += THREADS / 32) {
++      const uint32_t first = host_items[t], count = items(t);
++      for (uint32_t k = tid % 32; k < count; k += 32) item_rows[first + k] = params.full_rows + t;
++    }
++  }
++  return unique;
++}
++
++template <typename Q, typename KV, typename O, typename Id>
++struct SharedClaimTraits : JointQKTraits<Q, KV, O, Id> {};
++template <typename Params>
++struct SharedClaimHostParams : JointQKHostParams<Params> {};
++
++// Two different KV tiles share each Q fragment. Each score accumulator keeps the
++// native PE-then-CKV MMA order; this performs no duplicate QK work.
++template <bool INIT, typename KTraits, uint32_t D, uint32_t Q_STRIDE,
++          uint32_t K_STRIDE, SwizzleMode Q_SWIZZLE, SwizzleMode K_SWIZZLE>
++__device__ __forceinline__ void shared_claim_qk_pair_fragments(
++    smem_t<Q_SWIZZLE> q, smem_t<K_SWIZZLE> ka, smem_t<K_SWIZZLE> kb,
++    float (*sa)[8], float (*sb)[8]) {
++  static_assert(KTraits::QK_SHARD && KTraits::CTA_TILE_KV == 32);
++  const uint32_t lane=threadIdx.x, group=threadIdx.z, warp=threadIdx.y;
++  alignas(16) uint32_t qf[4],kf[4];
++  uint32_t qo=q.template get_permuted_offset<Q_STRIDE>(
++      warp*16+lane%16,lane/16);
++  uint32_t ko=ka.template get_permuted_offset<K_STRIDE>(
++      group*16+8*(lane/16)+lane%8,(lane%16)/8);
++#pragma unroll 4
++  for (uint32_t dim=0;dim<D;++dim) {
++    q.ldmatrix_m8n8x4(qo,qf);
++    ka.ldmatrix_m8n8x4(ko,kf);
++    if (INIT && dim==0)
++      mma::mma_sync_m16n16k16_row_col_f16f16f32<typename KTraits::DTypeQ,MMAMode::kInit>(sa[0],qf,kf);
++    else
++      mma::mma_sync_m16n16k16_row_col_f16f16f32<typename KTraits::DTypeQ>(sa[0],qf,kf);
++    kb.ldmatrix_m8n8x4(ko,kf);
++    if (INIT && dim==0)
++      mma::mma_sync_m16n16k16_row_col_f16f16f32<typename KTraits::DTypeQ,MMAMode::kInit>(sb[0],qf,kf);
++    else
++      mma::mma_sync_m16n16k16_row_col_f16f16f32<typename KTraits::DTypeQ>(sb[0],qf,kf);
++    qo=q.template advance_offset_by_column<2>(qo,dim);
++    ko=ka.template advance_offset_by_column<2>(ko,dim);
++  }
++}
++
++
++// Each lane owns four packed words per 16-feature QPE MMA fragment. The query
++// head/feature map is the same map produced by native ldmatrix.x4.
++template <typename Params>
++__device__ __forceinline__ void shared_claim_load_query(const Params& params, uint32_t row,
++                                                   uint32_t (&qpe)[4][4]) {
++  const uint32_t lane = threadIdx.x, warp = threadIdx.y;
++  const auto* query = params.q_pe + row * params.q_pe_stride_n;
++#pragma unroll
++  for (uint32_t dim = 0; dim < 4; ++dim) {
++    const uint32_t head = warp * 16 + lane / 4, col = dim * 16 + (lane % 4) * 2;
++    qpe[dim][0] = *reinterpret_cast<const uint32_t*>(query + head * params.q_pe_stride_h + col);
++    qpe[dim][1] = *reinterpret_cast<const uint32_t*>(query + (head + 8) * params.q_pe_stride_h + col);
++    qpe[dim][2] = *reinterpret_cast<const uint32_t*>(query + head * params.q_pe_stride_h + col + 8);
++    qpe[dim][3] = *reinterpret_cast<const uint32_t*>(query + (head + 8) * params.q_pe_stride_h + col + 8);
++  }
++}
++
++template <bool PAIR, typename KTraits>
++__device__ __forceinline__ void shared_claim_compute_pe(
++    typename KTraits::SharedStorage& storage, uint32_t a, uint32_t b,
++    uint32_t (&qpe)[4][4], float (*sa)[8], float (*sb)[8]) {
++  const uint32_t lane = threadIdx.x, group = threadIdx.z;
++  smem_t<KTraits::SWIZZLE_MODE_KPE> ka(storage.kpe_p_smem[a]), kb(storage.kpe_p_smem[b]);
++  alignas(16) uint32_t kf[4];
++#pragma unroll
++  for (uint32_t dim = 0; dim < 4; ++dim) {
++    const uint32_t offset = ka.template get_permuted_offset<KTraits::UPCAST_STRIDE_KPE>(
++        group * 16 + 8 * (lane / 16) + lane % 8, 2 * dim + (lane % 16) / 8);
++    ka.ldmatrix_m8n8x4(offset, kf);
++    if (dim == 0)
++      mma::mma_sync_m16n16k16_row_col_f16f16f32<typename KTraits::DTypeQ, MMAMode::kInit>(sa[0], qpe[dim], kf);
++    else
++      mma::mma_sync_m16n16k16_row_col_f16f16f32<typename KTraits::DTypeQ>(sa[0], qpe[dim], kf);
++    if constexpr (PAIR) {
++      kb.ldmatrix_m8n8x4(offset, kf);
++      if (dim == 0)
++        mma::mma_sync_m16n16k16_row_col_f16f16f32<typename KTraits::DTypeQ, MMAMode::kInit>(sb[0], qpe[dim], kf);
++      else
++        mma::mma_sync_m16n16k16_row_col_f16f16f32<typename KTraits::DTypeQ>(sb[0], qpe[dim], kf);
++    }
++  }
++}
++
++template <typename KTraits>
++__device__ __forceinline__ void shared_claim_compute_one(
++    typename KTraits::SharedStorage& storage, uint32_t (&qpe)[4][4], float (*scores)[8]) {
++  shared_claim_compute_pe<false, KTraits>(storage, 0, 0, qpe, scores, scores);
++  smem_t<KTraits::SWIZZLE_MODE_Q_NOPE> q(storage.q_smem_nope);
++  smem_t<KTraits::SWIZZLE_MODE_CKV> kv(storage.ckv_smem[0]);
++  compute_qk_<false, KTraits, KTraits::NUM_MMA_D_CKV,
++      KTraits::UPCAST_STRIDE_Q_NOPE, KTraits::UPCAST_STRIDE_CKV>(q, kv, scores);
++}
++
++template <typename KTraits>
++__device__ __forceinline__ void shared_claim_compute_qk_pair(
++    typename KTraits::SharedStorage& storage,uint32_t a,uint32_t b,
++    uint32_t (&qpe)[4][4], float (*sa)[8],float (*sb)[8]) {
++  shared_claim_compute_pe<true, KTraits>(storage, a, b, qpe, sa, sb);
++  smem_t<KTraits::SWIZZLE_MODE_Q_NOPE> qn(storage.q_smem_nope);
++  smem_t<KTraits::SWIZZLE_MODE_CKV> kna(storage.ckv_smem[a]),knb(storage.ckv_smem[b]);
++  shared_claim_qk_pair_fragments<false,KTraits,KTraits::NUM_MMA_D_CKV,
++      KTraits::UPCAST_STRIDE_Q_NOPE,KTraits::UPCAST_STRIDE_CKV>(qn,kna,knb,sa,sb);
++}
++
++
++// Two native32-row score tiles share one maximum, denominator/output rescale, then each
++// runs native PV in descending tile order. This changes FP32 reduction grouping, not the
++// attention equation. It is distinct from the earlier paired-QK-only schedule.
++template <typename KTraits>
++__device__ __forceinline__ void shared_claim_update_joint_host_mdo(
++    typename KTraits::SharedStorage* storage, typename KTraits::AttentionVariant variant,
++    float (*s0)[8], float (*s1)[8], float (*o)[8], float* m, float* d) {
++  static_assert(KTraits::QK_SHARD && KTraits::CTA_TILE_KV == 32);
++  const uint32_t lane = threadIdx.x, wg = threadIdx.z, warp = threadIdx.y;
++  const float scale = variant.sm_scale_log2;
++  float previous[2];
++#pragma unroll
++  for (uint32_t j = 0; j < 2; ++j) {
++    previous[j] = m[j];
++#pragma unroll
++    for (uint32_t t = 0; t < 2; ++t) {
++      const float* s = t == 0 ? s0[0] : s1[0];
++      m[j] = max(m[j], max(max(s[j*2], s[j*2+1]), max(s[j*2+4], s[j*2+5])));
++    }
++    m[j] = max(m[j], math::shfl_xor_sync(m[j], 2));
++    m[j] = max(m[j], math::shfl_xor_sync(m[j], 1));
++    if (lane % 4 == 0) storage->m_wg[wg][warp*16+j*8+lane/4] = m[j];
++  }
++  __syncthreads();
++#pragma unroll
++  for (uint32_t j = 0; j < 2; ++j) {
++    m[j] = max(storage->m_wg[0][warp*16+j*8+lane/4], storage->m_wg[1][warp*16+j*8+lane/4]);
++    const float factor = math::ptx_exp2(previous[j]*scale - m[j]*scale);
++    d[j] *= factor;
++#pragma unroll
++    for (uint32_t feature = 0; feature < KTraits::NUM_MMA_D_CKV/2; ++feature) {
++      o[feature][j*2] *= factor;
++      o[feature][j*2+1] *= factor;
++      o[feature][j*2+4] *= factor;
++      o[feature][j*2+5] *= factor;
++    }
++#pragma unroll
++    for (uint32_t t = 0; t < 2; ++t) {
++      float* s = t == 0 ? s0[0] : s1[0];
++      s[j*2] = math::ptx_exp2(s[j*2]*scale - m[j]*scale);
++      s[j*2+1] = math::ptx_exp2(s[j*2+1]*scale - m[j]*scale);
++      s[j*2+4] = math::ptx_exp2(s[j*2+4]*scale - m[j]*scale);
++      s[j*2+5] = math::ptx_exp2(s[j*2+5]*scale - m[j]*scale);
++    }
++  }
++}
++
++template <typename KTraits, typename Params>
++__device__ __forceinline__ void shared_claim_attend_joint_host_tiles(
++    const Params& params, typename KTraits::SharedStorage& storage,
++    typename KTraits::AttentionVariant& variant, const uint32_t* scratch, uint32_t index_base,
++    uint32_t kv_len, uint32_t row, int host_tiles, float (*scores)[8], float (*o)[8], float* m, float* d) {
++  static_assert(KTraits::NUM_STAGES == 2 && KTraits::CTA_TILE_KV == 32 && Params::fully_staged);
++  typename KTraits::IdType pages[kHostBatchTileRows<KTraits>];
++  alignas(16) uint32_t qpe[4][4];
++  shared_claim_load_query(params, row, qpe);
++  int hi = ceil_div(kv_len, 32u) - 1;
++  const int mask_tile = kv_len / 32;
++#pragma unroll
++  for (int i = 0; i < 2; ++i) {
++    const int tile = hi - i;
++    if (tile >= 0 && tile < host_tiles)
++      wait_host_batch_tile<KTraits>(params, scratch, index_base, kv_len, tile*32);
++  }
++  __syncthreads();
++#pragma unroll
++  for (int i = 0; i < 2; ++i) {
++    const int tile = hi - i;
++    if (tile >= 0) {
++      read_host_batch_pages<KTraits>(params, index_base, kv_len, tile*32, pages);
++      load_host_batch_kv<KTraits>(&storage, params, pages, kv_len, tile*32, tile%2, index_base);
++      cp_async::commit_group();
++    }
++  }
++#pragma unroll 1
++  for (; hi >= 1; hi -= 2) {
++    const int lo = hi - 1, next_hi = hi - 2, next_lo = hi - 3;
++    if (next_hi >= 0) read_host_batch_pages<KTraits>(params, index_base, kv_len, next_hi*32, pages);
++    // The frozen pair helper reuses Q fragments for the two current tiles. It requires
++    // both stages ready, trading the control's first-QK/load overlap for fewer Q loads.
++    cp_async::wait_group<0>();
++    __syncthreads();
++    shared_claim_compute_qk_pair<KTraits>(storage, hi%2, lo%2, qpe, scores, scores+1);
++    if (hi >= mask_tile)
++      logits_mask_<KTraits>(0, hi*32, 1, kv_len, kv_len, params.num_heads, scores);
++    shared_claim_update_joint_host_mdo<KTraits>(&storage, variant, scores, scores+1, o, m, d);
++    compute_mla_pv<KTraits>(&storage, hi%2, scores, d, o);
++    if (next_hi >= 0) {
++      if (next_hi < host_tiles)
++        wait_host_batch_tile<KTraits>(params, scratch, index_base, kv_len, next_hi*32);
++      __syncthreads();
++      load_host_batch_kv<KTraits>(&storage, params, pages, kv_len, next_hi*32, next_hi%2, index_base);
++      cp_async::commit_group();
++    }
++    // Refill the first released stage before PV of the second tile, preserving overlap.
++    if (next_lo >= 0) read_host_batch_pages<KTraits>(params, index_base, kv_len, next_lo*32, pages);
++    compute_mla_pv<KTraits>(&storage, lo%2, scores+1, d, o);
++    if (next_lo >= 0) {
++      if (next_lo < host_tiles)
++        wait_host_batch_tile<KTraits>(params, scratch, index_base, kv_len, next_lo*32);
++      __syncthreads();
++      load_host_batch_kv<KTraits>(&storage, params, pages, kv_len, next_lo*32, next_lo%2, index_base);
++      cp_async::commit_group();
++    }
++  }
++  cp_async::wait_group<0>();
++  __syncthreads();
++  if (hi == 0) {
++    shared_claim_compute_one<KTraits>(storage, qpe, scores);
++    logits_mask_<KTraits>(0, 0, 1, kv_len, kv_len, params.num_heads, scores);
++    update_mdo_states_<KTraits>(&storage, 0, variant, scores, o, m, d);
++    compute_mla_pv<KTraits>(&storage, 0, scores, d, o);
++  }
++}
++
++template <typename KTraits, typename Params, bool ROW_MERGE>
++__device__ __forceinline__ void shared_claim_run_joint_host_item(const Params& params,
++                                                    typename KTraits::SharedStorage& storage,
++                                                    uint8_t* smem, const uint32_t* scratch,
++                                                    const uint32_t item, float (*s_frag)[8],
++                                                    float (*o_frag)[8], float* m, float* d) {
++  using IdType = typename KTraits::IdType;
++  constexpr uint32_t CTA_TILE_Q = KTraits::CTA_TILE_Q;
++  constexpr uint32_t CTA_TILE_KV = KTraits::CTA_TILE_KV;
++  const uint32_t full_items = params.full_rows * params.num_head_tiles;
++  const uint32_t tail_tiles = (params.num_rows - params.full_rows) * params.num_head_tiles;
++  const uint32_t hbm_end = full_items + tail_tiles * params.num_chunks;
++  uint32_t row, head_tile, partial = 0, kv_start, kv_len, host_tiles;
++  if (Params::whole_rows || item < full_items) {
++    row = item / params.num_head_tiles;
++    head_tile = item % params.num_head_tiles;
++    kv_start = 0;
++    kv_len = host_batch_row_len(params, row);
++    host_tiles = ceil_div(params.state[kHostBatchHostCounts + row], CTA_TILE_KV);
++  } else if (item < hbm_end) {
++    const uint32_t tile = (item - full_items) / params.num_chunks;
++    const uint32_t chunk = (item - full_items) % params.num_chunks;
++    row = params.full_rows + tile / params.num_head_tiles;
++    head_tile = tile % params.num_head_tiles;
++    partial = item - full_items;
++    const uint32_t length = host_batch_row_len(params, row);
++    const uint32_t host = host_batch_split_host(params, row);
++    const uint32_t chunk_len = round_up(ceil_div(length - host, params.num_chunks), CTA_TILE_KV);
++    if (chunk * chunk_len >= length - host) return;
++    kv_start = host + chunk * chunk_len;
++    kv_len = min(chunk_len, length - kv_start);
++    // Without Host items the leading chunks carry the row's Host entries and wait on them.
++    const uint32_t row_host = params.state[kHostBatchHostCounts + row];
++    host_tiles = kv_start < row_host ? ceil_div(min(row_host, kv_start + kv_len) - kv_start, CTA_TILE_KV)
++                                     : 0;
++  } else {
++    const uint32_t k = item - hbm_end;
++    row = host_batch_host_item_rows(params)[k];
++    const uint2 chunks = host_batch_host_chunks<CTA_TILE_KV>(
++        params.state[kHostBatchHostCounts + row], host_batch_max_host_items(params),
++        params.host_item_entries);
++    const uint32_t local = k - host_batch_host_items(params)[row];
++    head_tile = local / chunks.x;
++    partial = tail_tiles * params.num_chunks + k;
++    kv_start = local % chunks.x * chunks.y;
++    kv_len = min(chunks.y, params.state[kHostBatchHostCounts + row] - kv_start);
++    host_tiles = ceil_div(kv_len, CTA_TILE_KV);
++  }
++
++  typename KTraits::AttentionVariant variant(params, row, smem);
++  init_states_<KTraits>(o_frag, m, d);
++  __syncthreads();
++  // A row of only padding (kv_len 0, e.g. a CUDA Graph filler row) writes a zero output from the
++  // initial state (lse at its -5e4 start); it must not issue load_q, whose copies join the first
++  // KV group.
++  if (kv_len > 0) {
++    load_q<KTraits>(&storage, params.q_nope + row * params.q_nope_stride_n,
++                    params.q_pe + row * params.q_pe_stride_n, params.q_nope_stride_n,
++                    params.q_nope_stride_h, params.q_pe_stride_n, params.q_pe_stride_h, 1,
++                    head_tile * CTA_TILE_Q, params.num_heads);
++    // load_q's copies join the first KV group, as in the native kernel.
++    shared_claim_attend_joint_host_tiles<KTraits>(params, storage, variant, scratch,
++                                     params.kv_indptr[row] + kv_start, kv_len, row, host_tiles, s_frag,
++                                     o_frag, m, d);
++  }
++  __syncthreads();
++  normalize_d_<KTraits>(&storage, 0, o_frag, m, d);
++  finalize_m_<KTraits>(variant, m);
++
++  // Each warp reads back output rows other lanes stored to shared memory.
++  if (Params::whole_rows || item < full_items) {
++    write_o<KTraits, /*SYNC_WARP=*/true>(&storage, params.final_o + row * params.o_stride_n,
++                     params.final_lse ? params.final_lse + row * params.num_heads : nullptr,
++                     nullptr, nullptr, o_frag, m, d, params.o_stride_n, params.o_stride_h, 1,
++                     head_tile * CTA_TILE_Q, params.num_heads, params.return_lse_base_on_e);
++  } else {
++    write_o<KTraits, /*SYNC_WARP=*/true>(&storage, nullptr, nullptr,
++                     params.partial_o + static_cast<int64_t>(partial) * CTA_TILE_Q *
++                                            KTraits::HEAD_DIM_CKV,
++                     params.partial_lse + partial * CTA_TILE_Q, o_frag, m, d, params.o_stride_n,
++                     params.o_stride_h, 1, head_tile * CTA_TILE_Q, params.num_heads,
++                     params.return_lse_base_on_e);
++  }
++  if constexpr (ROW_MERGE) {
++    if (item >= full_items) {
++      // Publish every thread's partial writes before advancing this row's completed item count.
++      __threadfence();
++      __syncthreads();
++      const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
++      if (tid == 0) atomicAdd(host_batch_row_completed(params) + row, 1u);
++    }
++  }
++}
++template <typename KTraits, typename Params, bool ROW_MERGE>
++__device__ __forceinline__ void shared_claim_run_joint_host_items(const Params& params,
++                                                     typename KTraits::SharedStorage& storage,
++                                                     uint8_t* smem, uint32_t* scratch,
++                                                     bool fetcher, uint32_t unique) {
++  constexpr uint32_t NUM_MMA_KV = KTraits::NUM_MMA_KV;
++  constexpr uint32_t NUM_MMA_D_CKV = KTraits::NUM_MMA_D_CKV;
++  // With no Host page the item list has no Host items, and host_batch_host_items was never
++  // written this launch, so it must not be read.
++  const int lru_items = host_batch_caching(params) && params.stage && unique ? params.num_pools : 0;
++  const int items = lru_items +
++                    (params.full_rows + (params.num_rows - params.full_rows) * params.num_chunks) *
++                        params.num_head_tiles +
++                    (unique ? host_batch_host_items(params)[params.num_rows] : 0);
++  const int workers = gridDim.y - params.fetch_ctas;
++  const int first = fetcher ? items - 1 - (blockIdx.y - workers) : blockIdx.y;
++  const int step = fetcher ? -static_cast<int>(params.fetch_ctas) : workers;
++
++  float s_frag[2][8];
++  alignas(16) float o_frag[NUM_MMA_D_CKV / 2][8];
++  float m[2];
++  float d[2];
++
++#pragma unroll 1
++  for (int item = first; item >= 0 && item < items; item += step) {
++    if (!claim_host_batch_item(params, scratch, item)) {
++      if (fetcher) break;
++      continue;
++    }
++    if (item < lru_items) {
++      run_host_batch_lru<KTraits>(params, smem, item, scratch[kHostBatchScratchEpoch], unique);
++      // The next item reuses the shared memory the selection scanned into.
++      __syncthreads();
++      continue;
++    }
++    shared_claim_run_joint_host_item<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, item - lru_items, s_frag, o_frag,
++                                 m, d);
++  }
++}
++template <typename KTraits, typename Params, bool ROW_MERGE>
++__global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLASharedClaimKernel(
++    const __grid_constant__ Params params) {
++  // cp.async moves full 128-byte lines only when the shared destination is aligned like the
++  // global source. The static scratch below would otherwise leave the dynamic buffer 16-byte
++  // aligned, which split every request in two: twice the sysmem sectors on the fetch (~22 vs
++  // ~26 GB/s) and slower HBM tile loads.
++  // A distinct name: extern shared arrays are one symbol per translation unit, and the native MLA
++  // kernels compiled alongside declare `smem` with 16-byte alignment, which would win.
++  extern __shared__ __align__(128) uint8_t host_batch_smem[];
++  uint8_t* smem = host_batch_smem;
++  auto& storage = reinterpret_cast<typename KTraits::SharedStorage&>(*smem);
++  __shared__ uint32_t scratch[3];
++  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
++  // The previous launch's last CTA advanced the epoch; ready flags from it no longer match.
++  const uint32_t epoch = params.state[kHostBatchEpoch];
++
++  // Not staging and no cache: nothing to prepare; remap is kv_indices (see the launcher) and
++  // the host counts stay zero.
++  const bool skip_prepare = !params.stage && !host_batch_caching(params);
++  uint32_t unique = 0;
++  // Grid-uniform: every CTA reads the flag after the same barrier.
++  bool gaps = false;
++  if (!skip_prepare) {
++    if (params.stage) {
++#ifdef FLASHINFER_HOST_BATCH_SMALL_PREPARE
++      if constexpr (ROW_MERGE) prepare_host_batch_small_rows<KTraits>(params, epoch + 1);
++      else prepare_shared_claim_rows<KTraits>(params, epoch + 1, smem);
++#else
++      prepare_shared_claim_rows<KTraits>(params, epoch + 1, smem);
++#endif
++    } else {
++      prepare_host_batch_rows_in_place<KTraits>(params, epoch + 1);
++    }
++    cg::this_grid().sync();
++    gaps = params.stage && host_batch_ld_acquire(params.state + kHostBatchGaps) != 0;
++#ifdef FLASHINFER_HOST_BATCH_SMALL_PREPARE
++    if constexpr (ROW_MERGE) unique = resolve_host_batch_small_slots<KTraits>(params, smem);
++    else unique = resolve_shared_claim_slots<KTraits>(params, smem);
++#else
++    unique = resolve_shared_claim_slots<KTraits>(params, smem);
++#endif
++    if (gaps) compact_host_batch_rows<KTraits>(params);
++    // In place, victims are chosen now, so they are known when the attention loads the pages.
++    if (host_batch_writes_back(params) && unique > 0) {
++#pragma unroll 1
++      for (uint32_t pool = blockIdx.y; pool < params.num_pools; pool += gridDim.y) {
++        run_host_batch_lru<KTraits>(params, smem, pool, epoch, unique,
++                                    reinterpret_cast<const uint32_t*>(smem));
++        __syncthreads();
++      }
++    }
++    if (blockIdx.y == 0 && tid == 0) params.state[kHostBatchUnique] = unique;
++  }
++  // unique is the same on every CTA (each runs the same scan), so the branch is grid-uniform and
++  // the cooperative barriers below stay matched.
++  // Which end of the item list this CTA walks from. This is a partition of the grid and must not
++  // depend on `unique`: if the back CTAs also walked from the front they would retrace the same
++  // items and contend on the claims (0% Host, 512 rows: 1514 -> 1784 us).
++  const bool from_back = blockIdx.y >= gridDim.y - params.fetch_ctas;
++  if (unique > 0 || gaps) {
++    // Rows resolved or compacted by other CTAs must be complete before any item or fetch reads them, and fetch
++    // CTAs clear the dedup slots the resolve step reads.
++    cg::this_grid().sync();
++    // Claim counts were read by every CTA's scan; reset them for the next launch.
++    for (uint32_t row = blockIdx.y * KTraits::NUM_THREADS + tid; row < params.num_rows;
++         row += gridDim.y * KTraits::NUM_THREADS) {
++      host_batch_row_claims(params)[row] = 0;
++    }
++
++  }
++  const uint32_t fetch_rows = host_batch_fetch_rows<ROW_MERGE>(params, unique);
++  if (tid == 0) {
++    scratch[kHostBatchScratchEpoch] = epoch;
++    scratch[kHostBatchScratchFetchRows] = fetch_rows;
++  }
++  __syncthreads();
++  // Fetch CTAs take attention items once their copies are issued, so low Host shares and the end
++  // of the PCIe stream keep every SM busy; with no Host page there is nothing to fetch.
++  if (unique > 0 && from_back && !host_batch_writes_back(params)) fetch_stream_source_pages<KTraits>(params, smem, epoch, unique, fetch_rows);
++  shared_claim_run_joint_host_items<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, from_back, unique);
++  // Uniform over the grid, so every CTA takes the same branch.
++  if (!Params::whole_rows && params.full_rows < params.num_rows) {
++    // A small staged merge waits only for the row it reads, overlapping the remaining rows and
++    // cache writeback. Every other path retains the full-grid merge barrier.
++    if constexpr (!ROW_MERGE) cg::this_grid().sync();
++    // 32 features per thread fill the grid only with enough (row tile, head) units; a small batch
++    // merged on 32 of 108 SMs at that width and took ~15 us for 8 rows, so it uses 8.
++    const uint32_t units = (params.num_rows - params.full_rows) * params.num_head_tiles *
++                           KTraits::CTA_TILE_Q;
++    if (params.num_rows == 1) {
++      merge_host_batch_single_query<KTraits, Params, ROW_MERGE>(params, smem);
++    } else if (units >= gridDim.y * (KTraits::NUM_THREADS / (KTraits::HEAD_DIM_CKV / 32))) {
++      merge_host_batch_chunks<KTraits, 32, Params, ROW_MERGE>(params);
++    } else {
++      merge_host_batch_chunks<KTraits, 8, Params, ROW_MERGE>(params);
++    }
++  }
++
++  // The last CTA to leave resets the shared counters for the next launch: the exit count, the
++  // per-row placement cursors (Host counts included), and then the epoch.
++  __syncthreads();
++  if (tid == 0) {
++    __threadfence();
++    scratch[kHostBatchScratchClaimed] =
++        atomicAdd(params.state + kHostBatchExit, 1u) == gridDim.y - 1;
++  }
++  __syncthreads();
++  if (scratch[kHostBatchScratchClaimed]) {
++    if (!skip_prepare) {
++      for (uint32_t row = tid; row < params.num_rows; row += KTraits::NUM_THREADS) {
++        params.state[kHostBatchHostCounts + row] = 0;
++        host_batch_local_cursors(params)[row] = 0;
++      }
++      if (tid == 0) params.state[kHostBatchGaps] = 0;
++    }
++    if constexpr (ROW_MERGE) {
++      for (uint32_t row = tid; row < params.num_rows; row += KTraits::NUM_THREADS)
++        host_batch_row_completed(params)[row] = 0;
++    }
++    __threadfence();
++    __syncthreads();
++    if (tid == 0) {
++      params.state[kHostBatchExit] = 0;
++      params.state[kHostBatchEpoch] = epoch + 1;
++    }
++  }
++}
++
++
+ // partial_capacity bounds the item states of the tail rows, in 64-head tiles.
+ template <uint32_t HEAD_DIM_CKV, uint32_t HEAD_DIM_KPE, typename Params>
+ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
+@@ -3730,6 +4412,37 @@
+         &smem_limit_per_sm, cudaDevAttrMaxSharedMemoryPerMultiprocessor, device));
+     FLASHINFER_CUDA_CALL(
+         cudaDeviceGetAttribute(&num_sms, cudaDevAttrMultiProcessorCount, device));
++    using SharedClaimKernelTraits = SharedClaimTraits<DTypeQ, DTypeKV, DTypeO, IdType>;
++    using SharedClaimKernelParams = SharedClaimHostParams<Params>;
++    constexpr size_t shared_claim_smem = sizeof(typename SharedClaimKernelTraits::SharedStorage);
++    static_assert(shared_claim_smem == 147968);
++    const bool shared_claim = max_kv_len > 0 && max_kv_len <= 2048 && params.stage && !params.host_split && params.num_head_tiles == 1 &&
++        params.pool_capacity > 0 && params.num_rows >= 4u * num_sms && params.fetch_ctas >= 1 &&
++        params.fetch_ctas < num_sms && smem_limit_per_sm >= shared_claim_smem + 4096 &&
++        smem_limit_per_sm < 200000 && static_cast<uint64_t>(params.staging_capacity) >=
++            static_cast<uint64_t>(params.num_rows) * max_kv_len;
++    if (shared_claim) {
++      auto shared_claim_kernel = BatchMLASharedClaimKernel<SharedClaimKernelTraits, SharedClaimKernelParams, false>;
++      FLASHINFER_CUDA_CALL(cudaFuncSetAttribute(shared_claim_kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, shared_claim_smem));
++      int shared_claim_blocks = 0;
++      FLASHINFER_CUDA_CALL(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&shared_claim_blocks, shared_claim_kernel, 256, shared_claim_smem));
++      if (shared_claim_blocks >= 1) {
++        const uint32_t shared_claim_grid = num_sms;
++        if (params.pool_capacity > kHostBatchMaxPool || 2ull * params.pool_capacity * sizeof(uint32_t) > shared_claim_smem)
++          return cudaErrorInvalidConfiguration;
++        static_assert(sizeof(SharedClaimKernelParams) == sizeof(Params));
++        static_assert(alignof(SharedClaimKernelParams) == alignof(Params));
++        params.full_rows = params.num_rows;
++        params.partial_capacity = partial_capacity;
++        params.num_chunks = 1;
++        const uint32_t length = max(max_kv_len, 1u);
++        params.prepare_parts = min(ceil_div(shared_claim_grid, max(params.num_rows, 1u)), ceil_div(length, 256u));
++        params.prepare_segment = round_up(ceil_div(length, params.prepare_parts), 256u);
++        void* args[] = {(void*)&params};
++        FLASHINFER_CUDA_CALL(cudaLaunchCooperativeKernel((void*)shared_claim_kernel, dim3(1, shared_claim_grid), dim3(32, 4, 2), args, shared_claim_smem, stream));
++        return cudaSuccess;
++      }
++    }
+     using StreamSourceKernelTraits = StreamSourceTraits<DTypeQ, DTypeKV, DTypeO, IdType>;
+     using StreamSourceKernelParams = StreamSourceHostParams<Params>;
+     constexpr size_t stream_source_smem = sizeof(typename StreamSourceKernelTraits::SharedStorage);

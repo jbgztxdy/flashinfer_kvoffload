@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-11-02T19:48:34+0800",
+  "runner": "run_focused.py",
+  "exec_session": null,
+  "exit_code": 1,
+  "phase": "resource_preflight_before_cuda",
+  "gpu_tests_started": false,
+  "gpu_timings_exist": false,
+  "reason": "Physical GPU3 is occupied by another user; the shared-lock holder's resource check rejected GPU work before spawning a CUDA child.",
+  "snapshot": {
+    "physical_gpu": 3,
+    "used_mib": 4479,
+    "utilization": 100,
+    "foreign_pid": 525539,
+    "foreign_process": "/mnt/raid/tzj/anaconda3/envs/smoe/bin/python",
+    "foreign_used_mib": 4472
+  },
+  "source": "exec_command returned the AssertionError with this snapshot; no focused_state.json was created before the assertion.",
+  "actions": "No process signaled, no CUDA test or timing launched, no waiting/background runner left. Resume only after a fresh resource check."
+}

@@ -1,0 +1,8 @@
+{
+  "base_sha256": "754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79",
+  "candidate_sha256": "7420c1d0a6edeb916b866a24cfff25000deb49ae370e898792e67a29bd545883",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "mechanism": "Shared hash dedup within up to4same-pool rows before global CAS; bounded16384key hash for maxK2048. Global unique owners ranked at group firstrow, page IDs temporarily in disjoint claim_entry ranges; original dense rowprefix resolve/fetch/LRU preserved.",
+  "invariants": "Group split at every cachepool boundary; global CAS still dedups crossgroup/crosspool. Hit stamps before original gridbarrier; no inline wait/newbarrier/fetchjob binarysearch. Identical attention math and sourcefetch/FAR/bytes.",
+  "adopted": false
+}

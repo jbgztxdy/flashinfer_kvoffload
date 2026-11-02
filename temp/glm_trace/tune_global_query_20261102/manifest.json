@@ -1,0 +1,9 @@
+{
+  "base_sha256": "754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79",
+  "candidate_sha256": "33062352611e93b6a7f9e31c606cbcb884a87416b578721bda2142691b808993",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "mechanism": "Native sharded64KV/two stages, query-nope fragments loaded directly from global through caches. Reclaims Q shared storage for second64KV stage; cached item QPE; one64KV max/rescale/PV; same total shared147968B and dedicated fetch64x2.",
+  "invariants": "One cooperative kernel, same prepare/resolve/exact launchLRU/sourcefetch/FAR/bytes. Original instances literal. Attention equation unchanged; FP32 order differs across KV columns.",
+  "adopted": false,
+  "pre_gpu_layout_fix": "Original draft interleaved warpgroup/subfragment coordinates. Fixed to native contiguous32KV per warpgroup before any GPU run. Old CPU builds archived."
+}
