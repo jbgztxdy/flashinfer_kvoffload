@@ -16,6 +16,8 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04认领行包号查询去重复控制：** quota的base/limit初始化一次、warp0每包查询一次，leader-owned shared packet供issue/stores/release，原同步/精确配额/planner/真实unique载荷保持。2定向检查、实际8877项包表与CPU逐项一致/epoch匹配/全cache载荷通过；新增shared复用K65目标1launch racecheck0error/0warning。normal3213.237µs，随后新clean3124.192µs，慢2.850%且3pass均慢；对旧quota3200.331也未见收益。主函数10638→9942指令，REG255/STACK16不变；停止查询局部变体，不单凭代码数归因，未测100GB/未安装。见CLAIMROW_CACHED_PACKET_20261104.md、audit/raw/实际库SHA。生产81093保持，runner结束。
+
 **11/04认领行并行配额新机制：** 原kernel实际rowprefix诊断认领行owner自用0.90%→49.01%、首far pair producer13.37→5.11，但每CTA30–160包尾部不可直接用。新planner复用resolve shared rowprefix，线程并行owner计数+excess/deficit scan+逆区间映射，无额外grid barrier/串行greedy；180CPU partition通过，实际GPU包表8857项与CPU逐项一致/epoch匹配，严格82/83包，自用42.40%。2定向检查及全cache载荷通过，normal3pass3200.331µs仍慢clean，拒绝不测100GB。区别旧poolquota的规划算法与成本，不能把更高自用当收益；未分离动态成本。见CLAIMROW_QUOTA_20261104.md、audit/model/raw/实际库SHA。生产81093保持，runner结束。
 
 **11/04CTA-owned行计数实验：** prepare_parts1/segment<=2048，warp计数atomicAdd换CTA prefix/direct store；页级CAS/EXCH不动，多分片回退原prepare。384CPU rankcase、2GPU定向通过，normal3095.413µs对近期clean3099.381仅0.13%，unique均值215559.54对215250.02略变，不认定收益/不安装。源/实际库SHA见CTA_ROW_COUNTS_20261104.md及audit，无新100GB结论。
