@@ -1,0 +1,87 @@
+{
+  "results": {
+    "refill_current": {
+      "pass_means_us": [
+        3094.9439853429794,
+        3107.583999633789,
+        3150.7200226187706
+      ],
+      "mean_us": 3117.7493358651795,
+      "mean_unique": 215230.33333333334,
+      "header_sha256": "0836d65d2726464d21aad249694355f0f96c6197554f1e4adc799f2bdbe5cc2d",
+      "actual_library_sha256": "d559e17c216809c8f1820a0632043773e0bed8187218ee735608c0d5718d5fe3"
+    },
+    "clean_refill_control": {
+      "pass_means_us": [
+        3096.640020608902,
+        3120.2239990234375,
+        3162.6880168914795
+      ],
+      "mean_us": 3126.51734550794,
+      "mean_unique": 215227.83333333334,
+      "header_sha256": "29835918684dd24c76e15e27366e7e330268c3dd66c939eaffb1462b54ab2742",
+      "actual_library_sha256": "ccc28bc51265e1233b82ec2c3ce06ebdf718140016370e86a3cc09fe86d8dbc9"
+    },
+    "refill_current_reverse": {
+      "pass_means_us": [
+        3102.8160080313683
+      ],
+      "mean_us": 3102.8160080313683,
+      "mean_unique": 215282.03125,
+      "header_sha256": "0836d65d2726464d21aad249694355f0f96c6197554f1e4adc799f2bdbe5cc2d",
+      "actual_library_sha256": "d559e17c216809c8f1820a0632043773e0bed8187218ee735608c0d5718d5fe3"
+    }
+  },
+  "normal_mean_gain_percent": 0.28044014070025547,
+  "reverse_firstpass_delta_us": 6.175987422466278,
+  "dispatch": {
+    "grid": [
+      1,
+      108,
+      1
+    ],
+    "block": [
+      32,
+      4,
+      2
+    ],
+    "dynamic_shared_bytes": 163072,
+    "active_blocks_per_SM": 1,
+    "kernel_name": "_ZN10flashinfer3mla26BatchMLACleanServiceKernelINS0_18CleanServiceTraitsI13__nv_bfloat16S3_S3_iEENS0_22CleanServiceHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+  },
+  "barriers": {
+    "clean": {
+      "library_sha256": "ccc28bc51265e1233b82ec2c3ce06ebdf718140016370e86a3cc09fe86d8dbc9",
+      "static_instructions": 9448,
+      "barrier_ops": {
+        "BAR.SYNC": 91,
+        "BAR.RED": 0,
+        "MEMBAR": 15
+      },
+      "cp_async_waits": 0
+    },
+    "refill_current": {
+      "library_sha256": "d559e17c216809c8f1820a0632043773e0bed8187218ee735608c0d5718d5fe3",
+      "static_instructions": 9432,
+      "barrier_ops": {
+        "BAR.SYNC": 86,
+        "BAR.RED": 0,
+        "MEMBAR": 15
+      },
+      "cp_async_waits": 0
+    }
+  },
+  "focused_tests": 2,
+  "target_racecheck": {
+    "scope": "K65 one target kernel launch",
+    "errors": 0,
+    "warnings": 0
+  },
+  "production": {
+    "mla_host_batch.cuh": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
+    "mla.cuh": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+    "far_link_emu.cuh": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716"
+  },
+  "retained": false,
+  "new100GB_result": false
+}
