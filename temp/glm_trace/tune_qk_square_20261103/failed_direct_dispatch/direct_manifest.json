@@ -1,0 +1,9 @@
+{
+  "base_sha256": "754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79",
+  "control_sha256": "ebfa1f7f0fd9149cd8b0457faf35a492bab706d4d646a3b2436992031bf775f7",
+  "candidate_sha256": "ce2ccfb95b21dc285a97025122b05007053482201d24a7df36dbd253ff2905e2",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "mechanism": "Square QK publishes BF16P directly to the original KPE/P stages. Producers reduce perheadmax before originalOrescale, native quantizedP rowsum is relayed to allPVwarps. Removes16KiBFP32score exchange and nativeP republishing; originalPV MMAorder/refill maintained. Shared149248B.",
+  "invariants": "Same fullQK/PEthenCKV, jointmaximum, BF16quantization/nativeP rowsum, exactlaunchLRU/sourcefetch/FAR/1152Bunique; FP32reduction grouping differs. Onecooperative kernel.",
+  "adopted": false
+}

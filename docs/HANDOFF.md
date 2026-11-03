@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-02 20:08 新110%目标四机制已实现，三拒绝、一项性能待空闲GPU；生产仍754706f8，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-03 11:15 用户迁移至新agent，生产仍754706f8；square_smem修正后未编译，无本任务活动runner，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -15,6 +15,18 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**11/03最新入口，优先于下方11/02历史快照：**用户希望新机制逼近100GB下逐步参考110%，也希望探索能否低于原“理论下限”；允许优化指定本地计算参考所对应的计算实现，不允许改模拟器/参考/实际远端载荷制造突破。GPU3空闲后已完成旧shared_claim有效补测，慢5.72%/6.65%/3.70%，拒绝，不再恢复旧SXM不完整runner。新anchor（8单位上界锚点）修正单元素LSE取整问题后3项通过，100GB0快0.29%/20慢1.67%，拒绝；原失败稿和容差保持。新square32×32warp内Q/K双复用，2项通过但100GB慢4.54%/5.08%；直接发布P的square_p也2项通过，慢6.94%/8.11%，均拒绝。normal/EMU square REG255/STACK16，square_p REG255/STACK88，皆static2304，不称零spill。今日24格12对/4608计时launch/288段，新增7项定向检查、复用旧2项，无新全套/sanitizer/原实例全等价/实际Graph节点probe/物理链路/FP16/SXM/H800性能结论。
+
+**迁移时唯一待续为square_smem**，目录`temp/glm_trace/tune_qk_square_20261103/`：仅将square_p的32个长期QPE packed words换成读取已有shared QPE，针对实际STACK88，不能预断定收益。首30e7稿编译失败是新bool square_smem与旧控制constexpr square_smem重名，现已改成square_smem_enabled并同步header/include/generator。最终候选SHA **c69a2643f887b642471c621cddd318e715a92e292c3ed1b35341ecfc6a24aeb2**；**修正后未编译、无GPU验证/性能、未安装**。首失败件在failed_smem_dispatch/；build_square_smem.json仍记录旧30e7失败，不能误认为最终头编译过。用户要求迁移后无新构建/GPU任务。
+
+重新预检GPU3后用指定Python先执行`build_smem.py`，成功再`run_smem.py`（两项定向检查＋smem256_三点新旧短对照），最后`audit_performance.py`；如考虑保留，再确认新分派/实际资源/单kernel，别重复旧大门槛。不要重跑make_smem_pe.py/fix_smem_dispatch.py等不可重复构造器，不恢复已完成旧runner。所有本轮handles已terminal，ps确认无活动runner或等待器；精确状态在`migration_state.json`。11:11GPU3 0MiB/0%，GPU0/1外部VLLM约38GB、GPU2外部服务，不动；NUMA1/共享锁继续。
+
+GPU3当前前32步参考核对：24步计算主导、8步传输主导，逐步max2699.864µs，当前base3347.701µs，110%2969.850µs，需再降11.29%。hypothetical计算快10/20%对应参考2556.862/2497.469µs，仅代数分析，不是实测/替换参考；更快计算可能低于指定device实现参考，但不能突破真实必需字节/带宽约束。`bound_audit.json`绑定原件。SXM全窗口约3.29/3.31ms对2.691ms属于另一硬件/窗口，勿混拼。
+
+H80011/03 11:12:58只读查：1004362/1004363 COMPLETED0，1040680仍FAILED1（CUDA静态库缺失，未重试）；1089379 PENDING/Priority、无依赖、估计11/05 00:49:44不保证，1089380 PENDING/afterok:1089379；watcher1174145活、4160646已结束。两排队cwd仍tuned_20261029，日志生产树temp/h800/logs，不含当前优化，未覆盖或重复提交。非login ssh无Slurm PATH，使用bash -lc或/rmprog/slurm/v24.05.1/bin。完整查询在`h800_login_query_20261103.txt`。
+
+生产7547、canonical数学34af、FAR5e409及原5304矩阵保持；整体目标未完成，未声明新收益。最新报告[11/03机制与迁移](mla_host_a100_innovation_20261103.md)，上轮[110%报告](mla_host_a100_overlap110_20261102.md)为历史。本轮任务源码/数据已保留，其他用户dirty文件不动。
 
 **20:00当前活动轮：用户要求更大优化，将100GB下staged/direct最优压到逐步参考110%以内。** 已完成两遍QK/PV与全局Q＋64KV双stage的GPU3/NUMA1定向筛选，均通过2项检查但100GB分别慢56%–57%和43%–44%，拒绝。新elastic_fetch经856CPU队列覆盖及normal/EMU构建；GPU3预检19:48遇外部525539，在CUDA前exit1；19:50发现GPU0/1释放，取得gpu01锁后转SXM/NUMA0完成2项定向检查和256×3三对，100GB0基本持平、20慢5.964%，也拒绝，不扫描退休边界。三版源码/原始结果及失败记录均在各`temp/glm_trace/tune_{two_pass,global_query,elastic_fetch}_20261102/`。6项定向检查/18格9对，不重跑整套测试/矩阵。生产754706f8保持，原方案不要重启。
 

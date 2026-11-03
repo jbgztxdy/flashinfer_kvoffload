@@ -1,0 +1,9 @@
+{
+  "base_sha256": "754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79",
+  "candidate_sha256": "ebfa1f7f0fd9149cd8b0457faf35a492bab706d4d646a3b2436992031bf775f7",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "mechanism": "Four of the original8warps do32head x32KV square microtiles across a pair. Both QandK fragments reused twice;16KiBshared FP32score exchange restores native8warp score mapping, then unchanged jointMDO/PV/refill. All8warps still own128FP32output values.",
+  "invariants": "Original PEthenCKV feature order, original32KV/2stage/64heads/256threads, exactLRU/fetch/sourcehint/FAR/bytes; canonicalmath unchanged, singlecooperative kernel. Oddtail uses originalnativeQK.",
+  "risks": "Sharedscore writes/barrier/reads and4activeQKwarps may outweigh LDSM saving; 32QPEpackedregisters/32score accumulators may spill. Dynamicshared164352B plus actualstatic must fit optin.",
+  "adopted": false
+}

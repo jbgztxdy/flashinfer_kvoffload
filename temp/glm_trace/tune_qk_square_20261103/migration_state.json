@@ -1,0 +1,39 @@
+{
+  "timestamp": "2026-11-03T11:15:23+0800",
+  "status": "handoff_user_requested_no_active_runner",
+  "production_sha256": "754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "far_emu_sha256": "5e409035aa4edc83f72135c09c453e825ce59e5dcc4bae63c04ff3909d024095",
+  "current_candidate": "square_smem",
+  "current_candidate_sha256": "c69a2643f887b642471c621cddd318e715a92e292c3ed1b35341ecfc6a24aeb2",
+  "candidate_installed": false,
+  "candidate_state": "Original30e7draft compilation failed: new bool square_smem collides with old control constexpr square_smem. Renamed bool square_smem_enabled in frozenheader/include/generator; finalc69a2643 is UNBUILT and has noGPUtests/timings. Oldfailed draft/logs/buildrecord infailed_smem_dispatch/.",
+  "previous_measured_states": "shared_claim rejected freshGPU3; anchor rejected; square/square_p rejected; see siblingdecisions and currentperformance_audit.",
+  "sourcefiles": [
+    "square.inc",
+    "direct_p.inc",
+    "make_smem_pe.py",
+    "square_smem.cuh",
+    "smem_manifest.json",
+    "smem_pe.diff"
+  ],
+  "terminal_exec_handles": {
+    "shared_claim_gpu3": 65933,
+    "anchor_initial_build": 9696,
+    "anchor_failed_validation": 78482,
+    "anchor_fixed_build": 8965,
+    "anchor_final_screen": 92066,
+    "square_build": 50528,
+    "square_screen": 10809,
+    "square_p_failed_build": 30097,
+    "square_p_fixed_build": 63040,
+    "square_p_screen": 48075,
+    "square_smem_failed_build": 34586
+  },
+  "live_task_runners": [],
+  "signals_sent": [],
+  "next_step": "FreshGPU3preflight+sharedlock; runPython build_smem.py only. Ifsuccess inspectactualREG/STACKandnewtypes, then run_smem.py for2focusedtests+3freshsamehardwarepairs. run_smem.py doesnotrepeatoldercontrolcohorts. Then audit_performance.py. Do notrerunmake_smem_pe.py orfixscripts thatassertnewpaths.",
+  "limits": "NoGPUproofafterfix,noFP16/SXM/NVLink/H800newtiming,newGraphnodeprobe/sanitizer orfullbinaryidentityaudit. Do notextrapolate.",
+  "h800_query": "h800_login_query_20261103.txt",
+  "goal_complete": false
+}

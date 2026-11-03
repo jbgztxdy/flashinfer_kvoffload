@@ -1,0 +1,84 @@
+{
+  "timestamp": "2026-11-02T20:08:28+0800",
+  "adopted": false,
+  "goal_complete": false,
+  "status": "awaiting_idle_GPU_for_candidate_timings",
+  "header_sha256": "a47ca8b87558b50b2470a9e4b470ea8116776b15bc5baea4c2b1a7e807659ec7",
+  "production_sha256": "754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79",
+  "canonical_math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "targeted_tests": 2,
+  "valid_candidate_performance_cells": 0,
+  "valid_baseline_cells": 3,
+  "incomplete_candidate_raw": [
+    {
+      "path": "temp/glm_trace/tune_shared_claim_20261102/raw/sxm256_shared_claim_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "sha256": "c326e01e20489362eb8ac71c8c2235031bd5f80973ba988d3448b3f974e205f8"
+    }
+  ],
+  "resources_current": {
+    "timestamp": "2026-11-02T20:08:28+0800",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+        "used_mib": 34495,
+        "total_mib": 40960,
+        "utilization": 0
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81",
+        "used_mib": 34495,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [
+      {
+        "gpu_uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+        "pid": 585473,
+        "process": "VLLM::Worker_TP0",
+        "used_mib": "32558"
+      },
+      {
+        "gpu_uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+        "pid": 589631,
+        "process": "VLLM::EngineCore",
+        "used_mib": "1890"
+      },
+      {
+        "gpu_uuid": "GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81",
+        "pid": 585474,
+        "process": "VLLM::Worker_TP1",
+        "used_mib": "32558"
+      },
+      {
+        "gpu_uuid": "GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81",
+        "pid": 590714,
+        "process": "VLLM::EngineCore",
+        "used_mib": "1890"
+      }
+    ],
+    "available": false
+  },
+  "original_runner": {
+    "exec_handle": 35058,
+    "exit_code": 1,
+    "reason": "Foreign GPU0/1 processes appeared during candidate run; end resource check rejected the first candidate cell. Original data stays incomplete and excluded."
+  },
+  "cpu_builds": {
+    "handles": [
+      45564,
+      87149
+    ],
+    "exit_codes": [
+      0,
+      0
+    ],
+    "first_build": "Pre-GPU scratch alias draft archived; second build uses final a47ca8b8."
+  },
+  "live_task_runners": [],
+  "signals_sent": [],
+  "next_step": "Fresh resource preflight, then only resume_candidate.py; it takes gpu01 lock through bench_sxm, archives incomplete raw and measures3candidate points. Keep existing3basepoints and2correctness tests. Run audit_performance.py afterward. No permission needed.",
+  "limitations": "No valid candidate timing; do not use3440us from contaminated incomplete raw. No exact fullcache-slot LRU tie oracle/sanitizer/exhaustive checks this round. Production unchanged."
+}

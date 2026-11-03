@@ -1,0 +1,101 @@
+{
+  "start": "2026-11-03T10:41:24+0800",
+  "complete": true,
+  "actions": [
+    {
+      "variant": "base",
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_shared_claim_20261102/bench_gpu3_native.py",
+        "--kind",
+        "lru",
+        "--mtp",
+        "8",
+        "--requests",
+        "128",
+        "--settings",
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000",
+        "--passes",
+        "3",
+        "--positions",
+        "256",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off"
+      ],
+      "start": "2026-11-03T10:41:24+0800",
+      "pid": 1932404,
+      "exit_code": 0,
+      "end": "2026-11-03T10:41:41+0800"
+    },
+    {
+      "variant": "shared_claim",
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_shared_claim_20261102/bench_gpu3_native.py",
+        "--kind",
+        "lru",
+        "--mtp",
+        "8",
+        "--requests",
+        "128",
+        "--settings",
+        "g100_l0",
+        "g100_l20000",
+        "g50_l20000",
+        "--passes",
+        "3",
+        "--positions",
+        "256",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off"
+      ],
+      "start": "2026-11-03T10:41:41+0800",
+      "pid": 1932976,
+      "exit_code": 0,
+      "end": "2026-11-03T10:41:57+0800"
+    }
+  ],
+  "resources_start": {
+    "timestamp": "2026-11-03T10:41:24+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "end": "2026-11-03T10:41:57+0800",
+  "resources_end": {
+    "timestamp": "2026-11-03T10:41:58+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 9
+      }
+    ],
+    "foreign": [],
+    "available": true
+  }
+}

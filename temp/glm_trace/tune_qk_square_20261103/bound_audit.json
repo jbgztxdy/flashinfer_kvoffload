@@ -1,0 +1,19 @@
+{
+  "raw": "temp/glm_trace/tune_qk_square_20261103/gpu3/raw/focused256_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+  "raw_sha256": "2d67c8a7d7f6597834e0aecda71c12389571a6ceb93a68097b5064fa695668d9",
+  "reference": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+  "reference_sha256": "e4200253cc88951752676f4cb6c4889a10eada7e9ff9f2bdfb8c5765bd95d8f0",
+  "actual_us": 3347.7013309796653,
+  "stepwise_reference_us": 2699.8636411410967,
+  "goal110_us": 2969.8500052552067,
+  "remaining_reduction_to110": 0.11286888774330561,
+  "steps": 32,
+  "compute_dominated_steps": 24,
+  "transfer_dominated_steps": 8,
+  "mean_compute_us": 2556.959974269072,
+  "mean_unique_transfer_us": 2479.47768,
+  "hypothetical_compute10pct_faster_stepwise_reference_us": 2556.861941191206,
+  "hypothetical_compute20pct_faster_stepwise_reference_us": 2497.4691946507774,
+  "interpretation": "The original stepwise reference is max of a measured device implementation and a unique-transfer budget. Faster computation can fall below its compute-dominated steps; the mandatory physical byte budget is still binding on transfer-dominated steps. Hypothetical numbers are algebra, not measured kernels or replacement references.",
+  "scope": "GPU3/A100-PCIE same-devicefarHBM EMU100GB0us,MTP8/R128/LRU4096,256positions x3coldpasses. Do not mixSXM absolute times."
+}

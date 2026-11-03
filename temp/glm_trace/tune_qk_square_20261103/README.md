@@ -1,0 +1,9 @@
+Read `migration_state.json` anddocs/mla_host_a100_innovation_20261103.md first. Production754706f8unchanged.
+
+Measuredsquareebfa1f7f andsquare_p03925d9c rejected. Eachpassed2targetedBF16tests,but100GBregressed. Allsamples/bytes/misses/guard/SHA inperformance_audit andgpu3/raw. Originalsquareuses16KiBFP32scoreexchange; square_p directlypublishesquantizedP/rowsums. CodegenREG255/STACK16 versusREG255/STACK88,static2304. Nozero-spillclaim, nofullsuite/sanitizer/fullbinaryidentityaudit thisround.
+
+Currentuninstalledcandidate: square_smem finalc69a2643. Onlysquare_pQPEsource changes toalready-loadedsharedqueryPE; triesremoving32long-livedpackedregisters. First30e7draftfailedCPUcompilebecauseboolsquare_smemcollidedwitholdconstexprsquare_smem; archivedinfailed_smem_dispatch. Fixedto square_smem_enabled infrozenheader/include/generator. FINALFIXUNBUILT; noGPUdata. build_square_smem.json stillrecordsoldfailed30e7attempt. Userrequestedmigration; noactivecompiler/GPU/waiter.
+
+Resume: freshGPU3preflight, thenrepositoryPython `build_smem.py`. Ifsuccess, `run_smem.py` does2focusedtestsand3freshsameparameterpairedpoints underGPU3lock/NUMA1 withnewsmem256_ cohort, no oldcontrolrerun. Thenaudit_performance.py. Checkactualdispatch/resources/onekernelifconsideringadoption. Do notrerunmake_smem_pe/fixscripts(theseassertnewpathsandarchivehistory).
+
+Include/JITdirectoriesignoredbutcurrentlypresent; ifmissingcopyrepoincludetoa privateinclude_base/include_square_smem thencopyfrozenhost/mathheaders. H800statususesloginqueryfile h800_login_query_20261103.txt; h800_status_20261103.txt isfailednonloginPATHattempt, notqueueevidence.
