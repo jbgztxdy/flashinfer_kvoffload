@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-03 15:29 v2下100GB两点及新device参考完成；生产cab508dc/FAR8507eab0保持，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-03 16:04 当前v2 fetch-SM诊断完成；生产cab508dc/FAR8507eab0保持，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -15,6 +15,12 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**11/03当前用户要求先梳理差距，讨论前判断fetch CTA占SM是否主因；诊断已完成，没有实施新优化。** GPU3/NUMA1同卡farHBM/v2、BF16MTP8R128K2048LRU4096/f24/staged/splitoff、256位置。相同当前attention实现、同一步完整kernel刚完成的remap/cache载荷、同binary84/108计算CTA重放：108为2442.389µs，84为3047.989µs，慢605.600µs/24.80%；3冷pass，192次全输出逐元素相等、state不变，轮换顺序信号稳定，108个不同SM实测。重放从kv_indptr恢复退出已清零的无padding行长度，不执行fetch/LRU/prepare，不能当端到端优化或替换device参考。该资源代价与正式约0.63–0.66ms差距同量级，强力支持fetch占用是主因，但不能称96.7%已归因或收益可直接回收。
+
+当前完整时间线0/20µs：前置189.088/187.296µs，fetch跨度2523.392/2552.672µs，fetch后attention尾部699.808/659.520µs；24fetch CTA后续仅算53.156/50.344行（总1024），最后ready至全部fetch返回约4µs。fetch SM服务预算/108约550.648/555.889µs，不是可直接扣除墙钟；尾部不能再与容量损失相加。暖步真正阻塞wait次数约26/31，计时含ready检查及插桩，不能直接扣成等待。100GB搬运预算~2.48ms与device~2.56ms接近，争用最容易暴露；低/高带宽趋势是机制解释，本轮未重扫v2带宽曲线，也不推广所有batch/物理NVLink。旧减fetch/退休/cofetch负结果继续有效，不原样重做。到110%仍需省0.36–0.39ms，前置全消除也不够。
+
+独立trace/capacity实际REG252/254、STACK0/LOCAL0/static2304/dynamic147968；时间线相对正式均值扰动+2.81%/+1.41%，各一点一pass，只作诊断。64个trace launch+96个完整准备+192个重放，采样参考/全输出state/三份最终524288有效cache槽全载荷检查通过。无新大验证/全窗口/物理链路/H800结论。首driver完成0µs后第二次VMM分配OOM，原件first_driver保留；之后按每设置独立进程只补20µs/capacity。全部runner terminal，GPU3末检0MiB0%，无等待器；生产和模拟器未改。入口[诊断报告](mla_host_fetch_sm_diagnosis_20261103.md)、`temp/glm_trace/diagnose_fetch_sm_v2_20261103/{README.md,analysis.json,run_state.json}`。构造器make_diagnostics/fix_replay_length非幂等resume命令；不要重跑已接纳诊断。
 
 **11/03最新v2性能重测已完成：** `temp/glm_trace/rebench_100gb_v2_20261103/`，GPU3/A100-PCIE/NUMA1同卡farHBM模拟，非NVLink；BF16/h64/K2048/MTP8R128/LRU4096/f24/item64/splitoff/staged，256位置×3冷pass。100GB0µs ours3327.371µs、Memcpy5813.493、同轮正常device2558.933、逐步max2701.022（高23.19%）；20µs ours3360.555、Memcpy5824.800、参考2701.192（高24.41%）。引用命中76.737/76.734%，unique247.915/247.957MB/步；不可套完整窗口~79%。110%目标2971.124/2971.311，还需降低10.71/11.58%。0→20均值只差33.184µs约1%，pass波动重叠，不当精确延迟因果量。
 

@@ -1,0 +1,116 @@
+{
+  "trace": [
+    {
+      "setting": "g100_l0",
+      "formal_us": 3327.3706659674644,
+      "formal_reference_us": 2701.0219708876484,
+      "instrumentation_slowdown": 0.02810788441769474,
+      "means": {
+        "event_us": 3420.896016061306,
+        "total_timeline_us": 3412.256,
+        "prepare_us": 133.696,
+        "resolve_barrier_us": 55.392,
+        "prefix_us": 189.088,
+        "fetch_span_us": 2523.392,
+        "postfetch_tail_us": 699.808,
+        "last_ready_us": 2708.288,
+        "deferred_cache_tail_us": 4.16,
+        "fetch_compute_rows": 53.15625,
+        "fetch_sm_us": 59469.984000000004,
+        "fetch_sm_equivalent_wall_us": 550.648,
+        "attention_sm_us": 263740.512,
+        "lru_sm_us": 2518.24,
+        "wait_call_sm_us": 19556.096,
+        "attention_per108_us": 2442.041777777778,
+        "attention_excluding_wait_per108_us": 2260.966814814815,
+        "far_wait_per_fetch_cta_us": 781.4133333333333,
+        "physical_wait_per_fetch_cta_us": 44.53066666666667,
+        "blocked_calls": 72.96875,
+        "wait_calls": 15724.40625,
+        "postprefix_idle_equivalent_us": 207.1611851851852,
+        "critical_rows": 10.875,
+        "critical_wait_us": 276.576,
+        "unique_miss_MB": 247.965876,
+        "actual_transfer_budget_us": 2479.65876,
+        "fetch_over_actual_budget_us": 43.73323999999999,
+        "transport_reference_us": 2479.15128,
+        "device_reference_us": 2558.933320144812
+      },
+      "payload": {
+        "valid_slots": 524288,
+        "unequal_elements": 0
+      }
+    },
+    {
+      "setting": "g100_l20000",
+      "formal_us": 3360.5546727776527,
+      "formal_reference_us": 2701.191770887648,
+      "instrumentation_slowdown": 0.014108784506648542,
+      "means": {
+        "event_us": 3407.9680144786835,
+        "total_timeline_us": 3399.488,
+        "prepare_us": 132.768,
+        "resolve_barrier_us": 54.528,
+        "prefix_us": 187.296,
+        "fetch_span_us": 2552.672,
+        "postfetch_tail_us": 659.52,
+        "last_ready_us": 2735.648,
+        "deferred_cache_tail_us": 4.32,
+        "fetch_compute_rows": 50.34375,
+        "fetch_sm_us": 60036.0,
+        "fetch_sm_equivalent_wall_us": 555.8888888888889,
+        "attention_sm_us": 262487.968,
+        "lru_sm_us": 2474.624,
+        "wait_call_sm_us": 19856.064,
+        "attention_per108_us": 2430.444148148148,
+        "attention_excluding_wait_per108_us": 2246.591703703704,
+        "far_wait_per_fetch_cta_us": 822.2546666666667,
+        "physical_wait_per_fetch_cta_us": 44.48266666666667,
+        "blocked_calls": 76.0625,
+        "wait_calls": 15726.0625,
+        "postprefix_idle_equivalent_us": 202.94577777777778,
+        "critical_rows": 10.78125,
+        "critical_wait_us": 280.192,
+        "unique_miss_MB": 247.940928,
+        "actual_transfer_budget_us": 2479.40928,
+        "fetch_over_actual_budget_us": 73.26271999999999,
+        "transport_reference_us": 2479.57308,
+        "device_reference_us": 2558.933320144812
+      },
+      "payload": {
+        "valid_slots": 524288,
+        "unequal_elements": 0
+      }
+    }
+  ],
+  "capacity": {
+    "mean84_us": 3047.989323735237,
+    "mean108_us": 2442.3893267909684,
+    "difference_us": 605.5999969442685,
+    "slowdown": 0.247953915578218,
+    "pass84_us": [
+      3029.5039862394333,
+      3063.8720095157623,
+      3050.5919754505157
+    ],
+    "pass108_us": [
+      2431.263990700245,
+      2451.871983706951,
+      2444.0320059657097
+    ],
+    "full_diagnostic_us": 3322.2399900356927,
+    "all_output_checks": 192,
+    "all_state_checks": 192,
+    "exact_equal": true,
+    "payload": {
+      "valid_slots": 524288,
+      "unequal_elements": 0
+    },
+    "order_means": {
+      "84_position0": 3049.706677595774,
+      "84_position1": 3046.2719698747,
+      "108_position0": 2441.898668805758,
+      "108_position1": 2442.879984776179
+    }
+  }
+}

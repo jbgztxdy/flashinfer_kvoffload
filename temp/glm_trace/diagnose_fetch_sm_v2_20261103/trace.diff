@@ -1,0 +1,404 @@
+--- production.cuh
++++ trace.cuh
+@@ -903,0 +904,19 @@
++
++// DIAGNOSTIC ONLY. Whole-row dispatch leaves partial_o idle. Trace occupies
++// 32 epochs *128CTAs *40uint64 fields=1.31MiB of its existing56MiB backing.
++__device__ __forceinline__ unsigned long long diag_now() {
++  unsigned long long t;asm volatile("mov.u64 %0, %%globaltimer;":"=l"(t));return t;
++}
++template<typename Params>
++__device__ __forceinline__ unsigned long long* diag_record(const Params& params) {
++  return reinterpret_cast<unsigned long long*>(params.partial_o)+
++      ((params.state[kHostBatchEpoch]%32)*128+blockIdx.y)*40;
++}
++template<typename Params>
++__device__ __forceinline__ void diag_mark(const Params& params,int k) {
++  if(threadIdx.x==0&&threadIdx.y==0&&threadIdx.z==0)diag_record(params)[k]=diag_now();
++}
++template<typename Params>
++__device__ __forceinline__ void diag_add(const Params& params,int k,unsigned long long n) {
++  if(threadIdx.x==0&&threadIdx.y==0&&threadIdx.z==0)diag_record(params)[k]+=n;
++}
+@@ -920,0 +940,28 @@
++  }
++}
++
++template <typename KTraits, typename Params>
++__device__ __forceinline__ void diag_wait_host_batch_tile(const Params& params, const uint32_t* scratch,
++                                                     uint32_t index_base, uint32_t kv_len,
++                                                     uint32_t kv_base) {
++  static_assert(KTraits::CTA_TILE_KV <= 64);
++  if (threadIdx.y != 0 || threadIdx.z != 0) return;
++  const uint32_t begin=static_cast<uint32_t>(diag_now());
++  bool blocked=false;
++#pragma unroll
++  for (uint32_t i = 0; i < KTraits::CTA_TILE_KV; i += 32) {
++    const uint32_t kv_idx = kv_base + i + threadIdx.x;
++    const typename KTraits::IdType page = kv_idx < kv_len ? params.remap[index_base + kv_idx] : 0;
++    // Cached entries (rows below cache_slots) are resident already.
++    const uint32_t row = static_cast<uint32_t>(-(page + 1));
++    if (page < 0 && row >= params.cache_slots) {
++      const uint32_t* flag = host_batch_flags(params) +
++                             (row - params.cache_slots) / scratch[kHostBatchScratchFetchRows];
++      while (host_batch_ld_acquire(flag) != scratch[kHostBatchScratchEpoch] + 1) {blocked=true;__nanosleep(64);}
++    }
++  }
++  const bool any=__any_sync(0xffffffff,blocked);
++  if(threadIdx.x==0) {
++    auto* out=diag_record(params);
++    out[17]+=static_cast<uint32_t>(diag_now())-begin;
++    out[18]+=1;out[19]+=any;
+@@ -3716 +3763 @@
+-__device__ __forceinline__ void pv_feature_pv(typename KTraits::SharedStorage* smem_storage,
++__device__ __forceinline__ void trace_pv_pv(typename KTraits::SharedStorage* smem_storage,
+@@ -3808,0 +3856,203 @@
++template <typename KTraits, typename Params>
++__device__ __forceinline__ void diag_fetch_pages(const Params& params, uint8_t* smem,
++                                                       uint32_t epoch, uint32_t unique,
++                                                       uint32_t rows) {
++  using DTypeKV = typename Params::DTypeKV;
++  constexpr uint32_t ROW = KTraits::HEAD_DIM_CKV + KTraits::HEAD_DIM_KPE;
++  constexpr uint32_t VECS_PER_ROW = ROW * sizeof(DTypeKV) / 16;
++  constexpr uint32_t CHUNK_VECS = kHostBatchFetchRows * VECS_PER_ROW;
++  constexpr uint32_t BUFFERS =
++      sizeof(typename KTraits::SharedStorage) >= 2 * CHUNK_VECS * 16 ? 2 : 1;
++  static_assert(sizeof(typename KTraits::SharedStorage) >= CHUNK_VECS * 16);
++  static_assert(CHUNK_VECS % KTraits::NUM_THREADS == 0);
++  const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
++  const uint32_t fetch_id = blockIdx.y - (gridDim.y - params.fetch_ctas);
++  const uint32_t count = params.stage ? min(unique, params.staging_capacity) : unique;
++  uint32_t* flags = host_batch_flags(params);
++  uint4* buffer = reinterpret_cast<uint4*>(smem);
++
++  const uint32_t chunk_vecs = rows * VECS_PER_ROW;
++  __shared__ int32_t cache_rows[kHostBatchFetchRows];
++  __shared__ typename Params::IdType page_ids[BUFFERS][kHostBatchFetchRows];
++  __shared__ uint32_t deferred[kHostBatchMaxDeferred], deferred_count;
++  if (tid == 0) deferred_count = 0;
++  uint64_t stream_source_policy;
++  asm volatile("createpolicy.fractional.L2::evict_first.b64 %0, 1.0;"
++               : "=l"(stream_source_policy));
++  FAR_EMU_INIT(2);
++  FAR_EMU_SYNC();
++  auto issue = [&](uint32_t chunk, uint32_t buf) {
++    if constexpr (Params::shared_fetch_ids) {
++      if (tid < rows && chunk * rows + tid < count) {
++        page_ids[buf][tid] = params.unique_pages[chunk * rows + tid];
++      }
++      // This synchronizes the ordinary ID stores without draining the other buffer's
++      // outstanding KV cp.async group. Every thread then reuses one shared ID per row.
++      __syncthreads();
++    }
++#pragma unroll
++    for (uint32_t i = 0; i < CHUNK_VECS / KTraits::NUM_THREADS; ++i) {
++      const uint32_t v = i * KTraits::NUM_THREADS + tid;
++      const uint32_t slot = chunk * rows + v / VECS_PER_ROW;
++      if (v < chunk_vecs && slot < count) {
++        const auto page = [&]() {
++          if constexpr (Params::shared_fetch_ids)
++            return page_ids[buf][v / VECS_PER_ROW];
++          else return params.unique_pages[slot];
++        }();
++        const auto* source = reinterpret_cast<const uint4*>(
++            params.ckv + static_cast<int64_t>(page) * ROW);
++        const uint32_t destination = static_cast<uint32_t>(
++            __cvta_generic_to_shared(buffer + buf * CHUNK_VECS + v));
++        asm volatile("cp.async.cg.shared.global.L2::cache_hint [%0], [%1], 16, %2;"
++                     :: "r"(destination), "l"(source + v % VECS_PER_ROW),
++                        "l"(stream_source_policy));
++      }
++    }
++    FAR_EMU_TILE(2, buf, tid == 0 ? min(rows, count - chunk * rows) : 0, ROW * sizeof(DTypeKV));
++    cp_async::commit_group();
++  };
++
++  uint32_t chunk = fetch_id;
++  if (chunk * rows < count) issue(chunk, 0);
++#pragma unroll 1
++  for (uint32_t k = 0; chunk * rows < count; ++k, chunk += params.fetch_ctas) {
++    const uint32_t next = chunk + params.fetch_ctas;
++    if (BUFFERS == 2 && next * rows < count) {
++      issue(next, (k + 1) % 2);
++    }
++    diag_mark(params,34);
++    if (BUFFERS == 2 && next * rows < count) cp_async::wait_group<1>();
++    else cp_async::wait_group<0>();
++    if(tid==0) {auto* out=diag_record(params);out[26]+=diag_now()-out[34];}
++    diag_mark(params,35);
++    FAR_EMU_WAIT(2, BUFFERS == 2 ? k % 2 : 0);
++    if(tid==0) {auto* out=diag_record(params);out[27]+=diag_now()-out[35];out[29]+=1;}
++    __syncthreads();
++    const uint32_t buf = BUFFERS == 2 ? k % 2 : 0;
++    auto* destination = reinterpret_cast<uint4*>(
++        params.staging +
++        (params.cache_slots + static_cast<int64_t>(chunk) * rows) * ROW);
++#pragma unroll
++    for (uint32_t i = 0; i < CHUNK_VECS / KTraits::NUM_THREADS; ++i) {
++      const uint32_t v = i * KTraits::NUM_THREADS + tid;
++      if (params.stage && v < chunk_vecs && chunk * rows + v / VECS_PER_ROW < count) {
++        destination[v] = buffer[buf * CHUNK_VECS + v];
++      }
++    }
++    // The resolve step is done, so the dedup entries can be cleared for the next launch.
++    if (tid < rows && chunk * rows + tid < count) {
++      const auto page = [&]() {
++        if constexpr (Params::shared_fetch_ids)
++          return page_ids[buf][tid];
++        else return params.unique_pages[chunk * rows + tid];
++      }();
++      params.host_slot[page - params.host_page_start] = 0;
++    }
++    if (params.stage) {
++      __threadfence();
++      __syncthreads();
++      if (tid == 0) {
++        asm volatile("st.release.gpu.global.u32 [%0], %1;" ::"l"(flags + chunk), "r"(epoch + 1)
++                     : "memory");
++      }
++    }
++    if(tid==0) {auto* out=diag_record(params);auto now=diag_now();if(!out[23])out[23]=now;out[24]=now;}
++    // Fill the LRU cache from the same shared-memory copy, after the attention items waiting on
++    // this chunk were released: one more HBM write per page, and no reread. The victims come from
++    // the pools' LRU items, which workers run first (see run_host_batch_items). A staged chunk
++    // that lands before its victims are chosen is not waited for: blocking here put the LRU
++    // selection (~20 us at 4096 slots) on the PCIe stream's critical path at small batch. Its
++    // index is kept and it is copied from staging after the loop. In place there is no staged
++    // copy, so the loop waits (nothing in this launch waits on these copies).
++    if (host_batch_caching(params)) {
++      bool ready = true;
++      if (tid < rows && chunk * rows + tid < count) {
++        const uint32_t* pool_flag = params.pool_flags + params.slot_pool[chunk * rows + tid];
++        ready = host_batch_ld_acquire(pool_flag) == epoch + 1;
++      }
++      const bool defer = params.stage && !__syncthreads_and(ready) &&
++                         deferred_count < kHostBatchMaxDeferred;
++      if (defer) {
++        __syncthreads();
++        if (tid == 0) deferred[deferred_count++] = chunk;
++      } else {
++        if (tid < rows) {
++          const uint32_t slot = chunk * rows + tid;
++          int32_t victim = -1;
++          if (slot < count) {
++            const uint32_t* pool_flag = params.pool_flags + params.slot_pool[slot];
++            while (host_batch_ld_acquire(pool_flag) != epoch + 1) __nanosleep(64);
++            victim = params.victim_of[slot];
++          }
++          cache_rows[tid] = victim;
++          if constexpr (Params::shared_fetch_ids) {
++            if (victim >= 0) {
++              const auto page = page_ids[buf][tid];
++              const int32_t evicted = params.slot_page[victim];
++              if (evicted >= 0) params.resident[evicted - params.host_page_start] = -1;
++              params.resident[page - params.host_page_start] = victim;
++              params.slot_page[victim] = page;
++            }
++          } else {
++            bind_host_batch_staged_slot(params, slot, victim);
++          }
++        }
++        __syncthreads();
++#pragma unroll
++        for (uint32_t i = 0; i < CHUNK_VECS / KTraits::NUM_THREADS; ++i) {
++          const uint32_t v = i * KTraits::NUM_THREADS + tid;
++          const int32_t victim = v < chunk_vecs ? cache_rows[v / VECS_PER_ROW] : -1;
++          if (victim >= 0) {
++            reinterpret_cast<uint4*>(
++                params.staging +
++                static_cast<int64_t>(victim) * ROW)[v % VECS_PER_ROW] =
++                buffer[buf * CHUNK_VECS + v];
++          }
++        }
++      }
++      // The buffer is refilled next.
++      __syncthreads();
++    }
++    if (BUFFERS == 1 && next * rows < count) issue(next, 0);
++  }
++  diag_mark(params,25);
++  if(tid==0)diag_record(params)[28]=deferred_count;
++  // Deferred staged chunks: their victims are chosen by now; copy staging -> cache, HBM to HBM,
++  // the whole CTA over each chunk.
++  __syncthreads();
++#pragma unroll 1
++  for (uint32_t d = 0; d < deferred_count; ++d) {
++    const uint32_t chunk = deferred[d];
++    if (tid < rows) {
++      const uint32_t slot = chunk * rows + tid;
++      int32_t victim = -1;
++      if (slot < count) {
++        const uint32_t* pool_flag = params.pool_flags + params.slot_pool[slot];
++        while (host_batch_ld_acquire(pool_flag) != epoch + 1) __nanosleep(64);
++        victim = params.victim_of[slot];
++      }
++      cache_rows[tid] = victim;
++      bind_host_batch_staged_slot(params, slot, victim);
++    }
++    __syncthreads();
++    const auto* source = reinterpret_cast<const uint4*>(
++        params.staging + (params.cache_slots + static_cast<int64_t>(chunk) * rows) * ROW);
++#pragma unroll 4
++    for (uint32_t v = tid; v < chunk_vecs; v += KTraits::NUM_THREADS) {
++      const int32_t victim = cache_rows[v / VECS_PER_ROW];
++      if (victim >= 0) {
++        reinterpret_cast<uint4*>(params.staging + static_cast<int64_t>(victim) * ROW)[v % VECS_PER_ROW] =
++            source[v];
++      }
++    }
++    __syncthreads();
++  }
++  // Overflow pages were never staged; clear their dedup entries too.
++#pragma unroll 1
++  for (uint32_t slot = count + fetch_id * KTraits::NUM_THREADS + tid; slot < unique;
++       slot += params.fetch_ctas * KTraits::NUM_THREADS) {
++    params.host_slot[params.unique_pages[slot] - params.host_page_start] = 0;
++  }
++}
++
+@@ -3810 +4060 @@
+-struct PVFeatureTraits : JointQKTraits<Q, KV, O, Id> {};
++struct TracePVTraits : JointQKTraits<Q, KV, O, Id> {};
+@@ -3812 +4062 @@
+-struct PVFeatureHostParams : JointQKHostParams<Params> {};
++struct TracePVHostParams : JointQKHostParams<Params> {};
+@@ -3818 +4068 @@
+-__device__ __forceinline__ void pv_feature_qk_pair_fragments(
++__device__ __forceinline__ void trace_pv_qk_pair_fragments(
+@@ -3850 +4100 @@
+-__device__ __forceinline__ void pv_feature_load_query(const Params& params, uint32_t row,
++__device__ __forceinline__ void trace_pv_load_query(const Params& params, uint32_t row,
+@@ -3865 +4115 @@
+-__device__ __forceinline__ void pv_feature_compute_pe(
++__device__ __forceinline__ void trace_pv_compute_pe(
+@@ -3891 +4141 @@
+-__device__ __forceinline__ void pv_feature_compute_one(
++__device__ __forceinline__ void trace_pv_compute_one(
+@@ -3893 +4143 @@
+-  pv_feature_compute_pe<false, KTraits>(storage, 0, 0, qpe, scores, scores);
++  trace_pv_compute_pe<false, KTraits>(storage, 0, 0, qpe, scores, scores);
+@@ -3901 +4151 @@
+-__device__ __forceinline__ void pv_feature_compute_qk_pair(
++__device__ __forceinline__ void trace_pv_compute_qk_pair(
+@@ -3904 +4154 @@
+-  pv_feature_compute_pe<true, KTraits>(storage, a, b, qpe, sa, sb);
++  trace_pv_compute_pe<true, KTraits>(storage, a, b, qpe, sa, sb);
+@@ -3907 +4157 @@
+-  pv_feature_qk_pair_fragments<false,KTraits,KTraits::NUM_MMA_D_CKV,
++  trace_pv_qk_pair_fragments<false,KTraits,KTraits::NUM_MMA_D_CKV,
+@@ -3916 +4166 @@
+-__device__ __forceinline__ void pv_feature_update_joint_host_mdo(
++__device__ __forceinline__ void trace_pv_update_joint_host_mdo(
+@@ -3960 +4210 @@
+-__device__ __forceinline__ void pv_feature_attend_joint_host_tiles(
++__device__ __forceinline__ void trace_pv_attend_joint_host_tiles(
+@@ -3967 +4217 @@
+-  pv_feature_load_query(params, row, qpe);
++  trace_pv_load_query(params, row, qpe);
+@@ -3974 +4224 @@
+-      wait_host_batch_tile<KTraits>(params, scratch, index_base, kv_len, tile*32);
++      diag_wait_host_batch_tile<KTraits>(params, scratch, index_base, kv_len, tile*32);
+@@ -3994 +4244 @@
+-    pv_feature_compute_qk_pair<KTraits>(storage, hi%2, lo%2, qpe, scores, scores+1);
++    trace_pv_compute_qk_pair<KTraits>(storage, hi%2, lo%2, qpe, scores, scores+1);
+@@ -3997,2 +4247,2 @@
+-    pv_feature_update_joint_host_mdo<KTraits>(&storage, variant, scores, scores+1, o, m, d);
+-    pv_feature_pv<KTraits>(&storage, hi%2, scores, d, o);
++    trace_pv_update_joint_host_mdo<KTraits>(&storage, variant, scores, scores+1, o, m, d);
++    trace_pv_pv<KTraits>(&storage, hi%2, scores, d, o);
+@@ -4001 +4251 @@
+-        wait_host_batch_tile<KTraits>(params, scratch, index_base, kv_len, next_hi*32);
++        diag_wait_host_batch_tile<KTraits>(params, scratch, index_base, kv_len, next_hi*32);
+@@ -4008 +4258 @@
+-    pv_feature_pv<KTraits>(&storage, lo%2, scores+1, d, o);
++    trace_pv_pv<KTraits>(&storage, lo%2, scores+1, d, o);
+@@ -4011 +4261 @@
+-        wait_host_batch_tile<KTraits>(params, scratch, index_base, kv_len, next_lo*32);
++        diag_wait_host_batch_tile<KTraits>(params, scratch, index_base, kv_len, next_lo*32);
+@@ -4020 +4270 @@
+-    pv_feature_compute_one<KTraits>(storage, qpe, scores);
++    trace_pv_compute_one<KTraits>(storage, qpe, scores);
+@@ -4023 +4273 @@
+-    pv_feature_pv<KTraits>(&storage, 0, scores, d, o);
++    trace_pv_pv<KTraits>(&storage, 0, scores, d, o);
+@@ -4028 +4278 @@
+-__device__ __forceinline__ void pv_feature_run_joint_host_item(const Params& params,
++__device__ __forceinline__ void trace_pv_run_joint_host_item(const Params& params,
+@@ -4088 +4338 @@
+-    pv_feature_attend_joint_host_tiles<KTraits>(params, storage, variant, scratch,
++    trace_pv_attend_joint_host_tiles<KTraits>(params, storage, variant, scratch,
+@@ -4121 +4371 @@
+-__device__ __forceinline__ void pv_feature_run_joint_host_items(const Params& params,
++__device__ __forceinline__ void trace_pv_run_joint_host_items(const Params& params,
+@@ -4148,0 +4399 @@
++    diag_mark(params,36);
+@@ -4152,0 +4404 @@
++      if(threadIdx.x==0&&threadIdx.y==0&&threadIdx.z==0) {auto* out=diag_record(params);out[14]++;out[15]+=diag_now()-out[36];}
+@@ -4155 +4407,2 @@
+-    pv_feature_run_joint_host_item<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, item - lru_items, s_frag, o_frag,
++    if(threadIdx.x==0&&threadIdx.y==0&&threadIdx.z==0) {auto* out=diag_record(params);auto now=diag_now();if(!out[20])out[20]=now;out[21]=now;}
++    trace_pv_run_joint_host_item<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, item - lru_items, s_frag, o_frag,
+@@ -4156,0 +4410 @@
++    if(threadIdx.x==0&&threadIdx.y==0&&threadIdx.z==0) {auto* out=diag_record(params);auto now=diag_now();out[13]++;out[16]+=now-out[36];out[22]=now;}
+@@ -4160 +4414 @@
+-__global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPVFeatureKernel(
++__global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLATracePVKernel(
+@@ -4174,0 +4429,2 @@
++  if(tid==0) {auto* out=diag_record(params);for(int i=0;i<40;++i)out[i]=0;out[11]=epoch;out[12]=blockIdx.y>=gridDim.y-params.fetch_ctas;unsigned sm;asm volatile("mov.u32 %0, %%smid;":"=r"(sm));out[10]=sm;}
++  diag_mark(params,0);
+@@ -4192,0 +4449 @@
++    diag_mark(params,1);
+@@ -4193,0 +4451 @@
++    diag_mark(params,2);
+@@ -4201,0 +4460 @@
++    diag_mark(params,3);
+@@ -4222,0 +4482 @@
++    diag_mark(params,4);
+@@ -4238,2 +4498,5 @@
+-  if (unique > 0 && from_back && !host_batch_writes_back(params)) fetch_stream_source_pages<KTraits>(params, smem, epoch, unique, fetch_rows);
+-  pv_feature_run_joint_host_items<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, from_back, unique);
++  diag_mark(params,5);
++  if (unique > 0 && from_back && !host_batch_writes_back(params)) diag_fetch_pages<KTraits>(params, smem, epoch, unique, fetch_rows);
++  diag_mark(params,6);diag_mark(params,7);
++  trace_pv_run_joint_host_items<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, from_back, unique);
++  diag_mark(params,8);
+@@ -4257,0 +4521 @@
++  diag_mark(params,9);
+@@ -4307,4 +4571,4 @@
+-    using PVFeatureKernelTraits = PVFeatureTraits<DTypeQ, DTypeKV, DTypeO, IdType>;
+-    using PVFeatureKernelParams = PVFeatureHostParams<Params>;
+-    constexpr size_t pv_feature_smem = sizeof(typename PVFeatureKernelTraits::SharedStorage);
+-    static_assert(pv_feature_smem == 147968);
++    using TracePVKernelTraits = TracePVTraits<DTypeQ, DTypeKV, DTypeO, IdType>;
++    using TracePVKernelParams = TracePVHostParams<Params>;
++    constexpr size_t trace_pv_smem = sizeof(typename TracePVKernelTraits::SharedStorage);
++    static_assert(trace_pv_smem == 147968);
+@@ -4313 +4577 @@
+-        params.fetch_ctas < num_sms && smem_limit_per_sm >= pv_feature_smem + 4096 &&
++        params.fetch_ctas < num_sms && smem_limit_per_sm >= trace_pv_smem + 4096 &&
+@@ -4317,7 +4581,7 @@
+-      auto pv_feature_kernel = BatchMLAPVFeatureKernel<PVFeatureKernelTraits, PVFeatureKernelParams, false>;
+-      FLASHINFER_CUDA_CALL(cudaFuncSetAttribute(pv_feature_kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, pv_feature_smem));
+-      int pv_feature_blocks = 0;
+-      FLASHINFER_CUDA_CALL(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&pv_feature_blocks, pv_feature_kernel, 256, pv_feature_smem));
+-      if (pv_feature_blocks >= 1) {
+-        const uint32_t pv_feature_grid = num_sms;
+-        if (params.pool_capacity > kHostBatchMaxPool || 2ull * params.pool_capacity * sizeof(uint32_t) > pv_feature_smem)
++      auto trace_pv_kernel = BatchMLATracePVKernel<TracePVKernelTraits, TracePVKernelParams, false>;
++      FLASHINFER_CUDA_CALL(cudaFuncSetAttribute(trace_pv_kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, trace_pv_smem));
++      int trace_pv_blocks = 0;
++      FLASHINFER_CUDA_CALL(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&trace_pv_blocks, trace_pv_kernel, 256, trace_pv_smem));
++      if (trace_pv_blocks >= 1) {
++        const uint32_t trace_pv_grid = num_sms;
++        if (params.pool_capacity > kHostBatchMaxPool || 2ull * params.pool_capacity * sizeof(uint32_t) > trace_pv_smem)
+@@ -4325,2 +4589,2 @@
+-        static_assert(sizeof(PVFeatureKernelParams) == sizeof(Params));
+-        static_assert(alignof(PVFeatureKernelParams) == alignof(Params));
++        static_assert(sizeof(TracePVKernelParams) == sizeof(Params));
++        static_assert(alignof(TracePVKernelParams) == alignof(Params));
+@@ -4331 +4595 @@
+-        params.prepare_parts = min(ceil_div(pv_feature_grid, max(params.num_rows, 1u)), ceil_div(length, 256u));
++        params.prepare_parts = min(ceil_div(trace_pv_grid, max(params.num_rows, 1u)), ceil_div(length, 256u));
+@@ -4334 +4598 @@
+-        FLASHINFER_CUDA_CALL(cudaLaunchCooperativeKernel((void*)pv_feature_kernel, dim3(1, pv_feature_grid), dim3(32, 4, 2), args, pv_feature_smem, stream));
++        FLASHINFER_CUDA_CALL(cudaLaunchCooperativeKernel((void*)trace_pv_kernel, dim3(1, trace_pv_grid), dim3(32, 4, 2), args, trace_pv_smem, stream));

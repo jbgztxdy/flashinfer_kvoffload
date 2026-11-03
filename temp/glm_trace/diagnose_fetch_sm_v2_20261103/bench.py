@@ -1,0 +1,339 @@
+"""GLM-5.3 kernel-only matrix: real sparse indices, actual cache payloads, arithmetic means."""
+import argparse
+import ctypes
+import contextlib
+import gc
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import random
+import subprocess
+import sys
+import time
+from resources_gpu3 import require_exclusive,snapshot
+
+ROOT = Path(__file__).resolve().parents[3]
+DEST = Path(__file__).resolve().parent
+EXECUTED_BENCH_SOURCE=Path(__file__).read_bytes()
+NUMA_POLICY=subprocess.check_output(['numactl','--show'],text=True)
+assert next(line.split(':',1)[1].strip() for line in NUMA_POLICY.splitlines() if line.startswith('membind:'))=='1', NUMA_POLICY
+os.chdir(ROOT)
+sys.path[:0] = [str(ROOT / "temp/h800"), str(ROOT / "temp"), str(ROOT / "temp/sim_link")]
+import torch
+import tiers
+import emu
+from flashinfer.jit import env as jit_env
+VARIANT=os.environ.get("TUNE_VARIANT","base")
+VARIANT_INCLUDE=(DEST/("include_"+VARIANT)).resolve()
+assert VARIANT_INCLUDE.is_dir()
+jit_env.FLASHINFER_INCLUDE_DIR=VARIANT_INCLUDE
+from bench_glm52_host_batch import make_wrapper, reference
+jit_env.FLASHINFER_INCLUDE_DIR=VARIANT_INCLUDE
+if VARIANT in ("profile", "profile_final"):
+    import inspect, textwrap
+    import flashinfer.mla._core as mla_core
+    cls=mla_core.BatchMLAPagedAttentionWrapper
+    code=textwrap.dedent(inspect.getsource(cls._run_host_batch))
+    code=code.replace("+ num_pools + rows,", "+ num_pools + rows + 2*128*128*16 + 2,")
+    assert "2*128*128*16" in code
+    namespace={}
+    exec(code,mla_core.__dict__,namespace)
+    cls._run_host_batch=namespace["_run_host_batch"]
+
+META = json.loads((DEST / "experiment.json").read_text())
+META["settings"].append(dict(name="native_hbm",tier="peer",emulated=False))
+P = argparse.ArgumentParser()
+P.add_argument("--mtp", type=int, required=True)
+P.add_argument("--requests", type=int, required=True)
+P.add_argument("--kind", choices=("floor", "snapshots", "nocache", "lru"), required=True)
+P.add_argument("--settings", nargs="+", default=None)
+P.add_argument("--smoke", action="store_true")
+P.add_argument("--fetch-ctas",type=int,default=16)
+P.add_argument("--host-item",type=int,default=64)
+P.add_argument("--host-split",choices=("on","off"),default="on")
+P.add_argument("--auto",action="store_true")
+P.add_argument("--positions",type=int,default=1024)
+P.add_argument("--route",choices=("staged","inplace"),default="staged")
+P.add_argument("--fractions",nargs="+",type=float,default=None)
+P.add_argument("--passes", type=int, default=META["passes"])
+A = P.parse_args()
+assert 0 < A.positions <= 1024 and A.positions % A.mtp == 0
+assert A.passes > 0
+if A.auto:
+    assert os.environ.get("TUNE_VARIANT") in ("final", "base", "confirm_final", "confirm_base", "profile_final")
+    if A.requests*A.mtp >= 432:
+        A.fetch_ctas=24; A.host_split="off"
+    else:
+        A.fetch_ctas=16; A.host_split="on"
+LOCK=(DEST.parent/"tune_general_20261031/gpu3_correctness.lock").open("w")
+fcntl.flock(LOCK,fcntl.LOCK_EX|fcntl.LOCK_NB)
+# Fail before CUDA work if another process owns GPU3.
+assert snapshot()['available'],snapshot()
+RESOURCE_START=require_exclusive()
+torch.set_num_threads(8)
+torch.cuda.set_device(0)
+torch.manual_seed(META["seed"])
+DEV = torch.device("cuda", 0)
+R, M, K, C, CAP = A.requests, A.mtp, META["topk"], 65536, META["capacity"]
+ROWS, NNZ = R * M, R * M * K
+STEPS = (16 if A.smoke else A.positions) // M
+PASSES = A.passes
+MODE = "ours"
+
+
+def digest(path):
+    h = hashlib.sha256()
+    with Path(path).open("rb") as f:
+        for b in iter(lambda: f.read(8 << 20), b""):
+            h.update(b)
+    return h.hexdigest()
+
+
+def save(path, data):
+    tmp = path.with_suffix(path.suffix + ".new")
+    tmp.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+    tmp.replace(path)
+
+
+def hardware():
+    fields="index,uuid,pci.bus_id,name,driver_version,memory.total,clocks.sm,clocks.mem,power.draw,temperature.gpu"
+    return subprocess.check_output(["nvidia-smi","--id=3","--query-gpu="+fields,
+                                    "--format=csv,noheader"],text=True).strip().splitlines()
+
+
+def sources():
+    files={s: digest(ROOT / s) for s in (str(Path(__file__).relative_to(ROOT)),
+            "temp/h800/tiers.py", "temp/sim_link/emu.py", "temp/sim_link/emu_gather.cu",
+            "include/flashinfer/attention/mla_host_batch.cuh", "include/flashinfer/attention/mla.cuh",
+            "include/flashinfer/attention/far_link_emu.cuh",
+            str((DEST / "plans.cpp").relative_to(ROOT)),
+            str((DEST / "experiment.json").relative_to(ROOT)),
+            str((DEST / "resources_gpu3.py").relative_to(ROOT)),
+            "temp/bench_glm52_host_batch.py",
+            "flashinfer/mla/_core.py", "csrc/batch_mla_run.cu")}
+    directory=DEST/"gpu3/source_snapshots";directory.mkdir(parents=True,exist_ok=True)
+    files["include/flashinfer/attention/mla_host_batch.cuh"]=digest(VARIANT_INCLUDE/"flashinfer/attention/mla_host_batch.cuh")
+    files["include/flashinfer/attention/mla.cuh"]=digest(VARIANT_INCLUDE/"flashinfer/attention/mla.cuh")
+    files["include/flashinfer/attention/far_link_emu.cuh"]=digest(VARIANT_INCLUDE/"flashinfer/attention/far_link_emu.cuh")
+    files[str(Path(__file__).relative_to(ROOT))]=hashlib.sha256(EXECUTED_BENCH_SOURCE).hexdigest()
+    for name,sha in files.items():
+        target=directory/(sha+Path(name).suffix)
+        if not target.exists():
+            target.write_bytes(EXECUTED_BENCH_SOURCE if name==str(Path(__file__).relative_to(ROOT)) else ((VARIANT_INCLUDE/name.removeprefix("include/")) if name in ("include/flashinfer/attention/mla_host_batch.cuh","include/flashinfer/attention/mla.cuh","include/flashinfer/attention/far_link_emu.cuh") else (ROOT/name)).read_bytes())
+    return files
+
+
+caps = []
+for path in sorted((ROOT / "temp/glm_trace/assistant64k").glob("doc*.pt")):
+    d = torch.load(path, map_location="cpu", weights_only=False)
+    assert d["replay_provenance"]["assistant_only"]
+    for layer in range(len(d["layers"])):
+        for group in range(len(d["group_starts"])):
+            caps.append((d["selections"][layer, group], dict(file=str(path.relative_to(ROOT)),
+                         layer=d["layers"][layer], window_start=int(d["group_starts"][group]),
+                         source_trace_sha256=d["replay_provenance"]["source_trace_sha256"])))
+random.Random(META["seed"]).shuffle(caps)
+bindings = [caps[r % len(caps)][1] | {"request": r, "repeated_capture": r >= len(caps)} for r in range(R)]
+# Identical prefix of requests at every batch size, and same request/layer/window throughout time.
+positions = torch.stack([caps[r % len(caps)][0][:STEPS * M] for r in range(R)]).reshape(R, STEPS, M, K).permute(1,0,2,3).contiguous()
+starts = torch.tensor([b["window_start"] for b in bindings]).view(1,R,1,1)
+newest = starts + torch.arange(STEPS * M).view(STEPS,1,M,1)
+
+SETTINGS = [s for s in META["settings"] if A.settings is None or s["name"] in A.settings]
+if A.kind in ("floor","snapshots"):
+    SETTINGS = [dict(name="floor", tier="peer", emulated=False)]
+assert SETTINGS
+assert all(s["name"] in ("floor","pcie","native_hbm") or s["name"].startswith(("g50_","g100_")) for s in SETTINGS), "GPU3 same-device far is not physical NVLink"
+CACHED_PAGES = {}
+CACHED_PLAN = None
+
+
+def row_pages(near, fraction):
+    source_positions=positions
+    source_newest=newest
+    if A.kind in ("nocache","snapshots"):
+        selected_ticks=[x//M for x in META["no_lru_snapshots"] if x//M<STEPS] or [0]
+        source_positions=positions[selected_ticks]
+        source_newest=newest[selected_ticks]
+    if fraction == 1:
+        far = source_positions < source_newest
+    elif fraction == 0:
+        far = torch.zeros_like(source_positions, dtype=torch.bool)
+    else:
+        # Match the requested selected-reference fraction exactly, preserving the trace's
+        # selected page identities and MTP overlap; mapping is per (request, position).
+        far = torch.empty_like(source_positions, dtype=torch.bool)
+        for r in range(R):
+            gen = torch.Generator().manual_seed(META["seed"] * 7919 + r)
+            flags = torch.rand(C, generator=gen) < fraction
+            far[:,r] = flags[source_positions[:,r].long()] & (source_positions[:,r] < source_newest[:,r])
+    owner = torch.arange(R).view(1,R,1,1)
+    near_pages = (owner % min(R,128)) * C + source_positions
+    pages = torch.where(far, near + owner * C + source_positions, near_pages).int().view(-1,ROWS,K)
+    return pages, far.reshape(pages.shape[0],-1).sum(1).tolist()
+
+
+def offline_lru(pages, near):
+    libpath = DEST / "plans.so"
+    if not libpath.exists() or libpath.stat().st_mtime < (DEST / "plans.cpp").stat().st_mtime:
+        subprocess.run(["g++", "-fopenmp", "-O3", "-shared", "-fPIC", "-std=c++17", str(DEST / "plans.cpp"),
+                        "-o", str(libpath)], check=True)
+    library = ctypes.CDLL(str(libpath))
+    fn = library.make_plan
+    fn.argtypes = [ctypes.c_void_p] * 6 + [ctypes.c_int] * 7
+    fn.restype = ctypes.c_int64
+    remap = torch.empty_like(pages)
+    src, dst = torch.empty(pages.numel(), dtype=torch.int64), torch.empty(pages.numel(), dtype=torch.int64)
+    offsets = torch.empty(STEPS+1, dtype=torch.int64)
+    counts = torch.empty(STEPS,4,dtype=torch.int64)
+    t = time.perf_counter()
+    used = fn(*[ctypes.c_void_p(x.data_ptr()) for x in (pages,remap,src,dst,offsets,counts)],
+              STEPS,R,M,K,C,near,CAP)
+    return dict(remap=remap, src=src[:used].clone(), dst=dst[:used].clone(),
+                offsets=offsets.tolist(), counts=counts.tolist(), cpu_plan_seconds=time.perf_counter()-t)
+
+
+def chunk_metadata(pages, plan, first, last, near, floor=False):
+    result = []
+    for t in range(first,last):
+        ids = pages[t].reshape(-1)
+        if floor or plan is None:
+            mask = ids >= near
+            unique, inverse = torch.unique(ids[mask], return_inverse=True)
+            mapped = ids.clone()
+            mapped[mask] = (near + inverse).int()
+            src, dst = (unique-near).long(), torch.arange(near,near+len(unique),dtype=torch.int64)
+        else:
+            a,b = plan["offsets"][t:t+2]
+            src,dst = plan["src"][a:b],plan["dst"][a:b]
+            mapped = plan["remap"][t].reshape(-1)
+        result.append(dict(selected=ids.to(DEV), remap=mapped.to(DEV),
+                           src=src.to(DEV), dst=dst.to(DEV), cpu_src=src))
+    return result
+
+
+# Diagnostics only: these timings never replace the formal production benchmark.
+def run_diagnostic(setting):
+    require_exclusive()
+    torch.manual_seed(META['seed'])
+    near=min(R,128)*C
+    kv=tiers.TieredKV(near,R*C,R*CAP+NNZ,0,'peer',0)
+    main=kv.main()
+    for b in range(0,kv.near+kv.far,1<<20): main[b:b+(1<<20)].normal_()
+    emu.kernel_env(100,setting['latency_ns'],main[near].data_ptr(),main[near].data_ptr()+kv.far*1152)
+    q=torch.randn(ROWS,64,512,dtype=torch.bfloat16,device=DEV)
+    qr=torch.randn(ROWS,64,64,dtype=torch.bfloat16,device=DEV)
+    idx=torch.empty(NNZ,dtype=torch.int32,device=DEV)
+    o=torch.empty_like(q)
+    w=make_wrapper(ROWS,idx,torch.empty(256<<20,dtype=torch.uint8,device=DEV),K)
+    w.host_fetch_ctas=24;w.host_item_entries=64;w.host_stage=True;w.host_split=False
+    w._host_prefetch_shape=False;w.host_staging_rows=NNZ
+    w.set_host_cache(torch.arange(R+1,dtype=torch.int32)*M,CAP)
+    pages,farrefs=row_pages(near,1.)
+    assert pages.shape==(32,1024,2048) and int(pages.min())>=0
+    selected=[x.reshape(-1).to(DEV) for x in pages]
+    ck,pk=main[...,:512],main[...,512:]
+    def full():
+        w.host_item_entries=64
+        w.run(q,qr,ck,pk,out=o,host_page_start=near)
+    idx.copy_(selected[0]);full();torch.cuda.synchronize()
+    state=w._host_batch_buffers[5]
+    partial=w._host_batch_buffers[6]
+    result=dict(variant=VARIANT,setting=setting,classification='diagnostic; not production/reference timing',
+                timestamp=time.strftime('%FT%T%z'),hardware_start=hardware(),resources_start=RESOURCE_START,
+                production_sha256=digest(ROOT/'include/flashinfer/attention/mla_host_batch.cuh'),
+                header_sha256=digest(VARIANT_INCLUDE/'flashinfer/attention/mla_host_batch.cuh'),
+                far_sha256=digest(VARIANT_INCLUDE/'flashinfer/attention/far_link_emu.cuh'),
+                harness_sha256=hashlib.sha256(EXECUTED_BENCH_SOURCE).hexdigest(),numa_policy=NUMA_POLICY,
+                config=dict(requests=R,mtp=M,steps=STEPS,positions=A.positions,fetch_ctas=24,
+                capacity=CAP,topk=K,grid=108,device='physical GPU3 same-card HBM far simulation',passes=PASSES),
+                bindings=bindings,passes=[],complete=False)
+    target=DEST/(f'{VARIANT}_{setting["name"]}.json')
+    save(target,result)
+    checkrows=[0,512,1023];checkids=torch.tensor(checkrows,device=DEV)
+    for repeat in range(PASSES):
+        w.release_host_cache(torch.arange(R));torch.cuda.synchronize()
+        if VARIANT=='trace':partial.view(torch.int64).reshape(-1)[:32*128*40].zero_()
+        events=[(torch.cuda.Event(enable_timing=True,external=True),torch.cuda.Event(enable_timing=True,external=True)) for _ in range(STEPS)]
+        miss=torch.empty(STEPS,dtype=torch.int32,device=DEV)
+        errors=torch.zeros((STEPS,2),dtype=torch.int64,device=DEV)
+        state_errors=torch.zeros_like(errors)
+        capevents={workers:[(torch.cuda.Event(enable_timing=True,external=True),torch.cuda.Event(enable_timing=True,external=True)) for _ in range(STEPS)] for workers in [84,108]} if VARIANT=='capacity' else {}
+        expected=[];order=[]
+        graph=torch.cuda.CUDAGraph()
+        with torch.cuda.graph(graph):
+            for t in range(STEPS):
+                idx.copy_(selected[t])
+                events[t][0].record();full();events[t][1].record()
+                miss[t]=state[1]
+                if t in [0,16,31]:expected.append((t,o.index_select(0,checkids).clone()))
+                if VARIANT=='capacity':
+                    original=o.clone();state_before=state.clone()
+                    widths=[84,108] if (repeat+t)%2==0 else [108,84]
+                    order.append(widths)
+                    for workers in widths:
+                        w.host_item_entries=workers*10
+                        ev=capevents[workers][t]
+                        ev[0].record();w.run(q,qr,ck,pk,out=o,host_page_start=near);ev[1].record()
+                        col=0 if workers==84 else 1
+                        errors[t,col]=torch.count_nonzero(o!=original)
+                        state_errors[t,col]=torch.count_nonzero(state!=state_before)
+                    del original,state_before
+        graph.replay();torch.cuda.synchronize()
+        passed=dict(pass_index=repeat,full_us=[s.elapsed_time(e)*1000 for s,e in events],unique_misses=miss.cpu().tolist())
+        for t,got in expected:
+            ref=reference(main,q,qr,selected[t].view(ROWS,K),checkrows)
+            torch.testing.assert_close(got.float(),ref,atol=.01,rtol=.01)
+        passed['sample_output_checks']=dict(steps=[0,16,31],rows=checkrows,passed=True)
+        if VARIANT=='trace':
+            records=partial.view(torch.int64).reshape(-1)[:32*128*40].cpu().reshape(32,128,40)
+            timeline=[]
+            for slot in records:
+                active=slot[slot[:,0]>0]
+                if not len(active):continue
+                assert len(active)==108,(len(active),active[:,11])
+                assert len(active[:,10].unique())==108
+                assert int(active[:,13].sum())==ROWS,int(active[:,13].sum())
+                assert int(active[:,14].sum())==R
+                epoch=int(active[0,11]);assert bool((active[:,11]==epoch).all())
+                timeline.append(dict(epoch=epoch,ctas=active.tolist()))
+            timeline.sort(key=lambda x:x['epoch'])
+            assert len(timeline)==STEPS
+            passed['timeline']=timeline
+        else:
+            passed['capacity_us']={str(workers):[s.elapsed_time(e)*1000 for s,e in capevents[workers]] for workers in [84,108]}
+            passed['capacity_order']=order
+            passed['output_unequal_counts']=errors.cpu().tolist()
+            passed['state_unequal_counts']=state_errors.cpu().tolist()
+            assert not bool(errors.any()) and not bool(state_errors.any()),(passed['output_unequal_counts'],passed['state_unequal_counts'])
+            smids=partial.view(torch.int32).reshape(-1)[:108].cpu().tolist()
+            assert len(set(smids))==108
+            passed['smids']=smids
+        result['passes'].append(passed);save(target,result)
+        print('PASS',VARIANT,setting['name'],repeat,'full',sum(passed['full_us'])/STEPS,
+              'capacity', {k:sum(v)/len(v) for k,v in passed.get('capacity_us',{}).items()},flush=True)
+        del graph,events,expected,capevents
+    # Validate every currently resident cache row against actual source payloads.
+    resident,slotpage,stamps,store=w._host_cache_views()
+    valid=slotpage[:store['slots']]>=0
+    slots=torch.nonzero(valid).flatten();payload_errors=0
+    for block in slots.split(32768):
+        source=main.index_select(0,slotpage[block].long())[:,0]
+        cached=store['kv'].index_select(0,block)
+        payload_errors+=int(torch.count_nonzero(source!=cached))
+    assert payload_errors==0
+    result['cache_payload_check']=dict(valid_slots=len(slots),unequal_elements=payload_errors)
+    result['loaded_libraries']=[]
+    paths={line.split()[-1] for line in Path('/proc/self/maps').read_text().splitlines() if '.so' in line and str(DEST/('jit_'+VARIANT)) in line}
+    for name in sorted(paths):result['loaded_libraries'].append(dict(path=str(Path(name).relative_to(ROOT)),sha256=digest(name)))
+    assert any('_host_overlap_v2' in x['path'] for x in result['loaded_libraries'])
+    result['resources_end']=require_exclusive();result['hardware_end']=hardware()
+    result['complete']=True;save(target,result)
+    print('DONE',target,flush=True)
+    del w,main,kv,q,qr,o,selected,partial,state
+    gc.collect();torch.cuda.empty_cache()
+
+assert VARIANT in ['trace','capacity'] and A.mtp==8 and A.requests==128 and A.positions==256
+for setting in SETTINGS:run_diagnostic(setting)

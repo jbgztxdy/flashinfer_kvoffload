@@ -1,0 +1,51 @@
+{
+  "production_sha256": "cab508dcb6e83b7a953d94a8e54e30e0aaf60bb1d7ba98480fc66893edcf4384",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "far_sha256": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716",
+  "variants": {
+    "trace": "76acf02fc1bccbcf66994e98af3e2cc3296aabb4ebcdccd699e177414238e9b6",
+    "capacity": "d015f434b58582f8b47193ecd2158fae1026d26bf1da418782c2573149ad54de"
+  },
+  "trace_shape": [
+    32,
+    128,
+    40
+  ],
+  "classification": "Diagnostics only; no adoptedcandidate, no formalreference orproductiontiming change.",
+  "capacity": "Host item scalar840/1080 selects same productionattention helper over completedremap/currentcache,84/108activeCTA inone108CTAgrid;alloutputrows computed,metadata/cache/epochunchanged. Replay restores exact unpadded length from kv_indptr after final cursors reset; grid barrier and SM IDs verify residency. No GPU run used first version.",
+  "libraries": [
+    {
+      "variant": "trace",
+      "path": "temp/glm_trace/diagnose_fetch_sm_v2_20261103/jit_trace/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "sha256": "2405e95af5f6fa594123340d1dd0b4e3782df735abf5c40065001c507c53f3d0"
+    },
+    {
+      "variant": "trace",
+      "path": "temp/glm_trace/diagnose_fetch_sm_v2_20261103/jit_trace/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "sha256": "4f56af1c18007cc2520dbb34b6b6142d7534b88efbb1a67dedd0ecc86b382323"
+    },
+    {
+      "variant": "capacity",
+      "path": "temp/glm_trace/diagnose_fetch_sm_v2_20261103/jit_capacity/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "sha256": "706a412168f0445123a51a2ad525361f880226518494b736da05a5c648157ffe"
+    },
+    {
+      "variant": "capacity",
+      "path": "temp/glm_trace/diagnose_fetch_sm_v2_20261103/jit_capacity/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "sha256": "5b3928f0f4257d4333acd340e7ea69c4ef23d5899233e7d54f80a9024ff61e68"
+    }
+  ],
+  "final_files": {
+    "bench.py": "87a1aca011f93db4f91edd97fb717dc170759243a1024da65e11601cc30c52c5",
+    "run.py": "41ffa76ef3efa5522f0f36701f99ab3abc1de8910f65f163693b49a10dff8f86",
+    "analyze.py": "41493ea44402b0454433b5c3dfc2edda7ee0c3e43b1c9f8a6f2c5200355ba165",
+    "trace.cuh": "76acf02fc1bccbcf66994e98af3e2cc3296aabb4ebcdccd699e177414238e9b6",
+    "capacity.cuh": "d015f434b58582f8b47193ecd2158fae1026d26bf1da418782c2573149ad54de",
+    "experiment.json": "0805c8f7817401a9fd5db92f13cdb3ca6c8f76f410465624afa19c696d7a4234",
+    "resources_gpu3.py": "f434630f6597f016e8c659253ed98dc8ebfcf7a18ea2c58859fe994c68fb588b",
+    "trace_g100_l0.json": "587208cf12030f7dc288ad8e3e15dcf9827828ca257c78671907ba582067a497",
+    "trace_g100_l20000.json": "4cbd4e3b7fbb5026b012cd7475849752876a8b51f5747fb4ba1cef7dce60d197",
+    "capacity_g100_l0.json": "30e99448c110885d7e24b2e379673ce50d78c524423be0978fe212fb627aa708",
+    "analysis.json": "b9d27ebf7343f10f3261be9e0a6ce35d5b5a1edbbf194569395377cb2abc63c5"
+  }
+}

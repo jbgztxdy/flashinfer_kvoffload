@@ -1,0 +1,17 @@
+PASS trace g100_l0 0 full 3420.896016061306 capacity {}
+DONE /mnt/data/rtx/projects/flashinfer/temp/glm_trace/diagnose_fetch_sm_v2_20261103/trace_g100_l0.json
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/diagnose_fetch_sm_v2_20261103/bench.py", line 339, in <module>
+    for setting in SETTINGS:run_diagnostic(setting)
+                            ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/diagnose_fetch_sm_v2_20261103/bench.py", line 222, in run_diagnostic
+    kv=tiers.TieredKV(near,R*C,R*CAP+NNZ,0,'peer',0)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/h800/tiers.py", line 61, in __init__
+    far_handle = self._create(far_location, self.far)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/h800/tiers.py", line 95, in _create
+    self._call("cuMemCreate", ctypes.byref(handle), ctypes.c_size_t(rows * ROW_BYTES), ctypes.byref(prop),
+  File "/mnt/data/rtx/projects/flashinfer/temp/h800/tiers.py", line 85, in _call
+    raise RuntimeError(f"{name}: {error.value.decode()} ({status})")
+RuntimeError: cuMemCreate: out of memory (2)

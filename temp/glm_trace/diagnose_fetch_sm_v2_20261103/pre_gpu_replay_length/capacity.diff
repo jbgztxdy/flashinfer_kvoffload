@@ -1,0 +1,129 @@
+--- production.cuh
++++ capacity.cuh
+@@ -3716 +3716 @@
+-__device__ __forceinline__ void pv_feature_pv(typename KTraits::SharedStorage* smem_storage,
++__device__ __forceinline__ void capacity_pv_pv(typename KTraits::SharedStorage* smem_storage,
+@@ -3810 +3810 @@
+-struct PVFeatureTraits : JointQKTraits<Q, KV, O, Id> {};
++struct CapacityPVTraits : JointQKTraits<Q, KV, O, Id> {};
+@@ -3812 +3812 @@
+-struct PVFeatureHostParams : JointQKHostParams<Params> {};
++struct CapacityPVHostParams : JointQKHostParams<Params> {};
+@@ -3818 +3818 @@
+-__device__ __forceinline__ void pv_feature_qk_pair_fragments(
++__device__ __forceinline__ void capacity_pv_qk_pair_fragments(
+@@ -3850 +3850 @@
+-__device__ __forceinline__ void pv_feature_load_query(const Params& params, uint32_t row,
++__device__ __forceinline__ void capacity_pv_load_query(const Params& params, uint32_t row,
+@@ -3865 +3865 @@
+-__device__ __forceinline__ void pv_feature_compute_pe(
++__device__ __forceinline__ void capacity_pv_compute_pe(
+@@ -3891 +3891 @@
+-__device__ __forceinline__ void pv_feature_compute_one(
++__device__ __forceinline__ void capacity_pv_compute_one(
+@@ -3893 +3893 @@
+-  pv_feature_compute_pe<false, KTraits>(storage, 0, 0, qpe, scores, scores);
++  capacity_pv_compute_pe<false, KTraits>(storage, 0, 0, qpe, scores, scores);
+@@ -3901 +3901 @@
+-__device__ __forceinline__ void pv_feature_compute_qk_pair(
++__device__ __forceinline__ void capacity_pv_compute_qk_pair(
+@@ -3904 +3904 @@
+-  pv_feature_compute_pe<true, KTraits>(storage, a, b, qpe, sa, sb);
++  capacity_pv_compute_pe<true, KTraits>(storage, a, b, qpe, sa, sb);
+@@ -3907 +3907 @@
+-  pv_feature_qk_pair_fragments<false,KTraits,KTraits::NUM_MMA_D_CKV,
++  capacity_pv_qk_pair_fragments<false,KTraits,KTraits::NUM_MMA_D_CKV,
+@@ -3916 +3916 @@
+-__device__ __forceinline__ void pv_feature_update_joint_host_mdo(
++__device__ __forceinline__ void capacity_pv_update_joint_host_mdo(
+@@ -3960 +3960 @@
+-__device__ __forceinline__ void pv_feature_attend_joint_host_tiles(
++__device__ __forceinline__ void capacity_pv_attend_joint_host_tiles(
+@@ -3967 +3967 @@
+-  pv_feature_load_query(params, row, qpe);
++  capacity_pv_load_query(params, row, qpe);
+@@ -3994 +3994 @@
+-    pv_feature_compute_qk_pair<KTraits>(storage, hi%2, lo%2, qpe, scores, scores+1);
++    capacity_pv_compute_qk_pair<KTraits>(storage, hi%2, lo%2, qpe, scores, scores+1);
+@@ -3997,2 +3997,2 @@
+-    pv_feature_update_joint_host_mdo<KTraits>(&storage, variant, scores, scores+1, o, m, d);
+-    pv_feature_pv<KTraits>(&storage, hi%2, scores, d, o);
++    capacity_pv_update_joint_host_mdo<KTraits>(&storage, variant, scores, scores+1, o, m, d);
++    capacity_pv_pv<KTraits>(&storage, hi%2, scores, d, o);
+@@ -4008 +4008 @@
+-    pv_feature_pv<KTraits>(&storage, lo%2, scores+1, d, o);
++    capacity_pv_pv<KTraits>(&storage, lo%2, scores+1, d, o);
+@@ -4020 +4020 @@
+-    pv_feature_compute_one<KTraits>(storage, qpe, scores);
++    capacity_pv_compute_one<KTraits>(storage, qpe, scores);
+@@ -4023 +4023 @@
+-    pv_feature_pv<KTraits>(&storage, 0, scores, d, o);
++    capacity_pv_pv<KTraits>(&storage, 0, scores, d, o);
+@@ -4028 +4028 @@
+-__device__ __forceinline__ void pv_feature_run_joint_host_item(const Params& params,
++__device__ __forceinline__ void capacity_pv_run_joint_host_item(const Params& params,
+@@ -4088 +4088 @@
+-    pv_feature_attend_joint_host_tiles<KTraits>(params, storage, variant, scratch,
++    capacity_pv_attend_joint_host_tiles<KTraits>(params, storage, variant, scratch,
+@@ -4121 +4121 @@
+-__device__ __forceinline__ void pv_feature_run_joint_host_items(const Params& params,
++__device__ __forceinline__ void capacity_pv_run_joint_host_items(const Params& params,
+@@ -4155 +4155 @@
+-    pv_feature_run_joint_host_item<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, item - lru_items, s_frag, o_frag,
++    capacity_pv_run_joint_host_item<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, item - lru_items, s_frag, o_frag,
+@@ -4160 +4160 @@
+-__global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPVFeatureKernel(
++__global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLACapacityPVKernel(
+@@ -4174,0 +4175,11 @@
++  if (params.host_item_entries==840 || params.host_item_entries==1080) {
++    const uint32_t workers=params.host_item_entries/10;
++    if(tid==0) {scratch[kHostBatchScratchEpoch]=epoch;scratch[kHostBatchScratchFetchRows]=64;}
++    __syncthreads();
++    if(blockIdx.y<workers) {
++      float s[2][8],o[KTraits::NUM_MMA_D_CKV/2][8],m[2],d[2];
++      for(uint32_t row=blockIdx.y;row<params.num_rows;row+=workers)
++        capacity_pv_run_joint_host_item<KTraits,Params,false>(params,storage,smem,scratch,row,s,o,m,d);
++    }
++    return;
++  }
+@@ -4239 +4250 @@
+-  pv_feature_run_joint_host_items<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, from_back, unique);
++  capacity_pv_run_joint_host_items<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, from_back, unique);
+@@ -4307,4 +4318,4 @@
+-    using PVFeatureKernelTraits = PVFeatureTraits<DTypeQ, DTypeKV, DTypeO, IdType>;
+-    using PVFeatureKernelParams = PVFeatureHostParams<Params>;
+-    constexpr size_t pv_feature_smem = sizeof(typename PVFeatureKernelTraits::SharedStorage);
+-    static_assert(pv_feature_smem == 147968);
++    using CapacityPVKernelTraits = CapacityPVTraits<DTypeQ, DTypeKV, DTypeO, IdType>;
++    using CapacityPVKernelParams = CapacityPVHostParams<Params>;
++    constexpr size_t capacity_pv_smem = sizeof(typename CapacityPVKernelTraits::SharedStorage);
++    static_assert(capacity_pv_smem == 147968);
+@@ -4313 +4324 @@
+-        params.fetch_ctas < num_sms && smem_limit_per_sm >= pv_feature_smem + 4096 &&
++        params.fetch_ctas < num_sms && smem_limit_per_sm >= capacity_pv_smem + 4096 &&
+@@ -4317,7 +4328,7 @@
+-      auto pv_feature_kernel = BatchMLAPVFeatureKernel<PVFeatureKernelTraits, PVFeatureKernelParams, false>;
+-      FLASHINFER_CUDA_CALL(cudaFuncSetAttribute(pv_feature_kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, pv_feature_smem));
+-      int pv_feature_blocks = 0;
+-      FLASHINFER_CUDA_CALL(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&pv_feature_blocks, pv_feature_kernel, 256, pv_feature_smem));
+-      if (pv_feature_blocks >= 1) {
+-        const uint32_t pv_feature_grid = num_sms;
+-        if (params.pool_capacity > kHostBatchMaxPool || 2ull * params.pool_capacity * sizeof(uint32_t) > pv_feature_smem)
++      auto capacity_pv_kernel = BatchMLACapacityPVKernel<CapacityPVKernelTraits, CapacityPVKernelParams, false>;
++      FLASHINFER_CUDA_CALL(cudaFuncSetAttribute(capacity_pv_kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, capacity_pv_smem));
++      int capacity_pv_blocks = 0;
++      FLASHINFER_CUDA_CALL(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&capacity_pv_blocks, capacity_pv_kernel, 256, capacity_pv_smem));
++      if (capacity_pv_blocks >= 1) {
++        const uint32_t capacity_pv_grid = num_sms;
++        if (params.pool_capacity > kHostBatchMaxPool || 2ull * params.pool_capacity * sizeof(uint32_t) > capacity_pv_smem)
+@@ -4325,2 +4336,2 @@
+-        static_assert(sizeof(PVFeatureKernelParams) == sizeof(Params));
+-        static_assert(alignof(PVFeatureKernelParams) == alignof(Params));
++        static_assert(sizeof(CapacityPVKernelParams) == sizeof(Params));
++        static_assert(alignof(CapacityPVKernelParams) == alignof(Params));
+@@ -4331 +4342 @@
+-        params.prepare_parts = min(ceil_div(pv_feature_grid, max(params.num_rows, 1u)), ceil_div(length, 256u));
++        params.prepare_parts = min(ceil_div(capacity_pv_grid, max(params.num_rows, 1u)), ceil_div(length, 256u));
+@@ -4334 +4345 @@
+-        FLASHINFER_CUDA_CALL(cudaLaunchCooperativeKernel((void*)pv_feature_kernel, dim3(1, pv_feature_grid), dim3(32, 4, 2), args, pv_feature_smem, stream));
++        FLASHINFER_CUDA_CALL(cudaLaunchCooperativeKernel((void*)capacity_pv_kernel, dim3(1, capacity_pv_grid), dim3(32, 4, 2), args, capacity_pv_smem, stream));
