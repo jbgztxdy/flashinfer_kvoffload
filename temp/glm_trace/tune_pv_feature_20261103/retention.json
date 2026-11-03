@@ -1,0 +1,196 @@
+{
+  "timestamp": "2026-11-03T11:39:18+0800",
+  "candidate_adopted": true,
+  "goal_complete": false,
+  "base_sha256": "754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79",
+  "production_sha256": "cab508dcb6e83b7a953d94a8e54e30e0aaf60bb1d7ba98480fc66893edcf4384",
+  "exact_measured_bytes": true,
+  "pairs": [
+    {
+      "hardware": "GPU3",
+      "cohort": "focused256_",
+      "variant": "pv_feature",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l0",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3368.5653234521546,
+      "new_us": 3333.909327785174,
+      "reduction": 0.010288058071993955,
+      "old_raw": "temp/glm_trace/tune_pv_feature_20261103/gpu3/raw/focused256_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_pv_feature_20261103/gpu3/raw/focused256_pv_feature_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "memcpy_us": 6081.589346130689,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.7515611410968,
+      "over_reference": 0.23489486061304077
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "focused256_",
+      "variant": "pv_feature",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3400.9813194473586,
+      "new_us": 3381.888007124265,
+      "reduction": 0.005614059746201661,
+      "old_raw": "temp/glm_trace/tune_pv_feature_20261103/gpu3/raw/focused256_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_pv_feature_20261103/gpu3/raw/focused256_pv_feature_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "memcpy_us": 6098.079999287923,
+      "local_us": 2556.959974269072,
+      "reference_us": 2700.075201141097,
+      "over_reference": 0.2525162283239455
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "focused256_",
+      "variant": "pv_feature",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g50_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 5266.527992983659,
+      "new_us": 5266.528015335401,
+      "reduction": -4.244113283036199e-09,
+      "old_raw": "temp/glm_trace/tune_pv_feature_20261103/gpu3/raw/focused256_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_pv_feature_20261103/gpu3/raw/focused256_pv_feature_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+      "memcpy_us": 8480.981349945068,
+      "local_us": 2556.959974269072,
+      "reference_us": 4959.41328,
+      "over_reference": 0.061925618615797484
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "native256_",
+      "variant": "pv_feature",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "native_hbm",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3149.258660773436,
+      "new_us": 3103.957340121269,
+      "reduction": 0.01438475702756059,
+      "old_raw": "temp/glm_trace/tune_pv_feature_20261103/gpu3/raw/native256_base_staged_f24_i64_soff_lru_native_hbm_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_pv_feature_20261103/gpu3/raw/native256_pv_feature_staged_f24_i64_soff_lru_native_hbm_mtp8_b128.json",
+      "memcpy_us": 3933.0986738204956,
+      "local_us": 2556.959974269072,
+      "reference_us": 2556.959974269072,
+      "over_reference": 0.21392488398593756
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "reverse256_",
+      "variant": "pv_feature",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l0",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3387.818659345309,
+      "new_us": 3345.226672788461,
+      "reduction": 0.012572097517485892,
+      "old_raw": "temp/glm_trace/tune_pv_feature_20261103/gpu3/raw/reverse256_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_pv_feature_20261103/gpu3/raw/reverse256_pv_feature_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+      "memcpy_us": 6068.970690170924,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.644881141097,
+      "over_reference": 0.23913581973584885
+    },
+    {
+      "hardware": "GPU3",
+      "cohort": "reverse256_",
+      "variant": "pv_feature",
+      "kind": "lru",
+      "fraction": null,
+      "mtp": 8,
+      "requests": 128,
+      "fetch_ctas": 24,
+      "setting": "g100_l20000",
+      "positions": 256,
+      "passes": 3,
+      "old_us": 3407.733323673407,
+      "new_us": 3343.1786646445594,
+      "reduction": 0.018943577122185196,
+      "old_raw": "temp/glm_trace/tune_pv_feature_20261103/gpu3/raw/reverse256_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "new_raw": "temp/glm_trace/tune_pv_feature_20261103/gpu3/raw/reverse256_pv_feature_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+      "memcpy_us": 6081.386675437291,
+      "local_us": 2556.959974269072,
+      "reference_us": 2699.924241141097,
+      "over_reference": 0.2382490640669226
+    }
+  ],
+  "evidence": [
+    {
+      "file": "manifest.json",
+      "sha256": "853d4108c7c8b4fb3528d6200b661a2640167c1b1f4a67f9e2b6c9a1328ba86e",
+      "snapshot": "retention_snapshot/853d4108c7c8b4fb3528d6200b661a2640167c1b1f4a67f9e2b6c9a1328ba86e_manifest.json"
+    },
+    {
+      "file": "pv_feature.cuh",
+      "sha256": "cab508dcb6e83b7a953d94a8e54e30e0aaf60bb1d7ba98480fc66893edcf4384",
+      "snapshot": "retention_snapshot/cab508dcb6e83b7a953d94a8e54e30e0aaf60bb1d7ba98480fc66893edcf4384_pv_feature.cuh"
+    },
+    {
+      "file": "performance_audit.json",
+      "sha256": "229c5479fa9f33e1219b07368580682052bcfb84f393aaffef11008c77da5eb9",
+      "snapshot": "retention_snapshot/229c5479fa9f33e1219b07368580682052bcfb84f393aaffef11008c77da5eb9_performance_audit.json"
+    },
+    {
+      "file": "source_review.json",
+      "sha256": "6a288f68c18b168c18fde5e9f809e2a178fbca00221ab83cd384e76a15431315",
+      "snapshot": "retention_snapshot/6a288f68c18b168c18fde5e9f809e2a178fbca00221ab83cd384e76a15431315_source_review.json"
+    },
+    {
+      "file": "codegen_review.json",
+      "sha256": "8e66396bc493b9a8bd274bd63b29aeb21d18fb74054b374abcdc18d5f4dff1c7",
+      "snapshot": "retention_snapshot/8e66396bc493b9a8bd274bd63b29aeb21d18fb74054b374abcdc18d5f4dff1c7_codegen_review.json"
+    },
+    {
+      "file": "schedule_review.json",
+      "sha256": "253224428359f1c2e6825185db80b37d6fbe8bca86770bee86450ce2d7e16e23",
+      "snapshot": "retention_snapshot/253224428359f1c2e6825185db80b37d6fbe8bca86770bee86450ce2d7e16e23_schedule_review.json"
+    },
+    {
+      "file": "targeted_correctness.log",
+      "sha256": "0fc440c708b8062bd05d6f72174bb278f97340e23c153cb23a029ed1add7672e",
+      "snapshot": "retention_snapshot/0fc440c708b8062bd05d6f72174bb278f97340e23c153cb23a029ed1add7672e_targeted_correctness.log"
+    },
+    {
+      "file": "state.json",
+      "sha256": "cac3cbbc71804b24e9570627b4d8ff025ae6fc9d7899b38f851fb2788b918046",
+      "snapshot": "retention_snapshot/cac3cbbc71804b24e9570627b4d8ff025ae6fc9d7899b38f851fb2788b918046_state.json"
+    },
+    {
+      "file": "confirmation_state.json",
+      "sha256": "e81091780a4004c8da35315fe36715aee9caab969df4ea773752005106e048da",
+      "snapshot": "retention_snapshot/e81091780a4004c8da35315fe36715aee9caab969df4ea773752005106e048da_confirmation_state.json"
+    },
+    {
+      "file": "dispatch_probe_pv_feature.json",
+      "sha256": "06f18e6a521d6634dc017eb548a0be0aa2e829f46ff6c1d28dbb3bcd2f201c3c",
+      "snapshot": "retention_snapshot/06f18e6a521d6634dc017eb548a0be0aa2e829f46ff6c1d28dbb3bcd2f201c3c_dispatch_probe_pv_feature.json"
+    }
+  ],
+  "validation_scope": "2targetedBF16tests+actualsinglekernelGraph+6pairedshortpoints. Reuse unchanged math/fetch/LRU source; no fullsuite, sanitizer, fullwindow, FP16/SXM/H800/nativePCIe/NVLink or fulloriginalbinaryidentity claims.",
+  "policy": "User-authorized lightweight iteration: verified mechanism and repeated100GBgains permit retention; broader coverage remains open."
+}

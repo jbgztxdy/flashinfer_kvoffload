@@ -1,0 +1,8 @@
+{
+  "base_sha256": "754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79",
+  "candidate_sha256": "ab8cf8d5e0c96de76e7163ed2792f6874f5610d6fbdcb2099318ed4e57d4e2da",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "mechanism": "Defer existing joint-MDO O FMULs to each feature of first PV mma_kv0. Same P cast/rowsum/publish, barriers, QK, second PV/refill, fetch/FAR/LRU and per-element arithmetic order. Only large cached whole-row SM80 typed dispatch.",
+  "hypothesis": "Interleave 128 scalar O FMULs per lane with PV tensor-core operations instead of an upfront FMUL batch. No operation reduction, geometry or parameter scan; compiler schedule and paired timing decide.",
+  "adopted": false
+}

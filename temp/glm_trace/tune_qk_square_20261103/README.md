@@ -1,3 +1,5 @@
+Completed continuation: square_smem finalc69a builtnormal/EMU(REG255STACK0),2tests passed;3freshpairs slower3.668/4.383/0.163%, rejected. Do notresume squarefamily. Production nowcab508dc fromindependent../tune_pv_feature_20261103; seeitsretention anddocs/mla_host_a100_compute_schedule_20261103.md. Below isoriginalhandoff history.
+
 Read `migration_state.json` anddocs/mla_host_a100_innovation_20261103.md first. Production754706f8unchanged.
 
 Measuredsquareebfa1f7f andsquare_p03925d9c rejected. Eachpassed2targetedBF16tests,but100GBregressed. Allsamples/bytes/misses/guard/SHA inperformance_audit andgpu3/raw. Originalsquareuses16KiBFP32scoreexchange; square_p directlypublishesquantizedP/rowsums. CodegenREG255/STACK16 versusREG255/STACK88,static2304. Nozero-spillclaim, nofullsuite/sanitizer/fullbinaryidentityaudit thisround.

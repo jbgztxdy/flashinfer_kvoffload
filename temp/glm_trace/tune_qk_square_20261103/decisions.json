@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-03T11:15:23+0800",
+  "timestamp": "2026-11-03T11:30:06+0800",
   "variants": {
     "square": {
       "decision": "rejected",
@@ -150,6 +150,81 @@
         }
       ],
       "reason": "All3points slower than same-cohort frozenproduction. Do not expand or rerun."
+    },
+    "square_smem": {
+      "decision": "rejected",
+      "adopted": false,
+      "header_sha256": "c69a2643f887b642471c621cddd318e715a92e292c3ed1b35341ecfc6a24aeb2",
+      "targeted_tests": 2,
+      "pairs": [
+        {
+          "hardware": "GPU3",
+          "cohort": "smem256_",
+          "variant": "square_smem",
+          "kind": "lru",
+          "fraction": null,
+          "mtp": 8,
+          "requests": 128,
+          "fetch_ctas": 24,
+          "setting": "g100_l0",
+          "positions": 256,
+          "passes": 3,
+          "old_us": 3357.066656152407,
+          "new_us": 3480.1919932166734,
+          "reduction": -0.0366764648055522,
+          "old_raw": "temp/glm_trace/tune_qk_square_20261103/gpu3/raw/smem256_base_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+          "new_raw": "temp/glm_trace/tune_qk_square_20261103/gpu3/raw/smem256_square_smem_staged_f24_i64_soff_lru_g100_l0_mtp8_b128.json",
+          "memcpy_us": 6055.0079842408495,
+          "local_us": 2556.959974269072,
+          "reference_us": 2699.7227611410967,
+          "over_reference": 0.28909236285643436
+        },
+        {
+          "hardware": "GPU3",
+          "cohort": "smem256_",
+          "variant": "square_smem",
+          "kind": "lru",
+          "fraction": null,
+          "mtp": 8,
+          "requests": 128,
+          "fetch_ctas": 24,
+          "setting": "g100_l20000",
+          "positions": 256,
+          "passes": 3,
+          "old_us": 3355.8826645215354,
+          "new_us": 3502.965323626995,
+          "reduction": -0.04382830802173765,
+          "old_raw": "temp/glm_trace/tune_qk_square_20261103/gpu3/raw/smem256_base_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+          "new_raw": "temp/glm_trace/tune_qk_square_20261103/gpu3/raw/smem256_square_smem_staged_f24_i64_soff_lru_g100_l20000_mtp8_b128.json",
+          "memcpy_us": 6077.919964989026,
+          "local_us": 2556.959974269072,
+          "reference_us": 2699.8056811410966,
+          "over_reference": 0.29748794444585225
+        },
+        {
+          "hardware": "GPU3",
+          "cohort": "smem256_",
+          "variant": "square_smem",
+          "kind": "lru",
+          "fraction": null,
+          "mtp": 8,
+          "requests": 128,
+          "fetch_ctas": 24,
+          "setting": "g50_l20000",
+          "positions": 256,
+          "passes": 3,
+          "old_us": 5266.282677650452,
+          "new_us": 5274.879989524682,
+          "reduction": -0.0016325200146807273,
+          "old_raw": "temp/glm_trace/tune_qk_square_20261103/gpu3/raw/smem256_base_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+          "new_raw": "temp/glm_trace/tune_qk_square_20261103/gpu3/raw/smem256_square_smem_staged_f24_i64_soff_lru_g50_l20000_mtp8_b128.json",
+          "memcpy_us": 8481.738651792208,
+          "local_us": 2556.959974269072,
+          "reference_us": 4959.78384,
+          "over_reference": 0.06353021818883975
+        }
+      ],
+      "reason": "STACK88->0 did not win against fresh production:100GB slower3.67/4.38%,50GBslower0.16%. No scan or expansion."
     }
   }
 }

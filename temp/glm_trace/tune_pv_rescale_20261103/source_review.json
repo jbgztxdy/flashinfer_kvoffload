@@ -1,0 +1,17 @@
+{
+  "candidate_sha256": "ab8cf8d5e0c96de76e7163ed2792f6874f5610d6fbdcb2099318ed4e57d4e2da",
+  "unchanged_helpers_after_type_rename": {
+    "stream_source_qk_pair_fragments": true,
+    "stream_source_load_query": true,
+    "stream_source_compute_pe": true,
+    "stream_source_compute_one": true,
+    "stream_source_compute_qk_pair": true,
+    "stream_source_run_joint_host_item": true,
+    "stream_source_run_joint_host_items": true,
+    "BatchMLAStreamSourceKernel": true
+  },
+  "unchanged_existing_host_header_prefix": true,
+  "math_unchanged": true,
+  "schedule_equation": "For each O feature: O <- factor*O followed by original first PV MMA(s), then original second PV MMA(s). d and P arithmetic/order unchanged. KPE->P barriers unchanged.",
+  "limits": "Source review only; compiled schedule/resources and end-to-end timing reviewed separately."
+}

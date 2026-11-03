@@ -1,0 +1,490 @@
+[
+  {
+    "mode": "emu",
+    "variant": "base",
+    "symbol": "_ZN10flashinfer3mla26BatchMLAStreamSourceKernelINS0_18StreamSourceTraitsI13__nv_bfloat16S3_S3_iEENS0_22StreamSourceHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+    "library_sha256": "7067599b4569a976bed7297dd60487e2e7e69c6ec2e718af88186046e6f3be87",
+    "archive": "base_emu_target.sass.gz",
+    "static_instruction_count": 7008,
+    "static_FMUL_count": 397,
+    "static_HMMA_count": 299,
+    "HMMA_with_FMUL_in_previous10_instructions": 62,
+    "example_windows": [
+      [
+        [
+          "efb0",
+          "FMUL.FTZ R116, R5, R116"
+        ],
+        [
+          "efc0",
+          "FMUL.FTZ R117, R5.reuse, R117"
+        ],
+        [
+          "efd0",
+          "FMUL.FTZ R112, R5.reuse, R112"
+        ],
+        [
+          "efe0",
+          "MUFU.EX2 R13, R13"
+        ],
+        [
+          "eff0",
+          "IMAD.MOV.U32 R167, RZ, RZ, RZ"
+        ],
+        [
+          "f000",
+          "FMUL.FTZ R166, R4.reuse, R166"
+        ],
+        [
+          "f010",
+          "FMUL.FTZ R118, R4.reuse, R118"
+        ],
+        [
+          "f020",
+          "FMUL.FTZ R119, R4.reuse, R119"
+        ],
+        [
+          "f030",
+          "MUFU.EX2 R14, R14"
+        ],
+        [
+          "f040",
+          "FMUL.FTZ R113, R5, R113"
+        ],
+        [
+          "f050",
+          "HMMA.16816.F32.BF16 R164, R176, R188, R164"
+        ],
+        [
+          "f060",
+          "FMUL.FTZ R114, R4, R114"
+        ],
+        [
+          "f070",
+          "FMUL.FTZ R115, R4.reuse, R115"
+        ]
+      ],
+      [
+        [
+          "f200",
+          "FMUL.FTZ R97, R5.reuse, R97"
+        ],
+        [
+          "f210",
+          "FMUL.FTZ R98, R4.reuse, R98"
+        ],
+        [
+          "f220",
+          "LDSM.16.MT88.4 R196, [R7+0x16980]"
+        ],
+        [
+          "f230",
+          "FMUL.FTZ R99, R4, R99"
+        ],
+        [
+          "f240",
+          "FMUL.FTZ R124, R5.reuse, R124"
+        ],
+        [
+          "f250",
+          "FMUL.FTZ R125, R5, R125"
+        ],
+        [
+          "f260",
+          "FMUL.FTZ R126, R4.reuse, R126"
+        ],
+        [
+          "f270",
+          "FMUL.FTZ R127, R4.reuse, R127"
+        ],
+        [
+          "f280",
+          "FMUL.FTZ R120, R5.reuse, R120"
+        ],
+        [
+          "f290",
+          "FMUL.FTZ R121, R5, R121"
+        ],
+        [
+          "f2a0",
+          "HMMA.16816.F32.BF16 R152, R156, R180, R152"
+        ],
+        [
+          "f2b0",
+          "FMUL.FTZ R122, R4.reuse, R122"
+        ],
+        [
+          "f2c0",
+          "FMUL.FTZ R123, R4, R123"
+        ]
+      ]
+    ],
+    "limits": "Static instructions and schedule windows only; not dynamic counts, stall fractions, or causal performance proof."
+  },
+  {
+    "mode": "emu",
+    "variant": "pv_rescale",
+    "symbol": "_ZN10flashinfer3mla23BatchMLAPVRescaleKernelINS0_15PVRescaleTraitsI13__nv_bfloat16S3_S3_iEENS0_19PVRescaleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+    "library_sha256": "7067599b4569a976bed7297dd60487e2e7e69c6ec2e718af88186046e6f3be87",
+    "archive": "pv_rescale_emu_target.sass.gz",
+    "static_instruction_count": 6984,
+    "static_FMUL_count": 397,
+    "static_HMMA_count": 299,
+    "HMMA_with_FMUL_in_previous10_instructions": 60,
+    "example_windows": [
+      [
+        [
+          "ee90",
+          "LOP3.LUT R211, R211, 0x60, RZ, 0x3c, !PT"
+        ],
+        [
+          "eea0",
+          "FMUL.FTZ R72, R245, R72"
+        ],
+        [
+          "eeb0",
+          "LOP3.LUT R206, R204, 0x40, RZ, 0x3c, !PT"
+        ],
+        [
+          "eec0",
+          "FMUL.FTZ R54, R243, R54"
+        ],
+        [
+          "eed0",
+          "IADD3 R249, R185, 0x4080, RZ"
+        ],
+        [
+          "eee0",
+          "FMUL.FTZ R34, R243, R34"
+        ],
+        [
+          "eef0",
+          "IADD3 R242, R185, 0x4100, RZ"
+        ],
+        [
+          "ef00",
+          "FMUL.FTZ R35, R243, R35"
+        ],
+        [
+          "ef10",
+          "IADD3 R244, R185, 0x4180, RZ"
+        ],
+        [
+          "ef20",
+          "FMUL.FTZ R73, R245, R73"
+        ],
+        [
+          "ef30",
+          "HMMA.16816.F32.BF16 R52, R168, R176, R52"
+        ],
+        [
+          "ef40",
+          "FMUL.FTZ R74, R243.reuse, R74"
+        ],
+        [
+          "ef50",
+          "LOP3.LUT R251, R242, 0x20, RZ, 0x3c, !PT"
+        ]
+      ],
+      [
+        [
+          "f120",
+          "MUFU.EX2 R63, R63"
+        ],
+        [
+          "f130",
+          "FMUL.FTZ R86, R243.reuse, R86"
+        ],
+        [
+          "f140",
+          "FMUL.FTZ R87, R243, R87"
+        ],
+        [
+          "f150",
+          "FMUL.FTZ R24, R245, R24"
+        ],
+        [
+          "f160",
+          "FMUL.FTZ R25, R245, R25"
+        ],
+        [
+          "f170",
+          "FMUL.FTZ R26, R243.reuse, R26"
+        ],
+        [
+          "f180",
+          "FMUL.FTZ R27, R243, R27"
+        ],
+        [
+          "f190",
+          "FMUL.FTZ R64, R245.reuse, R64"
+        ],
+        [
+          "f1a0",
+          "FMUL.FTZ R65, R245, R65"
+        ],
+        [
+          "f1b0",
+          "FMUL.FTZ R66, R243.reuse, R66"
+        ],
+        [
+          "f1c0",
+          "HMMA.16816.F32.BF16 R32, R4, R172, R32"
+        ],
+        [
+          "f1d0",
+          "FMUL.FTZ R67, R243, R67"
+        ],
+        [
+          "f1e0",
+          "FMUL.FTZ R88, R245.reuse, R88"
+        ]
+      ]
+    ],
+    "limits": "Static instructions and schedule windows only; not dynamic counts, stall fractions, or causal performance proof."
+  },
+  {
+    "mode": "normal",
+    "variant": "base",
+    "symbol": "_ZN10flashinfer3mla26BatchMLAStreamSourceKernelINS0_18StreamSourceTraitsI13__nv_bfloat16S3_S3_iEENS0_22StreamSourceHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+    "library_sha256": "b432da9b2d97c0b36f38dd93652a8dc04188973f2c47007ffc5f84dc4f854087",
+    "archive": "base_normal_target.sass.gz",
+    "static_instruction_count": 6824,
+    "static_FMUL_count": 397,
+    "static_HMMA_count": 299,
+    "HMMA_with_FMUL_in_previous10_instructions": 62,
+    "example_windows": [
+      [
+        [
+          "e470",
+          "FMUL.FTZ R116, R5, R116"
+        ],
+        [
+          "e480",
+          "FMUL.FTZ R117, R5.reuse, R117"
+        ],
+        [
+          "e490",
+          "FMUL.FTZ R112, R5.reuse, R112"
+        ],
+        [
+          "e4a0",
+          "MUFU.EX2 R13, R13"
+        ],
+        [
+          "e4b0",
+          "IMAD.MOV.U32 R167, RZ, RZ, RZ"
+        ],
+        [
+          "e4c0",
+          "FMUL.FTZ R166, R4.reuse, R166"
+        ],
+        [
+          "e4d0",
+          "FMUL.FTZ R118, R4.reuse, R118"
+        ],
+        [
+          "e4e0",
+          "FMUL.FTZ R119, R4.reuse, R119"
+        ],
+        [
+          "e4f0",
+          "MUFU.EX2 R14, R14"
+        ],
+        [
+          "e500",
+          "FMUL.FTZ R113, R5, R113"
+        ],
+        [
+          "e510",
+          "HMMA.16816.F32.BF16 R164, R176, R188, R164"
+        ],
+        [
+          "e520",
+          "FMUL.FTZ R114, R4, R114"
+        ],
+        [
+          "e530",
+          "FMUL.FTZ R115, R4.reuse, R115"
+        ]
+      ],
+      [
+        [
+          "e6c0",
+          "FMUL.FTZ R97, R5.reuse, R97"
+        ],
+        [
+          "e6d0",
+          "FMUL.FTZ R98, R4.reuse, R98"
+        ],
+        [
+          "e6e0",
+          "LDSM.16.MT88.4 R196, [R7+0x16980]"
+        ],
+        [
+          "e6f0",
+          "FMUL.FTZ R99, R4, R99"
+        ],
+        [
+          "e700",
+          "FMUL.FTZ R124, R5.reuse, R124"
+        ],
+        [
+          "e710",
+          "FMUL.FTZ R125, R5, R125"
+        ],
+        [
+          "e720",
+          "FMUL.FTZ R126, R4.reuse, R126"
+        ],
+        [
+          "e730",
+          "FMUL.FTZ R127, R4.reuse, R127"
+        ],
+        [
+          "e740",
+          "FMUL.FTZ R120, R5.reuse, R120"
+        ],
+        [
+          "e750",
+          "FMUL.FTZ R121, R5, R121"
+        ],
+        [
+          "e760",
+          "HMMA.16816.F32.BF16 R152, R156, R180, R152"
+        ],
+        [
+          "e770",
+          "FMUL.FTZ R122, R4.reuse, R122"
+        ],
+        [
+          "e780",
+          "FMUL.FTZ R123, R4, R123"
+        ]
+      ]
+    ],
+    "limits": "Static instructions and schedule windows only; not dynamic counts, stall fractions, or causal performance proof."
+  },
+  {
+    "mode": "normal",
+    "variant": "pv_rescale",
+    "symbol": "_ZN10flashinfer3mla23BatchMLAPVRescaleKernelINS0_15PVRescaleTraitsI13__nv_bfloat16S3_S3_iEENS0_19PVRescaleHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_",
+    "library_sha256": "b432da9b2d97c0b36f38dd93652a8dc04188973f2c47007ffc5f84dc4f854087",
+    "archive": "pv_rescale_normal_target.sass.gz",
+    "static_instruction_count": 6800,
+    "static_FMUL_count": 397,
+    "static_HMMA_count": 299,
+    "HMMA_with_FMUL_in_previous10_instructions": 60,
+    "example_windows": [
+      [
+        [
+          "e3a0",
+          "LOP3.LUT R211, R211, 0x60, RZ, 0x3c, !PT"
+        ],
+        [
+          "e3b0",
+          "FMUL.FTZ R72, R245, R72"
+        ],
+        [
+          "e3c0",
+          "LOP3.LUT R206, R204, 0x40, RZ, 0x3c, !PT"
+        ],
+        [
+          "e3d0",
+          "FMUL.FTZ R54, R243, R54"
+        ],
+        [
+          "e3e0",
+          "IADD3 R249, R185, 0x4080, RZ"
+        ],
+        [
+          "e3f0",
+          "FMUL.FTZ R34, R243, R34"
+        ],
+        [
+          "e400",
+          "IADD3 R242, R185, 0x4100, RZ"
+        ],
+        [
+          "e410",
+          "FMUL.FTZ R35, R243, R35"
+        ],
+        [
+          "e420",
+          "IADD3 R244, R185, 0x4180, RZ"
+        ],
+        [
+          "e430",
+          "FMUL.FTZ R73, R245, R73"
+        ],
+        [
+          "e440",
+          "HMMA.16816.F32.BF16 R52, R168, R176, R52"
+        ],
+        [
+          "e450",
+          "FMUL.FTZ R74, R243.reuse, R74"
+        ],
+        [
+          "e460",
+          "LOP3.LUT R251, R242, 0x20, RZ, 0x3c, !PT"
+        ]
+      ],
+      [
+        [
+          "e630",
+          "MUFU.EX2 R63, R63"
+        ],
+        [
+          "e640",
+          "FMUL.FTZ R86, R243.reuse, R86"
+        ],
+        [
+          "e650",
+          "FMUL.FTZ R87, R243, R87"
+        ],
+        [
+          "e660",
+          "FMUL.FTZ R24, R245, R24"
+        ],
+        [
+          "e670",
+          "FMUL.FTZ R25, R245, R25"
+        ],
+        [
+          "e680",
+          "FMUL.FTZ R26, R243.reuse, R26"
+        ],
+        [
+          "e690",
+          "FMUL.FTZ R27, R243, R27"
+        ],
+        [
+          "e6a0",
+          "FMUL.FTZ R64, R245.reuse, R64"
+        ],
+        [
+          "e6b0",
+          "FMUL.FTZ R65, R245, R65"
+        ],
+        [
+          "e6c0",
+          "FMUL.FTZ R66, R243.reuse, R66"
+        ],
+        [
+          "e6d0",
+          "HMMA.16816.F32.BF16 R32, R4, R172, R32"
+        ],
+        [
+          "e6e0",
+          "FMUL.FTZ R67, R243, R67"
+        ],
+        [
+          "e6f0",
+          "FMUL.FTZ R88, R245.reuse, R88"
+        ]
+      ]
+    ],
+    "limits": "Static instructions and schedule windows only; not dynamic counts, stall fractions, or causal performance proof."
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "base_sha256": "754706f8d8fba14a361ce6dcfc64a358446e5df36b225f392fa8a3e7756ded79",
+  "candidate_sha256": "cab508dcb6e83b7a953d94a8e54e30e0aaf60bb1d7ba98480fc66893edcf4384",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "address_oracle_checks": 2048,
+  "adopted": true,
+  "mechanism": "Native32KV PV loop interchange: preload both P fragments, then perfeature consume KVhalf0and1 consecutively. Same peroutput MMA order, Pcast/rowsum/publish, softmax rescale, barriers, QK/refill/fetch/LRU/FAR. Only large cached whole-row SM80 typed dispatch.",
+  "hypothesis": "Change output-accumulator scheduling/locality while keeping every arithmetic operation; costs4more live P registers. No parameter or unroll sweep. Independent from rejected pv_rescale."
+}

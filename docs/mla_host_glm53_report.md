@@ -10,6 +10,8 @@
 
 **11月3日更新**：shared_claim已补GPU3有效对照并拒绝；新anchor、32×32 QK及直接发布P也未取得稳定收益，不安装。当前square_smem针对后者STACK88改QPE来源，修复编译变量重名后尚未编译/上GPU；用户迁移任务，无活动runner。今日轻量筛选24格/12对，生产7547及原参考/矩阵保持；[新报告与准确接续状态](mla_host_a100_innovation_20261103.md)。
 
+**11月3日接续**：已保留PV按输出特征调度cab508dc，GPU3/MTP8R128/LRU4096短窗口100GB两顺序快0.56%–1.89%，正常同卡HBM快1.44%；定向数值/缓存检查及实际单kernel通过。square_smem和O缩放交错候选拒绝。110%目标仍未完成，未新测SXM/完整窗口；[接续报告与准确范围](mla_host_a100_compute_schedule_20261103.md)。
+
 ## 1. 工作成果与核心结论
 
 本阶段完成了远端 KV sparse MLA decode 的单 kernel 融合方案，将**跨 query 去重、跨步 LRU、远端取数、attention 计算及结果合并**放入同一次 cooperative kernel 启动。目标是在 KV 放到Host DRAM 或其他 GPU 后，尽量把传输隐藏在计算期间，减少相对纯 device 计算增加的耗时。

@@ -1,8 +1,12 @@
 """Small code-generation review; no repeated full original-kernel equivalence audit."""
-import hashlib,json,re,subprocess,time
+import argparse,hashlib,json,re,subprocess,time
 from pathlib import Path
+parser=argparse.ArgumentParser()
+parser.add_argument('--variants',nargs='+',choices=['square','square_p','square_smem'],default=['square','square_p'])
+args=parser.parse_args()
 p=Path(__file__).resolve().parent;r=dict(timestamp=time.strftime('%FT%T%z'),targets=[])
-for v,label in [('square','Square'),('square_p','SquareP')]:
+for v in args.variants:
+ label={'square':'Square','square_p':'SquareP','square_smem':'SquareSmem'}[v]
  for mode in ['emu','normal']:
   libs=list((p/('jit_'+v+('_normal' if mode=='normal' else ''))).rglob('*host_overlap_v2.so'))
   assert len(libs)==1,libs
@@ -14,5 +18,6 @@ for v,label in [('square','Square'),('square_p','SquareP')]:
    if 'BatchMLA'+label+'Kernel' in name:
     symbols.append(dict(symbol=name,resources=part.splitlines()[1].strip()))
   assert len(symbols)==1,symbols
-  r['targets'].append(dict(variant=v,mode=mode,library_sha256=hashlib.sha256(lib.read_bytes()).hexdigest(),**symbols[0]))
-(p/'codegen_review.json').write_text(json.dumps(r,indent=2)+'\n');print(json.dumps(r,indent=2))
+  r['targets'].append(dict(variant=v,mode=mode,header_sha256=hashlib.sha256((p/(v+'.cuh')).read_bytes()).hexdigest(),library_sha256=hashlib.sha256(lib.read_bytes()).hexdigest(),**symbols[0]))
+output='codegen_square_smem.json' if args.variants==['square_smem'] else 'codegen_review.json'
+(p/output).write_text(json.dumps(r,indent=2)+'\n');print(json.dumps(r,indent=2))

@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-03 11:15 用户迁移至新agent，生产仍754706f8；square_smem修正后未编译，无本任务活动runner，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-03 11:41 保留PV feature调度，生产cab508dc；所有本任务runner已结束，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -16,7 +16,13 @@
 
 ## 2. 当前运行状态与新一轮进度
 
-**11/03最新入口，优先于下方11/02历史快照：**用户希望新机制逼近100GB下逐步参考110%，也希望探索能否低于原“理论下限”；允许优化指定本地计算参考所对应的计算实现，不允许改模拟器/参考/实际远端载荷制造突破。GPU3空闲后已完成旧shared_claim有效补测，慢5.72%/6.65%/3.70%，拒绝，不再恢复旧SXM不完整runner。新anchor（8单位上界锚点）修正单元素LSE取整问题后3项通过，100GB0快0.29%/20慢1.67%，拒绝；原失败稿和容差保持。新square32×32warp内Q/K双复用，2项通过但100GB慢4.54%/5.08%；直接发布P的square_p也2项通过，慢6.94%/8.11%，均拒绝。normal/EMU square REG255/STACK16，square_p REG255/STACK88，皆static2304，不称零spill。今日24格12对/4608计时launch/288段，新增7项定向检查、复用旧2项，无新全套/sanitizer/原实例全等价/实际Graph节点probe/物理链路/FP16/SXM/H800性能结论。
+**11/03接续最新：生产已保留PV feature调度，SHA cab508dcb6e83b7a953d94a8e54e30e0aaf60bb1d7ba98480fc66893edcf4384；不回退7547或更早版本。** `tune_pv_feature_20261103/`直接以7547为控制，32KV PV先载入两P片段，再逐输出特征依次执行KV half0/1 MMA；每元素累计次序、P/rowsum/联合MDO/barrier/QK/refill/fetch/精确LRU/FAR保持，不组合拒绝的rescale。2048地址核对、2项定向BF16检查及实际单108CTA/block32x4x2/dynamic147968/active1 Graph通过。normal/EMU新REG254/STACK0/static2304/LOCAL0。GPU3/NUMA1/MTP8R128/LRU4096/f24off/256×3，正向100GB0/20快1.029%/0.561%、50GB持平；反向100GB快1.257%/1.894%，正常同卡HBM快1.438%。按轻量偏好逐字节安装实测头，retention绑定原件，无生产root重编译/新全套/sanitizer/full1024/FP16/SXM/物理PCIe/NVLink/H800新结论。参考仍原同硬件逐步max，短窗口仍高约24%，110%未完成，不能套旧SXM绝对值或称低于计算参考。[本轮报告](mla_host_a100_compute_schedule_20261103.md)。
+
+原唯一待续square_smem已完成：c69a2643 normal/EMU构建成功，REG255/STACK0，两项检查通过，100GB0/20慢3.668%/4.383%、50GB慢0.163%，拒绝。首编译失败件仍保存，最终build记录已正确绑定c69a，square家族不再重启。另新pv_rescale将原O缩放交错到首PV MMA，2项检查通过、REG254/STACK0，但100GB慢0.329%/0.141%、50GB持平，拒绝。此接续共6项成功定向检查、24格12对/4608计时launch/288段，另1实际Graph probe；所有raw/正负差/失败记录保持。全部build/run/confirm工具session均terminal，GPU3结束0MiB/0%；GPU0/1仍其他VLLM占用，GPU2不动。math34af/FAR5e409/原5304矩阵、H800队列源码均保持。后续从cab508dc继续真正新机制，不重跑本轮完成的筛选，也不将静态指令/栈减少当性能因果分解。
+
+以下11/03上午迁移段落及更早条目是历史，生产和活动任务以上述新入口为准。
+
+**11/03上午迁移历史：**用户希望新机制逼近100GB下逐步参考110%，也希望探索能否低于原“理论下限”；允许优化指定本地计算参考所对应的计算实现，不允许改模拟器/参考/实际远端载荷制造突破。GPU3空闲后已完成旧shared_claim有效补测，慢5.72%/6.65%/3.70%，拒绝，不再恢复旧SXM不完整runner。新anchor（8单位上界锚点）修正单元素LSE取整问题后3项通过，100GB0快0.29%/20慢1.67%，拒绝；原失败稿和容差保持。新square32×32warp内Q/K双复用，2项通过但100GB慢4.54%/5.08%；直接发布P的square_p也2项通过，慢6.94%/8.11%，均拒绝。normal/EMU square REG255/STACK16，square_p REG255/STACK88，皆static2304，不称零spill。今日24格12对/4608计时launch/288段，新增7项定向检查、复用旧2项，无新全套/sanitizer/原实例全等价/实际Graph节点probe/物理链路/FP16/SXM/H800性能结论。
 
 **迁移时唯一待续为square_smem**，目录`temp/glm_trace/tune_qk_square_20261103/`：仅将square_p的32个长期QPE packed words换成读取已有shared QPE，针对实际STACK88，不能预断定收益。首30e7稿编译失败是新bool square_smem与旧控制constexpr square_smem重名，现已改成square_smem_enabled并同步header/include/generator。最终候选SHA **c69a2643f887b642471c621cddd318e715a92e292c3ed1b35341ecfc6a24aeb2**；**修正后未编译、无GPU验证/性能、未安装**。首失败件在failed_smem_dispatch/；build_square_smem.json仍记录旧30e7失败，不能误认为最终头编译过。用户要求迁移后无新构建/GPU任务。
 
