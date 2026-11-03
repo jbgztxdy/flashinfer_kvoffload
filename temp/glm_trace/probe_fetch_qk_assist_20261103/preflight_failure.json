@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-11-03T16:27:07+0800",
+  "complete": false,
+  "status": "preflight_timeout_before_CUDA",
+  "wait_limit_seconds": 120,
+  "error": "RuntimeError: GPU3 busy",
+  "external_parent_pid": 2624055,
+  "observed_resources": {
+    "timestamp": "2026-11-03T16:27:08+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 4,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "probe_started": false,
+  "performance_result_exists": false,
+  "waiter_terminal": true
+}

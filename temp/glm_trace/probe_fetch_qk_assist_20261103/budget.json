@@ -1,0 +1,48 @@
+{
+  "classification": "CPU coordinate coverage and measured-budget analysis; GPU probe not executed",
+  "production_sha256": "cab508dcb6e83b7a953d94a8e54e30e0aaf60bb1d7ba98480fc66893edcf4384",
+  "far_sha256": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716",
+  "probe_source_sha256": "0a2f77155ab06e7b75848d760ff2ebe2903630277048d378e697584c150f0b6c",
+  "frozen_binary_sha256": "7d24ba6625cea831ceb237c776878e4a4a45a1fbe12dee09a3c6ed299fe6c4bf",
+  "cpu_mapping": {
+    "output_coordinates": 2048,
+    "unique_output_coordinates": 2048,
+    "features": 576,
+    "operand_coverage_per_warp": 256,
+    "pe_then_ckv": true
+  },
+  "rows": [
+    {
+      "setting": "g100_l0",
+      "chunks": 3363.71875,
+      "per_fetchCTA_chunks": 140.15494791666666,
+      "average_us_per_fetch_chunk": 17.679832477076154,
+      "far_wait_us_per_chunk": 5.575353171248339,
+      "physical_wait_us_per_chunk": 0.31772454221982743,
+      "explicit_wait_service_equivalent_wall_us": 183.5431111111111,
+      "explicit_wait_limit": "Opportunity estimate from intrusive timer; includes barrier effects, not causal savings or hard bound. It cannot establish idle tensor-core capacity during memory work."
+    },
+    {
+      "setting": "g100_l20000",
+      "chunks": 3363.4375,
+      "per_fetchCTA_chunks": 140.14322916666666,
+      "average_us_per_fetch_chunk": 17.84959583759175,
+      "far_wait_us_per_chunk": 5.867245043203568,
+      "physical_wait_us_per_chunk": 0.3174086035491963,
+      "explicit_wait_service_equivalent_wall_us": 192.6082962962963,
+      "explicit_wait_limit": "Opportunity estimate from intrusive timer; includes barrier effects, not causal savings or hard bound. It cannot establish idle tensor-core capacity during memory work."
+    }
+  ],
+  "paired_score_bytes": 16384,
+  "bounded_mailbox_bytes_84CTAs_2pairs": 2752512,
+  "fetch_buffer_bytes": 147456,
+  "original_dynamic_shared": 147968,
+  "original_static_shared": 2304,
+  "missing_evidence": [
+    "GPU QK arithmetic/payload check",
+    "probe link100Gb throughput with and without QK",
+    "actual mailbox integration and work replacement",
+    "84worker interference",
+    "full kernel codegen/correctness/performance"
+  ]
+}

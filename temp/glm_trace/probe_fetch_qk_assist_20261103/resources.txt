@@ -1,0 +1,39 @@
+
+Fatbin elf code:
+================
+arch = sm_80
+code version = [1,8]
+host = linux
+compile_size = 64bit
+
+Resource usage:
+ Common:
+  GLOBAL:0
+
+Fatbin elf code:
+================
+arch = sm_80
+code version = [1,8]
+host = linux
+compile_size = 64bit
+
+Resource usage:
+ Common:
+  GLOBAL:262192 CONSTANT[4]:24
+ Function _Z8pipelineILb1EEvPK5uint4PS0_PK13__nv_bfloat16S6_Pfi:
+  REG:54 STACK:0 SHARED:0 LOCAL:0 CONSTANT[2]:8 CONSTANT[0]:396 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function _Z8pipelineILb0EEvPK5uint4PS0_PK13__nv_bfloat16S6_Pfi:
+  REG:30 STACK:0 SHARED:0 LOCAL:0 CONSTANT[2]:8 CONSTANT[0]:396 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function _Z10standalonePK13__nv_bfloat16S1_Pfi:
+  REG:40 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:380 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function _Z5resetv:
+  REG:6 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:352 TEXTURE:0 SURFACE:0 SAMPLER:0
+
+Fatbin ptx code:
+================
+arch = sm_80
+code version = [9,1]
+host = linux
+compile_size = 64bit
+compressed
+ptxasOptions = -v  

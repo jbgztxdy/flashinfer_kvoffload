@@ -1,0 +1,409 @@
+include/flashinfer/mma.cuh(70): warning #1835-D: attribute "always_inline" does not apply here
+  __attribute__((device)) __inline__ __attribute__((always_inline)) void ldmatrix_m8n8x4(uint32_t* R, T* smem_ptr) {
+                                                    ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+include/flashinfer/mma.cuh(70): error: incomplete type "void" is not allowed
+  __attribute__((device)) __inline__ __attribute__((always_inline)) void ldmatrix_m8n8x4(uint32_t* R, T* smem_ptr) {
+                                                                         ^
+
+include/flashinfer/mma.cuh(70): error: identifier "uint32_t" is undefined
+  __attribute__((device)) __inline__ __attribute__((always_inline)) void ldmatrix_m8n8x4(uint32_t* R, T* smem_ptr) {
+                                                                                         ^
+
+include/flashinfer/mma.cuh(70): error: identifier "R" is undefined
+  __attribute__((device)) __inline__ __attribute__((always_inline)) void ldmatrix_m8n8x4(uint32_t* R, T* smem_ptr) {
+                                                                                                   ^
+
+include/flashinfer/mma.cuh(70): error: type name is not allowed
+  __attribute__((device)) __inline__ __attribute__((always_inline)) void ldmatrix_m8n8x4(uint32_t* R, T* smem_ptr) {
+                                                                                                      ^
+
+include/flashinfer/mma.cuh(70): error: identifier "smem_ptr" is undefined
+  __attribute__((device)) __inline__ __attribute__((always_inline)) void ldmatrix_m8n8x4(uint32_t* R, T* smem_ptr) {
+                                                                                                         ^
+
+include/flashinfer/mma.cuh(70): error: expected a ";"
+  __attribute__((device)) __inline__ __attribute__((always_inline)) void ldmatrix_m8n8x4(uint32_t* R, T* smem_ptr) {
+                                                                                                                   ^
+
+include/flashinfer/mma.cuh(70): error: An inline __device__/__constant__/__managed__ variable must have internal linkage when the program is compiled in whole program mode (-rdc=false)
+  __attribute__((device)) __inline__ __attribute__((always_inline)) void ldmatrix_m8n8x4(uint32_t* R, T* smem_ptr) {
+                                                                         ^
+
+/usr/include/c++/12/cstdint(52): error: the global scope has no "int_fast8_t"
+    using ::int_fast8_t;
+            ^
+
+/usr/include/c++/12/cstdint(53): error: the global scope has no "int_fast16_t"
+    using ::int_fast16_t;
+            ^
+
+/usr/include/c++/12/cstdint(54): error: the global scope has no "int_fast32_t"
+    using ::int_fast32_t;
+            ^
+
+/usr/include/c++/12/cstdint(55): error: the global scope has no "int_fast64_t"
+    using ::int_fast64_t;
+            ^
+
+/usr/include/c++/12/cstdint(57): error: the global scope has no "int_least8_t"
+    using ::int_least8_t;
+            ^
+
+/usr/include/c++/12/cstdint(58): error: the global scope has no "int_least16_t"
+    using ::int_least16_t;
+            ^
+
+/usr/include/c++/12/cstdint(59): error: the global scope has no "int_least32_t"
+    using ::int_least32_t;
+            ^
+
+/usr/include/c++/12/cstdint(60): error: the global scope has no "int_least64_t"
+    using ::int_least64_t;
+            ^
+
+/usr/include/c++/12/cstdint(62): error: the global scope has no "intmax_t"
+    using ::intmax_t;
+            ^
+
+/usr/include/c++/12/cstdint(63): error: the global scope has no "intptr_t"
+    using ::intptr_t;
+            ^
+
+/usr/include/c++/12/cstdint(65): error: the global scope has no "uint8_t"
+    using ::uint8_t;
+            ^
+
+/usr/include/c++/12/cstdint(66): error: the global scope has no "uint16_t"
+    using ::uint16_t;
+            ^
+
+/usr/include/c++/12/cstdint(67): error: the global scope has no "uint32_t"
+    using ::uint32_t;
+            ^
+
+/usr/include/c++/12/cstdint(68): error: the global scope has no "uint64_t"
+    using ::uint64_t;
+            ^
+
+/usr/include/c++/12/cstdint(70): error: the global scope has no "uint_fast8_t"
+    using ::uint_fast8_t;
+            ^
+
+/usr/include/c++/12/cstdint(71): error: the global scope has no "uint_fast16_t"
+    using ::uint_fast16_t;
+            ^
+
+/usr/include/c++/12/cstdint(72): error: the global scope has no "uint_fast32_t"
+    using ::uint_fast32_t;
+            ^
+
+/usr/include/c++/12/cstdint(73): error: the global scope has no "uint_fast64_t"
+    using ::uint_fast64_t;
+            ^
+
+/usr/include/c++/12/cstdint(75): error: the global scope has no "uint_least8_t"
+    using ::uint_least8_t;
+            ^
+
+/usr/include/c++/12/cstdint(76): error: the global scope has no "uint_least16_t"
+    using ::uint_least16_t;
+            ^
+
+/usr/include/c++/12/cstdint(77): error: the global scope has no "uint_least32_t"
+    using ::uint_least32_t;
+            ^
+
+/usr/include/c++/12/cstdint(78): error: the global scope has no "uint_least64_t"
+    using ::uint_least64_t;
+            ^
+
+/usr/include/c++/12/cstdint(80): error: the global scope has no "uintmax_t"
+    using ::uintmax_t;
+            ^
+
+/usr/include/c++/12/cstdint(81): error: the global scope has no "uintptr_t"
+    using ::uintptr_t;
+            ^
+
+/usr/include/c++/12/bits/stringfwd.h(71): error: allocator is not a template
+             typename _Alloc = allocator<_CharT> >
+                               ^
+
+/usr/include/c++/12/bits/stringfwd.h(77): error: basic_string is not a template
+    typedef basic_string<char> string;
+            ^
+
+/usr/include/c++/12/bits/stringfwd.h(80): error: basic_string is not a template
+    typedef basic_string<wchar_t> wstring;
+            ^
+
+/usr/include/c++/12/bits/stringfwd.h(89): error: basic_string is not a template
+    typedef basic_string<char16_t> u16string;
+            ^
+
+/usr/include/c++/12/bits/stringfwd.h(92): error: basic_string is not a template
+    typedef basic_string<char32_t> u32string;
+            ^
+
+/usr/include/c++/12/cwchar(64): error: the global scope has no "mbstate_t"
+    using ::mbstate_t;
+            ^
+
+/usr/include/c++/12/cwchar(141): error: the global scope has no "wint_t"
+    using ::wint_t;
+            ^
+
+/usr/include/c++/12/cwchar(143): error: the global scope has no "btowc"
+    using ::btowc;
+            ^
+
+/usr/include/c++/12/cwchar(144): error: the global scope has no "fgetwc"
+    using ::fgetwc;
+            ^
+
+/usr/include/c++/12/cwchar(145): error: the global scope has no "fgetws"
+    using ::fgetws;
+            ^
+
+/usr/include/c++/12/cwchar(146): error: the global scope has no "fputwc"
+    using ::fputwc;
+            ^
+
+/usr/include/c++/12/cwchar(147): error: the global scope has no "fputws"
+    using ::fputws;
+            ^
+
+/usr/include/c++/12/cwchar(148): error: the global scope has no "fwide"
+    using ::fwide;
+            ^
+
+/usr/include/c++/12/cwchar(149): error: the global scope has no "fwprintf"
+    using ::fwprintf;
+            ^
+
+/usr/include/c++/12/cwchar(150): error: the global scope has no "fwscanf"
+    using ::fwscanf;
+            ^
+
+/usr/include/c++/12/cwchar(151): error: the global scope has no "getwc"
+    using ::getwc;
+            ^
+
+/usr/include/c++/12/cwchar(152): error: the global scope has no "getwchar"
+    using ::getwchar;
+            ^
+
+/usr/include/c++/12/cwchar(153): error: the global scope has no "mbrlen"
+    using ::mbrlen;
+            ^
+
+/usr/include/c++/12/cwchar(154): error: the global scope has no "mbrtowc"
+    using ::mbrtowc;
+            ^
+
+/usr/include/c++/12/cwchar(155): error: the global scope has no "mbsinit"
+    using ::mbsinit;
+            ^
+
+/usr/include/c++/12/cwchar(156): error: the global scope has no "mbsrtowcs"
+    using ::mbsrtowcs;
+            ^
+
+/usr/include/c++/12/cwchar(157): error: the global scope has no "putwc"
+    using ::putwc;
+            ^
+
+/usr/include/c++/12/cwchar(158): error: the global scope has no "putwchar"
+    using ::putwchar;
+            ^
+
+/usr/include/c++/12/cwchar(160): error: the global scope has no "swprintf"
+    using ::swprintf;
+            ^
+
+/usr/include/c++/12/cwchar(162): error: the global scope has no "swscanf"
+    using ::swscanf;
+            ^
+
+/usr/include/c++/12/cwchar(163): error: the global scope has no "ungetwc"
+    using ::ungetwc;
+            ^
+
+/usr/include/c++/12/cwchar(164): error: the global scope has no "vfwprintf"
+    using ::vfwprintf;
+            ^
+
+/usr/include/c++/12/cwchar(166): error: the global scope has no "vfwscanf"
+    using ::vfwscanf;
+            ^
+
+/usr/include/c++/12/cwchar(169): error: the global scope has no "vswprintf"
+    using ::vswprintf;
+            ^
+
+/usr/include/c++/12/cwchar(172): error: the global scope has no "vswscanf"
+    using ::vswscanf;
+            ^
+
+/usr/include/c++/12/cwchar(174): error: the global scope has no "vwprintf"
+    using ::vwprintf;
+            ^
+
+/usr/include/c++/12/cwchar(176): error: the global scope has no "vwscanf"
+    using ::vwscanf;
+            ^
+
+/usr/include/c++/12/cwchar(178): error: the global scope has no "wcrtomb"
+    using ::wcrtomb;
+            ^
+
+/usr/include/c++/12/cwchar(179): error: the global scope has no "wcscat"
+    using ::wcscat;
+            ^
+
+/usr/include/c++/12/cwchar(180): error: the global scope has no "wcscmp"
+    using ::wcscmp;
+            ^
+
+/usr/include/c++/12/cwchar(181): error: the global scope has no "wcscoll"
+    using ::wcscoll;
+            ^
+
+/usr/include/c++/12/cwchar(182): error: the global scope has no "wcscpy"
+    using ::wcscpy;
+            ^
+
+/usr/include/c++/12/cwchar(183): error: the global scope has no "wcscspn"
+    using ::wcscspn;
+            ^
+
+/usr/include/c++/12/cwchar(184): error: the global scope has no "wcsftime"
+    using ::wcsftime;
+            ^
+
+/usr/include/c++/12/cwchar(185): error: the global scope has no "wcslen"
+    using ::wcslen;
+            ^
+
+/usr/include/c++/12/cwchar(186): error: the global scope has no "wcsncat"
+    using ::wcsncat;
+            ^
+
+/usr/include/c++/12/cwchar(187): error: the global scope has no "wcsncmp"
+    using ::wcsncmp;
+            ^
+
+/usr/include/c++/12/cwchar(188): error: the global scope has no "wcsncpy"
+    using ::wcsncpy;
+            ^
+
+/usr/include/c++/12/cwchar(189): error: the global scope has no "wcsrtombs"
+    using ::wcsrtombs;
+            ^
+
+/usr/include/c++/12/cwchar(190): error: the global scope has no "wcsspn"
+    using ::wcsspn;
+            ^
+
+/usr/include/c++/12/cwchar(191): error: the global scope has no "wcstod"
+    using ::wcstod;
+            ^
+
+/usr/include/c++/12/cwchar(193): error: the global scope has no "wcstof"
+    using ::wcstof;
+            ^
+
+/usr/include/c++/12/cwchar(195): error: the global scope has no "wcstok"
+    using ::wcstok;
+            ^
+
+/usr/include/c++/12/cwchar(196): error: the global scope has no "wcstol"
+    using ::wcstol;
+            ^
+
+/usr/include/c++/12/cwchar(197): error: the global scope has no "wcstoul"
+    using ::wcstoul;
+            ^
+
+/usr/include/c++/12/cwchar(198): error: the global scope has no "wcsxfrm"
+    using ::wcsxfrm;
+            ^
+
+/usr/include/c++/12/cwchar(199): error: the global scope has no "wctob"
+    using ::wctob;
+            ^
+
+/usr/include/c++/12/cwchar(200): error: the global scope has no "wmemcmp"
+    using ::wmemcmp;
+            ^
+
+/usr/include/c++/12/cwchar(201): error: the global scope has no "wmemcpy"
+    using ::wmemcpy;
+            ^
+
+/usr/include/c++/12/cwchar(202): error: the global scope has no "wmemmove"
+    using ::wmemmove;
+            ^
+
+/usr/include/c++/12/cwchar(203): error: the global scope has no "wmemset"
+    using ::wmemset;
+            ^
+
+/usr/include/c++/12/cwchar(204): error: the global scope has no "wprintf"
+    using ::wprintf;
+            ^
+
+/usr/include/c++/12/cwchar(205): error: the global scope has no "wscanf"
+    using ::wscanf;
+            ^
+
+/usr/include/c++/12/cwchar(206): error: the global scope has no "wcschr"
+    using ::wcschr;
+            ^
+
+/usr/include/c++/12/cwchar(207): error: the global scope has no "wcspbrk"
+    using ::wcspbrk;
+            ^
+
+/usr/include/c++/12/cwchar(208): error: the global scope has no "wcsrchr"
+    using ::wcsrchr;
+            ^
+
+/usr/include/c++/12/cwchar(209): error: the global scope has no "wcsstr"
+    using ::wcsstr;
+            ^
+
+/usr/include/c++/12/cwchar(210): error: the global scope has no "wmemchr"
+    using ::wmemchr;
+            ^
+
+/usr/include/c++/12/cwchar(251): error: the global scope has no "wcstold"
+    using ::wcstold;
+            ^
+
+/usr/include/c++/12/cwchar(260): error: the global scope has no "wcstoll"
+    using ::wcstoll;
+            ^
+
+/usr/include/c++/12/cwchar(261): error: the global scope has no "wcstoull"
+    using ::wcstoull;
+            ^
+
+/usr/include/c++/12/cwchar(267): error: namespace "__gnu_cxx" has no member "wcstold"
+    using ::__gnu_cxx::wcstold;
+                       ^
+
+/usr/include/c++/12/cwchar(268): error: namespace "__gnu_cxx" has no member "wcstoll"
+    using ::__gnu_cxx::wcstoll;
+                       ^
+
+/usr/include/c++/12/cwchar(269): error: namespace "__gnu_cxx" has no member "wcstoull"
+    using ::__gnu_cxx::wcstoull;
+                       ^
+
+Error limit reached.
+100 errors detected in the compilation of "temp/glm_trace/probe_fetch_qk_assist_20261103/probe.cu".
+Compilation terminated.

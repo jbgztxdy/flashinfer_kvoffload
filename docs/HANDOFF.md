@@ -16,6 +16,10 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**当前用户希望优先利用fetch CTA冗余计算，进入新QK辅助设计讨论。** 新方向为保留84worker完整布局和24个64行双buffer，只让fetch算有界已就绪QK，原worker消费score并跳过相应QK，原softmax/PV保持。不同于旧全部CTA role/cofetch/两遍QK；尚未实现真实交接，不能称已有分担或收益。两个前瞻paired槽/worker约2.625MiB，必须有epoch/generation/claim及drain；CLAIMED后不能盲目回退复算或复用。全CTA等待内单纯穿插的显式等待机会折算约0.18–0.19ms，并不保证覆盖目标0.36–0.39ms；后续fetch分支内warp分工需要正确loader组/barrier协议，未实现，FAR模型不能改变。
+
+已冻结`temp/glm_trace/probe_fetch_qk_assist_20261103/probe.cu`微探针：24CTA双64行、原v2 FAR，在每包等待前执行真正64head×32KV×576 QK并发布score；purefetch/assist实编REG30/54、STACK0/LOCAL0，CPU2048输出坐标/operand/PE→CKV576覆盖通过。只有独立local QK数据，无真实worker消费/LRU/84CTA并发；哪怕微探针通过也不是端到端收益。首漏cstdint编译失败存first_compile，已修。GPU3外部flashcheck连续占用，120秒稳定空闲预检到期，CUDA/probe未启动、无result.json/数值性能；原driver和preflight_failure保留，所有waiter terminal，不重启旧任务。下个空闲窗口只运行此新目录run.py做机制可行性，若吞吐受损先拒绝该实现，不扫参数。生产cab508dc/math34af/FAR8507及诊断原件不改；[设计与边界](mla_host_fetch_compute_design_20261103.md)。
+
 **11/03当前用户要求先梳理差距，讨论前判断fetch CTA占SM是否主因；诊断已完成，没有实施新优化。** GPU3/NUMA1同卡farHBM/v2、BF16MTP8R128K2048LRU4096/f24/staged/splitoff、256位置。相同当前attention实现、同一步完整kernel刚完成的remap/cache载荷、同binary84/108计算CTA重放：108为2442.389µs，84为3047.989µs，慢605.600µs/24.80%；3冷pass，192次全输出逐元素相等、state不变，轮换顺序信号稳定，108个不同SM实测。重放从kv_indptr恢复退出已清零的无padding行长度，不执行fetch/LRU/prepare，不能当端到端优化或替换device参考。该资源代价与正式约0.63–0.66ms差距同量级，强力支持fetch占用是主因，但不能称96.7%已归因或收益可直接回收。
 
 当前完整时间线0/20µs：前置189.088/187.296µs，fetch跨度2523.392/2552.672µs，fetch后attention尾部699.808/659.520µs；24fetch CTA后续仅算53.156/50.344行（总1024），最后ready至全部fetch返回约4µs。fetch SM服务预算/108约550.648/555.889µs，不是可直接扣除墙钟；尾部不能再与容量损失相加。暖步真正阻塞wait次数约26/31，计时含ready检查及插桩，不能直接扣成等待。100GB搬运预算~2.48ms与device~2.56ms接近，争用最容易暴露；低/高带宽趋势是机制解释，本轮未重扫v2带宽曲线，也不推广所有batch/物理NVLink。旧减fetch/退休/cofetch负结果继续有效，不原样重做。到110%仍需省0.36–0.39ms，前置全消除也不够。
