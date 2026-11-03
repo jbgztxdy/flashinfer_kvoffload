@@ -1,0 +1,81 @@
+{
+  "scope": "Unchanged reserve helper, synchronized synthetic calls; no payload/timing measurement",
+  "cases": [
+    {
+      "ctas": 2,
+      "initially_busy": false,
+      "trials": 2000,
+      "clock_mismatch_trials": 2000,
+      "duplicate_deadline_trials": 2000,
+      "max_undercount_ns": 737,
+      "min_service_span_ns": 737,
+      "max_service_span_ns": 737,
+      "expected_service_span_ns": 1474
+    },
+    {
+      "ctas": 2,
+      "initially_busy": true,
+      "trials": 2000,
+      "clock_mismatch_trials": 0,
+      "duplicate_deadline_trials": 0,
+      "max_undercount_ns": 0,
+      "min_service_span_ns": 1474,
+      "max_service_span_ns": 1474,
+      "expected_service_span_ns": 1474
+    },
+    {
+      "ctas": 24,
+      "initially_busy": false,
+      "trials": 2000,
+      "clock_mismatch_trials": 2000,
+      "duplicate_deadline_trials": 2000,
+      "max_undercount_ns": 16951,
+      "min_service_span_ns": 737,
+      "max_service_span_ns": 8844,
+      "expected_service_span_ns": 17688
+    },
+    {
+      "ctas": 24,
+      "initially_busy": true,
+      "trials": 2000,
+      "clock_mismatch_trials": 0,
+      "duplicate_deadline_trials": 0,
+      "max_undercount_ns": 0,
+      "min_service_span_ns": 17688,
+      "max_service_span_ns": 17688,
+      "expected_service_span_ns": 17688
+    }
+  ],
+  "timestamp": "2026-11-03T14:24:14+0800",
+  "physical_gpu": 3,
+  "resources_start": {
+    "timestamp": "2026-11-03T14:24:14+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "resources_end": {
+    "timestamp": "2026-11-03T14:24:15+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 1
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "source_sha256": "09eec9d311b8f6de06d3d82d1505a27d10ca83f3fcdd20f6b427841729503d6c",
+  "emulator_sha256": "5e409035aa4edc83f72135c09c453e825ce59e5dcc4bae63c04ff3909d024095"
+}

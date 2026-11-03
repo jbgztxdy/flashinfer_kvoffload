@@ -1,0 +1,275 @@
+{
+  "timestamp": "2026-11-03T14:23:17+0800",
+  "source_sha256": "5e409035aa4edc83f72135c09c453e825ce59e5dcc4bae63c04ff3909d024095",
+  "scope": "Deterministic CPU enumeration of legal interleavings of the unchanged reserve helper. Not a GPU occurrence-rate or end-to-end timing measurement.",
+  "arrival_ns": 1000000,
+  "bytes_per_request": 73728,
+  "bandwidth_GBps": 100,
+  "cost_integer_ns": 737,
+  "legal_schedules": 6,
+  "undercount_schedules": 4,
+  "schedules": [
+    {
+      "order": [
+        "A.add",
+        "A.max",
+        "B.add",
+        "B.max"
+      ],
+      "final_clock": 1001474,
+      "expected_clock": 1001474,
+      "undercounted_ns": 0,
+      "events": [
+        {
+          "op": "A.add",
+          "clock": 737,
+          "returned_ends": {
+            "A": 737
+          }
+        },
+        {
+          "op": "A.max",
+          "clock": 1000737,
+          "returned_ends": {
+            "A": 1000737
+          }
+        },
+        {
+          "op": "B.add",
+          "clock": 1001474,
+          "returned_ends": {
+            "A": 1000737,
+            "B": 1001474
+          }
+        },
+        {
+          "op": "B.max",
+          "clock": 1001474,
+          "returned_ends": {
+            "A": 1000737,
+            "B": 1001474
+          }
+        }
+      ]
+    },
+    {
+      "order": [
+        "A.add",
+        "B.add",
+        "A.max",
+        "B.max"
+      ],
+      "final_clock": 1000737,
+      "expected_clock": 1001474,
+      "undercounted_ns": 737,
+      "events": [
+        {
+          "op": "A.add",
+          "clock": 737,
+          "returned_ends": {
+            "A": 737
+          }
+        },
+        {
+          "op": "B.add",
+          "clock": 1474,
+          "returned_ends": {
+            "A": 737,
+            "B": 1474
+          }
+        },
+        {
+          "op": "A.max",
+          "clock": 1000737,
+          "returned_ends": {
+            "A": 1000737,
+            "B": 1474
+          }
+        },
+        {
+          "op": "B.max",
+          "clock": 1000737,
+          "returned_ends": {
+            "A": 1000737,
+            "B": 1000737
+          }
+        }
+      ]
+    },
+    {
+      "order": [
+        "A.add",
+        "B.add",
+        "B.max",
+        "A.max"
+      ],
+      "final_clock": 1000737,
+      "expected_clock": 1001474,
+      "undercounted_ns": 737,
+      "events": [
+        {
+          "op": "A.add",
+          "clock": 737,
+          "returned_ends": {
+            "A": 737
+          }
+        },
+        {
+          "op": "B.add",
+          "clock": 1474,
+          "returned_ends": {
+            "A": 737,
+            "B": 1474
+          }
+        },
+        {
+          "op": "B.max",
+          "clock": 1000737,
+          "returned_ends": {
+            "A": 737,
+            "B": 1000737
+          }
+        },
+        {
+          "op": "A.max",
+          "clock": 1000737,
+          "returned_ends": {
+            "A": 1000737,
+            "B": 1000737
+          }
+        }
+      ]
+    },
+    {
+      "order": [
+        "B.add",
+        "A.add",
+        "A.max",
+        "B.max"
+      ],
+      "final_clock": 1000737,
+      "expected_clock": 1001474,
+      "undercounted_ns": 737,
+      "events": [
+        {
+          "op": "B.add",
+          "clock": 737,
+          "returned_ends": {
+            "B": 737
+          }
+        },
+        {
+          "op": "A.add",
+          "clock": 1474,
+          "returned_ends": {
+            "B": 737,
+            "A": 1474
+          }
+        },
+        {
+          "op": "A.max",
+          "clock": 1000737,
+          "returned_ends": {
+            "B": 737,
+            "A": 1000737
+          }
+        },
+        {
+          "op": "B.max",
+          "clock": 1000737,
+          "returned_ends": {
+            "B": 1000737,
+            "A": 1000737
+          }
+        }
+      ]
+    },
+    {
+      "order": [
+        "B.add",
+        "A.add",
+        "B.max",
+        "A.max"
+      ],
+      "final_clock": 1000737,
+      "expected_clock": 1001474,
+      "undercounted_ns": 737,
+      "events": [
+        {
+          "op": "B.add",
+          "clock": 737,
+          "returned_ends": {
+            "B": 737
+          }
+        },
+        {
+          "op": "A.add",
+          "clock": 1474,
+          "returned_ends": {
+            "B": 737,
+            "A": 1474
+          }
+        },
+        {
+          "op": "B.max",
+          "clock": 1000737,
+          "returned_ends": {
+            "B": 1000737,
+            "A": 1474
+          }
+        },
+        {
+          "op": "A.max",
+          "clock": 1000737,
+          "returned_ends": {
+            "B": 1000737,
+            "A": 1000737
+          }
+        }
+      ]
+    },
+    {
+      "order": [
+        "B.add",
+        "B.max",
+        "A.add",
+        "A.max"
+      ],
+      "final_clock": 1001474,
+      "expected_clock": 1001474,
+      "undercounted_ns": 0,
+      "events": [
+        {
+          "op": "B.add",
+          "clock": 737,
+          "returned_ends": {
+            "B": 737
+          }
+        },
+        {
+          "op": "B.max",
+          "clock": 1000737,
+          "returned_ends": {
+            "B": 1000737
+          }
+        },
+        {
+          "op": "A.add",
+          "clock": 1001474,
+          "returned_ends": {
+            "B": 1000737,
+            "A": 1001474
+          }
+        },
+        {
+          "op": "A.max",
+          "clock": 1001474,
+          "returned_ends": {
+            "B": 1000737,
+            "A": 1001474
+          }
+        }
+      ]
+    }
+  ]
+}
