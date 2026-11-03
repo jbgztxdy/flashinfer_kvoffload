@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/rebench_100gb_v2_20261103/bench.py", line 73, in <module>
+    assert snapshot()['available'],snapshot()
+           ~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: {'timestamp': '2026-11-03T15:21:10+0800', 'gpus': [{'index': 3, 'uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'used_mib': 1005, 'total_mib': 40960, 'utilization': 3}], 'foreign': [{'gpu_uuid': 'GPU-8e5926b4-7d67-81dd-937a-89f102e0692a', 'pid': 2480721, 'process': '/mnt/raid/ny_work/envs/flashcheck/bin/python', 'used_mib': '998'}], 'available': False}

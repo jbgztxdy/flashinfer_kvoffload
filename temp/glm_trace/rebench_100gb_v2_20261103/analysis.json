@@ -1,0 +1,36 @@
+{
+  "rows": [
+    {
+      "setting": "g100_l0",
+      "latency_ns": 0,
+      "mean_excess_us": 626.3486950798163,
+      "median_excess_us": 650.2401034037275,
+      "min_excess_us": 345.77075640360545,
+      "max_excess_us": 750.6713144118248,
+      "first_step_excess_us": 581.6981976745601,
+      "first_step_over_reference": 0.09365861095051442,
+      "after_first_excess_us": 627.7890337057922,
+      "actual_over_compute_capacity_84cta": 1.0113413046154265,
+      "rough_84cta_compute_capacity_us": 3290.057125900473
+    },
+    {
+      "setting": "g100_l20000",
+      "latency_ns": 20000,
+      "mean_excess_us": 659.3629018900045,
+      "median_excess_us": 679.253339767456,
+      "min_excess_us": 408.2347551981611,
+      "max_excess_us": 787.7042372210694,
+      "first_step_excess_us": 605.2501385925289,
+      "first_step_over_reference": 0.09745068402274293,
+      "after_first_excess_us": 661.1084748996005,
+      "actual_over_compute_capacity_84cta": 1.0214274537430366,
+      "rough_84cta_compute_capacity_us": 3290.057125900473
+    }
+  ],
+  "latency_increment_us": 33.18400681018829,
+  "latency_increment_relative": 0.009973041822360251,
+  "kernel_symbol": "_ZN10flashinfer3mla23BatchMLAPVFeatureKernelINS0_15PVFeatureTraitsI13__nv_bfloat16S3_S3_iEENS0_19PVFeatureHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_:",
+  "kernel_resources": "REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[2]:8 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+  "library_sha256": "6663f67c1bf18fd5b3665c76a64b5b0221b2a6cc57dd7f344eba3c6db8ef8e3e",
+  "limits": "Descriptive CPU analysis of measured means;84CTAcapacity assumeslinear scaling andisnotcausalproof. No phaseprofile collected."
+}

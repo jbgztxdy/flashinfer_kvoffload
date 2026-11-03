@@ -1,0 +1,35 @@
+{
+  "emulator_version": 2,
+  "attention_variant": "current",
+  "scope": "GPU3/NUMA1 same-card farHBM,100GB0/20us,stagedMTP8R128/LRU4096/f24off,256positions3coldpasses;freshsamehardware normaldevice reference.",
+  "include_root": "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/emu_fix_20261103/include_v2",
+  "libraries": [
+    {
+      "mode": "emu",
+      "path": "temp/glm_trace/emu_fix_20261103/jit_v2/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "sha256": "2b75112e519549890a83dc07813855bf335f20d6224a90ca455feebea5ab1bc9"
+    },
+    {
+      "mode": "emu",
+      "path": "temp/glm_trace/emu_fix_20261103/jit_v2/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "sha256": "6663f67c1bf18fd5b3665c76a64b5b0221b2a6cc57dd7f344eba3c6db8ef8e3e"
+    },
+    {
+      "mode": "normal",
+      "path": "temp/glm_trace/emu_fix_20261103/jit_v2_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "sha256": "5fd8b991a3f0ac6c26a4a749f96ec43a85cc4b78389c9e78927e0158ef15939e"
+    },
+    {
+      "mode": "normal",
+      "path": "temp/glm_trace/emu_fix_20261103/jit_v2_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "sha256": "c61d0bfdd3369ff1f03e713f2b42c90f8b9f41887f8be5c42b705b982a9de507"
+    }
+  ],
+  "files": {
+    "include/flashinfer/attention/mla_host_batch.cuh": "cab508dcb6e83b7a953d94a8e54e30e0aaf60bb1d7ba98480fc66893edcf4384",
+    "include/flashinfer/attention/mla.cuh": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+    "include/flashinfer/attention/far_link_emu.cuh": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716",
+    "temp/sim_link/emu.py": "897a70c7a29d2897d2e890529b28f9b08d4773a3ed57dc639c7a04651a493f3e",
+    "temp/sim_link/emu_gather.cu": "0e6b170302b9fbc02371b885c8d1087da8bd388f162065c8b36bd6aa7d905d25"
+  }
+}

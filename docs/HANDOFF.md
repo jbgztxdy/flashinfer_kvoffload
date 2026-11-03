@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-03 14:56 模拟器v2修复及校准完成，attention仍cab508dc，FAR8507eab0，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-03 15:29 v2下100GB两点及新device参考完成；生产cab508dc/FAR8507eab0保持，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -15,6 +15,12 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**11/03最新v2性能重测已完成：** `temp/glm_trace/rebench_100gb_v2_20261103/`，GPU3/A100-PCIE/NUMA1同卡farHBM模拟，非NVLink；BF16/h64/K2048/MTP8R128/LRU4096/f24/item64/splitoff/staged，256位置×3冷pass。100GB0µs ours3327.371µs、Memcpy5813.493、同轮正常device2558.933、逐步max2701.022（高23.19%）；20µs ours3360.555、Memcpy5824.800、参考2701.192（高24.41%）。引用命中76.737/76.734%，unique247.915/247.957MB/步；不可套完整窗口~79%。110%目标2971.124/2971.311，还需降低10.71/11.58%。0→20均值只差33.184µs约1%，pass波动重叠，不当精确延迟因果量。
+
+24步计算主导/8步传输主导；0µs两类平均高于参考611.285/671.539µs，20µs639.801/718.049µs；首冷步传输参考6210.835µs，实测6792.533/6816.085，仅高9.37/9.75%而绝对仍多约0.6ms。支持继续检查准备/SM争用/尾部，但未新做阶段插桩，不能直接归因。84CTA线性粗估3290.057µs只是待验证假设。当前EMU实际REG254/STACK0/static2304/LOCAL0。
+
+Memcpy本地attention本轮明确绑定正常device库，远端仍v2 gather+必要cache scatter，同输入同容量离线LRU；元数据标memcpy_path_version3、far_emulator_version2，不与旧v1Memcpy作严格新旧对照。复用已验证v2二进制，实际加载路径/SHA均记录；device参考本轮相同32步新测，原mean(stepmax)公式保持。3格/480计时launch/30有效段，数值/guards/源与binary/miss审计通过，没有新kernel机制或全套/sanitizer/full1024/物理链路/H800。首子进程因外部flashcheck重启在CUDA前被预检挡住，原失败保留；稳定空闲10秒后成功，全接纳raw开始/结束无外部GPU3任务。所有runner均terminal，无等待器；生产、旧5304矩阵及旧数据保持。[报告与初步分析](mla_host_100gb_v2_retest_20261103.md)。后续再讨论优化方向，勿重复旧拒绝方案或把描述性分组当因果阶段拆分。
 
 **11/03最新：用户明确要求“先修复吧，先保证我们的模拟准确然后我们讨论优化方向”，已授权本次模拟器修复，优先于旧“不改模拟器”限制。** FAR升级为8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716；host仍cab508dc、math34af不改。CAS原子max-plus计费，发出时预约、stage记录各warp最晚deadline、等待前补齐CTA同步；纳秒预算向上取整<1ns/包，L不占传输时钟，移除1秒截短。Memcpy gather统一发出时预约，旧432x16正确CAS校准只约51GB/s而失败，原件保存在emu_fix/cas_contention；最终64页/48单bufferCTA=3072在途行，与f24双64页相当。公共emu.py新模块/build_v2，拒绝旧kernel头混用新gather。
 
