@@ -1,0 +1,61 @@
+{
+  "results": {
+    "stage_tile_uniform": {
+      "pass_means_us": [
+        3003.936007618904,
+        3032.992012798786,
+        3077.3759931325912
+      ],
+      "mean_us": 3038.101337850094,
+      "mean_unique": 215243.52083333334,
+      "header_sha256": "4d0a06bfeee4d39d12c32c22fb45254236fd14d3c4db8b26ae78cae51fdd438f",
+      "actual_library_sha256": "8cd69956cad8d282c16ad0e6dedcc7cf499c97b64a76c8cd163153ef378a622b"
+    },
+    "production_stage_tile_control": {
+      "pass_means_us": [
+        3025.856003165245,
+        3026.848003268242,
+        3059.2320188879967
+      ],
+      "mean_us": 3037.3120084404945,
+      "mean_unique": 215247.04166666666,
+      "header_sha256": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
+      "actual_library_sha256": "df09ae5c50e4220b2f78c63c5b35afa18343d26337a50e79a8102ce9410b08c9"
+    }
+  },
+  "candidate_slowdown_percent": 0.025987761790879915,
+  "dispatch": {
+    "grid": [
+      1,
+      108,
+      1
+    ],
+    "block": [
+      32,
+      4,
+      2
+    ],
+    "dynamic_shared_bytes": 147968,
+    "active_blocks_per_SM": 1,
+    "kernel_name": "_ZN10flashinfer3mla23BatchMLAPVFeatureKernelINS0_15PVFeatureTraitsI13__nv_bfloat16S3_S3_iEENS0_19PVFeatureHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+  },
+  "focused_tests": 2,
+  "cpu_tile_cases": 829227,
+  "codegen": {
+    "retained": {
+      "instructions": 6537,
+      "resources": "_ZN10flashinfer3mla23BatchMLAPVFeatureKernelINS0_15PVFeatureTraitsI13__nv_bfloat16S3_S3_iEENS0_19PVFeatureHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_:\n  REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    },
+    "stage_tile_uniform": {
+      "instructions": 6661,
+      "resources": "_ZN10flashinfer3mla23BatchMLAPVFeatureKernelINS0_15PVFeatureTraitsI13__nv_bfloat16S3_S3_iEENS0_19PVFeatureHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_:\n  REG:254 STACK:0 SHARED:2304 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0"
+    }
+  },
+  "production": {
+    "mla_host_batch.cuh": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
+    "mla.cuh": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+    "far_link_emu.cuh": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716"
+  },
+  "retained": false,
+  "new100GB_result": false
+}

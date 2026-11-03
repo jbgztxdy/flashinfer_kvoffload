@@ -16,6 +16,8 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04生产staged完整Host前缀tile专化：** 从当前81093正常PVFeature出发，仅完整32KV Host前缀tile使用已知负staging页号的无源类型分支地址计算，边界/其他tile原loader，远端unique/真实双写/LRU/数学不变。82.9万CPU边界tile、2GPU定向和全最终cache载荷通过；实际Graph单PVFeature108CTA/active1。normal3pass候选3038.101µs，随后当前生产staged3037.312，持平且pass方向混合；REG254/STACK0不变，静态指令6537→6661，不保留、不测100GB。构造/机器码分析首错保留，见STAGE_TILE_UNIFORM_20261104.md、raw/source/实际库SHA。生产81093不变，runner结束。
+
 **11/04前置current/去等待step首屏障：** clean全CTA包/8warp/unique/LRU/真实双写不变，在原refill发布done时一并发布current，删等待step开头冗余写入和一道CTA barrier；计算KV stage屏障及所有ready发布保留。区别旧ticketstep取消末屏障。2定向检查、最终全cache载荷、Graph单目标108CTA/active1、K65目标1launch racecheck0hazard；SASS静态BAR.SYNC91→86，REG255/STACK16不变。normal3pass3117.749µs vs随后clean3126.517仅0.280%小信号，反序单pass3102.816比clean首pass3096.640慢，不保留、不测100GB。见REFILL_CURRENT_20261104.md、raw/source/实际库SHA。生产81093不变，runner结束。
 
 **11/04全CTA最大可行22页包实验：** 依据A100实际166912B/block上限，clean20页dynamic163072/static1152→22页dynamic165376/static1152、总166528；23页预计超限。只改包大小，原全局轮转unique/LRU/真实双写/全8warp数学保留。2定向检查、全最终cache载荷和实际Graph单新kernel108CTA/active1通过；平均包数10763.35→9785.00。正常GPU3 3pass3113.429µs vs随后clean3130.187仅0.535%小信号，反序单pass3101.984与clean首pass3102.624几乎同速；当前生产staged新对照3039.147，仍快2.44%，不装不测100GB。首次“生产对照”误用硬编码direct harness得2881.995，原件保留且config.staged=False，不混作staged；首次正则/缺include失败亦保留。入口SERVICE22_20261104.md及raw/源码/实际库SHA，生产81093不变，runner结束。
