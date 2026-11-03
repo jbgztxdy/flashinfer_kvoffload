@@ -1,0 +1,68 @@
+{
+  "scope": "actualGPU finalvictim/table metadata; RR is CPU counterfactualsamefinalstate only, notmeasuredRRtiming; logicalstoresnottransactioncounter",
+  "summary": {
+    "actual_quota": {
+      "packet_counts": {
+        "min": 82,
+        "max": 83,
+        "mean": 82.17592592592592,
+        "cv": 0.004633438917172302,
+        "max_over_mean": 1.0100281690140844
+      },
+      "unique_pages": {
+        "min": 1634,
+        "max": 1660,
+        "mean": 1643.462962962963,
+        "cv": 0.004662319205804099,
+        "max_over_mean": 1.0100623119654748
+      },
+      "cache_admitted_pages": {
+        "min": 220,
+        "max": 1660,
+        "mean": 1124.9444444444443,
+        "cv": 0.2783312932974443,
+        "max_over_mean": 1.475628426095116
+      },
+      "logical_payload_store_bytes": {
+        "min": 2142720,
+        "max": 3824640,
+        "mean": 3189205.3333333335,
+        "cv": 0.11347844549424951,
+        "max_over_mean": 1.1992454546670768
+      },
+      "admitted_vs_last_publish_pearson": 0.6542639945271428
+    },
+    "counterfactual_roundrobin": {
+      "packet_counts": {
+        "min": 82,
+        "max": 83,
+        "mean": 82.17592592592592,
+        "cv": 0.004633438917172302,
+        "max_over_mean": 1.0100281690140844
+      },
+      "unique_pages": {
+        "min": 1640,
+        "max": 1660,
+        "mean": 1643.462962962963,
+        "cv": 0.004573234177833868,
+        "max_over_mean": 1.0100623119654748
+      },
+      "cache_admitted_pages": {
+        "min": 1002,
+        "max": 1240,
+        "mean": 1124.9444444444443,
+        "cv": 0.052539561593932575,
+        "max_over_mean": 1.1022766556373156
+      },
+      "logical_payload_store_bytes": {
+        "min": 3043584,
+        "max": 3317760,
+        "mean": 3189205.3333333335,
+        "cv": 0.020778644399268305,
+        "max_over_mean": 1.040309310072645
+      }
+    }
+  },
+  "total_unique": 177494,
+  "total_admitted": 121494
+}

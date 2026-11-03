@@ -1,0 +1,50 @@
+{
+  "raw_actual_library_verified": [
+    {
+      "raw": "claimrow_timeline_native_unlimited_f23.json",
+      "mean_us": 3117.7599877119064,
+      "library_sha256": "bd2bbaf109f2f2e0da0eec9cbb7d8673b9280b9b8ac15e3d19a00e7d9a07bbe5"
+    },
+    {
+      "raw": "claimrow_timeline_native_unlimited_f24.json",
+      "mean_us": 3182.1759939193726,
+      "library_sha256": "bd2bbaf109f2f2e0da0eec9cbb7d8673b9280b9b8ac15e3d19a00e7d9a07bbe5"
+    },
+    {
+      "raw": "claimrow_timeline_workload_native_unlimited_f24.json",
+      "mean_us": 3180.6399896740913,
+      "library_sha256": "bd2bbaf109f2f2e0da0eec9cbb7d8673b9280b9b8ac15e3d19a00e7d9a07bbe5"
+    },
+    {
+      "raw": "claimrow_timeline_packet_weights_native_unlimited_f24.json",
+      "mean_us": 3153.343990445137,
+      "library_sha256": "bd2bbaf109f2f2e0da0eec9cbb7d8673b9280b9b8ac15e3d19a00e7d9a07bbe5"
+    },
+    {
+      "raw": "claimrow_interleave_native_unlimited_f24.json",
+      "mean_us": 3403.5946503281593,
+      "library_sha256": "a5f37f473b9eeb32bdef702886ecf01db1b4c0a01de95efe6b449862251462ca"
+    },
+    {
+      "raw": "claimrow_interleave_sorted_native_unlimited_f24.json",
+      "mean_us": 3246.591995159785,
+      "library_sha256": "d44765e00454b3aad8a6c5d1b5273592e1429391232af58b472fa738a76b44fd"
+    },
+    {
+      "raw": "claimrow_interleave_timeline_native_unlimited_f24.json",
+      "mean_us": 3353.1519919633865,
+      "library_sha256": "f4674ee9f087686bde0b04596045b1c816daadff4a90d2472e624ba2fb533106"
+    }
+  ],
+  "source_header_verified": true,
+  "sorted_target_racecheck_errors": 0,
+  "sorted_target_racecheck_warnings": 0,
+  "production": {
+    "mla_host_batch.cuh": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
+    "mla.cuh": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+    "far_link_emu.cuh": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716"
+  },
+  "retained": false,
+  "new100GB_result": false,
+  "scope": "bounded normal GPU3 same-device HBM and CPU counterfactual only"
+}

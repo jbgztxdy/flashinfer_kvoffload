@@ -1,0 +1,18 @@
+{
+  "sha256": "d25d42a131dceacfd3577fb0bcc7b2e644b4d88da4cd8dedfa5f1f97c2a9fbbd",
+  "base_sha256": "d11ef723ff3977db01fa5d40510714087304b0610c1df0b3062a1b1f892999bb",
+  "mechanism": "samebinary full108CTA kernel; privatefetch_ctas23=roundrobin/24=quota; eightglobaltimer phases, realpayload/LRU/attention retained; afterevent perstepdiagcopy",
+  "phase_names": [
+    "kernel_start",
+    "prepare_grid_done",
+    "resolve_done",
+    "planner_done",
+    "lru_grid_done",
+    "service_initialized",
+    "last_packet_published",
+    "attention_drain_done"
+  ],
+  "unmeasured_first_header_sha256": "d24e0e43ce988668db8ba917764662183009c19c4b95ed1b9b320edbf2c7aafd",
+  "timer_compiler_memory_clobber": true,
+  "first_build_scope": "unfenced header compiled only, neverGPU executed; archived before adding compiler memory clobber"
+}

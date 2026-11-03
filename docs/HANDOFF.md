@@ -16,6 +16,8 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04认领行包顺序/写回负载续证：** 同一诊断二进制原轮转3117.760 vs认领行配额3182.176µs，planner约3.57µs，差距主要在后续服务/计算；实际末步cache获准写回CTA间CV0.278，对同一元数据轮转反事实0.053（非GPU计时）。半本地交错CPU模型CV0.182，GPU精确包表/2定向检查通过，却normal3403.595µs；只按包号升序排序恢复至3246.592µs，K65定向racecheck0error，仍慢原配额3200.331和clean。诊断显示交错planner约4.78µs，不把巨大退化全归规划。原波次一CTA一包局部性末步上限11.73%，不做旧pool重映射。两版均拒绝、不测100GB；详见实验目录CLAIMROW_ORDER_20261104.md、原始/库SHA。生产81093保持，runner结束。
+
 **11/04认领行包号查询去重复控制：** quota的base/limit初始化一次、warp0每包查询一次，leader-owned shared packet供issue/stores/release，原同步/精确配额/planner/真实unique载荷保持。2定向检查、实际8877项包表与CPU逐项一致/epoch匹配/全cache载荷通过；新增shared复用K65目标1launch racecheck0error/0warning。normal3213.237µs，随后新clean3124.192µs，慢2.850%且3pass均慢；对旧quota3200.331也未见收益。主函数10638→9942指令，REG255/STACK16不变；停止查询局部变体，不单凭代码数归因，未测100GB/未安装。见CLAIMROW_CACHED_PACKET_20261104.md、audit/raw/实际库SHA。生产81093保持，runner结束。
 
 **11/04认领行并行配额新机制：** 原kernel实际rowprefix诊断认领行owner自用0.90%→49.01%、首far pair producer13.37→5.11，但每CTA30–160包尾部不可直接用。新planner复用resolve shared rowprefix，线程并行owner计数+excess/deficit scan+逆区间映射，无额外grid barrier/串行greedy；180CPU partition通过，实际GPU包表8857项与CPU逐项一致/epoch匹配，严格82/83包，自用42.40%。2定向检查及全cache载荷通过，normal3pass3200.331µs仍慢clean，拒绝不测100GB。区别旧poolquota的规划算法与成本，不能把更高自用当收益；未分离动态成本。见CLAIMROW_QUOTA_20261104.md、audit/model/raw/实际库SHA。生产81093保持，runner结束。
