@@ -1,0 +1,46 @@
+{
+  "accessed": "2026-11-03T17:49:53+0800",
+  "method": "Read official source through web tool. Direct urllib download failed SSL and no source snapshots exist.",
+  "sources": [
+    {
+      "project": "CUTLASS",
+      "tag": "v3.9.2",
+      "url": "https://github.com/NVIDIA/cutlass/blob/v3.9.2/include/cutlass/gemm/threadblock/mma_multistage.h",
+      "functions": [
+        "copy_tiles_and_advance",
+        "gmem_wait",
+        "mac_loop_iter"
+      ],
+      "observed": "Splits next-stage copies across warp-MMA iterations; fragment double buffering; stage wait before use."
+    },
+    {
+      "project": "FlashAttention",
+      "tag": "v2.7.4.post1",
+      "url": "https://github.com/Dao-AILab/flash-attention/blob/v2.7.4.post1/csrc/flash_attn/src/flash_fwd_kernel.h",
+      "functions": [
+        "compute_attn_1rowblock"
+      ],
+      "observed": "AsyncV before QK; async nextK before softmax/PV; same CTA owns full output."
+    },
+    {
+      "project": "FlashAttention",
+      "tag": "v2.7.4.post1",
+      "url": "https://github.com/Dao-AILab/flash-attention/blob/v2.7.4.post1/csrc/flash_attn/src/utils.h",
+      "functions": [
+        "gemm",
+        "gemm_rs"
+      ],
+      "observed": "Loads next register fragments before current MMA."
+    },
+    {
+      "project": "NVIDIA Ampere tuning guide",
+      "url": "https://docs.nvidia.com/cuda/ampere-tuning-guide/index.html",
+      "observed": "SM80 asyncglobal-to-shared supports compute overlap; registers/shared and occupancy remain constraints."
+    },
+    {
+      "project": "FlashAttention-2 paper",
+      "url": "https://arxiv.org/abs/2307.08691",
+      "observed": "Reports50\u201373%theoreticalFLOPs/s A100 under paper shapes, not remoteKV idealoverlap result."
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-03 17:29 fetch内4+4分工与真实QK交接两版完成并拒绝；生产cab508dc/FAR8507eab0保持，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-03 17:51 SM80同warp流水线调研/CPU可行性完成；新探针GPU预检占用未运行，生产cab508dc/FAR8507eab0保持，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -15,6 +15,12 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**最新用户提出学习其他A100工程，让所有warp访存穿插计算；本轮完成官方源码调研和新结构可行性核算，未新增GPU结果/生产候选。** CUTLASS v3.9.2 `mma_multistage::mac_loop_iter`将future cp.async分散在当前warpMMA之间，stage边界才wait；FA2 v2.7.4 forward先V读再QK、nextK读再softmax/PV，utils预取下片段再MMA。它们同CTA拥有输出，不能照搬成逐引用far读取。相同base24 trace未缓存引用562.109MB/步而unique247.981MB，若取消launch去重会多2.267倍远端字节，不能沿用unique参考。
+
+新依据：当前PVFeature PE已global→packedregs，数值region不读shared QPE，但load_q和storage仍保留8192B；仅该typedpath可考虑回收，canonical其他路径不能删。CPU实际sizeof已编译运行：原147968→compact139776，保留双32KVstage+2×10row独立farbuffer后162816dynamic，加假定static2304为165120≤166912/block。不是完整kernel资源/占用/正确性证明。108×20row×1152=2.488MB名义在途，大于100GB×20us=2MB，但CAS包频率、ready与复用、registerpressure仍可能使吞吐失败。新完整kernel假设保留8mathwarps/双stage，静态粗unique任务，cp.async向量分布到MMA之间，无QKscore跨SM交接；未实现，不原样重跑旧减stagecofetch/hybrid。
+
+`temp/glm_trace/research_sm80_pipeline_20261103/`已有独立samewarp微探针（purefetch/bulkasyncthenQK/distributedcpasyncbetweenMMA，24/108CTA100GB0/20），compiledREG117/168/76、stack/local0，未查SASS真实交错。独立localQ/K、不含真实worker/LRU/O/softmax，不能替代完整attention。GPU3编译后外部VLLM约37GB占用，120秒稳定idle预检到期，CUDA子进程未启动、无result.json/GPU正确性性能，waiterterminal。下个硬件窗口若合理，仅跑该新目录run.py，不恢复旧completed筛选。sources.json是官方固定tag web读取的URL/函数，直接urllib下载SSL失败，无外部源码快照/伪造SHA。生产cab508dc/math34af/FAR8507、参考、矩阵均未改；GPU0/1/2/H800未使用。[研究报告](mla_host_sm80_pipeline_research_20261103.md)、feasibility.json/README为入口。
 
 **17:29最新：用户已授权在维持带宽下利用fetch CTA冗余计算，支持局部warp分工及有依据地增加fetch SM；本轮两版完整实现及诊断已完成，无新生产加速。** 串行QK穿插探针补完：99.49/98.52→62.80/62.80GB/s，拒绝。新的fetch CTA内4loader+4QK、保留双64行＋12KiB feature工作区，24CTA微探针100GB0/20仍99.22/98.04GB/s并算完3361真实QK块；32CTA相近。payload/采样QK/arrival≥deadline检查通过，FAR header/reserve/tile不改，128loader wait同步适配；微探针不含真实worker消费，不能算端到端收益。
 

@@ -1,0 +1,83 @@
+{
+  "classification": "CPU/compiled feasibility only; no GPU performance or newproductionkernel",
+  "production_sha256": "cab508dcb6e83b7a953d94a8e54e30e0aaf60bb1d7ba98480fc66893edcf4384",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "far_sha256": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716",
+  "QPE_audit": {
+    "scope": "CurrentPVFeature typed numericalpath only",
+    "shared_pe_reference_in_target_region": false,
+    "queryPE_loaded_from_global_to_packed_registers": true,
+    "native_load_q_still_copies_PE_to_shared": true,
+    "canonical_compute_qk_other_paths_still_need_shared_PE": true,
+    "unused_shared_bytes_in_target": 8192
+  },
+  "layout": {
+    "classification": "CPUsizeofonly_not_real_kernel_resources",
+    "original_dynamic": 147968,
+    "compact_attention": 139776,
+    "unified_dynamic": 162816,
+    "assumed_static": 2304,
+    "inflight_rows": 2160,
+    "inflight_bytes": 2488320,
+    "BDP100GB20us_bytes": 2000000
+  },
+  "BDP": {
+    "bandwidth_Bps": 100000000000,
+    "latency_s": 2e-05,
+    "minimum_payload_bytes": 2000000,
+    "candidate_inflight_bytes": 2488320,
+    "nominal_margin": 0.24415999999999993,
+    "limits": "Nominal inventory only. Ready dependencies,issue overhead,register pressure,FARpacket reservation throughput,cache stores and bufferreuse reduce usable flight."
+  },
+  "probe": {
+    "modes": [
+      "plainfetch",
+      "bulkasync_then_localQK",
+      "cpasyncrounds_spread_betweenMMA"
+    ],
+    "CTAs": [
+      24,
+      108
+    ],
+    "QK_jobs": 3361,
+    "dynamic_shared": 160256,
+    "registers": [
+      117,
+      168,
+      76
+    ],
+    "stack_bytes": [
+      0,
+      0,
+      0
+    ],
+    "local_bytes": [
+      0,
+      0,
+      0
+    ],
+    "source_sha256": "ffcfda3f8164a9b59b6929ece2f928a952944b0fea66b47cbcac5eefb8b4f053",
+    "binary_sha256": "0ce95742a8c5b631ead11a0edd2eb809eba73b32a82465ae9d96cf3a69a21194",
+    "GPU_executed": false,
+    "reason": "PhysicalGPU3 ownedbyotherVLLM; stableidle120spreflight timedout beforeCUDA",
+    "not_validated": [
+      "QK GPU numerical result",
+      "payload correctness",
+      "bandwidth",
+      "MMA saturation",
+      "instruction-level overlap inSASS",
+      "fullattention speed",
+      "cache/LRUintegration"
+    ]
+  },
+  "limits": "Layout sizeof confirms declaredstorage only. No compiledcompleteCTA resource/occupancy proof or model/production/reference change.",
+  "dedup_warning": {
+    "source": "tune_fetch_qk_assist_20261103/base_g100_l0_f24.json",
+    "unique_miss_pages": 215261.125,
+    "referenced_miss_pages": 487942,
+    "unique_MB": 247.980816,
+    "uncached_references_MB": 562.109184,
+    "duplicated_remote_if_each_reference_loaded": 2.266744633988139,
+    "scope": "SameLRUstate/reference set; eachreference uncached fetch independently is an accounting estimate, not run actualdirect-onlyperformance."
+  }
+}
