@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-04 带宽模拟已发请求批量预约原型完成：dense校准98–99GB/s，稀疏/延迟及完整kernel开销仍未解决，未安装；生产81093ba5/FAR8507eab0保持，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-04 全CTA远端copy/QK真并行三版短筛：一版完整trace非法访存、两版正确但不限速明显变慢，均未安装；生产81093ba5/FAR8507eab0保持，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -15,6 +15,8 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**11/04 全CTA unique 搬运与QK真并行短筛：** 旧“QK后写回”已在QK前等远端完成；本轮真正试图让far cp.async跨过QK。迟发包版K65/K2048短检通过，但32步Graph因wait_tile先于issue推进元数据而非法访存，失败原件保留、不计性能。保持原进度协议、同步全部本地KV的修正版2检查/全最终cache载荷通过，3pass3679.360µs；四个计算warp搬运＋混合本地异步载入版同样通过，但3pass6056.437µs。同轮clean控制1pass3096.832µs；两候选第一pass慢18.11%/95.58%，不保留、不测100GB。两版实际Graph均单BatchMLACleanServiceKernel/108CTA/active1，非回落。源码/实际库SHA、失败与完整逐步raw见 [FAR_QK_OVERLAP_20261104.md](../temp/glm_trace/tune_unlimited_uniform_20261103/FAR_QK_OVERLAP_20261104.md)。这不是已获益的新全CTA调度；生产/默认staged路由不变，GPU runner已结束。
 
 **11/04生产staged完整Host前缀tile专化：** 从当前81093正常PVFeature出发，仅完整32KV Host前缀tile使用已知负staging页号的无源类型分支地址计算，边界/其他tile原loader，远端unique/真实双写/LRU/数学不变。82.9万CPU边界tile、2GPU定向和全最终cache载荷通过；实际Graph单PVFeature108CTA/active1。normal3pass候选3038.101µs，随后当前生产staged3037.312，持平且pass方向混合；REG254/STACK0不变，静态指令6537→6661，不保留、不测100GB。构造/机器码分析首错保留，见STAGE_TILE_UNIFORM_20261104.md、raw/source/实际库SHA。生产81093不变，runner结束。
 
