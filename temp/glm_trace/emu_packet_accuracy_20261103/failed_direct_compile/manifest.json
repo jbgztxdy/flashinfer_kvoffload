@@ -1,0 +1,15 @@
+{
+  "base_far_sha256": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716",
+  "scope": "Isolated diagnostic, no production change; retry instrumentation may perturb timing.",
+  "batch_sha256": "c3eae41e89490cb5c1884abb1c8eadcceb8a241441fddfaeb8cafd6c3d8cc211",
+  "batch_mechanism": "Warp flatcombiner serializes published realissued packets in32request maxplus scan; no future reservation/no dedicatedCTA; same bandwidth and latency semantics; isolatednotproduction",
+  "batch_first_sha256": "32f2f07c78550cec50f7a9169d9f622437a818b8afe11c34a5a9ef050afee3f2",
+  "batch_first_result_header": "batch_first.cuh",
+  "integration_headers": {
+    "staged": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
+    "direct": "b0c39c526c1ec4585be7a554c842dbca10e25f02bbe9482478bd692aa0b89f39",
+    "uniform": "c7c380909c56bb967d54225f7492b4d7dac05dd0fbf56b529ff0833fd92f047f"
+  },
+  "production_host_sha256": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
+  "integration_scope": "PrivateEMU builds; directgate enabled onlyexperiment and perpair stage waits added. All actualbytes/hooks retained; production untouched."
+}

@@ -1,0 +1,21 @@
+from pathlib import Path
+import shutil,json,hashlib
+p=Path(__file__).resolve().parent;root=p.parents[2]
+assert not(p/'diag.cuh').exists()
+s=(root/'include/flashinfer/attention/far_link_emu.cuh').read_text();(p/'base.cuh').write_text(s)
+s=s.replace('__device__ unsigned long long link_clock;','__device__ unsigned long long link_clock;\n__device__ unsigned long long metrics[4];')
+s=s.replace('  unsigned long long old = atomicAdd(&link_clock, 0ull);','  unsigned long long retries=0,begin=clock64();\n  unsigned long long old = atomicAdd(&link_clock, 0ull);')
+s=s.replace('    if (observed == old) return end + config.latency_ns;','    if (observed == old){atomicAdd(metrics,1ull);atomicAdd(metrics+1,retries);atomicAdd(metrics+2,clock64()-begin);atomicMax(metrics+3,retries);return end + config.latency_ns;}\n    ++retries;')
+(p/'diag.cuh').write_text(s)
+(p/'include/flashinfer/attention').mkdir(parents=True);(p/'include/flashinfer/attention/far_link_emu.cuh').write_text(s)
+s=(p.parent/'tune_uniform_warps_20261103/transfer_modes.cu').read_text().replace('flashinfer::far_emu::link_clock=0;','{flashinfer::far_emu::link_clock=0;for(int i=0;i<4;++i)flashinfer::far_emu::metrics[i]=0;}')
+s=s.replace('for(int config_mode:{0,1,2})','for(int config_mode:{2})')
+s=s.replace('if(rep){if(!first)', 'U metric[4];ck(cudaMemcpyFromSymbol(metric,flashinfer::far_emu::metrics,sizeof(metric)));if(rep){if(!first)')
+s=s.replace('\\\"us\\\":%.6f}', '\\\"us\\\":%.6f,\\\"calls\\\":%llu,\\\"retries\\\":%llu,\\\"cycles_sum\\\":%llu,\\\"max_retries\\\":%llu}')
+s=s.replace('rep,ms*1000);','rep,ms*1000,metric[0],metric[1],metric[2],metric[3]);')
+(p/'probe.cu').write_text(s)
+shutil.copy2(p.parent/'tune_uniform_warps_20261103/resources_gpu3.py',p/'resources_gpu3.py')
+s=(p.parent/'tune_uniform_warps_20261103/run_transfer_modes.py').read_text().replace('transfer_modes','probe').replace("p.parent/'diagnose_fetch_sm_v2_20261103'","p")
+(p/'run_probe.py').write_text(s)
+(p/'.gitignore').write_text('include/\n__pycache__/\n/probe\n')
+(p/'manifest.json').write_text(json.dumps({'base_far_sha256':hashlib.sha256((p/'base.cuh').read_bytes()).hexdigest(),'scope':'Isolated diagnostic, no production change; retry instrumentation may perturb timing.'},indent=2)+'\n')

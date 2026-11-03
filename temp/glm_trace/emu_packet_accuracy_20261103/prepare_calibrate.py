@@ -1,0 +1,10 @@
+from pathlib import Path
+p=Path(__file__).resolve().parent;s=(p/'batch.cu').read_text()
+s=s.replace('FAR_EMU_TILE(2,stage,threadIdx.x==0?min(ROWS,count-chunk*ROWS):0,1152);','FAR_EMU_TILE(2,stage,ROWS==32?(threadIdx.x%32==0?max(0,min(4,count-chunk*ROWS-int(threadIdx.x/32)*4)):0):(threadIdx.x==0?min(ROWS,count-chunk*ROWS):0),1152);')
+s=s.replace('ck(cudaFuncSetAttribute(copy<10>,cudaFuncAttributeMaxDynamicSharedMemorySize,163072));','ck(cudaFuncSetAttribute(copy<10>,cudaFuncAttributeMaxDynamicSharedMemorySize,163072));ck(cudaFuncSetAttribute(copy<20>,cudaFuncAttributeMaxDynamicSharedMemorySize,163072));ck(cudaFuncSetAttribute(copy<32>,cudaFuncAttributeMaxDynamicSharedMemorySize,163072));')
+s=s.replace('for(int config_mode:{0,1,2})','for(int config_mode:{0,1,2,3})').replace('for(int i=0;i<2;++i)','for(int i=0;i<4;++i)').replace('int mode=rep%2?1-i:i;','int mode=rep%2?3-i:i;')
+s=s.replace('config_mode==2?10ull:0ull','config_mode==2?10ull:config_mode==3?20ull:0ull')
+s=s.replace('else copy<10><<<108,256,163072>>>(src,dst,count);','else if(mode==1)copy<10><<<108,256,163072>>>(src,dst,count);else if(mode==2)copy<20><<<108,256,163072>>>(src,dst,count);else copy<32><<<108,256,163072>>>(src,dst,count);')
+s=s.replace('mode?10:64,mode?108:24','mode==0?64:mode==1?10:mode==2?20:32,mode?108:24')
+(p/'calibrate.cu').write_text(s);(p/'run_calibrate.py').write_text((p/'run_probe.py').read_text().replace('probe','calibrate'))
+f=p/'.gitignore';f.write_text(f.read_text()+'/calibrate\n')

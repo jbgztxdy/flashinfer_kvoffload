@@ -1,5 +1,7 @@
 # 远端 KV 稀疏 MLA 融合算子性能汇报
 
+2026-11-04模拟补充：隔离实现已发请求批量预约＋本地deadline等待；dense小包恢复约98–99GB/s且逐请求字节/到达审计通过，但稀疏少far行/20µs及完整kernel开销仍限制适用范围，未替换生产。原staged新旧模型仅差0.6–0.8%，仍高原逐步参考约22–23%。[完整证据与限制](mla_host_emulator_batch_20261104.md)。
+
 2026-11-03补充：完全不限速GPU3正常BF16/MTP8R128/LRU4096下，新的direct计算专化2861.536µs，对原生产staged3029.035µs快5.53%，已保留为正常BF16大batch direct分支；实际far约563MB/步，不能沿用staged约248MB unique参考或声称100GB目标完成。同unique全CTA staged仍慢3.2%，未装。生产81093ba5，数学/FAR不变。[本轮结果与范围](mla_host_native_unlimited_20261103.md)。
 
 **11月3日v2性能重测**：GPU3/MTP8R128/LRU4096、256位置×3冷pass，100GB0/20µs为3.327/3.361ms，同轮逐步参考约2.701ms，高23.19%/24.41%，比同输入Memcpy耗时低42%左右；110%仍未达到。当前生产cab508dc/FAR8507eab0不改，无新kernel优化；[新口径、原始数据与初步分析](mla_host_100gb_v2_retest_20261103.md)。

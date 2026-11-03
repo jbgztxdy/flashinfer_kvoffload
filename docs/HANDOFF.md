@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-03 20:28 不限速新direct计算快5.53%并保留；同unique全CTA staged仍慢3.2%未装，生产81093ba5/FAR8507eab0，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-04 带宽模拟已发请求批量预约原型完成：dense校准98–99GB/s，稀疏/延迟及完整kernel开销仍未解决，未安装；生产81093ba5/FAR8507eab0保持，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -15,6 +15,19 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**11/04最新：用户明确授权修复/更换带宽模拟，已试“已发请求批量预算＋本地deadline等待”，隔离实验完成，未替换生产模拟器。** `temp/glm_trace/emu_packet_accuracy_20261103/`。旧108CTA10页预约平均53CAS重试、最大>9000，24CTA64页约0.5；退避更慢19/14GB/s拒绝。batch由请求warp临时合并当前已发/已真实读的mailbox，32lane exactmaxplus，个别deadline本地等待，无专用SM、无未来字节/提前消费/静态均分。最终broker有GPUacq_rel fence，初无fence的batch_first与结果分开。semantic24组154368请求、2/24/108CTA×1/8warps×50/100GB×0/20us、混合大小/主动idle/晚到均收费与maxplus正确、early0；另payload逐请求约5万条，载荷相同。
+
+dense copy100GB：原10页34/31→batch98/92GB/s；20页99.26/98.37。原每warp4页的32行stage只有72.8/72.7，显式全CTA汇总“本stage已经发出的实际far字节”后99.43/98.63；50GB接近49.5–49.9。CTA合并改变issue为最晚warp后、加barrier，保守开销明确，不能偷偷视作零开销。更贴近warm-cache32行只有8far行校准100GB91.61/70.01，50GB49.24/47.88；名义双stage在途1.99MB接近20us×100GB2MB无余量，控制成本也在，未严格拆分。稀疏/高延迟适用边界尚未解决。
+
+完整新kernel仍受模型接入/代码生成影响，不声明等价物理100GB。uniform inlineREG128/STACK944约11ms，noinlineREG255/STACK32降5.172ms；同binarydisabled3.786/enabledunlimited0为3.920。direct已在私有EMU开放新mathgate并补paired/tail FARWAIT，原normal-only生产gate不动；fullCTA stage真实far计费，inline8.762/12.073ms，noinline9.327/12.426，原CAS+CTA聚合19.69/21.51均不采用。direct同binarydisabled2.890/enabledunlimited0为3.262/enabledunlimited20为8.762ms，不能只凭字节/B认为能用满带宽。实际诊断读两launch的全部broker记录，收费行数精确等remap远端引用，排除两次重复计费；cold2.414GB和直接跳step31的1.292GB不是热32步平均，正式direct仍约563MB/步。
+
+原staged同参3pass100GB0/20：旧v2 3288.395/3293.429，新batch3307.787/3320.501，仅慢0.590/0.822%；原逐步参考约2700，旧高21.80/21.98%、新高22.52/22.98%。因此旧大差距不全由CAS竞争造成，不能称已归因fetchSM或已实现110%。复用原同GPU device参考前32步，未改模拟器/参考制造收益。6新集成版本×2检查=12通过（数学/LSE/奇尾空/QPEstride80/Graph/全部有效cache载荷），有效完整计时960launch，另专项/校准；无新全suite/sanitizer/full1024/FP16/Graphnodeprobe/物理PCIe/NVLink/SXM/H800。首State编译错误、控制catalog、accounting变量、一次自有copy争锁导致staged20在CUDA前退出均归档，仅补缺失动作，不抢占外部。
+
+所有CPU/GPUrunner结束、无等待器、GPU3末检空闲，生产81093/math34af/FAR8507及原5304矩阵不变，GPU0/1/2/H800和他人dirty不动。源码SHA、实际库、失败/负差/控制/校准审计均保留；下轮不要恢复completed runners/原样重跑构造器。下一疑点是稀疏少far行/20us的到达/inflight与hook开销定量分离，再决定低频预约设计；目前不能说模型已全面修复。入口[模拟实验报告](mla_host_emulator_batch_20261104.md)、`emu_packet_accuracy_20261103/{README.md,audit.json,migration_state.json}`。
+
+以下20:28及更早条目为历史。
+
 
 **20:28最新：用户要求先完全不限速胜过生产，再讨论模拟；已实现新的正常BF16大batch direct计算分支并保留。** 生产header81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2，canonical34af/FAR8507保持。pairedQK/itemQPE/jointMDO/PVfeature接入native inplace prepare/LRU/owner cache写回，所有8warp计算、双stage，无专用fetch。GPU3/NUMA1正常构建，无EMU编译hooks，BF16/MTP8R128K2048LRU4096/256×3：初测2856.469µs；反序2861.301对原staged3029.035（快5.538%）；最终受限头2861.536（对最近base快5.530%）。实际单新DirectPV kernel108CTA/block32x4x2/dynamic147968/active1，REG254/STACK0/static1408。仅正常BF16/direct/cached≥4SM行且原A100guard，staged/EMU/default路由保持，源码剔除guard后原tokenstream相同，不声称全部旧机器码等价。根JIT未额外重编；保留绑定独立实测SHA。
 

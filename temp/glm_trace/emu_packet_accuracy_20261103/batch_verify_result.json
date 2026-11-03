@@ -1,0 +1,186 @@
+{
+  "classification": "transfer diagnostic only",
+  "bytes": 247741056,
+  "cases": [
+    {
+      "config_mode": 2,
+      "latency_ns": 0,
+      "rows_per_packet": 10,
+      "CTAs": 108,
+      "repeat": 1,
+      "us": 2557.951904,
+      "request_records": 21506,
+      "charged_ns": 2494615,
+      "bad": 0,
+      "early": 0
+    },
+    {
+      "config_mode": 2,
+      "latency_ns": 0,
+      "rows_per_packet": 64,
+      "CTAs": 24,
+      "repeat": 1,
+      "us": 2500.60791,
+      "request_records": 3361,
+      "charged_ns": 2479830,
+      "bad": 0,
+      "early": 0
+    },
+    {
+      "config_mode": 2,
+      "latency_ns": 20000,
+      "rows_per_packet": 10,
+      "CTAs": 108,
+      "repeat": 1,
+      "us": 2710.527832,
+      "request_records": 21506,
+      "charged_ns": 2494615,
+      "bad": 0,
+      "early": 0
+    },
+    {
+      "config_mode": 2,
+      "latency_ns": 20000,
+      "rows_per_packet": 64,
+      "CTAs": 24,
+      "repeat": 1,
+      "us": 2548.736084,
+      "request_records": 3361,
+      "charged_ns": 2479830,
+      "bad": 0,
+      "early": 0
+    }
+  ],
+  "payload_exact": true,
+  "provenance": {
+    "start": "2026-11-03T23:49:02+0800",
+    "complete": false,
+    "preflight": [
+      {
+        "timestamp": "2026-11-03T23:49:02+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      {
+        "timestamp": "2026-11-03T23:49:05+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      {
+        "timestamp": "2026-11-03T23:49:07+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      {
+        "timestamp": "2026-11-03T23:49:09+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      {
+        "timestamp": "2026-11-03T23:49:11+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      {
+        "timestamp": "2026-11-03T23:49:13+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      }
+    ],
+    "resources_start": {
+      "timestamp": "2026-11-03T23:49:13+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    "command": [
+      "numactl",
+      "-N1",
+      "-m1",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/emu_packet_accuracy_20261103/batch_verify"
+    ],
+    "pid": 3474939,
+    "exit_code": 0,
+    "end": "2026-11-03T23:49:15+0800",
+    "resources_end": {
+      "timestamp": "2026-11-03T23:49:15+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 6
+        }
+      ],
+      "foreign": [],
+      "available": true
+    }
+  },
+  "source_sha256": "6bef6d71a7e28a80ade2c592cb4cf768dba829bc401f763623afb32bccb07a7b",
+  "binary_sha256": "e3e12b71a8877cdfaeba5a1abf1f6aba7feb3c4eb6170dfad61323d017827729",
+  "far_sha256": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716",
+  "complete": true
+}
