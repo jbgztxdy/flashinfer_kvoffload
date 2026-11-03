@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-11-03T20:25:16+0800",
+  "installed": true,
+  "header_sha256": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
+  "source": "retained.cuh",
+  "baseline_sha256": "cab508dcb6e83b7a953d94a8e54e30e0aaf60bb1d7ba98480fc66893edcf4384",
+  "native_us": 2861.5360036492348,
+  "base_recent_us": 3029.0346642335257,
+  "native_time_reduction_pct": 5.529770344397011,
+  "scope": "Normal BF16 cached direct largeA100 path. Staged/EMU/default route untouched; exactlaunchLRU/nativeownerwriteback, all8warpscompute, twoKVstages. No claim of uniqueonly fartraffic.",
+  "actual_direct_far_MB": 563.12982,
+  "loaded_libraries": [
+    {
+      "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_retained/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "sha256": "20caf1e9dcebb439dd3b2f7985e00d921a8c35d4f5f7a39aaba889d251c08755"
+    },
+    {
+      "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_retained/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "sha256": "df09ae5c50e4220b2f78c63c5b35afa18343d26337a50e79a8102ce9410b08c9"
+    }
+  ],
+  "proof_files": [
+    "dispatch_probe_retained.json",
+    "retained_scope_review.json",
+    "correctness_retained.log",
+    "retained_native_unlimited_f24.json",
+    "direct_confirm_direct_pv_native_unlimited_f24.json",
+    "direct_confirm_base_native_unlimited_f24.json"
+  ],
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "far_sha256": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716",
+  "root_rebuilt": false,
+  "not_covered": [
+    "100GBnewpath",
+    "otherbandwidthlatency",
+    "FP16",
+    "physicalPCIeNVLink",
+    "SXM",
+    "H800",
+    "full1024",
+    "fullsuite",
+    "sanitizers",
+    "alloldmachinecodeequivalence"
+  ]
+}

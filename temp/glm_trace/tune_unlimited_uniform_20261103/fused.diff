@@ -1,0 +1,305 @@
+--- production
++++ fused
+@@ -3715,2 +3715,102 @@
+-template <typename KTraits>
+-__device__ __forceinline__ void pv_feature_pv(typename KTraits::SharedStorage* smem_storage,
++// All256threads compute attention and move unique KV. The normal build contains
++// no virtual-link instructions. Service phases reuse existing math barriers.
++struct FusedService {
++ uint32_t count,epoch,done,current,waiting;
++ int32_t pages[2][10],victims[2][10];
++ uint32_t produced,issues,wait_loops,rows;
++};
++template<typename Q,typename KV,typename O>
++struct FusedServiceStorage {
++ union {
++  struct {
++   alignas(16) Q q_smem_nope[64*512];
++   alignas(16) KV ckv_smem[2][32*512];
++   alignas(16) KV kpe_p_smem[2][32*64];
++   union {alignas(16) float m_wg[2][64];alignas(16) float d_wg[2][64];};
++  };
++  alignas(16) O o_smem[64*512];
++ };
++ alignas(128) KV remote[2][10*576];
++ FusedService service;
++};
++template<typename Q,typename KV,typename O,typename Id>
++struct FusedServiceTraits : JointQKTraits<Q,KV,O,Id> {using SharedStorage=FusedServiceStorage<Q,KV,O>;};
++template<typename Params> struct FusedServiceHostParams : JointQKHostParams<Params> {};
++template<typename Params> __device__ __forceinline__ uint32_t* fused_service_flags(const Params& p){return reinterpret_cast<uint32_t*>(p.partial_o);}
++template<typename Params> __device__ __forceinline__ unsigned long long* fused_service_diag(const Params& p){return reinterpret_cast<unsigned long long*>(fused_service_flags(p)+round_up(ceil_div(p.staging_capacity,10u),2u))+blockIdx.y*8;}
++template<typename KTraits,typename Params>
++__device__ __forceinline__ void fused_service_ids(const Params& p,typename KTraits::SharedStorage& s,uint32_t ticket){
++ uint32_t t=(threadIdx.z*blockDim.y+threadIdx.y)*32+threadIdx.x,chunk=blockIdx.y+ticket*gridDim.y,b=ticket%2;
++ if(t<10&&chunk*10+t<s.service.count){uint32_t slot=chunk*10+t;s.service.pages[b][t]=p.unique_pages[slot];s.service.victims[b][t]=p.victim_of[slot];}
++}
++template<typename KTraits,typename Params>
++__device__ __forceinline__ void fused_service_issue(const Params& p,typename KTraits::SharedStorage& s,uint32_t ticket){
++ uint32_t t=(threadIdx.z*blockDim.y+threadIdx.y)*32+threadIdx.x,chunk=blockIdx.y+ticket*gridDim.y,b=ticket%2;
++ if(chunk*10>=s.service.count)return;
++ uint64_t policy;asm volatile("createpolicy.fractional.L2::evict_first.b64 %0,1.0;":"=l"(policy));
++#pragma unroll
++ for(uint32_t r=0;r<3;++r){uint32_t v=r*256+t,slot=chunk*10+v/72;if(v<720&&slot<s.service.count){auto page=s.service.pages[b][v/72];auto* src=reinterpret_cast<const uint4*>(p.ckv+static_cast<int64_t>(page)*576)+v%72;uint32_t dst=static_cast<uint32_t>(__cvta_generic_to_shared(reinterpret_cast<uint4*>(s.remote[b])+v));asm volatile("cp.async.cg.shared.global.L2::cache_hint [%0],[%1],16,%2;"::"r"(dst),"l"(src),"l"(policy));}}
++ FAR_EMU_TILE(2,b,t==0?min(10u,s.service.count-chunk*10):0,1152);cp_async::commit_group();if(t==0)s.service.issues++;
++}
++// Every lane has already completed cp.async.wait_group0 and the original QK
++// barrier. No stage metadata is overwritten before the subsequent MDO barrier.
++template<typename KTraits,typename Params>
++__device__ __forceinline__ void fused_service_stores(const Params& p,typename KTraits::SharedStorage& s){
++ uint32_t t=(threadIdx.z*blockDim.y+threadIdx.y)*32+threadIdx.x,ticket=s.service.current,chunk=blockIdx.y+ticket*gridDim.y,b=ticket%2;
++ if(chunk*10>=s.service.count)return;
++#ifdef FLASHINFER_FAR_EMU
++ ::flashinfer::far_emu::State state{};::flashinfer::far_emu::wait_stage<2>(b,state);__syncthreads();
++#endif
++#pragma unroll
++ for(uint32_t r=0;r<3;++r){uint32_t v=r*256+t,slot=chunk*10+v/72;if(v<720&&slot<s.service.count){uint4 value=reinterpret_cast<uint4*>(s.remote[b])[v];reinterpret_cast<uint4*>(p.staging+(p.cache_slots+static_cast<int64_t>(slot))*576)[v%72]=value;int32_t victim=s.service.victims[b][v/72];if(victim>=0)reinterpret_cast<uint4*>(p.staging+static_cast<int64_t>(victim)*576)[v%72]=value;}}
++ if(t<10&&chunk*10+t<s.service.count){auto page=s.service.pages[b][t];p.host_slot[page-p.host_page_start]=0;int32_t victim=s.service.victims[b][t];if(victim>=0){int32_t evicted=p.slot_page[victim];if(evicted>=0)p.resident[evicted-p.host_page_start]=-1;p.resident[page-p.host_page_start]=victim;p.slot_page[victim]=page;}}
++ __threadfence();
++}
++// Called immediately after jointMDO's original barrier; all payload stores are
++// fenced and visible before the leader releases the ready flag.
++template<typename KTraits,typename Params>
++__device__ __forceinline__ void fused_service_publish_prepare(const Params& p,typename KTraits::SharedStorage& s){
++ uint32_t t=(threadIdx.z*blockDim.y+threadIdx.y)*32+threadIdx.x,ticket=s.service.current,chunk=blockIdx.y+ticket*gridDim.y;
++ if(chunk*10>=s.service.count)return;
++ if(t==0){asm volatile("st.release.gpu.global.u32 [%0],%1;"::"l"(fused_service_flags(p)+chunk),"r"(s.service.epoch+1):"memory");s.service.produced++;s.service.rows+=min(10u,s.service.count-chunk*10);}
++ fused_service_ids<KTraits>(p,s,ticket+2);
++}
++// The first original PV barrier published the next packet's metadata. Its
++// second original barrier also publishes the leader's done increment.
++template<typename KTraits,typename Params>
++__device__ __forceinline__ void fused_service_refill(const Params& p,typename KTraits::SharedStorage& s){
++ uint32_t t=(threadIdx.z*blockDim.y+threadIdx.y)*32+threadIdx.x,ticket=s.service.current;
++ if((blockIdx.y+ticket*gridDim.y)*10>=s.service.count)return;
++ fused_service_issue<KTraits>(p,s,ticket+2);if(t==0)s.service.done=ticket+1;
++}
++template<typename KTraits,typename Params>
++__device__ __forceinline__ void fused_service_step(const Params& p,typename KTraits::SharedStorage& s){
++ uint32_t t=(threadIdx.z*blockDim.y+threadIdx.y)*32+threadIdx.x;if(t==0)s.service.current=s.service.done;
++ cp_async::wait_group<0>();__syncthreads();fused_service_stores<KTraits>(p,s);__syncthreads();
++ fused_service_publish_prepare<KTraits>(p,s);__syncthreads();fused_service_refill<KTraits>(p,s);__syncthreads();
++}
++template<typename KTraits,typename Params>
++__device__ __forceinline__ void fused_service_wait_tile(const Params& p,typename KTraits::SharedStorage& s,const uint32_t* scratch,uint32_t base,uint32_t len,uint32_t tile){
++ uint32_t t=(threadIdx.z*blockDim.y+threadIdx.y)*32+threadIdx.x;
++ while(true){if(threadIdx.y==0&&threadIdx.z==0){uint32_t k=tile+threadIdx.x;auto page=k<len?p.remap[base+k]:0;uint32_t row=static_cast<uint32_t>(-(page+1));bool wait=page<0&&row>=p.cache_slots&&host_batch_ld_acquire(fused_service_flags(p)+(row-p.cache_slots)/10)!=scratch[kHostBatchScratchEpoch]+1;bool any=__any_sync(0xffffffffu,wait);if(threadIdx.x==0)s.service.waiting=any;}
++ __syncthreads();if(!s.service.waiting)return;fused_service_step<KTraits>(p,s);if(t==0)s.service.wait_loops++;__nanosleep(64);}
++}
++template<typename KTraits,typename Params>
++__device__ __forceinline__ void fused_service_initialize(const Params& p,typename KTraits::SharedStorage& s,uint32_t unique,uint32_t epoch){
++ uint32_t t=(threadIdx.z*blockDim.y+threadIdx.y)*32+threadIdx.x;if(t==0){s.service.count=unique;s.service.epoch=epoch;s.service.done=0;s.service.current=0;s.service.waiting=0;s.service.produced=s.service.issues=s.service.wait_loops=s.service.rows=0;}
++ FAR_EMU_INIT(2);__syncthreads();fused_service_ids<KTraits>(p,s,0);fused_service_ids<KTraits>(p,s,1);__syncthreads();fused_service_issue<KTraits>(p,s,0);fused_service_issue<KTraits>(p,s,1);__syncthreads();
++}
++template<typename KTraits,typename Params>
++__device__ __forceinline__ void fused_service_drain(const Params& p,typename KTraits::SharedStorage& s){while((blockIdx.y+s.service.done*gridDim.y)*10<s.service.count)fused_service_step<KTraits>(p,s);}
++template<typename KTraits>
++__device__ __forceinline__ void fused_service_load_q(typename KTraits::SharedStorage* s,typename KTraits::DTypeQ* qn,uint32_t stride_n,uint32_t stride_h,uint_fastdiv heads){
++ smem_t<KTraits::SWIZZLE_MODE_Q_NOPE> q(s->q_smem_nope);uint32_t lane=threadIdx.x,wg=threadIdx.z,w=threadIdx.y;
++#pragma unroll
++ for(uint32_t a=0;a<2;++a){uint32_t row,head;heads.divmod(lane/8+(wg+a*2)*16+w*4,row,head);auto* ptr=qn+row*stride_n+head*stride_h+(lane%8)*8;
++#pragma unroll
++ for(uint32_t dim=0;dim<8;++dim){uint32_t at=q.template get_permuted_offset<KTraits::UPCAST_STRIDE_Q_NOPE>(32*a+wg*16+w*4+lane/8,dim*8+lane%8);q.template load_128b_async<SharedMemFillMode::kFillZero>(at,ptr,row<1);ptr+=64;}}
++}
++
++
++template <bool SERVICE,typename KTraits,typename Params>
++__device__ __forceinline__ void fused_service_pv(typename KTraits::SharedStorage* smem_storage,
+@@ -3720 +3820 @@
+-                                               float (*o_frag)[8]) {
++                                               float (*o_frag)[8],const Params& params) {
+@@ -3738,0 +3839 @@
++    if constexpr(SERVICE)fused_service_refill<KTraits>(params,*smem_storage);
+@@ -3809,5 +3909,0 @@
+-template <typename Q, typename KV, typename O, typename Id>
+-struct PVFeatureTraits : JointQKTraits<Q, KV, O, Id> {};
+-template <typename Params>
+-struct PVFeatureHostParams : JointQKHostParams<Params> {};
+-
+@@ -3818 +3914 @@
+-__device__ __forceinline__ void pv_feature_qk_pair_fragments(
++__device__ __forceinline__ void fused_service_qk_pair_fragments(
+@@ -3850 +3946 @@
+-__device__ __forceinline__ void pv_feature_load_query(const Params& params, uint32_t row,
++__device__ __forceinline__ void fused_service_load_query(const Params& params, uint32_t row,
+@@ -3865 +3961 @@
+-__device__ __forceinline__ void pv_feature_compute_pe(
++__device__ __forceinline__ void fused_service_compute_pe(
+@@ -3891 +3987 @@
+-__device__ __forceinline__ void pv_feature_compute_one(
++__device__ __forceinline__ void fused_service_compute_one(
+@@ -3893 +3989 @@
+-  pv_feature_compute_pe<false, KTraits>(storage, 0, 0, qpe, scores, scores);
++  fused_service_compute_pe<false, KTraits>(storage, 0, 0, qpe, scores, scores);
+@@ -3901 +3997 @@
+-__device__ __forceinline__ void pv_feature_compute_qk_pair(
++__device__ __forceinline__ void fused_service_compute_qk_pair(
+@@ -3904 +4000 @@
+-  pv_feature_compute_pe<true, KTraits>(storage, a, b, qpe, sa, sb);
++  fused_service_compute_pe<true, KTraits>(storage, a, b, qpe, sa, sb);
+@@ -3907 +4003 @@
+-  pv_feature_qk_pair_fragments<false,KTraits,KTraits::NUM_MMA_D_CKV,
++  fused_service_qk_pair_fragments<false,KTraits,KTraits::NUM_MMA_D_CKV,
+@@ -3915,2 +4011,2 @@
+-template <typename KTraits>
+-__device__ __forceinline__ void pv_feature_update_joint_host_mdo(
++template <typename KTraits,typename Params>
++__device__ __forceinline__ void fused_service_update_joint_host_mdo(
+@@ -3918 +4014 @@
+-    float (*s0)[8], float (*s1)[8], float (*o)[8], float* m, float* d) {
++    float (*s0)[8], float (*s1)[8], float (*o)[8], float* m, float* d,const Params& params) {
+@@ -3935,0 +4032 @@
++  fused_service_publish_prepare<KTraits>(params,*storage);
+@@ -3960 +4057 @@
+-__device__ __forceinline__ void pv_feature_attend_joint_host_tiles(
++__device__ __forceinline__ void fused_service_attend_joint_host_tiles(
+@@ -3967 +4064 @@
+-  pv_feature_load_query(params, row, qpe);
++  fused_service_load_query(params, row, qpe);
+@@ -3974 +4071 @@
+-      wait_host_batch_tile<KTraits>(params, scratch, index_base, kv_len, tile*32);
++      fused_service_wait_tile<KTraits>(params, storage, scratch, index_base, kv_len, tile*32);
+@@ -3991,0 +4089,2 @@
++    const uint32_t service_tid=(threadIdx.z*blockDim.y+threadIdx.y)*32+threadIdx.x;
++    if(service_tid==0)storage.service.current=storage.service.done;
+@@ -3994 +4093,2 @@
+-    pv_feature_compute_qk_pair<KTraits>(storage, hi%2, lo%2, qpe, scores, scores+1);
++    fused_service_stores<KTraits>(params,storage);
++    fused_service_compute_qk_pair<KTraits>(storage, hi%2, lo%2, qpe, scores, scores+1);
+@@ -3997,2 +4097,2 @@
+-    pv_feature_update_joint_host_mdo<KTraits>(&storage, variant, scores, scores+1, o, m, d);
+-    pv_feature_pv<KTraits>(&storage, hi%2, scores, d, o);
++    fused_service_update_joint_host_mdo<KTraits>(&storage, variant, scores, scores+1, o, m, d,params);
++    fused_service_pv<true,KTraits>(&storage, hi%2, scores, d, o,params);
+@@ -4001,2 +4101,2 @@
+-        wait_host_batch_tile<KTraits>(params, scratch, index_base, kv_len, next_hi*32);
+-      __syncthreads();
++        fused_service_wait_tile<KTraits>(params, storage, scratch, index_base, kv_len, next_hi*32);
++      else __syncthreads();
+@@ -4008 +4108 @@
+-    pv_feature_pv<KTraits>(&storage, lo%2, scores+1, d, o);
++    fused_service_pv<false,KTraits>(&storage, lo%2, scores+1, d, o,params);
+@@ -4011,2 +4111,2 @@
+-        wait_host_batch_tile<KTraits>(params, scratch, index_base, kv_len, next_lo*32);
+-      __syncthreads();
++        fused_service_wait_tile<KTraits>(params, storage, scratch, index_base, kv_len, next_lo*32);
++      else __syncthreads();
+@@ -4020 +4120 @@
+-    pv_feature_compute_one<KTraits>(storage, qpe, scores);
++    fused_service_compute_one<KTraits>(storage, qpe, scores);
+@@ -4023 +4123 @@
+-    pv_feature_pv<KTraits>(&storage, 0, scores, d, o);
++    fused_service_pv<false,KTraits>(&storage, 0, scores, d, o,params);
+@@ -4028 +4128 @@
+-__device__ __forceinline__ void pv_feature_run_joint_host_item(const Params& params,
++__device__ __forceinline__ void fused_service_run_joint_host_item(const Params& params,
+@@ -4083,4 +4183 @@
+-    load_q<KTraits>(&storage, params.q_nope + row * params.q_nope_stride_n,
+-                    params.q_pe + row * params.q_pe_stride_n, params.q_nope_stride_n,
+-                    params.q_nope_stride_h, params.q_pe_stride_n, params.q_pe_stride_h, 1,
+-                    head_tile * CTA_TILE_Q, params.num_heads);
++    fused_service_load_q<KTraits>(&storage,params.q_nope+row*params.q_nope_stride_n,params.q_nope_stride_n,params.q_nope_stride_h,params.num_heads);
+@@ -4088 +4185 @@
+-    pv_feature_attend_joint_host_tiles<KTraits>(params, storage, variant, scratch,
++    fused_service_attend_joint_host_tiles<KTraits>(params, storage, variant, scratch,
+@@ -4121,37 +4218,7 @@
+-__device__ __forceinline__ void pv_feature_run_joint_host_items(const Params& params,
+-                                                     typename KTraits::SharedStorage& storage,
+-                                                     uint8_t* smem, uint32_t* scratch,
+-                                                     bool fetcher, uint32_t unique) {
+-  constexpr uint32_t NUM_MMA_KV = KTraits::NUM_MMA_KV;
+-  constexpr uint32_t NUM_MMA_D_CKV = KTraits::NUM_MMA_D_CKV;
+-  // With no Host page the item list has no Host items, and host_batch_host_items was never
+-  // written this launch, so it must not be read.
+-  const int lru_items = host_batch_caching(params) && params.stage && unique ? params.num_pools : 0;
+-  const int items = lru_items +
+-                    (params.full_rows + (params.num_rows - params.full_rows) * params.num_chunks) *
+-                        params.num_head_tiles +
+-                    (unique ? host_batch_host_items(params)[params.num_rows] : 0);
+-  const int workers = gridDim.y - params.fetch_ctas;
+-  const int first = fetcher ? items - 1 - (blockIdx.y - workers) : blockIdx.y;
+-  const int step = fetcher ? -static_cast<int>(params.fetch_ctas) : workers;
+-
+-  float s_frag[2][8];
+-  alignas(16) float o_frag[NUM_MMA_D_CKV / 2][8];
+-  float m[2];
+-  float d[2];
+-
+-#pragma unroll 1
+-  for (int item = first; item >= 0 && item < items; item += step) {
+-    if (!claim_host_batch_item(params, scratch, item)) {
+-      if (fetcher) break;
+-      continue;
+-    }
+-    if (item < lru_items) {
+-      run_host_batch_lru<KTraits>(params, smem, item, scratch[kHostBatchScratchEpoch], unique);
+-      // The next item reuses the shared memory the selection scanned into.
+-      __syncthreads();
+-      continue;
+-    }
+-    pv_feature_run_joint_host_item<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, item - lru_items, s_frag, o_frag,
+-                                 m, d);
+-  }
++__device__ __forceinline__ void fused_service_run_joint_host_items(const Params& params,typename KTraits::SharedStorage& storage,uint8_t* smem,uint32_t* scratch,bool,uint32_t) {
++ float scores[2][8],output[KTraits::NUM_MMA_D_CKV/2][8],m[2],d[2];
++ for(uint32_t row=blockIdx.y;row<params.num_rows;row+=gridDim.y)
++   fused_service_run_joint_host_item<KTraits,Params,false>(params,storage,smem,scratch,row,scores,output,m,d);
++ fused_service_drain<KTraits>(params,storage);
++ const uint32_t tid=(threadIdx.z*blockDim.y+threadIdx.y)*32+threadIdx.x;
++ if(tid==0){auto* diag=fused_service_diag(params);diag[0]=storage.service.produced;diag[1]=storage.service.issues;diag[2]=storage.service.wait_loops;diag[3]=storage.service.rows;diag[4]=sizeof(typename KTraits::SharedStorage);}
+@@ -4160 +4227 @@
+-__global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPVFeatureKernel(
++__global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAFusedServiceKernel(
+@@ -4230 +4297,7 @@
+-  const uint32_t fetch_rows = host_batch_fetch_rows<ROW_MERGE>(params, unique);
++  // Readyflags occupy existing unused whole-row partial backing, one per10pages.
++  for(uint32_t flag=blockIdx.y*KTraits::NUM_THREADS+tid;flag<ceil_div(unique,10u);flag+=gridDim.y*KTraits::NUM_THREADS)fused_service_flags(params)[flag]=0;
++  if(unique>0){
++    for(uint32_t pool=blockIdx.y;pool<params.num_pools;pool+=gridDim.y){run_host_batch_lru<KTraits>(params,smem,pool,epoch,unique);__syncthreads();}
++    cg::this_grid().sync();
++  }
++  const uint32_t fetch_rows=10;
+@@ -4238,2 +4311,2 @@
+-  if (unique > 0 && from_back && !host_batch_writes_back(params)) fetch_stream_source_pages<KTraits>(params, smem, epoch, unique, fetch_rows);
+-  pv_feature_run_joint_host_items<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, from_back, unique);
++  fused_service_initialize<KTraits>(params,storage,unique,epoch);
++  fused_service_run_joint_host_items<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, from_back, unique);
+@@ -4307,4 +4380,4 @@
+-    using PVFeatureKernelTraits = PVFeatureTraits<DTypeQ, DTypeKV, DTypeO, IdType>;
+-    using PVFeatureKernelParams = PVFeatureHostParams<Params>;
+-    constexpr size_t pv_feature_smem = sizeof(typename PVFeatureKernelTraits::SharedStorage);
+-    static_assert(pv_feature_smem == 147968);
++    using UniformKernelTraits = FusedServiceTraits<DTypeQ, DTypeKV, DTypeO, IdType>;
++    using UniformKernelParams = FusedServiceHostParams<Params>;
++    constexpr size_t fused_service_smem = sizeof(typename UniformKernelTraits::SharedStorage);
++    static_assert(fused_service_smem == 163072);
+@@ -4313 +4386 @@
+-        params.fetch_ctas < num_sms && smem_limit_per_sm >= pv_feature_smem + 4096 &&
++        params.fetch_ctas < num_sms && smem_limit_per_sm >= fused_service_smem &&
+@@ -4317,7 +4390,8 @@
+-      auto pv_feature_kernel = BatchMLAPVFeatureKernel<PVFeatureKernelTraits, PVFeatureKernelParams, false>;
+-      FLASHINFER_CUDA_CALL(cudaFuncSetAttribute(pv_feature_kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, pv_feature_smem));
+-      int pv_feature_blocks = 0;
+-      FLASHINFER_CUDA_CALL(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&pv_feature_blocks, pv_feature_kernel, 256, pv_feature_smem));
+-      if (pv_feature_blocks >= 1) {
+-        const uint32_t pv_feature_grid = num_sms;
+-        if (params.pool_capacity > kHostBatchMaxPool || 2ull * params.pool_capacity * sizeof(uint32_t) > pv_feature_smem)
++      auto fused_service_kernel = BatchMLAFusedServiceKernel<UniformKernelTraits, UniformKernelParams, false>;
++      FLASHINFER_CUDA_CALL(cudaFuncSetAttribute(fused_service_kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, fused_service_smem));
++      int fused_service_blocks = 0;
++      FLASHINFER_CUDA_CALL(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&fused_service_blocks, fused_service_kernel, 256, fused_service_smem));
++      if (fused_service_blocks >= 1) {
++        const uint32_t fused_service_grid = num_sms;
++        if((ceil_div(params.staging_capacity,10u)+128*16ull)*4 > static_cast<uint64_t>(partial_capacity)*64*512*sizeof(DTypeO))return cudaErrorInvalidConfiguration;
++        if (params.pool_capacity > kHostBatchMaxPool || 2ull * params.pool_capacity * sizeof(uint32_t) > fused_service_smem)
+@@ -4325,2 +4399,2 @@
+-        static_assert(sizeof(PVFeatureKernelParams) == sizeof(Params));
+-        static_assert(alignof(PVFeatureKernelParams) == alignof(Params));
++        static_assert(sizeof(UniformKernelParams) == sizeof(Params));
++        static_assert(alignof(UniformKernelParams) == alignof(Params));
+@@ -4331 +4405 @@
+-        params.prepare_parts = min(ceil_div(pv_feature_grid, max(params.num_rows, 1u)), ceil_div(length, 256u));
++        params.prepare_parts = min(ceil_div(fused_service_grid, max(params.num_rows, 1u)), ceil_div(length, 256u));
+@@ -4334 +4408 @@
+-        FLASHINFER_CUDA_CALL(cudaLaunchCooperativeKernel((void*)pv_feature_kernel, dim3(1, pv_feature_grid), dim3(32, 4, 2), args, pv_feature_smem, stream));
++        FLASHINFER_CUDA_CALL(cudaLaunchCooperativeKernel((void*)fused_service_kernel, dim3(1, fused_service_grid), dim3(32, 4, 2), args, fused_service_smem, stream));

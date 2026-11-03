@@ -1,0 +1,137 @@
+{
+  "start": "2026-11-03T20:16:12+0800",
+  "complete": true,
+  "preflight": [
+    {
+      "timestamp": "2026-11-03T20:16:13+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-03T20:16:15+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-03T20:16:17+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-03T20:16:19+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-03T20:16:21+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-03T20:16:23+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    }
+  ],
+  "actions": [
+    {
+      "label": "dispatch_clean",
+      "variant": "clean",
+      "start": "2026-11-03T20:16:23+0800",
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/probe.py"
+      ],
+      "resources_start": {
+        "timestamp": "2026-11-03T20:16:24+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      "pid": 3087931,
+      "exit_code": 0,
+      "end": "2026-11-03T20:16:28+0800",
+      "resources_end": {
+        "timestamp": "2026-11-03T20:16:28+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      }
+    }
+  ],
+  "end": "2026-11-03T20:16:28+0800"
+}

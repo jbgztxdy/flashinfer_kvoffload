@@ -1,0 +1,74 @@
+{
+  "production_sha256": "cab508dcb6e83b7a953d94a8e54e30e0aaf60bb1d7ba98480fc66893edcf4384",
+  "fused_sha256": "47708fbdbb62cff90a1efb15c974c3e551e0701999a5c991ea5e0ac69cd05e4d",
+  "math_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "far_sha256": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716",
+  "mode": "normal no emulation compiled",
+  "mechanism": "AllCTAservice retire/publish/refill reusepreQK,jointMDO,PVbarriers; nativeQKinnerlooprestored; staticuniqueownership",
+  "CPU_fix": "restore specificallythetargetQKhelper; renameoldroundscountertoissues",
+  "fused_libraries": [
+    {
+      "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_fused/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "sha256": "786216381d6520e6bdc8f402dbd8c8b56b55473f00c2ed11d32d1a1b1bc31fb8"
+    },
+    {
+      "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_fused/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "sha256": "ddcdaabbc1e38f200e05df2fe663585c77be6131dfa57f5ae5e6dacfeb424f88"
+    }
+  ],
+  "target_resources": "  REG:255 STACK:8 SHARED:1152 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+  "packet_sha256": "a2779304c618651826e5f4fe53378c81187e1cd27e29ec692bc2d1bfbe0411d4",
+  "packet_mechanism": "Merge2far10stages into1far20stage; same23040Bfarstorage,halfpacketfences,publishonce,readsoverlapPV; attention2stagesunchanged",
+  "packet_libraries": [
+    {
+      "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_packet/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "sha256": "618417f0b90ddce7aad47dce1318697aea18cba05d7c35fdd5bfbcbc2eaf82b7"
+    },
+    {
+      "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_packet/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "sha256": "8acb3327e08409003ded912ed1b4eacc0960359ac8c2e131137504add8943f56"
+    }
+  ],
+  "packet_resources": "  REG:255 STACK:0 SHARED:1152 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+  "release_sha256": "f2789ae2911e89a669c6c8d65ed634bf59e35e97eb454dc65bf576a9ab693adb",
+  "release_protocol_sources": [
+    "https://docs.nvidia.com/cuda/parallel-thread-execution/#memory-consistency-model-release-acquire-patterns",
+    "https://docs.nvidia.com/cuda/parallel-thread-execution/#memory-consistency-model-causality-order",
+    "https://docs.nvidia.com/cuda/parallel-thread-execution/#parallel-synchronization-and-communication-instructions-bar"
+  ],
+  "phase_sha256": "2fcf10fabb88fc3276c7ff09a8bbde8284c888c4d15f423493e95abfb842400e",
+  "phase_mechanism": "AfterthisCTAownedmissesfinished,rowbranchselectscompiledpureattentionwithoutservicehotloop; remainingKVacquiresandallnecessarywritesretained",
+  "rowcopy_sha256": "e591a99900f0538f2b116c3406259526805ae27d8c33387f7f3459c0c4b8f69d",
+  "rowcopy_mechanism": "Phase plus 8lane page ownership with hoisted source/cache/staging addresses; no divmod72 in each vector round, same real unique bytes and two required stores",
+  "lean_sha256": "0a74e18433971eb744ead9fba6039b7a532a4052625985c28d207f7a7bfca376",
+  "lean_mechanism": "rowcopy plus native warp0-only acquire in compiled pure rows after thisCTA drained; original CTA visibility barrier retained; no extra shared waiting broadcast",
+  "pvpipe_sha256": "c08a91c6bbbc5420a1e6d27fe840a8be439d86b05c6c6bd720447ab614c461d3",
+  "pvpipe_mechanism": "lean plus nextpacket nine128B lane-group copies distributed between PV feature MMA; commit afterallnine; no extra barriers or QK change",
+  "operands_sha256": "259b0aa8090ad766d23103416378a4aa4ddda408f8e02f6d3fce45d16cce0057",
+  "operands_mechanism": "lean plus preloadbothKandbothVfragmentsbeforetheirfirstMMA; same per accumulator order; test load latency hiding vs registercost",
+  "allready_sha256": "8ede97369b8304165de4e4a376003a62e10e9ce22dfd193219d5d6c47ffcea9d",
+  "allready_mechanism": "lean plus onceperCTA acq_rel completion chain; leader acquiretotal then CTA barrier before disablingtileacquires in laterrows; full stores and all publication order remain",
+  "qpetail_sha256": "8320019deef779595c6699565e8d1a6496db4b4883842efc3f4af965fda32551",
+  "qpetail_mechanism": "lean plus reuse deadremote8KiB afterownmissfinished for bankinterleaved QPE; remove16persistentpackedregs onlypurebody; sameQPEoperands/order",
+  "stagger_sha256": "bb0646237b0a8f20477db4dbe82203b14f9b731b25fed433150ac4599e6340ea",
+  "stagger_mechanism": "lean plus oppositephase warp service: evenwarps storesbeforeQK/nextreads beforePV, oddwarps QKbeforestores/readsafterPV; same 8warpsallcompute and barriers; normalonly",
+  "clean_sha256": "29835918684dd24c76e15e27366e7e330268c3dd66c939eaffb1462b54ab2742",
+  "clean_mechanism": "lean without nonfunctional perpacket shared diagnosticincrements; real stores/cachemetadata/ready release/acquire/done tracking/math untouched; diagnosticcounts explicitly unavailable",
+  "queue_sha256": "9d85097dcfd0ef6d4d6018b68a679ee761be7469f1d6ba67252447af0401df31",
+  "queue_mechanism": "clean plus coarse row queue after first108rows; far ownership remains static, drainretained; row queue counter inunusedpartialworkspace; one initialgridbarrier extra explicit",
+  "queue_compile_fix": "Removed repeated localtid declaration; first source/errorlog archived",
+  "lrupipe_sha256": "59222b0455f2758bb840f9a9e6d70633d5a4e7e3ad5f5f407426de0d94f9a21b",
+  "lrupipe_mechanism": "clean plus firstrealread before distributedLRU; no allLRU gridbarrier; victim acquisition waits specificpool release then existingpreQK barrier; flagclears move before originalresolvegrid; disjoint sharedmemory verified",
+  "regstream_sha256": "2fa411ae40c496a5f8d23870adb097630f37ab7676ab9d380c526a273bfcab1d",
+  "regstream_mechanism": "Normal-only 32page packets copied directly through4temporaryregs into staging+cache, no persistentpayload/farshared/asyncread; same8mathwarps and2KVstages; source L2evict_first via ld.cg hint; actualonceperunique16Bread; no prefetch extra bytes",
+  "regstream_sources": [
+    "https://docs.nvidia.com/cuda/archive/12.6.0/parallel-thread-execution/index.html#data-movement-and-conversion-instructions-ld"
+  ],
+  "native_diag_sha256": "1600d090a5a097817035b47622e934cd2d9a1f83398a2d1713daacc0364df41d",
+  "native_diag_mechanism": "Production normal build with ninefields/CTA/epoch inunusedpartialbacking; onlyphase stamps and perrow counter; no tile/fetchloop probes",
+  "direct_pv_sha256": "d8c47b2b27a22cf9c8a71f68eeef8fa9fe63332c891f16b95e2f62027bc1bdda",
+  "direct_pv_mechanism": "Normal direct inplace native prepare/LRU/owner cachewriteback + new pairedQK/QPEitemreuse/jointMDO/PVfeature math; no dedicated fetch, same8mathwarps/twoKVstages. Far reads per reference, not unique. All existing staged code preserved.",
+  "trycache_sha256": "bd9e68953ecb10b773f547431f240826ccc034702832c7c417d9ec7e57ec5145",
+  "trycache_mechanism": "Normal-only directPV + nonblocking same-launch cache reuse; ownerwrites -> jointMDO CTAbarrier -> pervictim release, candidate readacquire before existingCTAbarrier; all actualfarread selections counted perwarp atkernelend. No waiting for futureowner and no assumed unique traffic.",
+  "trycache_compile_fix": "Perthread far_count declaration insertion corrected; failed source/log retained"
+}

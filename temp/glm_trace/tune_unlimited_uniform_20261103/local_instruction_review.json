@@ -1,0 +1,23 @@
+{
+  "clean": {
+    "local_instructions": [
+      "/*6340*/                   STL [R1+0x4], R247 ;                                                 /* 0x000004f701007387 */",
+      "/*6390*/                   LDL.LU R12, [R1+0x4] ;                                               /* 0x00000400010c7983 */",
+      "/*6520*/                   STL [R1], R44 ;                                                      /* 0x0000002c01007387 */",
+      "/*65f0*/                   STL [R1+0x8], R7 ;                                                   /* 0x0000080701007387 */",
+      "/*6600*/                   STL [R1+0x4], R12 ;                                                  /* 0x0000040c01007387 */",
+      "/*ea20*/                   LDL.LU R177, [R1] ;                                                  /* 0x0000000001b17983 */",
+      "/*ea50*/                   LDL R176, [R1+0x8] ;                                                 /* 0x0000080001b07983 */",
+      "/*119c0*/                   LDL R8, [R1] ;                                                      /* 0x0000000001087983 */",
+      "/*1cd30*/                   LDL.LU R119, [R1] ;                                                 /* 0x0000000001777983 */",
+      "/*1cd50*/                   LDL R118, [R1+0x8] ;                                                /* 0x0000080001767983 */"
+    ],
+    "count": 10,
+    "library": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_clean/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so"
+  },
+  "base": {
+    "local_instructions": [],
+    "count": 0,
+    "library": "temp/glm_trace/emu_fix_20261103/jit_v2_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so"
+  }
+}

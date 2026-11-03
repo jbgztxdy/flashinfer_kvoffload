@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-03 18:42 全warp首版完成并拒绝，新增小包限速适用范围证据；生产cab508dc/FAR8507eab0保持，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-03 20:28 不限速新direct计算快5.53%并保留；同unique全CTA staged仍慢3.2%未装，生产81093ba5/FAR8507eab0，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -15,6 +15,17 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**20:28最新：用户要求先完全不限速胜过生产，再讨论模拟；已实现新的正常BF16大batch direct计算分支并保留。** 生产header81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2，canonical34af/FAR8507保持。pairedQK/itemQPE/jointMDO/PVfeature接入native inplace prepare/LRU/owner cache写回，所有8warp计算、双stage，无专用fetch。GPU3/NUMA1正常构建，无EMU编译hooks，BF16/MTP8R128K2048LRU4096/256×3：初测2856.469µs；反序2861.301对原staged3029.035（快5.538%）；最终受限头2861.536（对最近base快5.530%）。实际单新DirectPV kernel108CTA/block32x4x2/dynamic147968/active1，REG254/STACK0/static1408。仅正常BF16/direct/cached≥4SM行且原A100guard，staged/EMU/default路由保持，源码剔除guard后原tokenstream相同，不声称全部旧机器码等价。根JIT未额外重编；保留绑定独立实测SHA。
+
+**不能称同unique全CTA路线取胜或100GB目标完成。** 全108CTA8mathwarp+双计算stage的新service屏障融合3404.149→20页包3262.763→分离纯计算3196.117→页内地址/warp0wait/去诊断3126.699；反序3128.949对3031.499仍慢3.215%，拒绝不装。PV交错copy、双operand预载、全完成计数（约526/1024行省flag）、死farshared存QPE、偶奇warp相反次序、粗rowqueue、首读/LRU重叠、短期reg直写均无采用信号。regstream REG252/STACK0仍3387.008。不要原样重跑这16个负结果候选或扫数字。新direct实际far约563.130MB/步，staged unique约248MB；非阻塞同launchcache复用降到504.679MB却3700.885µs，拒绝。direct新数学有收益，但100GB不能沿用stagedunique参考。
+
+正常生产轻量时间线一pass：event3016.768µs、prepare188.608、fetch1366.016、相对起点最后fetch1554.208；fetchCTA之后算134.25/1024行，故不限速可回收资源小于100GB诊断。无miss生产2507.296、phase2572.192、release2667.520，仅诊断非相同输入LRU消融/严格因果分解。18候选×2定向检查=36成功，另发布协议38880000uint4/0错误；有效正常计时2528launch，数学采样及全部最终cache载荷检查保留。direct首gate误留stagedcapacity导致回落的2格192launch在failed_direct_gate，不算新实现结果；修正后direct/trycache/retained实际Graph确认。queue/trycache首编译失败、trycache GPU前来源选择修订有归档。first fused构造器有CPU修订，不幂等resume。
+
+本轮无新100GB/延迟/full1024/FP16/物理PCIe/NVLink/SXM/H800/全suite/sanitizer；正常GPU3同卡HBM不是NVLink。所有runner结束、无后台waiter，最终资源快照见migration_state；GPU0/1/2及H800未操作，其他用户dirty不动。原始/失败/SHA/审计与重建入口`temp/glm_trace/tune_unlimited_uniform_20261103/{README.md,audit.json,retention.json}`，[本轮报告](mla_host_native_unlimited_20261103.md)。下一步从81093正常direct+原staged继续，别退回cab508或把100GB问题视为完成。
+
+以下18:42及更早段落为历史，源码/活动状态以上述新入口为准。
+
 
 **18:42最新：用户授权全CTA同warp实现，已完成首个完整kernel及诊断；拒绝不安装，无新生产收益。** `tune_uniform_warps_20261103/`保留全108CTA/8warp/双32KV计算stage，回收目标路径sharedQPE，双10行farbuffer＋shared上下文，静态uniquechunk=CTA+k×grid，QK特征步0/12/24发copy，无跨SMscore交接；LRU先完成/gridbarrier，ready等待时推进自身取数，退出drain。真实原FAR/cachepayload/字节/数学保留，f24参数不代表24专用SM。实际REG255/STACK48/static1152/dynamic163072，有LDL/STL；不能称零溢出。首外层Params模板缺失编译失败first_compile，GPU前修复，冻结最终SHA见manifest，make非幂等resume且早于手工fix。
 

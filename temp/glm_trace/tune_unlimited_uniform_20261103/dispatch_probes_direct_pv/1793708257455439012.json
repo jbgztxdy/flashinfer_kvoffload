@@ -1,0 +1,59 @@
+{
+  "timestamp": "2026-11-03T20:17:37+0800",
+  "physical_gpu": 3,
+  "resources_start": {
+    "timestamp": "2026-11-03T20:17:33+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "resources_end": {
+    "timestamp": "2026-11-03T20:17:37+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 939,
+        "total_mib": 40960,
+        "utilization": 1
+      }
+    ],
+    "foreign": [],
+    "available": false
+  },
+  "header_sha256": "c67cf153002baae10ec1fe0e38d80b9e718d3dd9ca3de98b873ce56e6c9c70cb",
+  "math_header_sha256": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+  "graph_nodes": 1,
+  "kernel_nodes": 1,
+  "launches": [
+    {
+      "grid": [
+        1,
+        108,
+        1
+      ],
+      "block": [
+        32,
+        4,
+        2
+      ],
+      "dynamic_shared_bytes": 147968,
+      "active_blocks_per_SM": 1,
+      "kernel_name": "_ZN10flashinfer3mla22BatchMLADirectPVKernelINS0_14DirectPVTraitsI13__nv_bfloat16S3_S3_iEENS0_18DirectPVHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+    }
+  ],
+  "checked_rows": [
+    0,
+    431
+  ],
+  "max_abs_error": 0.004127860069274902,
+  "probe_source_sha256": "facc1b3af0827c5458c63e054ea5deba1b8388846e0b99d96343746f8d6c8707"
+}
