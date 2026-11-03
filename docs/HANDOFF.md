@@ -16,6 +16,42 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04后续检查点归档：** 260新增文件、17份完整计时raw实际库SHA核验通过，JSON/Python语法通过。无新生产收益/可信100GB成绩。pool/quota/动态需求/提前hint/统一主体等负结果和首版失败全部保存，协议与CPU模型不混作性能。见`CHECKPOINT_LATER_20261104.md`、checkpoint_later_20261104_manifest.json。生产仍81093，GPU3空闲、runner均结束，不继续旧变体数字扫描。
+
+**11/04提示查询去原子控制：** lookahead中atomicAdd0→acquire读，最终独占CAS保持；2定向检查通过，normal3pass3258.123µs未改善旧3235.435。拒绝不测100GB，停止逐pair hint查询变体。证据`DEMAND_READHINT_20261104.md`、audit/raw/header/库SHA齐，生产未改，runner结束。
+
+**11/04提前需求hint完整候选：** 在本地计算窗口preQK读取下一far tile真实remap/claimed，复用原barrier发布hint，未提前payload/计费。2定向检查通过，normal3pass3235.435µs慢于demand_phase3187.637，拒绝不扫提前距离/不测100GB。hint采用率未新测，不能从耗时推断它未提高。raw/header/实际库SHA见`DEMAND_LOOKAHEAD_20261104.md`及audit。生产不变，runner结束。
+
+**11/04需求hint诊断决定停止当前路线：** demand_phase normal插桩32步一pass，平均hint成功29.03包、fallback10734.16包，hint仅0.2697%，每步sum精确等ceil(unique/20)。实际缺页才hint太晚，几乎仍是fallback全局队列。停止本版微调；重设计需在本地计算窗口提前识别真实待消费包，不能提前预约未来模拟字节。证据`DEMAND_DIAG_20261104.md`、demand_diag_summary.json及raw。计数时间仅诊断，无100GB外推，生产未改。
+
+**11/04动态需求phase：** fallback耗尽且自身包已发布可切pure行体，无需全局ready，纠正旧始终ACTIVE必需的保守判断。2定向检查通过，正常3pass3187.637µs，比demand_full3294.581改善但仍慢clean，拒绝不测100GB。原始/header/实际库SHA见`DEMAND_PHASE_20261104.md`与demand_phase_audit.json。生产未改、runner结束。
+
+**11/04需求认领完整kernel完成：** demand_full独立claimed/ready+cursor、实际缺页hint优先CAS，所有CTA八warp数学/真实unique stage/cache写入/LRU保持。normal2定向+2额外claim/ready检查通过，3pass3294.581µs慢于clean，拒绝不测100GB。未做新Graph函数名probe/sanitizer/硬件字节计数，不能将claim状态核对当硬件流量证明。入口`DEMAND_FULL_20261104.md`、demand_full_audit.json，源码/实际库SHA齐。生产不变，runner结束。
+
+**11/04需求认领交错消费补证：** GPU2/24/108CTA×3epoch，每CTA64按序实际需求，未ready推进认领/fallback，ready后验证完整stage/cache；96777生产包copy恰1、errors0。仍无attention/LRU/cp.async集成/计时。特别更正探针验证会重读source，247741056B只是producer_source_bytes，不能声称总unique源字节/带宽。源码/二进制SHA和局限见`DEMAND_CONSUME_20261104.md`。生产未改、runner结束。
+
+**11/04需求认领GPU协议探针：** 2/24/108CTA×3epoch，9launch共96777完整20页包（各launch尾13页），每包实际源读/双stage-cache写回后release/acquire全载荷核对，copy恰1、errors0、done正确。REG20/STACK0，未计时、未集成attention/LRU/cp.async，消费者在drain阶段验证，不能冒充完整kernel正确性/性能。入口`DEMAND_PAYLOAD_20261104.md`、demand_payload.cu、run JSON源/二进制SHA。生产未改，runner结束。
+
+**11/04新机制进度模型：** demand-driven完整20页包认领，与旧prepare shared_claim hash不同；实际消费者可claim包、失败者推进fallback，结束compute继续drain。480CPU随机公平交错case恰一次copy/全部完成，但非CUDA内存/性能证明，尚未完整kernel。需独立claimed/ready、epoch和容量检查，保持实际unique字节。入口`DEMAND_PACKETS_20261104.md`、model_demand_packets.py、demand_packet_model.json。生产不变。
+
+**11/04行内服务关停控制：** 在clean保留双数学模板，只增加paired tile级service_live统一跳过耗尽后的服务helper；2定向检查通过，正常候选3109.579µs、随后新clean3117.867µs仅快0.266%，第三pass候选更慢，不认定稳定收益、不装不测100GB。区别于旧phase仅行边界切换；不能原样重做。原始/库SHA见`MIDROW_RELEASE_20261104.md`、midrow_release_audit.json。生产未改，runner结束。
+
+**11/04近期派发补证：** poolstripe/listcontrol/unifiedbody/poolquota_v2/quota_once，5版本Graph实查均单目标全CTA108CTA/8warp/dynamic163072/active1，header与实际加载库SHA逐一等于原性能raw。probe432query/K97单pool，不声称原R128K2048每launch已实查。证据见`RECENT_DISPATCH_20261104.md`、recent_dispatch_audit.json。候选仍拒绝，无新性能结论，生产未改。
+
+**11/04配额单次规划控制：** CTA0 leader一次写全部包表+grid barrier，samequota/same包序，2定向检查通过，正常3pass3675.680µs，比重复规划3540.139更慢，拒绝不测100GB。不能凭减少重复指令推断收益；串行全表发布等待成本真实计入。源码/raw/实际库SHA见同目录`QUOTA_ONCE_20261104.md`、quota_once_audit.json。生产不变，runner均结束。
+
+**11/04容量约束完整kernel：** poolquota粗粒度local-first+spill、严格每CTAq/q+1包，设备内重复leader规划计时。首版unique0读旧row_slot_base进度失败，自有pytest SIGTERM，原件保留；v2修复零miss跳过，2定向检查通过，正常3pass3540.139µs，仍慢于clean/listcontrol，拒绝不测100GB。160CPU exact quota/partition通过不等于GPU调度收益。入口`POOL_QUOTA_20261104.md`及poolquota_v2_audit.json，原始/源码/库SHA齐，生产不变，所有runner结束。
+
+**11/04严格配额局部性CPU可行性：** 实际末步8883包，固定clean每CTA82/83配额，整数匹配97.74%包可交其pool的8计算CTA、201包外溢；简单greedy95.45%/404外溢。只是CPU模型，非GPU实现/引用自用率/100GB收益，不上传规划替代必要GPU工作。为下一粗粒度容量约束planner提供依据，见同目录`POOL_CAPACITY_20261104.md`、model_pool_capacity.py及完整allocation JSON。生产保持81093。
+
+**11/04统一计算主体验证：** runtime active替换ACTIVE/SERVICE模板复制，实际codegen MMA598→299、指令9336→6687、REG仍255，正常3pass3175.445µs，无优于clean信号，拒绝；2定向检查通过。不能再仅凭静态代码复制认定主要瓶颈。原始/codegen/库SHA见同目录`UNIFIED_BODY_20261104.md`和unifiedbody_codegen.json。生产未改，runner结束。
+
+**11/04间接列表控制完成：** 保留pool系列间接packet表但恢复clean相同全局轮转包序/逐行计算，2定向检查通过，正常3pass3159.147µs，接近clean约3128，明显快于poolstripe3478。削弱“包表查询是主要退化”解释，不能跨轮相减作严格因果；继续pool机制需处理负载/供需顺序，不只删表。源码/实际库SHA核验见`LISTCONTROL_20261104.md`与listcontrol_audit.json，runner结束，生产不变。
+
+**11/04 pool拆分对照完成：** 保留pool包owner恢复均衡行计算poolrows3949.920µs；再将包分散给pool各query行owner的poolstripe3478.048µs，仍慢于clean约3128，均拒绝不测100GB，各2定向检查通过。stripe180CPU partition通过，actual last-step max110包/mean82.25；两raw header/实际库SHA核验通过。证明整pool工作不均衡有重要影响，但非同分配因果拆分、不称局部性已胜。停止换映射数字；入口同目录`POOL_SPLIT_20261104.md`、pool_split_audit.json。生产不变、runner均结束。
+
+**11/04 pool局部性路线：** actual最后一步远端引用全部samepool，unique按128pool连续。poolowner串行构造8460.555µs，parallel5457.664，真实row_slot_base边界构造5427.893，均拒绝，各2定向检查通过。负载审计固定整pool最大16行/平均9.48，maxunique5331/平均1645；不能据比例直接算端到端归因，但整pool不拆分尾部明确。停止只优化列表/换mod映射，下一设计须拆pool内计算任务并保留unique唯一producer。入口同实验目录`POOL*_20261104.md`、raw/SHA及pool_load_tail_audit.json。生产不变，runner均结束。
+
 **11/04 01:32后接续检查点：** 新连续包/连续行/反序包、payload helper noinline、CTA waitvote、不可变ticket等待step、QK后写回均未形成采用信号，生产81093保持。ticketstep3125.504 vs新clean3127.680µs仅0.07%；late_store3143.253µs。新候选共7×2=14项定向检查通过；无新100GB/物理链路/完整矩阵结论。profile/dependency/wait/clock诊断均为限定范围证据，不把低eligible、barrier比例或冲突总数当可回收时间。7轮末pass漂移在增加遥测空隙后未复现，不校正旧时间。所有完整raw实际库SHA12份核验通过，检查点manifest绑定166文件。目录内新增`*_20261104.md`及`checkpoint_20261104_manifest.json`为接续入口；构造器仍非幂等，不覆盖raw。所有runner已结束，GPU3末检空闲。后续不要再换包序/微调等待投票；应设计更低频跨CTA数据共享/状态交接并先证明真实依赖与进度，保留unique字节和单kernel约束。
 
 

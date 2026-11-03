@@ -1,0 +1,25 @@
+{
+  "scope": "last step actual unique counts; arithmetic load proxy, no timing prediction",
+  "pool_mod_grid": {
+    "max_rows": 16,
+    "mean_rows": 9.481481481481481,
+    "compute_tail_ratio": 1.6875,
+    "max_unique": 5331,
+    "mean_unique": 1644.8425925925926,
+    "transfer_tail_ratio": 3.2410396131567243
+  },
+  "row_round_robin": {
+    "max_rows": 10,
+    "mean_rows": 9.481481481481481,
+    "compute_tail_ratio": 1.0546875
+  },
+  "unique_round_robin_20": {
+    "max_packets": 83,
+    "mean_packets": 82.25
+  },
+  "greedy_combined_proxy": {
+    "max_rows": 16,
+    "max_unique": 3343,
+    "note": "still cannot avoid16row CTA with128 indivisible pools on108CTA"
+  }
+}

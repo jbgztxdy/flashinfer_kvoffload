@@ -1,0 +1,13 @@
+{
+  "cases": 480,
+  "max_ticks": 6372,
+  "each_payload_copied_once": true,
+  "all_consumers_finish": true,
+  "scope": "fair sequentially consistent randomized interleaving model, no attention math, no CUDA release/acquire or timing proof",
+  "requirements": [
+    "never abandon an in-flight claimed packet",
+    "ready published only after actual full stage/cache payload stores",
+    "completed compute CTAs participate until all unique packets drain",
+    "failed claim does not block unrelated fallback progress"
+  ]
+}

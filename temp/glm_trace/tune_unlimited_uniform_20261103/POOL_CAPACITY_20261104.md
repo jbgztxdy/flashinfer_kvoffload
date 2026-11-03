@@ -1,0 +1,7 @@
+# 局部性与严格包数配额的可行性
+
+从clean_pooldependency实际末步128pool unique counts生成8883个原20页包，包归属仍为首slot pool。该benchmark每pool8连续query行，计算row%108。将原全局轮转配额固定为每CTA82或83包，通过pool→其8个计算CTA→容量的整数maxflow，8682包可在自身pool计算CTA搬运（97.7373%），201包需非局部外溢；补齐后严格使用全部原配额。exact整数守恒检查通过，allocation区间251。
+
+这不是GPU实现或性能预测，不上传CPU规划代替设备工作，不代表97.74%引用由当前计算该行CTA自用，仅表示producer属于该pool的8个计算CTA集合。只最后一步，不宣称完整trace均如此。相比旧poolstripe最大110包，说明局部性不要求该负载尾部。原始输入SHA、allocation见pool_capacity_model.json；脚本model_pool_capacity.py无第三方依赖。
+
+简单确定性按pool顺序、8候选最大剩余容量waterfill，再全局spill得到8479/8883局部包（95.452%）、404非局部，严格82/83配额；905分配区间。pool_capacity_greedy.json保留全部allocation。CPU逐包waterfill不是应原样移植的GPU算法。下一GPU实现应按pool粗粒度整数水位分配、将配额构造/列表写入放在同cooperative kernel，计时包括全部必要规划；先证明容量与owner唯一性，禁止把CPU可行性当实测收益。生产未改，100GB目标未完成。

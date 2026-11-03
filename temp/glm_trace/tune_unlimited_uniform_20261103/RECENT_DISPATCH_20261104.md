@@ -1,0 +1,5 @@
+# 近期5版本实际派发审计
+
+poolstripe/listcontrol/unifiedbody/poolquota_v2/quota_once各一次Graph API实查，正常GPU3 NUMA1，共用已有独立JIT。实际header SHA及加载host_overlap库SHA逐一与原性能raw相同。均单BatchMLACleanServiceKernel、grid[1,108,1]、block[32,4,2]、dynamic163072、active1；采样输出参考通过。结果绑定recent_dispatch_audit.json及每版本dispatch_probe/独立archive，源码probe_recent.py。没有测性能或全矩阵。
+
+这确认5个新版本在probe形状下未回落通用路径；probe为432query/K97/单pool，并非重放原R128K2048完整Graph，不能当原性能所有launch实查。与raw库SHA相同和原guard审阅合用支持原实验路径有效，不替代未来保留版本的完整形状dispatch检查。所有候选仍拒绝，生产不变，100GB目标未完成。

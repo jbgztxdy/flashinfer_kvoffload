@@ -1,0 +1,7 @@
+# 动态需求认领耗尽后切pure
+
+需求版fallback cursor单调扫描所有候选，返回sentinel说明全部包已认领；本CTA当前包发布后才更新done为下一claim结果。因此done=sentinel时自身无未完成copy，未ready包均有仍负责推进的producer，可在行边界使用原pure数学体，而无需等待全局全部ready。纠正DEMAND_FULL原文中始终ACTIVE是进度必需条件的保守表述。此条件依赖先完整发布本包才claim下一包，不能随意提前退休producer。
+
+从demand_full只恢复每行ACTIVE/pure选择，动态claim/需求hint/cursor/真实数学/LRU/cache写入保持。正常GPU3同卡HBM BF16MTP8R128K2048LRU4096、256位置32步×3coldpass3158.495985/3184.288003/3220.127992µs，均3187.637327，较始终ACTIVE3294.581314下降3.25%，仍未胜clean约3128，更未胜生产staged约3030，拒绝不测100GB。跨轮非严格夹测，不能精确分摊控制成本。
+
+2项K65/K2048数学/LSE/padding/QPEstride80/Graph/cache全部有效载荷通过；性能采样及最终完整cache载荷通过。header与实际加载库SHA重核见demand_phase_audit.json，原始时间全部保留。未新增硬件字节/claim计数/Graph函数名probe/sanitizer/EMU结论。生产81093保持，runner结束。

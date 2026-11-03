@@ -1,0 +1,5 @@
+# 提示查询去原子控制
+
+demand_lookahead仅将候选claimed状态查询atomicAdd0替为host_batch_ld_acquire。提示不决定所有权，最终CAS独占claim保持，旧0只导致CAS失败fallback，不会重复搬运。ready消费和全部数学/LRU/真实cache-stage写回不变。区别于扫描提前距离，本次删除不必要的查询原子。
+
+正常GPU3同卡HBM BF16MTP8R128K2048LRU4096、256位置32步×3coldpass3232.863992/3232.800029/3308.704011µs，均3258.122678，未改善之前lookahead3235.434661，亦慢于demand_phase3187.637327和clean约3128；跨轮非严格夹测，无采用信号，拒绝不测100GB。2项K65/K2048数学/LSE/padding/QPEstride80/Graph/cache载荷通过，性能采样与全部最终cache载荷通过。源/实际库SHA核验见audit。无新硬件字节/采用率/Graph函数名probe/sanitizer/EMU结论。停止逐pair remap/claimed提示查询路线，不再扩展同机制变体，生产81093保持。

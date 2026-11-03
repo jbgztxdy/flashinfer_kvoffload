@@ -1,0 +1,7 @@
+# 消费需求驱动完整包认领：进度模型
+
+历史shared_claim为prepare阶段shared hash页去重（见docs/mla_host_a100_overlap110_20261102.md），与本机制不同。本设计保留原launch unique和20页完整packet，计算CTA遇实际缺页时可以CAS认领尚未搬的packet；没有静态未来owner。失败认领者不能只空等，继续fallback认领未分配packet；计算结束CTA继续drain直到全部unique完成。ready必须在真实读取/必要stage/cache载荷写完后release，消费者acquire，禁止额外远端重复读取。
+
+model_demand_packets.py：480组，1/2/8/108worker、0/1/3/20/109/501packet，随机消费/循环共享依赖、偏斜和随机copy延迟，fair shuffled调度。每包copy恰1、消费者完成、inflight全部drain。不是CUDA内存模型、所有并发交错或性能证明，没有attention数学，不称新kernel已实现。
+
+完整实现需额外claimed标志与cursor，不能复用ready为claimed后让消费者误消费；flags/claim/cursor容量及epoch清理都必须在原partial backing范围内。load→cache/stage stores→barrier→release协议继续沿用已验证规则。为避免高频全局CAS，优先按完整20页包认领，fallback cursor只推进候选；仍有atomic和全局控制成本，不保证胜过静态clean。下一步应实现独立正常kernel，先定向载荷/数学/Graph和包唯一性再小对照，不用模型成功代替实测。生产未改。

@@ -1,0 +1,9 @@
+# 动态认领与局部消费交错GPU协议检查
+
+在demand_payload基础上，CTA循环有64个按序需求；leader acquire当前需求ready后，经CTA同步，全线程验证真实stage/cache载荷；未ready则claim实际需求包，失败则推进fallback，之后重试同一消费需求。只有消费成功才增加turn，计算需求结束继续drain，全部需求和全局生产完成后才退出。覆盖局部消费等待与生产交错，不再只在全部drain后检查。
+
+2/24/108CTA×3epoch，9launch共96777生产packet，每包copy计数精确1，消费者验证及最终全载荷errors0，尾包13页。每launch215053页，producer_source_bytes247741056。source/binary SHA、preflight/结束资源、原始日志见demand_consume_run.json/log，源码demand_consume.cu。
+
+纠正旧DEMAND_PAYLOAD文档字节措辞：生产搬运每页一次，但验证逻辑读取source比较，整个探针总源读取不止unique字节。本版本明确记录producer_source_bytes；两个探针均未计时，不能用其字节作真实链路带宽或完整attention预测。尚未包含attention/MMA/cp.async/LRU/cache跨launch状态，也不是原完整kernel同步安全证明。
+
+完整集成需替换静态ticket到动态chunk、用独立claimed与ready、维护尚未发包与在途包的不同状态，保留原真实发布协议。服务结束后不能切pure_wait而遗留尚未认领需求；应以全局完成且自身无在途包为准。生产未改，目标未完成。

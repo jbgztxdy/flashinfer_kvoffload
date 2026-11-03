@@ -1,0 +1,7 @@
+# 需求认领完整attention原型
+
+从clean全CTA kernel集成独立claimed位图、fallback cursor，替换静态chunk=CTA+ticket*grid为动态完整20页包。warp0实际缺页投票选择需求包hint；当前包发布后leader优先CAS hint，失败按cursor找未claim包；所有CTA始终用ACTIVE数学体，防计算结束前错误切pure路径。原pairedQK/itemQPE/jointMDO/PV、双32KVstage/八mathwarp、精确launch LRU、真实stage/cache写回、release/acquire与FAR代码保持；只实测normal构建，EMU未验证。claim数组和cursor位于unused whole-row partial backing，与ready/诊断分离。clear后grid barrier包括unique0，所有必要初始化与原子计时。
+
+GPU3正常同卡HBM BF16MTP8R128K2048LRU4096，256位置32步×3coldpass3259.967975/3287.903979/3335.871987µs，均3294.581314。慢于clean约3128，无采用信号，拒绝安装不测100GB。不能由此精确分摊atomic、总是ACTIVE、供需顺序成本。
+
+原2项K65/K2048数学/LSE/padding/QPEstride80/Graph/cache全有效载荷通过；额外2项相同定向输入逐轮检查claimed全1、ready一致正epoch，覆盖当前unique所有packet。CAS逻辑保证唯一winner，但此检查不是每copy硬件字节计数；实际流量未测物理计数。性能采样/全部最终cache载荷通过。源/实际库SHA重新核验见demand_full_audit.json。无新全suite/sanitizer/实际Graph函数名probe/物理/EMU结论，生产81093保持。微探针验证源重读口径限制仍保留，不将其字节当完整kernel带宽。

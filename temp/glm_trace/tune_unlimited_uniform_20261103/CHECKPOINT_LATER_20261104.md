@@ -1,0 +1,11 @@
+# 后续检查点：没有新生产收益
+
+当前生产81093ba5/math34af/FAR8507保持。所有新增pool、quota、需求认领、统一主体和行内关停版本未安装。没有新增可信100GB成绩，也没有达到110%。完整kernel仍以normalGPU3同卡HBM筛选，不等价NVLink。
+
+17份完整新计时原件的实际库SHA重新核验；260个新增文件逐字节SHA见checkpoint_later_20261104_manifest.json。所有JSON可解析，Python AST通过。poolquota首版零miss停滞、SIGTERM与修正版独立保留，失败不可计为通过。
+
+最近机制结论：pool绑定牺牲负载均衡；严格quota恢复包数均衡仍未胜，重复planner改单次CTA0+gridbarrier也更慢；间接表同负载控制接近clean；统一数学代码体积减半仍未快；需求认领phase3187.637µs、始终ACTIVE3294.581，实际hint成功仅0.27%；提前逐pair hint3235.435，去查询原子3258.123，均无净收益。停止这些变体数字扫描，不凭静态指令/occupancy/协议模型推断性能。
+
+协议探针96777包exact-copy通过及交错消费通过，仅证明各自有限协议。验证源重读额外字节已明确，不作带宽计时。CPU配额局部性模型97.74%是可行性上界，不是GPU结果。5版本小形状Graph派发实查与性能raw库SHA相同，但不声称原全部计时launch均实查。
+
+后续需要实质不同且有成本依据的设计：在单kernel/unique字节/精确LRU保持下减少跨CTA发布和全局staging中转成本，而不是继续调整当前包排序/认领hint。既有用户约束要求先normal超过生产，当前全CTA仍未达到；不应为挽救候选更改模型/参考或隐去必要写回。生产direct正常优化与全CTA去重进展继续分开。
