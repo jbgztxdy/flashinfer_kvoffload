@@ -1,0 +1,222 @@
+{
+  "classification": "transfer diagnostic only",
+  "bytes": 247741056,
+  "cases": [
+    {
+      "latency_ns": 0,
+      "rows_per_packet": 10,
+      "CTAs": 108,
+      "repeat": 1,
+      "us": 7200.768066
+    },
+    {
+      "latency_ns": 0,
+      "rows_per_packet": 64,
+      "CTAs": 24,
+      "repeat": 1,
+      "us": 2493.439941
+    },
+    {
+      "latency_ns": 0,
+      "rows_per_packet": 64,
+      "CTAs": 24,
+      "repeat": 2,
+      "us": 2493.439941
+    },
+    {
+      "latency_ns": 0,
+      "rows_per_packet": 10,
+      "CTAs": 108,
+      "repeat": 2,
+      "us": 7206.912109
+    },
+    {
+      "latency_ns": 0,
+      "rows_per_packet": 10,
+      "CTAs": 108,
+      "repeat": 3,
+      "us": 7225.344238
+    },
+    {
+      "latency_ns": 0,
+      "rows_per_packet": 64,
+      "CTAs": 24,
+      "repeat": 3,
+      "us": 2492.416016
+    },
+    {
+      "latency_ns": 20000,
+      "rows_per_packet": 10,
+      "CTAs": 108,
+      "repeat": 1,
+      "us": 7908.352051
+    },
+    {
+      "latency_ns": 20000,
+      "rows_per_packet": 64,
+      "CTAs": 24,
+      "repeat": 1,
+      "us": 2511.87207
+    },
+    {
+      "latency_ns": 20000,
+      "rows_per_packet": 64,
+      "CTAs": 24,
+      "repeat": 2,
+      "us": 2510.848145
+    },
+    {
+      "latency_ns": 20000,
+      "rows_per_packet": 10,
+      "CTAs": 108,
+      "repeat": 2,
+      "us": 7908.352051
+    },
+    {
+      "latency_ns": 20000,
+      "rows_per_packet": 10,
+      "CTAs": 108,
+      "repeat": 3,
+      "us": 7970.815918
+    },
+    {
+      "latency_ns": 20000,
+      "rows_per_packet": 64,
+      "CTAs": 24,
+      "repeat": 3,
+      "us": 2511.87207
+    }
+  ],
+  "payload_exact": true,
+  "provenance": {
+    "start": "2026-11-03T18:29:44+0800",
+    "complete": false,
+    "preflight": [
+      {
+        "timestamp": "2026-11-03T18:29:44+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      {
+        "timestamp": "2026-11-03T18:29:47+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      {
+        "timestamp": "2026-11-03T18:29:49+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      {
+        "timestamp": "2026-11-03T18:29:51+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      {
+        "timestamp": "2026-11-03T18:29:53+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      {
+        "timestamp": "2026-11-03T18:29:55+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      }
+    ],
+    "resources_start": {
+      "timestamp": "2026-11-03T18:29:55+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    "command": [
+      "numactl",
+      "-N1",
+      "-m1",
+      "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/transfer_probe"
+    ],
+    "pid": 2900722,
+    "exit_code": 0,
+    "end": "2026-11-03T18:29:57+0800",
+    "resources_end": {
+      "timestamp": "2026-11-03T18:29:57+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 24
+        }
+      ],
+      "foreign": [],
+      "available": false
+    }
+  },
+  "source_sha256": "ecffd1404bb165c10ff5dedd03ea3e52aff23cb29f74200902d3d17a4084e8c3",
+  "binary_sha256": "7336409b560ce38ff48bf9e453ee672220bad4da96981e5e23b91091b2b101e8",
+  "far_sha256": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716",
+  "complete": true
+}

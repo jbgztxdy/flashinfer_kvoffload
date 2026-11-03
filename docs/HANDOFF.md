@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-03 17:51 SM80同warp流水线调研/CPU可行性完成；新探针GPU预检占用未运行，生产cab508dc/FAR8507eab0保持，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-03 18:42 全warp首版完成并拒绝，新增小包限速适用范围证据；生产cab508dc/FAR8507eab0保持，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -15,6 +15,16 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**18:42最新：用户授权全CTA同warp实现，已完成首个完整kernel及诊断；拒绝不安装，无新生产收益。** `tune_uniform_warps_20261103/`保留全108CTA/8warp/双32KV计算stage，回收目标路径sharedQPE，双10行farbuffer＋shared上下文，静态uniquechunk=CTA+k×grid，QK特征步0/12/24发copy，无跨SMscore交接；LRU先完成/gridbarrier，ready等待时推进自身取数，退出drain。真实原FAR/cachepayload/字节/数学保留，f24参数不代表24专用SM。实际REG255/STACK48/static1152/dynamic163072，有LDL/STL；不能称零溢出。首外层Params模板缺失编译失败first_compile，GPU前修复，冻结最终SHA见manifest，make非幂等resume且早于手工fix。
+
+samewarp前轮微探针本轮补GPU：108CTA的bulk/distributedQK0/20仍约98GB/s，24CTA约62–63；36计时launch，fullpayload+采样完整QK通过。随后新完整短窗口GPU3NUMA1BF16MTP8R128K2048LRU4096/staged/splitoff/256×3：base3295.179/3307.616µs，candidate9687.957/9449.024（慢194.00%/185.67%）。2项定向检查（output/LSE、padding空/奇尾、QPEstride80、3轮cache、Graph×2、全有效cache映射载荷）通过，52CPUownershipcases及4mathhelper/Qnope坐标身份；每性能步issue==publish==ceil(unique/10)、fetchedrows==actualunique，远端仍约248MB/步，但约12万waitprogress循环。无新大suite/sanitizer/full1024/FP16/normalbuild/physical/H800/Graphnodeprobe。
+
+**关键模型范围发现：原v2校准不能外推新108CTA双10行通道。** 独立纯transfer（不算attention）10行在hooksdisabled约653/646GB/s，enabledunlimited0/20约583/118，enabled100GB仅34.26/31.41；独立首transfer也34.36/31.24。原24CTA双64行仍99.44/98.56。表明高频小包在软件限速/预约竞争组合下不能达到100GB，不是payload漏计或提前放行，不把完整9.5ms称等价物理100GB架构失败；未细分CAS/时钟粒度/同步原因，模型header/参考未改、未绕hook。原生产校准口径仍有效。全kernelenabledunlimited0诊断candidate3935.328 vsbase3004.960µs，仍慢30.96%，故不能把退化全归模型，也不能把unlimited当正式参考。
+
+448完整计时launch（4×96＋2诊断×32），另36samewarp＋48transfer；所有原始负差/失败/SHA/资源保存。所有producerterminal，无waiter，GPU3末检0MiB0%；GPU0/1/2和H800不动。生产cab508dc/math34af/FAR8507/原矩阵保持。后续需新的包粒度/shared生命周期和减少service同步机制，不能原样重跑双10或只扫cadence数字；小包新组织先验实际吞吐。入口[完整结果](mla_host_uniform_warps_20261103.md)、`tune_uniform_warps_20261103/{README.md,audit.json,manifest.json}`。research_sm80_pipeline probe已completed，不再跑其旧未测入口。
+
+以下17:51研究入口为历史，原“新probe未运行”已被上文替代。
 
 **最新用户提出学习其他A100工程，让所有warp访存穿插计算；本轮完成官方源码调研和新结构可行性核算，未新增GPU结果/生产候选。** CUTLASS v3.9.2 `mma_multistage::mac_loop_iter`将future cp.async分散在当前warpMMA之间，stage边界才wait；FA2 v2.7.4 forward先V读再QK、nextK读再softmax/PV，utils预取下片段再MMA。它们同CTA拥有输出，不能照搬成逐引用far读取。相同base24 trace未缓存引用562.109MB/步而unique247.981MB，若取消launch去重会多2.267倍远端字节，不能沿用unique参考。
 

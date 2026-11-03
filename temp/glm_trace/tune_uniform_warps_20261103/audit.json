@@ -1,0 +1,894 @@
+{
+  "complete": true,
+  "timestamp": "2026-11-03T18:41:27+0800",
+  "rows": [
+    {
+      "raw": "base_diagnostic_unlimited_l0_f24.json",
+      "variant": "base",
+      "setting": {
+        "name": "diagnostic_unlimited_l0",
+        "bandwidth_GBps": 0,
+        "latency_ns": 0,
+        "tier": "peer",
+        "emulated": true
+      },
+      "mean_us": 3004.9600154161453,
+      "pass_us": [
+        3004.9600154161453
+      ],
+      "unique_miss_MB": 247.956084,
+      "mean_chunks": 0,
+      "mean_wait_progress_loops": 0,
+      "mean_fetched_pages": 0,
+      "harness": "bench_unlimited.py",
+      "sha256": "32eaf37601ec5ffa633fbefb8b09ae904b5bd8a64add5a91b83935b8b442b9fb",
+      "classification": "Diagnostic only unlimited transport; not formal100GB reference orphysicalNVLink"
+    },
+    {
+      "raw": "base_g100_l0_f24.json",
+      "variant": "base",
+      "setting": {
+        "name": "g100_l0",
+        "bandwidth_GBps": 100,
+        "latency_ns": 0,
+        "tier": "peer",
+        "emulated": true
+      },
+      "mean_us": 3295.178664227327,
+      "pass_us": [
+        3285.632014274597,
+        3281.215988099575,
+        3318.687990307808
+      ],
+      "unique_miss_MB": 247.986408,
+      "mean_chunks": 0,
+      "mean_wait_progress_loops": 0,
+      "mean_fetched_pages": 0,
+      "harness": "bench.py",
+      "sha256": "0b4e733709150147dc4b1e2e518260a956a9224a33736c30b59b911fd4dff4f5",
+      "reference_us": 2701.1557708876485,
+      "over_reference": 0.2199143417576661
+    },
+    {
+      "raw": "base_g100_l20000_f24.json",
+      "variant": "base",
+      "setting": {
+        "name": "g100_l20000",
+        "bandwidth_GBps": 100,
+        "latency_ns": 20000,
+        "tier": "peer",
+        "emulated": true
+      },
+      "mean_us": 3307.615992923578,
+      "pass_us": [
+        3291.839987039566,
+        3282.5919911265373,
+        3348.4160006046295
+      ],
+      "unique_miss_MB": 247.958088,
+      "mean_chunks": 0,
+      "mean_wait_progress_loops": 0,
+      "mean_fetched_pages": 0,
+      "harness": "bench.py",
+      "sha256": "16610442683834bd869bb9e201d54627a6204be6442de9e05a8857bd54b37e0e",
+      "reference_us": 2701.1570908876483,
+      "over_reference": 0.22451819040137222
+    },
+    {
+      "raw": "candidate_diagnostic_unlimited_l0_f24.json",
+      "variant": "candidate",
+      "setting": {
+        "name": "diagnostic_unlimited_l0",
+        "bandwidth_GBps": 0,
+        "latency_ns": 0,
+        "tier": "peer",
+        "emulated": true
+      },
+      "mean_us": 3935.3279918432236,
+      "pass_us": [
+        3935.3279918432236
+      ],
+      "unique_miss_MB": 248.02956,
+      "mean_chunks": 21530.78125,
+      "mean_wait_progress_loops": 1096.0625,
+      "mean_fetched_pages": 215303.4375,
+      "harness": "bench_unlimited.py",
+      "sha256": "736c5b2963720594452c6667c1b9ddccb5638503a626cf0c3ce6a6d32b4f6c4f",
+      "classification": "Diagnostic only unlimited transport; not formal100GB reference orphysicalNVLink"
+    },
+    {
+      "raw": "candidate_g100_l0_f24.json",
+      "variant": "candidate",
+      "setting": {
+        "name": "g100_l0",
+        "bandwidth_GBps": 100,
+        "latency_ns": 0,
+        "tier": "peer",
+        "emulated": true
+      },
+      "mean_us": 9687.957351406416,
+      "pass_us": [
+        9686.911940574646,
+        9682.592064142227,
+        9694.368049502373
+      ],
+      "unique_miss_MB": 248.00166,
+      "mean_chunks": 21528.385416666668,
+      "mean_wait_progress_loops": 122998.5625,
+      "mean_fetched_pages": 215279.21875,
+      "harness": "bench.py",
+      "sha256": "94bdaae812ad93aeae12f9cd3ca57dfd26ee02ffcc43ec7556814f7c9637958d",
+      "reference_us": 2701.2398908876485,
+      "over_reference": 2.5864853706950393
+    },
+    {
+      "raw": "candidate_g100_l20000_f24.json",
+      "variant": "candidate",
+      "setting": {
+        "name": "g100_l20000",
+        "bandwidth_GBps": 100,
+        "latency_ns": 20000,
+        "tier": "peer",
+        "emulated": true
+      },
+      "mean_us": 9449.023986856142,
+      "pass_us": [
+        9470.495983958244,
+        9448.415979743004,
+        9428.15999686718
+      ],
+      "unique_miss_MB": 247.950372,
+      "mean_chunks": 21523.895833333332,
+      "mean_wait_progress_loops": 126907.36458333333,
+      "mean_fetched_pages": 215234.69791666666,
+      "harness": "bench.py",
+      "sha256": "f349aec8f66c83b8bb4e315176b6ae4323f60ec732d27f3c2cc5be32206a52a2",
+      "reference_us": 2701.165130887648,
+      "over_reference": 2.498128966203201
+    }
+  ],
+  "comparisons": [
+    {
+      "setting": "diagnostic_unlimited_l0",
+      "base_us": 3004.9600154161453,
+      "candidate_us": 3935.3279918432236,
+      "slowdown": 0.309610767415897,
+      "decision": "reject current full candidate; not installed"
+    },
+    {
+      "setting": "g100_l0",
+      "base_us": 3295.178664227327,
+      "candidate_us": 9687.957351406416,
+      "slowdown": 1.9400400823723185,
+      "decision": "reject current full candidate; not installed"
+    },
+    {
+      "setting": "g100_l20000",
+      "base_us": 3307.615992923578,
+      "candidate_us": 9449.023986856142,
+      "slowdown": 1.8567475810588938,
+      "decision": "reject current full candidate; not installed"
+    }
+  ],
+  "transfer_diagnostics": [
+    {
+      "raw": "transfer_result.json",
+      "mode": 2,
+      "mode_name": "enabled100GB",
+      "latency_ns": 0,
+      "rows": 64,
+      "CTAs": 24,
+      "mean_us": 2493.0986326666666,
+      "GBps": 99.37073999154673,
+      "samples_us": [
+        2493.439941,
+        2493.439941,
+        2492.416016
+      ]
+    },
+    {
+      "raw": "transfer_result.json",
+      "mode": 2,
+      "mode_name": "enabled100GB",
+      "latency_ns": 0,
+      "rows": 10,
+      "CTAs": 108,
+      "mean_us": 7211.008137666667,
+      "GBps": 34.35595290843256,
+      "samples_us": [
+        7200.768066,
+        7206.912109,
+        7225.344238
+      ]
+    },
+    {
+      "raw": "transfer_result.json",
+      "mode": 2,
+      "mode_name": "enabled100GB",
+      "latency_ns": 20000,
+      "rows": 64,
+      "CTAs": 24,
+      "mean_us": 2511.5307616666664,
+      "GBps": 98.64145794320179,
+      "samples_us": [
+        2511.87207,
+        2510.848145,
+        2511.87207
+      ]
+    },
+    {
+      "raw": "transfer_result.json",
+      "mode": 2,
+      "mode_name": "enabled100GB",
+      "latency_ns": 20000,
+      "rows": 10,
+      "CTAs": 108,
+      "mean_us": 7929.17334,
+      "GBps": 31.244247713721947,
+      "samples_us": [
+        7908.352051,
+        7908.352051,
+        7970.815918
+      ]
+    },
+    {
+      "raw": "transfer_modes_result.json",
+      "mode": 0,
+      "mode_name": "hooksdisabled",
+      "latency_ns": 0,
+      "rows": 64,
+      "CTAs": 24,
+      "mean_us": 473.770671,
+      "GBps": 522.9134498281343,
+      "samples_us": [
+        476.160004,
+        474.112,
+        471.040009
+      ]
+    },
+    {
+      "raw": "transfer_modes_result.json",
+      "mode": 0,
+      "mode_name": "hooksdisabled",
+      "latency_ns": 0,
+      "rows": 10,
+      "CTAs": 108,
+      "mean_us": 379.562663,
+      "GBps": 652.7013327441008,
+      "samples_us": [
+        378.880005,
+        377.855988,
+        381.951996
+      ]
+    },
+    {
+      "raw": "transfer_modes_result.json",
+      "mode": 0,
+      "mode_name": "hooksdisabled",
+      "latency_ns": 20000,
+      "rows": 64,
+      "CTAs": 24,
+      "mean_us": 473.77065999999996,
+      "GBps": 522.9134619691308,
+      "samples_us": [
+        472.063995,
+        472.063995,
+        477.18399
+      ]
+    },
+    {
+      "raw": "transfer_modes_result.json",
+      "mode": 0,
+      "mode_name": "hooksdisabled",
+      "latency_ns": 20000,
+      "rows": 10,
+      "CTAs": 108,
+      "mean_us": 383.317332,
+      "GBps": 646.3079942338741,
+      "samples_us": [
+        381.951996,
+        379.903992,
+        388.096008
+      ]
+    },
+    {
+      "raw": "transfer_modes_result.json",
+      "mode": 1,
+      "mode_name": "enabledunlimited",
+      "latency_ns": 0,
+      "rows": 64,
+      "CTAs": 24,
+      "mean_us": 584.3626503333334,
+      "GBps": 423.9508734151353,
+      "samples_us": [
+        588.799988,
+        579.583984,
+        584.703979
+      ]
+    },
+    {
+      "raw": "transfer_modes_result.json",
+      "mode": 1,
+      "mode_name": "enabledunlimited",
+      "latency_ns": 0,
+      "rows": 10,
+      "CTAs": 108,
+      "mean_us": 425.30133033333334,
+      "GBps": 582.5071269018391,
+      "samples_us": [
+        428.032013,
+        424.959991,
+        422.911987
+      ]
+    },
+    {
+      "raw": "transfer_modes_result.json",
+      "mode": 1,
+      "mode_name": "enabledunlimited",
+      "latency_ns": 20000,
+      "rows": 64,
+      "CTAs": 24,
+      "mean_us": 1677.6533613333334,
+      "GBps": 147.6711826828786,
+      "samples_us": [
+        1678.33606,
+        1677.312012,
+        1677.312012
+      ]
+    },
+    {
+      "raw": "transfer_modes_result.json",
+      "mode": 1,
+      "mode_name": "enabledunlimited",
+      "latency_ns": 20000,
+      "rows": 10,
+      "CTAs": 108,
+      "mean_us": 2097.4933266666667,
+      "GBps": 118.11291738110543,
+      "samples_us": [
+        2099.199951,
+        2098.176025,
+        2095.104004
+      ]
+    },
+    {
+      "raw": "transfer_modes_result.json",
+      "mode": 2,
+      "mode_name": "enabled100GB",
+      "latency_ns": 0,
+      "rows": 64,
+      "CTAs": 24,
+      "mean_us": 2491.3920086666667,
+      "GBps": 99.43880976506185,
+      "samples_us": [
+        2492.416016,
+        2489.343994,
+        2492.416016
+      ]
+    },
+    {
+      "raw": "transfer_modes_result.json",
+      "mode": 2,
+      "mode_name": "enabled100GB",
+      "latency_ns": 0,
+      "rows": 10,
+      "CTAs": 108,
+      "mean_us": 7230.122721333333,
+      "GBps": 34.26512461109556,
+      "samples_us": [
+        7231.488281,
+        7221.248047,
+        7237.631836
+      ]
+    },
+    {
+      "raw": "transfer_modes_result.json",
+      "mode": 2,
+      "mode_name": "enabled100GB",
+      "latency_ns": 20000,
+      "rows": 64,
+      "CTAs": 24,
+      "mean_us": 2513.5787763333333,
+      "GBps": 98.56108681876708,
+      "samples_us": [
+        2514.944092,
+        2514.944092,
+        2510.848145
+      ]
+    },
+    {
+      "raw": "transfer_modes_result.json",
+      "mode": 2,
+      "mode_name": "enabled100GB",
+      "latency_ns": 20000,
+      "rows": 10,
+      "CTAs": 108,
+      "mean_us": 7888.213379,
+      "GBps": 31.406485105934912,
+      "samples_us": [
+        7886.848145,
+        7941.120117,
+        7836.671875
+      ]
+    }
+  ],
+  "samewarp_probe": [
+    {
+      "latency_ns": 0,
+      "CTAs": 24,
+      "mode": 0,
+      "mean_us": 2491.733236,
+      "GBps": 99.42519223996095
+    },
+    {
+      "latency_ns": 0,
+      "CTAs": 24,
+      "mode": 1,
+      "mean_us": 4003.8400063333333,
+      "GBps": 61.875863073479344
+    },
+    {
+      "latency_ns": 0,
+      "CTAs": 24,
+      "mode": 2,
+      "mean_us": 3940.693278,
+      "GBps": 62.86737853541718
+    },
+    {
+      "latency_ns": 0,
+      "CTAs": 108,
+      "mode": 0,
+      "mean_us": 2497.5359703333334,
+      "GBps": 99.19418937014761
+    },
+    {
+      "latency_ns": 0,
+      "CTAs": 108,
+      "mode": 1,
+      "mean_us": 2517.674642,
+      "GBps": 98.40074323630574
+    },
+    {
+      "latency_ns": 0,
+      "CTAs": 108,
+      "mode": 2,
+      "mean_us": 2522.4533693333333,
+      "GBps": 98.21432539126629
+    },
+    {
+      "latency_ns": 20000,
+      "CTAs": 24,
+      "mode": 0,
+      "mean_us": 2513.578776,
+      "GBps": 98.56108683183759
+    },
+    {
+      "latency_ns": 20000,
+      "CTAs": 24,
+      "mode": 1,
+      "mean_us": 4009.984131,
+      "GBps": 61.78105645974687
+    },
+    {
+      "latency_ns": 20000,
+      "CTAs": 24,
+      "mode": 2,
+      "mean_us": 3941.7173666666667,
+      "GBps": 62.851045104104834
+    },
+    {
+      "latency_ns": 20000,
+      "CTAs": 108,
+      "mode": 0,
+      "mean_us": 2517.6748046666667,
+      "GBps": 98.40073687864555
+    },
+    {
+      "latency_ns": 20000,
+      "CTAs": 108,
+      "mode": 1,
+      "mean_us": 2528.9385580000003,
+      "GBps": 97.96246540521922
+    },
+    {
+      "latency_ns": 20000,
+      "CTAs": 108,
+      "mode": 2,
+      "mean_us": 2524.8426106666666,
+      "GBps": 98.1213858453481
+    }
+  ],
+  "timed_full_launches": 448,
+  "timed_samewarp_probe_launches": 36,
+  "timed_transfer_launches": 48,
+  "focused_checks": 2,
+  "CPU_ownership_cases": 52,
+  "source_audit": {
+    "complete": true,
+    "ownership_cases": 52,
+    "cases": [
+      {
+        "grid": 1,
+        "count": 0,
+        "chunks": 0,
+        "vectors": 0,
+        "far_bytes": 0
+      },
+      {
+        "grid": 1,
+        "count": 1,
+        "chunks": 1,
+        "vectors": 72,
+        "far_bytes": 1152
+      },
+      {
+        "grid": 1,
+        "count": 9,
+        "chunks": 1,
+        "vectors": 648,
+        "far_bytes": 10368
+      },
+      {
+        "grid": 1,
+        "count": 10,
+        "chunks": 1,
+        "vectors": 720,
+        "far_bytes": 11520
+      },
+      {
+        "grid": 1,
+        "count": 11,
+        "chunks": 2,
+        "vectors": 792,
+        "far_bytes": 12672
+      },
+      {
+        "grid": 1,
+        "count": 19,
+        "chunks": 2,
+        "vectors": 1368,
+        "far_bytes": 21888
+      },
+      {
+        "grid": 1,
+        "count": 20,
+        "chunks": 2,
+        "vectors": 1440,
+        "far_bytes": 23040
+      },
+      {
+        "grid": 1,
+        "count": 21,
+        "chunks": 3,
+        "vectors": 1512,
+        "far_bytes": 24192
+      },
+      {
+        "grid": 1,
+        "count": 64,
+        "chunks": 7,
+        "vectors": 4608,
+        "far_bytes": 73728
+      },
+      {
+        "grid": 1,
+        "count": 1079,
+        "chunks": 108,
+        "vectors": 77688,
+        "far_bytes": 1243008
+      },
+      {
+        "grid": 1,
+        "count": 1080,
+        "chunks": 108,
+        "vectors": 77760,
+        "far_bytes": 1244160
+      },
+      {
+        "grid": 1,
+        "count": 1081,
+        "chunks": 109,
+        "vectors": 77832,
+        "far_bytes": 1245312
+      },
+      {
+        "grid": 1,
+        "count": 215261,
+        "chunks": 21527,
+        "vectors": 15498792,
+        "far_bytes": 247980672
+      },
+      {
+        "grid": 4,
+        "count": 0,
+        "chunks": 0,
+        "vectors": 0,
+        "far_bytes": 0
+      },
+      {
+        "grid": 4,
+        "count": 1,
+        "chunks": 1,
+        "vectors": 72,
+        "far_bytes": 1152
+      },
+      {
+        "grid": 4,
+        "count": 9,
+        "chunks": 1,
+        "vectors": 648,
+        "far_bytes": 10368
+      },
+      {
+        "grid": 4,
+        "count": 10,
+        "chunks": 1,
+        "vectors": 720,
+        "far_bytes": 11520
+      },
+      {
+        "grid": 4,
+        "count": 11,
+        "chunks": 2,
+        "vectors": 792,
+        "far_bytes": 12672
+      },
+      {
+        "grid": 4,
+        "count": 19,
+        "chunks": 2,
+        "vectors": 1368,
+        "far_bytes": 21888
+      },
+      {
+        "grid": 4,
+        "count": 20,
+        "chunks": 2,
+        "vectors": 1440,
+        "far_bytes": 23040
+      },
+      {
+        "grid": 4,
+        "count": 21,
+        "chunks": 3,
+        "vectors": 1512,
+        "far_bytes": 24192
+      },
+      {
+        "grid": 4,
+        "count": 64,
+        "chunks": 7,
+        "vectors": 4608,
+        "far_bytes": 73728
+      },
+      {
+        "grid": 4,
+        "count": 1079,
+        "chunks": 108,
+        "vectors": 77688,
+        "far_bytes": 1243008
+      },
+      {
+        "grid": 4,
+        "count": 1080,
+        "chunks": 108,
+        "vectors": 77760,
+        "far_bytes": 1244160
+      },
+      {
+        "grid": 4,
+        "count": 1081,
+        "chunks": 109,
+        "vectors": 77832,
+        "far_bytes": 1245312
+      },
+      {
+        "grid": 4,
+        "count": 215261,
+        "chunks": 21527,
+        "vectors": 15498792,
+        "far_bytes": 247980672
+      },
+      {
+        "grid": 24,
+        "count": 0,
+        "chunks": 0,
+        "vectors": 0,
+        "far_bytes": 0
+      },
+      {
+        "grid": 24,
+        "count": 1,
+        "chunks": 1,
+        "vectors": 72,
+        "far_bytes": 1152
+      },
+      {
+        "grid": 24,
+        "count": 9,
+        "chunks": 1,
+        "vectors": 648,
+        "far_bytes": 10368
+      },
+      {
+        "grid": 24,
+        "count": 10,
+        "chunks": 1,
+        "vectors": 720,
+        "far_bytes": 11520
+      },
+      {
+        "grid": 24,
+        "count": 11,
+        "chunks": 2,
+        "vectors": 792,
+        "far_bytes": 12672
+      },
+      {
+        "grid": 24,
+        "count": 19,
+        "chunks": 2,
+        "vectors": 1368,
+        "far_bytes": 21888
+      },
+      {
+        "grid": 24,
+        "count": 20,
+        "chunks": 2,
+        "vectors": 1440,
+        "far_bytes": 23040
+      },
+      {
+        "grid": 24,
+        "count": 21,
+        "chunks": 3,
+        "vectors": 1512,
+        "far_bytes": 24192
+      },
+      {
+        "grid": 24,
+        "count": 64,
+        "chunks": 7,
+        "vectors": 4608,
+        "far_bytes": 73728
+      },
+      {
+        "grid": 24,
+        "count": 1079,
+        "chunks": 108,
+        "vectors": 77688,
+        "far_bytes": 1243008
+      },
+      {
+        "grid": 24,
+        "count": 1080,
+        "chunks": 108,
+        "vectors": 77760,
+        "far_bytes": 1244160
+      },
+      {
+        "grid": 24,
+        "count": 1081,
+        "chunks": 109,
+        "vectors": 77832,
+        "far_bytes": 1245312
+      },
+      {
+        "grid": 24,
+        "count": 215261,
+        "chunks": 21527,
+        "vectors": 15498792,
+        "far_bytes": 247980672
+      },
+      {
+        "grid": 108,
+        "count": 0,
+        "chunks": 0,
+        "vectors": 0,
+        "far_bytes": 0
+      },
+      {
+        "grid": 108,
+        "count": 1,
+        "chunks": 1,
+        "vectors": 72,
+        "far_bytes": 1152
+      },
+      {
+        "grid": 108,
+        "count": 9,
+        "chunks": 1,
+        "vectors": 648,
+        "far_bytes": 10368
+      },
+      {
+        "grid": 108,
+        "count": 10,
+        "chunks": 1,
+        "vectors": 720,
+        "far_bytes": 11520
+      },
+      {
+        "grid": 108,
+        "count": 11,
+        "chunks": 2,
+        "vectors": 792,
+        "far_bytes": 12672
+      },
+      {
+        "grid": 108,
+        "count": 19,
+        "chunks": 2,
+        "vectors": 1368,
+        "far_bytes": 21888
+      },
+      {
+        "grid": 108,
+        "count": 20,
+        "chunks": 2,
+        "vectors": 1440,
+        "far_bytes": 23040
+      },
+      {
+        "grid": 108,
+        "count": 21,
+        "chunks": 3,
+        "vectors": 1512,
+        "far_bytes": 24192
+      },
+      {
+        "grid": 108,
+        "count": 64,
+        "chunks": 7,
+        "vectors": 4608,
+        "far_bytes": 73728
+      },
+      {
+        "grid": 108,
+        "count": 1079,
+        "chunks": 108,
+        "vectors": 77688,
+        "far_bytes": 1243008
+      },
+      {
+        "grid": 108,
+        "count": 1080,
+        "chunks": 108,
+        "vectors": 77760,
+        "far_bytes": 1244160
+      },
+      {
+        "grid": 108,
+        "count": 1081,
+        "chunks": 109,
+        "vectors": 77832,
+        "far_bytes": 1245312
+      },
+      {
+        "grid": 108,
+        "count": 215261,
+        "chunks": 21527,
+        "vectors": 15498792,
+        "far_bytes": 247980672
+      }
+    ],
+    "Q_nope_vectors": 4096,
+    "exact_Q_nope_coordinate_identity": true,
+    "unchanged_math_helpers": [
+      "pv_feature_pv",
+      "pv_feature_load_query",
+      "pv_feature_compute_pe",
+      "pv_feature_update_joint_host_mdo"
+    ],
+    "production_unchanged": true,
+    "math_unchanged": true,
+    "emulator_unchanged": true,
+    "limits": "CPU only: does not establish GPU progress/barriers/cachepayload/math correctness or speed."
+  },
+  "production_unchanged": true,
+  "canonical_math_unchanged": true,
+  "emulator_unchanged": true,
+  "formal_reference_unchanged": true,
+  "decision": "Reject current uniform10page implementation, do not install. Samewarp concept remains unproven endtoend; new packetization/lifetime mechanism needed, no trivialcadence/rowcount sweep.",
+  "limits": "BF16 GPU3samecardHBM NUMA1,32step prefix only. TargetactualREG255/STACK48/static1152/dynamic163072. No nativephysical/FP16/normalbuild/sanitizer/full1024/H800/newGraphnodeprobe.100GBv2aggregate calibration does not extend to108CTA10rowpacketization; it achieves31-34GBps even withoutattention. Enabledunlimited diagnostic cannotreplace100GB orbe claimed asproduction gain."
+}

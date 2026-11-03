@@ -1,3 +1,7 @@
+# Continuation: samewarp GPU probe completed
+
+Currentresult.json passes fullpayload/sampledQK.108CTA~98GB/s,24CTA~63GB/swithQK. Fulluniform2x10rowcandidate subsequentlyfailedthroughput/endtoend; see [latestreport](../../../docs/mla_host_uniform_warps_20261103.md). Priorpreflightstate archivedfirst_preflight. Allproducerscompleted, noresumeofaccepteddata. FollowingCPU-onlynotes arehistorical.
+
 # SM80 same-warp pipeline research — compile/CPU evidence only
 
 [Report](../../../docs/mla_host_sm80_pipeline_research_20261103.md) and `feasibility.json` explain limits. sources.json links official fixed-tag CUTLASS/FlashAttention code read through web tool; external snapshot download failed SSL, no downloaded source files or source hashes exist.

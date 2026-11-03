@@ -1,0 +1,445 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/flashinfer/jit/cpp_ext.py", line 332, in run_ninja
+    subprocess.run(
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['ninja', '-v', '-C', '/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False', '-f', '/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/build.ninja', '-j', '2']' returned non-zero exit status 1.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/compile.py", line 17, in <module>
+    gen_batch_mla_module('fa2',dtype,dtype,dtype,torch.int32,512,64,False,host_prefetch=host).build_and_load()
+  File "/mnt/data/rtx/projects/flashinfer/flashinfer/jit/core.py", line 318, in build_and_load
+    self.build(verbose, need_lock=False)
+  File "/mnt/data/rtx/projects/flashinfer/flashinfer/jit/core.py", line 304, in build
+    run_ninja(self.build_dir, self.ninja_path, verbose)
+  File "/mnt/data/rtx/projects/flashinfer/flashinfer/jit/cpp_ext.py", line 344, in run_ninja
+    raise RuntimeError(msg) from e
+RuntimeError: Ninja build failed. Ninja output:
+ninja: Entering directory `/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False'
+[1/4] /usr/local/cuda-13.1/bin/nvcc --generate-dependencies-with-compile --dependency-output /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_batch_mla_run.cuda.o.d -DPy_LIMITED_API=0x03090000 -D_GLIBCXX_USE_CXX11_ABI=1 -isystem /usr/include/python3.12 -isystem /usr/local/cuda-13.1/include -isystem /usr/local/cuda-13.1/include/cccl -isystem /mnt/data/mhy-vllm-venv/lib/python3.12/site-packages/tvm_ffi/include -isystem /mnt/data/mhy-vllm-venv/lib/python3.12/site-packages/tvm_ffi/include -isystem /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/include_candidate -isystem /mnt/data/rtx/projects/flashinfer/csrc -isystem /mnt/data/rtx/projects/flashinfer/3rdparty/cutlass/include -isystem /mnt/data/rtx/projects/flashinfer/3rdparty/cutlass/tools/util/include -isystem /mnt/data/rtx/projects/flashinfer/3rdparty/spdlog/include --compiler-options=-fPIC --expt-relaxed-constexpr -static-global-template-stub=false -gencode=arch=compute_80,code=sm_80 -DFLASHINFER_ENABLE_FP8_E8M0 -DFLASHINFER_ENABLE_FP4_E2M1 -std=c++17 --threads=1 -use_fast_math -DFLASHINFER_ENABLE_F16 -DFLASHINFER_ENABLE_BF16 -DFLASHINFER_ENABLE_FP8_E4M3 -DFLASHINFER_ENABLE_FP8_E5M2 -DNDEBUG -O3 -DFLASHINFER_FAR_EMU -c /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu -o /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_batch_mla_run.cuda.o 
+FAILED: /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_batch_mla_run.cuda.o 
+/usr/local/cuda-13.1/bin/nvcc --generate-dependencies-with-compile --dependency-output /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_batch_mla_run.cuda.o.d -DPy_LIMITED_API=0x03090000 -D_GLIBCXX_USE_CXX11_ABI=1 -isystem /usr/include/python3.12 -isystem /usr/local/cuda-13.1/include -isystem /usr/local/cuda-13.1/include/cccl -isystem /mnt/data/mhy-vllm-venv/lib/python3.12/site-packages/tvm_ffi/include -isystem /mnt/data/mhy-vllm-venv/lib/python3.12/site-packages/tvm_ffi/include -isystem /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/include_candidate -isystem /mnt/data/rtx/projects/flashinfer/csrc -isystem /mnt/data/rtx/projects/flashinfer/3rdparty/cutlass/include -isystem /mnt/data/rtx/projects/flashinfer/3rdparty/cutlass/tools/util/include -isystem /mnt/data/rtx/projects/flashinfer/3rdparty/spdlog/include --compiler-options=-fPIC --expt-relaxed-constexpr -static-global-template-stub=false -gencode=arch=compute_80,code=sm_80 -DFLASHINFER_ENABLE_FP8_E8M0 -DFLASHINFER_ENABLE_FP4_E2M1 -std=c++17 --threads=1 -use_fast_math -DFLASHINFER_ENABLE_F16 -DFLASHINFER_ENABLE_BF16 -DFLASHINFER_ENABLE_FP8_E4M3 -DFLASHINFER_ENABLE_FP8_E5M2 -DNDEBUG -O3 -DFLASHINFER_FAR_EMU -c /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu -o /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_batch_mla_run.cuda.o 
+In file included from /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu:22:
+/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_config.inc:29:111: warning: backslash-newline at end of file
+   29 | #define DISPATCH_context(DTypeQ, DTypeKV, DTypeO, IdType, MASK_MODE, HEAD_DIM_CKV, HEAD_DIM_KPE, Params, ...) \
+      |                                                                                                                
+In file included from /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu:22:
+/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_config.inc:29:111: warning: backslash-newline at end of file
+   29 | #define DISPATCH_context(DTypeQ, DTypeKV, DTypeO, IdType, MASK_MODE, HEAD_DIM_CKV, HEAD_DIM_KPE, Params, ...) \
+      |                                                                                                                
+/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/include_candidate/flashinfer/attention/mla_host_batch.cuh(3951): error: identifier "Params" is undefined
+      float (*sa)[8], float (*sb)[8], typename KTraits::SharedStorage& storage, const Params& params) {
+                                                                                      ^
+
+/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/include_candidate/flashinfer/attention/mla_host_batch.cuh(4035): error: incomplete type "void" is not allowed
+  __attribute__((device)) __inline__ __attribute__((always_inline)) void uniform_compute_qk_pair(
+                                                                         ^
+
+/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/include_candidate/flashinfer/attention/mla_host_batch.cuh(4036): error: type name is not allowed
+      typename KTraits::SharedStorage& storage,uint32_t a,uint32_t b,
+      ^
+
+/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/include_candidate/flashinfer/attention/mla_host_batch.cuh(4036): error: identifier "storage" is undefined
+      typename KTraits::SharedStorage& storage,uint32_t a,uint32_t b,
+                                       ^
+
+/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/include_candidate/flashinfer/attention/mla_host_batch.cuh(4036): error: type name is not allowed
+      typename KTraits::SharedStorage& storage,uint32_t a,uint32_t b,
+                                               ^
+
+/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/include_candidate/flashinfer/attention/mla_host_batch.cuh(4036): error: expected a ")"
+      typename KTraits::SharedStorage& storage,uint32_t a,uint32_t b,
+                                                        ^
+
+/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/include_candidate/flashinfer/attention/mla_host_batch.cuh(4037): error: expected a ";"
+      uint32_t (&qpe)[4][4], float (*sa)[8],float (*sb)[8],const Params& params) {
+                                                                                 ^
+
+/usr/include/c++/12/optional(98): error: not a class or struct name
+    class bad_optional_access : public exception
+                                       ^
+
+/usr/include/c++/12/optional(104): error: member function declared with "override" does not override a base class member
+      const char* what() const noexcept override
+                  ^
+
+/usr/include/c++/12/optional(118): error: remove_const_t is not a template
+        using _Stored_type = remove_const_t<_Tp>;
+                             ^
+
+/usr/include/c++/12/optional(125): error: identifier "in_place_t" is undefined
+   _Optional_payload_base(in_place_t __tag, _Args&&... __args)
+                          ^
+
+/usr/include/c++/12/optional(132): error: qualified name is not allowed
+   _Optional_payload_base(std::initializer_list<_Up> __il,
+                          ^
+
+/usr/include/c++/12/optional(132): error: expected a ")"
+   _Optional_payload_base(std::initializer_list<_Up> __il,
+                                               ^
+
+/usr/include/c++/12/optional(131): error: not a valid member class or function template declaration
+   constexpr
+   ^
+
+/usr/include/c++/12/optional(132): error: expected a ";"
+   _Optional_payload_base(std::initializer_list<_Up> __il,
+                                                         ^
+
+/usr/include/c++/12/optional(206): error: mismatched delimiters in default argument expression
+        template<typename _Up, bool = is_trivially_destructible_v<_Up>>
+                                      ^
+
+/usr/include/c++/12/optional(234): error: expected a "," or ">"
+   };
+    ^
+
+/usr/include/c++/12/optional(206): error: identifier "is_trivially_destructible_v" is undefined
+        template<typename _Up, bool = is_trivially_destructible_v<_Up>>
+                                      ^
+
+/usr/include/c++/12/optional(206): error: type name is not allowed
+        template<typename _Up, bool = is_trivially_destructible_v<_Up>>
+                                                                  ^
+
+/usr/include/c++/12/optional(206): error: expected a "," or ">"
+        template<typename _Up, bool = is_trivially_destructible_v<_Up>>
+                                                                     ^
+
+/usr/include/c++/12/optional(234): error: expected a declaration
+   };
+    ^
+
+/usr/include/c++/12/optional(237): error: a template argument list is not allowed in a declaration of a primary template
+   union _Storage<_Up, false>
+         ^
+
+/usr/include/c++/12/optional(269): error: _Storage is not a template
+        _Storage<_Stored_type> _M_payload;
+        ^
+
+/usr/include/c++/12/optional(190): error: identifier "__and_v" is undefined
+        noexcept(__and_v<is_nothrow_move_constructible<_Tp>,
+                 ^
+
+/usr/include/c++/12/optional(190): error: identifier "is_nothrow_move_constructible" is undefined
+        noexcept(__and_v<is_nothrow_move_constructible<_Tp>,
+                         ^
+
+/usr/include/c++/12/optional(190): error: type name is not allowed
+        noexcept(__and_v<is_nothrow_move_constructible<_Tp>,
+                                                       ^
+
+/usr/include/c++/12/optional(190): error: expected an expression
+        noexcept(__and_v<is_nothrow_move_constructible<_Tp>,
+                                                           ^
+
+/usr/include/c++/12/optional(276): error: identifier "is_nothrow_constructible_v" is undefined
+   noexcept(is_nothrow_constructible_v<_Stored_type, _Args...>)
+            ^
+
+/usr/include/c++/12/optional(276): error: type name is not allowed
+   noexcept(is_nothrow_constructible_v<_Stored_type, _Args...>)
+                                       ^
+
+/usr/include/c++/12/optional(276): error: expected a ")"
+   noexcept(is_nothrow_constructible_v<_Stored_type, _Args...>)
+                                                   ^
+
+/usr/include/c++/12/optional(126): error: namespace "flashinfer::mla::std" has no member "forward"
+   : _M_payload(__tag, std::forward<_Args>(__args)...),
+                            ^
+
+/usr/include/c++/12/optional(126): error: type name is not allowed
+   : _M_payload(__tag, std::forward<_Args>(__args)...),
+                                    ^
+
+/usr/include/c++/12/optional(194): error: namespace "flashinfer::mla::std" has no member "move"
+     this->_M_get() = std::move(__other._M_get());
+                           ^
+
+/usr/include/c++/12/optional(198): error: namespace "flashinfer::mla::std" has no member "move"
+         this->_M_construct(std::move(__other._M_get()));
+                                 ^
+
+/usr/include/c++/12/optional(278): error: namespace "flashinfer::mla::std" has no member "_Construct"
+     std::_Construct(std::__addressof(this->_M_payload._M_value),
+          ^
+
+/usr/include/c++/12/optional(278): error: namespace "flashinfer::mla::std" has no member "__addressof"
+     std::_Construct(std::__addressof(this->_M_payload._M_value),
+                          ^
+
+/usr/include/c++/12/optional(279): error: namespace "flashinfer::mla::std" has no member "forward"
+       std::forward<_Args>(__args)...);
+            ^
+
+/usr/include/c++/12/optional(279): error: type name is not allowed
+       std::forward<_Args>(__args)...);
+                    ^
+
+/usr/include/c++/12/optional(325): error: identifier "is_trivially_destructible_v" is undefined
+         is_trivially_destructible_v<_Tp>,
+         ^
+
+/usr/include/c++/12/optional(325): error: type name is not allowed
+         is_trivially_destructible_v<_Tp>,
+                                     ^
+
+/usr/include/c++/12/optional(325): error: expected a declaration
+         is_trivially_destructible_v<_Tp>,
+                                         ^
+
+/usr/include/c++/12/optional(325): error: expected a ";"
+         is_trivially_destructible_v<_Tp>,
+                                         ^
+
+/usr/include/c++/12/optional(336): error: a template argument list is not allowed in a declaration of a primary template
+      struct _Optional_payload<_Tp, true, true, true>
+             ^
+
+/usr/include/c++/12/optional(346): error: a template argument list is not allowed in a declaration of a primary template
+      struct _Optional_payload<_Tp, true, false, true>
+             ^
+
+/usr/include/c++/12/optional(369): error: a template argument list is not allowed in a declaration of a primary template
+      struct _Optional_payload<_Tp, true, true, false>
+             ^
+
+/usr/include/c++/12/optional(394): error: a template argument list is not allowed in a declaration of a primary template
+      struct _Optional_payload<_Tp, true, false, false>
+             ^
+
+/usr/include/c++/12/optional(427): error: a template argument list is not allowed in a declaration of a primary template
+      struct _Optional_payload<_Tp, false, _Copy, _Move>
+             ^
+
+/usr/include/c++/12/optional(428): error: _Optional_payload is not a template
+      : _Optional_payload<_Tp, true, false, false>
+        ^
+
+/usr/include/c++/12/optional(448): error: remove_const_t is not a template
+        using _Stored_type = remove_const_t<_Tp>;
+                             ^
+
+/usr/include/c++/12/optional(455): error: identifier "is_nothrow_constructible_v" is undefined
+   noexcept(is_nothrow_constructible_v<_Stored_type, _Args...>)
+            ^
+
+/usr/include/c++/12/optional(455): error: type name is not allowed
+   noexcept(is_nothrow_constructible_v<_Stored_type, _Args...>)
+                                       ^
+
+/usr/include/c++/12/optional(455): error: expected a ")"
+   noexcept(is_nothrow_constructible_v<_Stored_type, _Args...>)
+                                                   ^
+
+/usr/include/c++/12/optional(458): error: namespace "flashinfer::mla::std" has no member "forward"
+       std::forward<_Args>(__args)...);
+            ^
+
+/usr/include/c++/12/optional(458): error: type name is not allowed
+       std::forward<_Args>(__args)...);
+                    ^
+
+/usr/include/c++/12/optional(477): error: namespace "flashinfer::mla::std" has no member "__is_constant_evaluated"
+   do { if (std::__is_constant_evaluated() && !bool(this->_M_is_engaged())) __builtin_unreachable(); } while (false);
+                 ^
+
+/usr/include/c++/12/optional(484): error: namespace "flashinfer::mla::std" has no member "__is_constant_evaluated"
+   do { if (std::__is_constant_evaluated() && !bool(this->_M_is_engaged())) __builtin_unreachable(); } while (false);
+                 ^
+
+/usr/include/c++/12/optional(508): error: identifier "is_trivially_copy_constructible_v" is undefined
+      bool = is_trivially_copy_constructible_v<_Tp>,
+             ^
+
+/usr/include/c++/12/optional(508): error: type name is not allowed
+      bool = is_trivially_copy_constructible_v<_Tp>,
+                                               ^
+
+/usr/include/c++/12/optional(508): error: expected a declaration
+      bool = is_trivially_copy_constructible_v<_Tp>,
+                                                   ^
+
+/usr/include/c++/12/optional(508): error: expected a ";"
+      bool = is_trivially_copy_constructible_v<_Tp>,
+                                                   ^
+
+/usr/include/c++/12/optional(537): error: identifier "_Optional_base" is undefined
+        _Optional_base(const _Optional_base& __other)
+                             ^
+
+/usr/include/c++/12/optional(538): error: expected a "{"
+        : _M_payload(__other._M_payload._M_engaged, __other._M_payload)
+        ^
+
+/usr/include/c++/12/optional(542): error: declaration is incompatible with "int flashinfer::mla::_Optional_base(const <error-type> &)" (declared at line 537)
+        _Optional_base(_Optional_base&& __other)
+        ^
+
+/usr/include/c++/12/optional(542): error: identifier "__other" is undefined
+        _Optional_base(_Optional_base&& __other)
+                                        ^
+
+/usr/include/c++/12/optional(543): error: expected a ";"
+        noexcept(is_nothrow_move_constructible_v<_Tp>)
+        ^
+
+/usr/include/c++/12/optional(550): error: variable "flashinfer::mla::_Optional_base" is not a type name
+        _Optional_base& operator=(_Optional_base&&) = default;
+        ^
+
+/usr/include/c++/12/optional(550): error: "operator=" must be a member function
+        _Optional_base& operator=(_Optional_base&&) = default;
+                        ^
+
+/usr/include/c++/12/optional(550): error: variable "flashinfer::mla::_Optional_base" is not a type name
+        _Optional_base& operator=(_Optional_base&&) = default;
+                                  ^
+
+/usr/include/c++/12/optional(550): error: "= default" can only appear on default constructors, copy/move constructors, copy/move assignment operators, and destructors
+        _Optional_base& operator=(_Optional_base&&) = default;
+                                                      ^
+
+/usr/include/c++/12/optional(552): error: _Optional_payload is not a template
+        _Optional_payload<_Tp> _M_payload;
+        ^
+
+/usr/include/c++/12/optional(552): error: identifier "_Tp" is undefined
+        _Optional_payload<_Tp> _M_payload;
+                          ^
+
+/usr/include/c++/12/optional(556): error: a template argument list is not allowed in a declaration of a primary template
+      struct _Optional_base<_Tp, false, true>
+             ^
+
+/usr/include/c++/12/optional(557): error: _Optional_base_impl is not a template
+      : _Optional_base_impl<_Tp, _Optional_base<_Tp>>
+        ^
+
+/usr/include/c++/12/optional(557): error: identifier "_Optional_base" is undefined
+      : _Optional_base_impl<_Tp, _Optional_base<_Tp>>
+                                 ^
+
+/usr/include/c++/12/optional(557): error: type name is not allowed
+      : _Optional_base_impl<_Tp, _Optional_base<_Tp>>
+                                                ^
+
+/usr/include/c++/12/optional(597): error: _Optional_base_impl is not a template
+      : _Optional_base_impl<_Tp, _Optional_base<_Tp>>
+        ^
+
+/usr/include/c++/12/optional(597): error: type name is not allowed
+      : _Optional_base_impl<_Tp, _Optional_base<_Tp>>
+                                                ^
+
+/usr/include/c++/12/optional(640): error: _Optional_base_impl is not a template
+      : _Optional_base_impl<_Tp, _Optional_base<_Tp>>
+        ^
+
+/usr/include/c++/12/optional(640): error: type name is not allowed
+      : _Optional_base_impl<_Tp, _Optional_base<_Tp>>
+                                                ^
+
+/usr/include/c++/12/optional(685): error: __or_ is not a template
+        __or_<is_constructible<_Tp, const optional<_Up>&>,
+        ^
+
+/usr/include/c++/12/optional(685): error: identifier "is_constructible" is undefined
+        __or_<is_constructible<_Tp, const optional<_Up>&>,
+              ^
+
+/usr/include/c++/12/optional(685): error: type name is not allowed
+        __or_<is_constructible<_Tp, const optional<_Up>&>,
+                               ^
+
+/usr/include/c++/12/optional(685): error: expected a ";"
+        __or_<is_constructible<_Tp, const optional<_Up>&>,
+                                                         ^
+
+/usr/include/c++/12/optional(696): error: __or_ is not a template
+        __or_<is_assignable<_Tp&, const optional<_Up>&>,
+        ^
+
+/usr/include/c++/12/optional(696): error: identifier "is_assignable" is undefined
+        __or_<is_assignable<_Tp&, const optional<_Up>&>,
+              ^
+
+/usr/include/c++/12/optional(696): error: type name is not allowed
+        __or_<is_assignable<_Tp&, const optional<_Up>&>,
+                            ^
+
+/usr/include/c++/12/optional(696): error: expected an expression
+        __or_<is_assignable<_Tp&, const optional<_Up>&>,
+                                ^
+
+/usr/include/c++/12/optional(696): error: expected a ";"
+        __or_<is_assignable<_Tp&, const optional<_Up>&>,
+                                                       ^
+
+/usr/include/c++/12/optional(707): error: _Enable_copy_move is not a template
+        private _Enable_copy_move<
+                ^
+
+/usr/include/c++/12/optional(709): error: identifier "is_copy_constructible_v" is undefined
+   is_copy_constructible_v<_Tp>,
+   ^
+
+/usr/include/c++/12/optional(709): error: type name is not allowed
+   is_copy_constructible_v<_Tp>,
+                           ^
+
+/usr/include/c++/12/optional(711): error: __and_v is not a template
+   __and_v<is_copy_constructible<_Tp>, is_copy_assignable<_Tp>>,
+   ^
+
+/usr/include/c++/12/optional(711): error: identifier "is_copy_constructible" is undefined
+   __and_v<is_copy_constructible<_Tp>, is_copy_assignable<_Tp>>,
+           ^
+
+/usr/include/c++/12/optional(711): error: type name is not allowed
+   __and_v<is_copy_constructible<_Tp>, is_copy_assignable<_Tp>>,
+                                 ^
+
+/usr/include/c++/12/optional(711): error: is_copy_assignable is not a template
+   __and_v<is_copy_constructible<_Tp>, is_copy_assignable<_Tp>>,
+                                       ^
+
+/usr/include/c++/12/optional(711): error: class or struct definition is missing
+   __and_v<is_copy_constructible<_Tp>, is_copy_assignable<_Tp>>,
+                                                             ^
+
+/usr/include/c++/12/optional(1187): error: enable_if_t is not a template
+        enable_if_t<is_convertible<_Tp, bool>::value, bool>;
+        ^
+
+/usr/include/c++/12/optional(1187): error: identifier "is_convertible" is undefined
+        enable_if_t<is_convertible<_Tp, bool>::value, bool>;
+                    ^
+
+/usr/include/c++/12/optional(1187): error: type name is not allowed
+        enable_if_t<is_convertible<_Tp, bool>::value, bool>;
+                                   ^
+
+/usr/include/c++/12/optional(1187): error: expected a ";"
+        enable_if_t<is_convertible<_Tp, bool>::value, bool>;
+                                                    ^
+
+Error limit reached.
+100 errors detected in the compilation of "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_run.cu".
+Compilation terminated.
+[2/4] /usr/local/cuda-13.1/bin/nvcc --generate-dependencies-with-compile --dependency-output /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_batch_mla_plan.cuda.o.d -DPy_LIMITED_API=0x03090000 -D_GLIBCXX_USE_CXX11_ABI=1 -isystem /usr/include/python3.12 -isystem /usr/local/cuda-13.1/include -isystem /usr/local/cuda-13.1/include/cccl -isystem /mnt/data/mhy-vllm-venv/lib/python3.12/site-packages/tvm_ffi/include -isystem /mnt/data/mhy-vllm-venv/lib/python3.12/site-packages/tvm_ffi/include -isystem /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/include_candidate -isystem /mnt/data/rtx/projects/flashinfer/csrc -isystem /mnt/data/rtx/projects/flashinfer/3rdparty/cutlass/include -isystem /mnt/data/rtx/projects/flashinfer/3rdparty/cutlass/tools/util/include -isystem /mnt/data/rtx/projects/flashinfer/3rdparty/spdlog/include --compiler-options=-fPIC --expt-relaxed-constexpr -static-global-template-stub=false -gencode=arch=compute_80,code=sm_80 -DFLASHINFER_ENABLE_FP8_E8M0 -DFLASHINFER_ENABLE_FP4_E2M1 -std=c++17 --threads=1 -use_fast_math -DFLASHINFER_ENABLE_F16 -DFLASHINFER_ENABLE_BF16 -DFLASHINFER_ENABLE_FP8_E4M3 -DFLASHINFER_ENABLE_FP8_E5M2 -DNDEBUG -O3 -DFLASHINFER_FAR_EMU -c /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_plan.cu -o /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_batch_mla_plan.cuda.o 
+In file included from /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_plan.cu:18:
+/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_config.inc:29:111: warning: backslash-newline at end of file
+   29 | #define DISPATCH_context(DTypeQ, DTypeKV, DTypeO, IdType, MASK_MODE, HEAD_DIM_CKV, HEAD_DIM_KPE, Params, ...) \
+      |                                                                                                                
+In file included from /mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_plan.cu:18:
+/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_uniform_warps_20261103/jit_candidate/.cache/flashinfer/0.6.7/80/generated/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_config.inc:29:111: warning: backslash-newline at end of file
+   29 | #define DISPATCH_context(DTypeQ, DTypeKV, DTypeO, IdType, MASK_MODE, HEAD_DIM_CKV, HEAD_DIM_KPE, Params, ...) \
+      |                                                                                                                
+ninja: build stopped: subcommand failed.
+
