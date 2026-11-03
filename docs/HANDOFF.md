@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-03 11:41 保留PV feature调度，生产cab508dc；所有本任务runner已结束，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-03 14:56 模拟器v2修复及校准完成，attention仍cab508dc，FAR8507eab0，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -15,6 +15,14 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**11/03最新：用户明确要求“先修复吧，先保证我们的模拟准确然后我们讨论优化方向”，已授权本次模拟器修复，优先于旧“不改模拟器”限制。** FAR升级为8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716；host仍cab508dc、math34af不改。CAS原子max-plus计费，发出时预约、stage记录各warp最晚deadline、等待前补齐CTA同步；纳秒预算向上取整<1ns/包，L不占传输时钟，移除1秒截短。Memcpy gather统一发出时预约，旧432x16正确CAS校准只约51GB/s而失败，原件保存在emu_fix/cas_contention；最终64页/48单bufferCTA=3072在途行，与f24双64页相当。公共emu.py新模块/build_v2，拒绝旧kernel头混用新gather。
+
+GPU3/NUMA1：32组16000次并发预约、3组算术、2组late-warp stage检查全部正确；6真实payload搬运格全载荷一致。24CTA双64页fetch模拟100GB0/20实测99.53/98.78GB/s，50GB49.91/49.75；最终gather15组校准全过，100GB五延迟98.17–99.15，50GB49.69–49.88，20µs chase约20.48µs，原5%/10%+600ns判据、全部样本保持。normal/EMU构建、3项BF16staged/direct output/LSE/cachepayload/Graph集成、公共binding载荷/Graph及旧头拒绝通过。首CPU兼容错误和oracle错误归档first_attempt，非最终失败。软件开销已记录：302MB搬运微核nohooks486.4µs、disabled558.4、unlimited enabled695.0；不是完整MLA因果份额，不能直接扣除。它是校准的payload/到达模型，仍非物理NVLink等价，只验证单活动launch/module及50/100GB0–20µs。
+
+**旧5304矩阵及此前所有性能都是v1，不改值、不重标v2；旧冻结runner不得混用新gather。** attention110%目标继续未完成，不能将模拟修复计作kernel加速。后续讨论差距或优化收益前，用同一v2、新JIT/新原始文件做少量关键新对照；device参考公式保持。没有本轮新MLA性能/完整trace/矩阵/sanitizer/FP16/SXM/NVLink/H800结论。所有本轮runner结束，GPU3资源重新查询，GPU0/1/2未使用。当前报告[模拟器修复与校准](mla_host_emulator_fix_20261103.md)，原始目录`temp/glm_trace/emu_fix_20261103/`及audit.py为入口。
+
+以下14:24审计段落及更早记录是旧模型历史，FAR当前SHA以上述v2入口为准。
 
 **11/03 14:24模拟器审计新发现（优先阅读）：用户追问100GB真实性，未改生产cab508dc或FAR5e409。** 原reserve的atomicAdd后conditional atomicMax不是原子max-plus，空闲恢复时并发预约可漏算字节预算。`temp/glm_trace/emu_semantics_20261103/`保留CPU合法交错反例和调用原header实际reserve的独立GPU3诊断：2/24CTA同issue空闲burst各2000次均预算不符，预忙对照各2000次全正确；24CTA service span737..8844ns，预期17688ns。这是构造场景并发正确性证据，无payload，不是fulltrace发生率或耗时影响。此前SXM432CTA/16row饱和校准99.72..99.96GB/s仍如实保留，但不证明24CTA/64row瞬态严格100GB或物理等价。现有AB是在同一未改模拟器内的结果，不能再承诺严格物理100GB或把~24%差距全归kernel。延迟加在虚拟传输完成deadline上，实际copy耗时与其重叠，并非真实copy后再睡满L。预约在consume时按recorded issue追记，排队按预约顺序。无模拟器修复/参考变更/旧数据覆盖，建议先隔离版本审计正确性与生产发生率，再新测；所有诊断任务已结束。[审计与原件](../temp/glm_trace/emu_semantics_20261103/README.md)。
 

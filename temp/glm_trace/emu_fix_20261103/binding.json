@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-11-03T14:53:48+0800",
+  "complete": true,
+  "rows": 8205,
+  "bandwidth_GBps": 100,
+  "latency_ns": 20000,
+  "payload_ok": true,
+  "graph_replays": 2,
+  "module_name": "far_emu_gather_v2",
+  "build_directory": "/mnt/data/rtx/projects/flashinfer/temp/sim_link/build_v2",
+  "resources_start": {
+    "timestamp": "2026-11-03T14:52:52+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": true
+  },
+  "resources_end": {
+    "timestamp": "2026-11-03T14:53:49+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 579,
+        "total_mib": 40960,
+        "utilization": 0
+      }
+    ],
+    "foreign": [],
+    "available": false
+  },
+  "sources": {
+    "temp/sim_link/emu.py": "897a70c7a29d2897d2e890529b28f9b08d4773a3ed57dc639c7a04651a493f3e",
+    "temp/sim_link/emu_gather.cu": "0e6b170302b9fbc02371b885c8d1087da8bd388f162065c8b36bd6aa7d905d25",
+    "include/flashinfer/attention/far_link_emu.cuh": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716"
+  }
+}

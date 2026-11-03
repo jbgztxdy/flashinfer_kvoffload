@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "files": {
+    "include/flashinfer/attention/far_link_emu.cuh": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716",
+    "include/flashinfer/attention/mla.cuh": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+    "include/flashinfer/attention/mla_host_batch.cuh": "cab508dcb6e83b7a953d94a8e54e30e0aaf60bb1d7ba98480fc66893edcf4384",
+    "temp/sim_link/emu_gather.cu": "0e6b170302b9fbc02371b885c8d1087da8bd388f162065c8b36bd6aa7d905d25",
+    "temp/sim_link/emu.py": "897a70c7a29d2897d2e890529b28f9b08d4773a3ed57dc639c7a04651a493f3e"
+  },
+  "model": "Issue-time linearizable max-plus reservation,ceil(ns)service,latency excludedfromserializer; crosswarp prewaitbarrier.",
+  "packet_service_rounding": "ceil(bytes*ps_per_byte/1000)ns, conservative<1ns perpacket;100/50GBps representedexactlyat10/20ps/B.",
+  "gather_transport": "64row packets,48singlebufferCTAs=3072inflightrows; equalstagedf24double64bufferpayloadcapacity; replaces failed432x16layout."
+}

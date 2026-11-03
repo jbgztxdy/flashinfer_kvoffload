@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-11-03T14:56:57+0800",
+  "version": 2,
+  "status": "passed",
+  "model": "Issue-time CAS max-plus,ceil(ns)service; latency excluded from serialization.",
+  "emulator_sha256": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716",
+  "gather_sha256": "0e6b170302b9fbc02371b885c8d1087da8bd388f162065c8b36bd6aa7d905d25",
+  "binding_sha256": "897a70c7a29d2897d2e890529b28f9b08d4773a3ed57dc639c7a04651a493f3e",
+  "host_header_unchanged": true,
+  "math_header_unchanged": true,
+  "reservation_cases": 32,
+  "reservation_trials": 16000,
+  "arithmetic_cases": 3,
+  "stage_cases": 2,
+  "real_payload_cases": 6,
+  "standalone_calibration_settings": 15,
+  "integration_tests": 3,
+  "public_binding_graph_replays": 2,
+  "mismatched_old_header_rejected": true,
+  "bandwidth_acceptance_relative": 0.05,
+  "latency_acceptance": "abs(error)<=10%target+600ns forallpositiveL samples",
+  "max_standalone_mean_bandwidth_error": 0.018329238208278142,
+  "max_positive_latency_error_ns": 480,
+  "libraries": [
+    {
+      "mode": "emu",
+      "path": "jit_v2/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "sha256": "2b75112e519549890a83dc07813855bf335f20d6224a90ca455feebea5ab1bc9"
+    },
+    {
+      "mode": "emu",
+      "path": "jit_v2/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "sha256": "6663f67c1bf18fd5b3665c76a64b5b0221b2a6cc57dd7f344eba3c6db8ef8e3e"
+    },
+    {
+      "mode": "normal",
+      "path": "jit_v2_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+      "sha256": "5fd8b991a3f0ac6c26a4a749f96ec43a85cc4b78389c9e78927e0158ef15939e"
+    },
+    {
+      "mode": "normal",
+      "path": "jit_v2_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+      "sha256": "c61d0bfdd3369ff1f03e713f2b42c90f8b9f41887f8be5c42b705b982a9de507"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "manifest.json",
+      "sha256": "c41d5932e111dc548fd2cbbfbf736a910432f17c461e32e385731a1d854d5eeb"
+    },
+    {
+      "path": "build_v2.json",
+      "sha256": "aaa7d304c709b6bf8e447e4eca94740cc62191fd9e4abcce1945fd4247e4cc25"
+    },
+    {
+      "path": "verification.json",
+      "sha256": "f3cfd0b0f4301bb040fd3a8f9dc544417d28b0f6e566b54a33faba9977723d52"
+    },
+    {
+      "path": "calibration.json",
+      "sha256": "575349dd5cc82d005d19d804f0564d727e8bca8f9401a85114bd02aea6c64cd2"
+    },
+    {
+      "path": "integration.json",
+      "sha256": "f6588fc899241061dc5fb287587fc070a8ced222ab37c2a41a6113a083ee56dc"
+    },
+    {
+      "path": "overhead.json",
+      "sha256": "f3afeccd5e48137d40f0c09d55defd5bdc3c97bd3440c16ec1dab6c37a0bbc6c"
+    },
+    {
+      "path": "binding.json",
+      "sha256": "fd5b34d2c808fd339dfdba971bc7566a89f7a91674545cc3d216036466f95d3c"
+    },
+    {
+      "path": "binding_guard.json",
+      "sha256": "d71dad65e5b95e68b1b31f218493994f7f15eeb727d0d2014ceaaad628f10465"
+    }
+  ],
+  "limits": "GPU3 same-deviceHBM. No physicalNVLink/H800 or freshMLAperformance. Single active launch per module (CTA slots shared). Separate modules independent clocks. Packet rounding<1ns;50/100GBps exact10/20ps/B. Software overhead isnotfullMLA decomposition. Historicalraw retained,notrelabeled."
+}

@@ -18,10 +18,23 @@ def kernel_env(gbps, latency_ns, far_begin, far_end):
 
 def _load():
     global _mod
+    # A frozen kernel include tree can still contain the old simulator. Mixing it
+    # with the current gather would invalidate a comparison, so fail before JIT/GPU work.
+    from flashinfer.jit import env as jit_env
+    kernel_header = Path(jit_env.FLASHINFER_INCLUDE_DIR) / "flashinfer/attention/far_link_emu.cuh"
+    gather_header = ROOT / "include/flashinfer/attention/far_link_emu.cuh"
+    if kernel_header.read_bytes() != gather_header.read_bytes():
+        raise RuntimeError(
+            "Far-link simulator mismatch between the kernel include tree and gather; "
+            "use matching frozen sources and a separate JIT workspace."
+        )
     if _mod is None:
-        _mod = load("far_emu_gather", [str(Path(__file__).with_name("emu_gather.cu"))],
+        # Keep the original build and loaded module name separate from model v2.
+        build_directory = ROOT / "temp/sim_link/build_v2"
+        build_directory.mkdir(parents=True, exist_ok=True)
+        _mod = load("far_emu_gather_v2", [str(Path(__file__).with_name("emu_gather.cu"))],
                     extra_include_paths=[str(ROOT / "include")], extra_cuda_cflags=["-O3", "-arch=sm_80"],
-                    build_directory=str(ROOT / "temp/sim_link/build"), verbose=False)
+                    build_directory=str(build_directory), verbose=False)
     return _mod
 
 
