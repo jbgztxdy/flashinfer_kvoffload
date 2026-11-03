@@ -1,0 +1,7 @@
+# Direct计算head-pair同步
+
+在retained正常BF16 direct仅修改jointMDO最大值交换和PV的P发布屏障为64thread named barrier，KPE复用前屏障/owner-cache写回/exit/load同步保持。数据路径仍为逐引用direct，不是unique staged，不改变实际必要字节或默认路由。
+
+专用Graph API实查单DirectPV kernel108CTA/block32x4x2/dynamic147968/active1；2项K65/K2048数学/LSE/padding/QPEstride80/Graph/cache全有效载荷通过。正常GPU3同卡HBM BF16MTP8R128K2048LRU4096、256位置32步×3coldpass2839.583993/2850.495987/2924.128003µs，均2871.402661。此前retained2861.536，非同轮夹测，无采用信号，拒绝不追加100GB。不能用staged字节参考评价direct。
+
+首runner旧probe variant白名单在GPU前assert，原log/state保留；专用probe修正后完整跑完。source/实际库SHA重核见audit，dispatch_probe_direct_pairbarrier.json绑定实际Graph。复用paired barrier机制的前置分析但未新做direct专项racecheck/synccheck，不能称direct sanitizer通过；没有性能收益不扩展验证。生产81093不变。

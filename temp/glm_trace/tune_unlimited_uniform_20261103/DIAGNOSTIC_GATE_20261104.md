@@ -1,0 +1,7 @@
+# 评估门槛待用户取舍
+
+此前用户明确要求先正常不限速胜生产，再考虑模拟。最近所有全CTA候选未满足；normal最好的clean约3129µs相对生产staged约3030仍慢3.2%。这不能证明100GB一定更慢，但在用户更改门槛前不自行绕过。
+
+已向用户询问是否保留该门槛或允许少量100GB诊断，答复尚待。可审查范围optional_100gb_diagnostic_scope.json：仅clean20页冻结头与同参数production staged，先同binarydisabled/unlimited控制、核对Graph及header/library SHA，再考虑100GB0。原uniform10页模型5.17ms不能充当clean20页实测；无生产安装/修改参考/扣除hook开销或完整矩阵计划。当前三冻结候选均保留真实FAR读计费/wait，但其EMU构建未核验。
+
+没有运行新的GPU实验，也未将goal暂停/完成/blocked。生产保持81093。

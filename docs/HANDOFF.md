@@ -16,6 +16,34 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04cache直读双写控制：** 相同tile-ahead victim解析/cache读路径，恢复真实stage副本写入，normal3pass3397.984µs；单目的地3320.320约省77.664µs但仍慢clean，跨轮非严格因果。省写不足抵消地址/布局综合代价，停止当前cache直读形式。性能数学采样/全cache载荷通过，复用前驱定向检查，原始/库SHA见`CACHE_READ_CONTROL_20261104.md`及audit。生产未改、runner结束。
+
+**11/04单最终目的地新实现：** 与旧final_destination不同，沿用全CTA提前LRU、原global remap和packet ready，仅tile-ahead页号寄存器解析victim，无新增grid/global重编码/per-page ready；获准页只写cache，其他只写stage。2定向检查通过，normal3pass3320.320µs慢于clean，拒绝不测100GB。省写机会约166MB不等于实测加速/硬件字节证明。证据`SINGLE_DESTINATION_20261104.md`、audit及raw/header/实际库SHA，生产未改、runner结束。
+
+**11/04LRU特殊路径频率已测：** clean normal32步1pass4096pool项，select-all2446但low!=high仅283（6.9%）；同stamp原已跳radix。精确保序还需额外扫描，暂不新增优化分支。插桩时间非成绩，数学采样/全最终cache载荷通过，原始/实际库SHA见`LRU_FREQUENCY_20261104.md`及summary/raw。生产不变、runner结束。
+
+**11/04LRU准备优化前置核查：** select-all可用threshold=high/rank=count(high)替代radix，460CPU case原victim顺序精确相同；不能用UINT_MAX shortcut改变tie映射。原low==high已跳radix，冷步未必获益，需先统计真实full-select且low!=high频率，CUDA未实现，不声称收益。见`LRU_SELECT_ALL_20261104.md`、lru_select_all_model.json。生产未改。
+
+**11/04normal/100GB热步骤对齐：** 复用旧raw，24compute-reference占优步normal生产staged比device高400.540µs，100GB比normal再高158.976/159.687µs。跨binary/跨轮非严格因果，不扣时间、不全归prepare/模拟；支持继续降低正常融合固定工作/中转而非只修冷步或模拟。见`NATIVE_100GB_HOT_20261104.md`、native_100gb_hot_comparison.json及输入SHA。生产未改，无新GPU成绩。
+
+**11/04direct pairbarrier控制：** 已保留direct数学MDO/P发布改64thread同步，Graph实查单目标108CTA，2定向检查通过，normal3pass2871.403µs对历史retained2861.536无收益，拒绝不测100GB。首旧probe白名单GPU前失败保留后专用probe修复。未新做direct sanitizer，不混staged分母。证据`DIRECT_PAIRBARRIER_20261104.md`及audit/raw/实际库SHA。生产未改，runner结束。
+
+**11/04pairbarrier补证：** SASS确认64thread BAR，REG255/STACK16与clean一致；K65目标kernel1launch racecheck0errors/0warnings，synccheck此前0error。首未过滤racecheck范围过大，自有pytest3781887被终止exit15，原log保留，不算通过。未新增性能/未保留生产，见PAIRBARRIER报告、codegen/audit和target日志。所有检查结束。
+
+**11/04pure head-pair named barrier原型：** 仅pure MDO和P发布交换改两warp64thread barrier1..4，KPE复用/ACTIVE服务发布/装载仍CTA同步。2定向检查+K65 synccheck1case0error；normal3pass3105.525µs vs近期clean3117.867仅约0.4%跨轮信号，未认定稳定收益/未装不测100GB。source/实际库SHA与局限见`PAIRBARRIER_20261104.md`、pairbarrier_audit.json。生产未改、runner结束。
+
+**11/04loader复用审查：** clean和当前direct共用read_host_batch_pages/load_host_batch_kv/resolve_host_batch_row，函数体逐字相同且SHA保存；staged编译排除direct victim准备/逐引用FAR。不做loader换名重复实验。详见`SHARED_LOADER_20261104.md`、shared_loader_audit.json，无新GPU成绩/生产修改。待用户门槛问题答复期间未擅自启动100GB。
+
+**11/04stream cachewrite机器码补证：** 54条STG.E.128实际变STG.E.EF.128，提示未被忽略；REG255相同但STACK16→8、指令9336→9431，非等codegen，不能从持平时间单独否定L2策略。raw库SHA核对见cachewrite_codegen.json，报告已补，无新GPU时间/生产改动。
+
+**11/04miss-cache store提示候选：** clean仅实际cache uint4写回改st.global.cs，stage/时点/线程/字节/发布保持，区别旧写回迁移。2定向检查通过，normal3pass3116.523µs与近期clean3117.867接近，无收益不装不测100GB。不能从持平否定L2争用，未新采counter或SASS。原始/header/实际库SHA见`STREAM_CACHEWRITE_20261104.md`及audit。生产不变、runner结束。
+
+**11/04 100GB逐步差距分层：** 重解既有4格，32步24compute-reference占优、8transfer占优；旧v2 0µs平均超额贡献分别419.637/168.839µs，约71%来自compute类，20µs及batch模型一致。仅修冷步补发即使全消其超额仍不足110%。类别非实测因果，不将420µs全归fetchSM；后续优先热步服务/计算争用。逐步max及原参考SHA保留，入口`STEP_GAP_100GB_20261104.md`、step_gap_100gb.json。无新GPU成绩，生产未改。
+
+**11/04cadence预算：** 复用已有unique核算1包/64KV计算pair，冷步约需7.78行进度发完、热末2.56行、平均占可用计算约32.7%。纯算术非时序/100GB预测，不足支持扫cadence；冷热约束不同，需要真实在途/发布尾部证据。入口`SERVICE_CADENCE_20261104.md`、service_cadence_budget.json。无新GPU成绩，生产未改。
+
+**11/04跨query计算复用分析：** 全assistant前256位置10752相邻query对common71.92%，原位0.35%、同32tile5.70%。两query×32head需两CTA覆盖全部64heads，union平均2623页×2反多28.08%加载/全union计算；两query×64head现sharedQ+CKV已192KiB超A100。否决直接形式，不做无依据GPU筛选，区别旧半head双驻留。输入SHA/逐对统计见`MTP_PAIR_REUSE_20261104.md`、mtp_pair_reuse.json。生产未改。
+
 **11/04后续检查点归档：** 260新增文件、17份完整计时raw实际库SHA核验通过，JSON/Python语法通过。无新生产收益/可信100GB成绩。pool/quota/动态需求/提前hint/统一主体等负结果和首版失败全部保存，协议与CPU模型不混作性能。见`CHECKPOINT_LATER_20261104.md`、checkpoint_later_20261104_manifest.json。生产仍81093，GPU3空闲、runner均结束，不继续旧变体数字扫描。
 
 **11/04提示查询去原子控制：** lookahead中atomicAdd0→acquire读，最终独占CAS保持；2定向检查通过，normal3pass3258.123µs未改善旧3235.435。拒绝不测100GB，停止逐pair hint查询变体。证据`DEMAND_READHINT_20261104.md`、audit/raw/header/库SHA齐，生产未改，runner结束。

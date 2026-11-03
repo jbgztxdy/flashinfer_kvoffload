@@ -1,0 +1,12 @@
+{
+  "cases": 460,
+  "same_threshold": true,
+  "same_rank": true,
+  "same_victim_slot_order": true,
+  "scope": "CPU select-all special-case equivalence only; no GPU frequency or speed evidence",
+  "limitations": [
+    "when all stamps equal, existing radix already skips loop",
+    "extra high-count pass may negate savings",
+    "need actual select-all frequency before implementation"
+  ]
+}

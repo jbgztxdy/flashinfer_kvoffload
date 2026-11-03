@@ -1,0 +1,16 @@
+{
+  "scope": "upper byte-saving opportunity from actual LRU diagnostic32steps; not proposed implementation performance; no change to far unique bytes",
+  "mean_unique_pages": 215248.25,
+  "mean_admitted_pages": 144368.375,
+  "mean_avoidable_duplicate_stage_store_bytes": 166312368.0,
+  "mean_far_bytes": 247965984.0,
+  "max_possible_store_saving_fraction_of_unique_pages": 0.6707063820495637,
+  "source_sha256": "e1d47dd71cafec61abd43bf1c82722670f7e8d2d79210da75643cfa0f95a3cd2",
+  "constraints": [
+    "Preserve original launch-ready packet dependence even if destination becomes cache",
+    "Do not overwrite current-launch hit slots",
+    "No extra far read",
+    "All final cache payload writes remain timed",
+    "No claim of net speedup from saved bytes alone"
+  ]
+}

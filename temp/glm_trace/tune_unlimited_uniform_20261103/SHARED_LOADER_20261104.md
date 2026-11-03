@@ -1,0 +1,7 @@
+# Direct/staged loader源码范围核对
+
+当前生产retained direct与clean全CTA均调用同一个read_host_batch_pages/load_host_batch_kv/resolve_host_batch_row。逐字函数体核对相同，SHA见shared_loader_audit.json。KTraits布局和Params编译专化可改变codegen，不声称所有SASS相同。
+
+resolve每页一次以page符号选择staging或ckv，row*576地址，KPE为CKV+512；CKV/PE异步向量沿相同swizzle写计算stage。fully_staged跳过每引用FAR计费，staged关闭host_batch_writes_back中direct的victim准备。当前正常direct的主要收益是已移植到全CTA的pairedQK/itemQPE/jointMDO/PVfeature，而不是另一个可复制的更快KV loader。
+
+因此不做同代码换名的重复GPU筛选。后续若改地址路径须提出新信息（如批级确定全local/stage）并保留near与staging混合来源，而不能简单强制所有引用来自staging。无新GPU结果、生产未改。

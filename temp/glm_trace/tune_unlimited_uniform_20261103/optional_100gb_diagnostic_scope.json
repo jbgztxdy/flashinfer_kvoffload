@@ -1,0 +1,49 @@
+{
+  "purpose": "reviewable optional diagnostic scope; no launches authorized by this file",
+  "candidate": "clean20-row best established unique allCTA prototype",
+  "baseline": "production staged, same GPU and trace",
+  "minimal_points": [
+    "normal nohooks control if new EMU binary differs",
+    "samebinary hooks runtime disabled",
+    "samebinary enabledunlimited0",
+    "100GB0 diagnostic only after controls"
+  ],
+  "not_in_scope": [
+    "full matrix",
+    "5passes",
+    "latency sweep",
+    "production install",
+    "reference replacement"
+  ],
+  "constraints": [
+    "Preserve actual unique bytes, stage/cache stores and exact LRU",
+    "Bind actual loaded library and source SHA",
+    "Verify actual graph target",
+    "Do not subtract hook overhead from result",
+    "Label limited result diagnostic until model envelope holds"
+  ],
+  "existing_evidence": "uniform noinline old10-row 5172us versus normal~3935; not20-row clean equivalence",
+  "headers": {
+    "clean": {
+      "sha256": "29835918684dd24c76e15e27366e7e330268c3dd66c939eaffb1462b54ab2742",
+      "far_tile_present": true,
+      "far_wait_present": true,
+      "normal_tested": true,
+      "emu_build_for_this_frozen_header_verified": false
+    },
+    "midrow_release": {
+      "sha256": "71da0dba4cfc1792ef13cbf20f11247c8a9776843adb027d6bf389a5930c5fe9",
+      "far_tile_present": true,
+      "far_wait_present": true,
+      "normal_tested": true,
+      "emu_build_for_this_frozen_header_verified": false
+    },
+    "demand_phase": {
+      "sha256": "3a4fe9ab2bbc592f87069fe3ecd3cf8ad1f919252e5091e09ae64cdd6e5c7c3c",
+      "far_tile_present": true,
+      "far_wait_present": true,
+      "normal_tested": true,
+      "emu_build_for_this_frozen_header_verified": false
+    }
+  }
+}

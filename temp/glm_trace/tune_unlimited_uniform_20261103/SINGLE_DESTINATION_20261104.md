@@ -1,0 +1,7 @@
+# 提前页号阶段解析最终cache源
+
+从clean全CTA构建，原LRU在服务前已完成，single_destination_read_pages在原tile-ahead读取remap后将获victim的staged entry仅在线程寄存器中改为cache行；wait仍通过原global remap等待原20页包ready。producer对victim>=0只写cache，否则只写staging，原全writer屏障+release发布保持。未新增grid barrier、global remap遍历或per-page ready。区别于旧final_destination两额外grid/全局重编码/逐页轮询；与旧loader末端dependent lookup相比，把查询放在已有tile-ahead阶段。
+
+真实LRU诊断mean admitted144368页、unique215248页，对应理论可省duplicate stage store166312368B/步；此为写字节机会，不改变远端unique字节。缓存载荷完整写入是必需操作，未省略。旧remap仍是staging索引，原reference_misses诊断不因register重编码失效。
+
+正常GPU3同卡HBM BF16MTP8R128K2048LRU4096/256位置32步×3coldpass3299.519986/3306.303993/3355.136007µs，均3320.319995，慢于clean约3128，拒绝不测100GB。不能精确归因dependent查询与cache/staging布局成本。2项K65/K2048数学/LSE/padding/QPEstride80/Graph/cache所有有效载荷通过；性能采样及最终cache全载荷通过。source/实际库SHA核验见audit，raw全部保留；没有硬件store字节计数/新sanitizer/函数名Graphprobe/EMU结论。生产81093保持。

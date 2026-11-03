@@ -1,0 +1,666 @@
+{
+  "native_path": "temp/glm_trace/tune_unlimited_uniform_20261103/base_native_unlimited_f24.json",
+  "native_sha256": "47aec4d4fe1662e81a31f6bddd838781f1fc755f832e8980fcd415dbfd1ee83c",
+  "step_gap_sha256": "71ebf7d6b1642c205dae38b746387cc54d5a71a31dc4d51fcf4669390a426c9c",
+  "scope": "cross-run diagnostic only: earlier normal native binary vs EMU binary, different cache admission ties/clocks possible; not causal subtraction or corrected timing",
+  "cases": [
+    {
+      "name": "base_g100_l0_f24",
+      "compute_reference_dominant_steps": 24,
+      "hot_mean_native_over_device_us": 400.5404810110728,
+      "hot_mean_g100_minus_native_us": 158.97599193784922,
+      "hot_mean_excess_us": 559.516472948922,
+      "steps": [
+        {
+          "step": 0,
+          "dominant": "transfer",
+          "device_reference_us": 2470.5706437428794,
+          "native_us": 4069.0345764160156,
+          "g100_us": 6774.101257324219,
+          "native_over_device_us": 1598.4639326731362,
+          "g100_minus_native_us": 2705.066680908203,
+          "excess_over_ideal_us": 563.2660573242183
+        },
+        {
+          "step": 1,
+          "dominant": "compute",
+          "device_reference_us": 2471.935987472534,
+          "native_us": 2847.7439880371094,
+          "g100_us": 3016.704003016154,
+          "native_over_device_us": 375.8080005645752,
+          "g100_minus_native_us": 168.96001497904444,
+          "excess_over_ideal_us": 544.7680155436196
+        },
+        {
+          "step": 2,
+          "dominant": "compute",
+          "device_reference_us": 2466.1332766215005,
+          "native_us": 2809.173345565796,
+          "g100_us": 2989.738623301188,
+          "native_over_device_us": 343.0400689442954,
+          "g100_minus_native_us": 180.5652777353921,
+          "excess_over_ideal_us": 523.6053466796875
+        },
+        {
+          "step": 3,
+          "dominant": "compute",
+          "device_reference_us": 2464.7679328918457,
+          "native_us": 2848.4267393747964,
+          "g100_us": 3016.704003016154,
+          "native_over_device_us": 383.6588064829507,
+          "g100_minus_native_us": 168.27726364135742,
+          "excess_over_ideal_us": 551.9360701243081
+        },
+        {
+          "step": 4,
+          "dominant": "compute",
+          "device_reference_us": 2472.618659337362,
+          "native_us": 2853.8880348205566,
+          "g100_us": 2989.3972873687744,
+          "native_over_device_us": 381.26937548319484,
+          "g100_minus_native_us": 135.50925254821777,
+          "excess_over_ideal_us": 516.7786280314126
+        },
+        {
+          "step": 5,
+          "dominant": "compute",
+          "device_reference_us": 2478.0800342559814,
+          "native_us": 2877.4399757385254,
+          "g100_us": 3087.35998471578,
+          "native_over_device_us": 399.35994148254395,
+          "g100_minus_native_us": 209.92000897725438,
+          "excess_over_ideal_us": 609.2799504597983
+        },
+        {
+          "step": 6,
+          "dominant": "compute",
+          "device_reference_us": 2479.1040420532227,
+          "native_us": 2854.912042617798,
+          "g100_us": 3056.2987327575684,
+          "native_over_device_us": 375.8080005645752,
+          "g100_minus_native_us": 201.3866901397705,
+          "excess_over_ideal_us": 577.1946907043457
+        },
+        {
+          "step": 7,
+          "dominant": "compute",
+          "device_reference_us": 2482.51740137736,
+          "native_us": 2880.1706631978354,
+          "g100_us": 3067.903916041056,
+          "native_over_device_us": 397.65326182047556,
+          "g100_minus_native_us": 187.73325284322073,
+          "excess_over_ideal_us": 585.3865146636963
+        },
+        {
+          "step": 8,
+          "dominant": "compute",
+          "device_reference_us": 2491.3920561472573,
+          "native_us": 2847.7439880371094,
+          "g100_us": 2960.042635599772,
+          "native_over_device_us": 356.35193188985204,
+          "g100_minus_native_us": 112.29864756266261,
+          "excess_over_ideal_us": 468.65057945251465
+        },
+        {
+          "step": 9,
+          "dominant": "compute",
+          "device_reference_us": 2593.791961669922,
+          "native_us": 2920.7893212636313,
+          "g100_us": 3073.70662689209,
+          "native_over_device_us": 326.99735959370946,
+          "g100_minus_native_us": 152.9173056284585,
+          "excess_over_ideal_us": 479.91466522216797
+        },
+        {
+          "step": 10,
+          "dominant": "compute",
+          "device_reference_us": 2652.8426011403403,
+          "native_us": 2919.423977533976,
+          "g100_us": 3143.338680267334,
+          "native_over_device_us": 266.58137639363576,
+          "g100_minus_native_us": 223.9147027333579,
+          "excess_over_ideal_us": 490.49607912699366
+        },
+        {
+          "step": 11,
+          "dominant": "compute",
+          "device_reference_us": 2650.1119136810303,
+          "native_us": 2892.7999337514243,
+          "g100_us": 3104.7680377960205,
+          "native_over_device_us": 242.68802007039403,
+          "g100_minus_native_us": 211.9681040445962,
+          "excess_over_ideal_us": 454.65612411499023
+        },
+        {
+          "step": 12,
+          "dominant": "transfer",
+          "device_reference_us": 2648.063898086548,
+          "native_us": 2975.0613371531167,
+          "g100_us": 3329.7065893809,
+          "native_over_device_us": 326.99743906656886,
+          "g100_minus_native_us": 354.6452522277832,
+          "excess_over_ideal_us": 641.4109093808997
+        },
+        {
+          "step": 13,
+          "dominant": "compute",
+          "device_reference_us": 2652.5012652079263,
+          "native_us": 2954.581340154012,
+          "g100_us": 3109.2052459716797,
+          "native_over_device_us": 302.0800749460859,
+          "g100_minus_native_us": 154.6239058176675,
+          "excess_over_ideal_us": 456.7039807637534
+        },
+        {
+          "step": 14,
+          "dominant": "compute",
+          "device_reference_us": 2697.215954462687,
+          "native_us": 2937.8559589385986,
+          "g100_us": 3041.9627030690513,
+          "native_over_device_us": 240.6400044759116,
+          "g100_minus_native_us": 104.10674413045263,
+          "excess_over_ideal_us": 344.74674860636424
+        },
+        {
+          "step": 15,
+          "dominant": "compute",
+          "device_reference_us": 2775.381247202555,
+          "native_us": 3010.5599562327066,
+          "g100_us": 3164.1599337259927,
+          "native_over_device_us": 235.17870903015137,
+          "g100_minus_native_us": 153.59997749328613,
+          "excess_over_ideal_us": 388.7786865234375
+        },
+        {
+          "step": 16,
+          "dominant": "compute",
+          "device_reference_us": 2469.205300013224,
+          "native_us": 3029.3333530426025,
+          "g100_us": 3160.0639820098877,
+          "native_over_device_us": 560.1280530293784,
+          "g100_minus_native_us": 130.73062896728516,
+          "excess_over_ideal_us": 690.8586819966636
+        },
+        {
+          "step": 17,
+          "dominant": "transfer",
+          "device_reference_us": 2467.4986203511558,
+          "native_us": 3064.8319721221924,
+          "g100_us": 3228.671948115031,
+          "native_over_device_us": 597.3333517710366,
+          "g100_minus_native_us": 163.8399759928384,
+          "excess_over_ideal_us": 738.6738681150309
+        },
+        {
+          "step": 18,
+          "dominant": "transfer",
+          "device_reference_us": 2471.5946515401206,
+          "native_us": 3102.3786067962646,
+          "g100_us": 3366.9119675954184,
+          "native_over_device_us": 630.783955256144,
+          "g100_minus_native_us": 264.5333607991538,
+          "excess_over_ideal_us": 689.4412475954186
+        },
+        {
+          "step": 19,
+          "dominant": "compute",
+          "device_reference_us": 2467.8399562835693,
+          "native_us": 3046.0586547851562,
+          "g100_us": 3194.8800881703696,
+          "native_over_device_us": 578.2186985015869,
+          "g100_minus_native_us": 148.82143338521337,
+          "excess_over_ideal_us": 727.0401318868003
+        },
+        {
+          "step": 20,
+          "dominant": "transfer",
+          "device_reference_us": 2482.1759859720864,
+          "native_us": 3140.607992808024,
+          "g100_us": 3438.250700632731,
+          "native_over_device_us": 658.4320068359375,
+          "g100_minus_native_us": 297.64270782470703,
+          "excess_over_ideal_us": 611.834060632731
+        },
+        {
+          "step": 21,
+          "dominant": "transfer",
+          "device_reference_us": 2482.1760654449463,
+          "native_us": 3106.4747174580893,
+          "g100_us": 3218.0906931559243,
+          "native_over_device_us": 624.298652013143,
+          "g100_minus_native_us": 111.61597569783498,
+          "excess_over_ideal_us": 717.9434931559244
+        },
+        {
+          "step": 22,
+          "dominant": "transfer",
+          "device_reference_us": 2480.4693857828775,
+          "native_us": 3113.3012771606445,
+          "g100_us": 3283.626635869344,
+          "native_over_device_us": 632.8318913777671,
+          "g100_minus_native_us": 170.3253587086997,
+          "excess_over_ideal_us": 703.1658358693439
+        },
+        {
+          "step": 23,
+          "dominant": "transfer",
+          "device_reference_us": 2483.541409174601,
+          "native_us": 3148.1173833211265,
+          "g100_us": 3324.24529393514,
+          "native_over_device_us": 664.5759741465254,
+          "g100_minus_native_us": 176.12791061401367,
+          "excess_over_ideal_us": 737.1067339351403
+        },
+        {
+          "step": 24,
+          "dominant": "compute",
+          "device_reference_us": 2515.9680048624673,
+          "native_us": 3121.834675470988,
+          "g100_us": 3257.685343424479,
+          "native_over_device_us": 605.8666706085205,
+          "g100_minus_native_us": 135.8506679534912,
+          "excess_over_ideal_us": 741.7173385620117
+        },
+        {
+          "step": 25,
+          "dominant": "compute",
+          "device_reference_us": 2549.4186878204346,
+          "native_us": 3107.8399817148843,
+          "g100_us": 3235.83992322286,
+          "native_over_device_us": 558.4212938944497,
+          "g100_minus_native_us": 127.99994150797556,
+          "excess_over_ideal_us": 686.4212354024253
+        },
+        {
+          "step": 26,
+          "dominant": "compute",
+          "device_reference_us": 2589.695930480957,
+          "native_us": 3132.416009902954,
+          "g100_us": 3265.1946544647217,
+          "native_over_device_us": 542.7200794219971,
+          "g100_minus_native_us": 132.77864456176758,
+          "excess_over_ideal_us": 675.4987239837646
+        },
+        {
+          "step": 27,
+          "dominant": "compute",
+          "device_reference_us": 2652.1599292755127,
+          "native_us": 3152.2133350372314,
+          "g100_us": 3372.0320065816245,
+          "native_over_device_us": 500.05340576171875,
+          "g100_minus_native_us": 219.81867154439306,
+          "excess_over_ideal_us": 719.8720773061118
+        },
+        {
+          "step": 28,
+          "dominant": "compute",
+          "device_reference_us": 2653.8666089375815,
+          "native_us": 3097.9413986206055,
+          "g100_us": 3236.8640104929605,
+          "native_over_device_us": 444.07478968302394,
+          "g100_minus_native_us": 138.922611872355,
+          "excess_over_ideal_us": 582.9974015553789
+        },
+        {
+          "step": 29,
+          "dominant": "compute",
+          "device_reference_us": 2655.57328859965,
+          "native_us": 3117.055972417196,
+          "g100_us": 3256.661335627238,
+          "native_over_device_us": 461.4826838175459,
+          "g100_minus_native_us": 139.60536321004201,
+          "excess_over_ideal_us": 601.0880470275879
+        },
+        {
+          "step": 30,
+          "dominant": "compute",
+          "device_reference_us": 2703.359921773275,
+          "native_us": 3097.9413986206055,
+          "g100_us": 3233.7920665740967,
+          "native_over_device_us": 394.5814768473306,
+          "g100_minus_native_us": 135.8506679534912,
+          "excess_over_ideal_us": 530.4321448008218
+        },
+        {
+          "step": 31,
+          "dominant": "compute",
+          "device_reference_us": 2751.1465549468994,
+          "native_us": 3091.4560159047446,
+          "g100_us": 3230.720043182373,
+          "native_over_device_us": 340.3094609578452,
+          "g100_minus_native_us": 139.26402727762843,
+          "excess_over_ideal_us": 479.57348823547363
+        }
+      ]
+    },
+    {
+      "name": "base_g100_l20000_f24",
+      "compute_reference_dominant_steps": 24,
+      "hot_mean_native_over_device_us": 400.5404810110728,
+      "hot_mean_g100_minus_native_us": 159.68711177508033,
+      "hot_mean_excess_us": 560.2275927861532,
+      "steps": [
+        {
+          "step": 0,
+          "dominant": "transfer",
+          "device_reference_us": 2470.5706437428794,
+          "native_us": 4069.0345764160156,
+          "g100_us": 6804.479916890462,
+          "native_over_device_us": 1598.4639326731362,
+          "g100_minus_native_us": 2735.4453404744463,
+          "excess_over_ideal_us": 593.6447168904615
+        },
+        {
+          "step": 1,
+          "dominant": "compute",
+          "device_reference_us": 2471.935987472534,
+          "native_us": 2847.7439880371094,
+          "g100_us": 2978.816032409668,
+          "native_over_device_us": 375.8080005645752,
+          "g100_minus_native_us": 131.0720443725586,
+          "excess_over_ideal_us": 506.8800449371338
+        },
+        {
+          "step": 2,
+          "dominant": "compute",
+          "device_reference_us": 2466.1332766215005,
+          "native_us": 2809.173345565796,
+          "g100_us": 2954.581340154012,
+          "native_over_device_us": 343.0400689442954,
+          "g100_minus_native_us": 145.4079945882163,
+          "excess_over_ideal_us": 488.4480635325117
+        },
+        {
+          "step": 3,
+          "dominant": "compute",
+          "device_reference_us": 2464.7679328918457,
+          "native_us": 2848.4267393747964,
+          "g100_us": 2987.6906077067056,
+          "native_over_device_us": 383.6588064829507,
+          "g100_minus_native_us": 139.26386833190918,
+          "excess_over_ideal_us": 522.9226748148599
+        },
+        {
+          "step": 4,
+          "dominant": "compute",
+          "device_reference_us": 2472.618659337362,
+          "native_us": 2853.8880348205566,
+          "g100_us": 2991.1040465037026,
+          "native_over_device_us": 381.26937548319484,
+          "g100_minus_native_us": 137.216011683146,
+          "excess_over_ideal_us": 518.4853871663408
+        },
+        {
+          "step": 5,
+          "dominant": "compute",
+          "device_reference_us": 2478.0800342559814,
+          "native_us": 2877.4399757385254,
+          "g100_us": 3096.9173113505044,
+          "native_over_device_us": 399.35994148254395,
+          "g100_minus_native_us": 219.47733561197902,
+          "excess_over_ideal_us": 618.837277094523
+        },
+        {
+          "step": 6,
+          "dominant": "compute",
+          "device_reference_us": 2479.1040420532227,
+          "native_us": 2854.912042617798,
+          "g100_us": 3072.000026702881,
+          "native_over_device_us": 375.8080005645752,
+          "g100_minus_native_us": 217.087984085083,
+          "excess_over_ideal_us": 592.8959846496582
+        },
+        {
+          "step": 7,
+          "dominant": "compute",
+          "device_reference_us": 2482.51740137736,
+          "native_us": 2880.1706631978354,
+          "g100_us": 3067.5626595815024,
+          "native_over_device_us": 397.65326182047556,
+          "g100_minus_native_us": 187.391996383667,
+          "excess_over_ideal_us": 585.0452582041426
+        },
+        {
+          "step": 8,
+          "dominant": "compute",
+          "device_reference_us": 2491.3920561472573,
+          "native_us": 2847.7439880371094,
+          "g100_us": 2967.8932825724282,
+          "native_over_device_us": 356.35193188985204,
+          "g100_minus_native_us": 120.14929453531886,
+          "excess_over_ideal_us": 476.5012264251709
+        },
+        {
+          "step": 9,
+          "dominant": "compute",
+          "device_reference_us": 2593.791961669922,
+          "native_us": 2920.7893212636313,
+          "g100_us": 3095.893303553263,
+          "native_over_device_us": 326.99735959370946,
+          "g100_minus_native_us": 175.10398228963186,
+          "excess_over_ideal_us": 502.1013418833413
+        },
+        {
+          "step": 10,
+          "dominant": "compute",
+          "device_reference_us": 2652.8426011403403,
+          "native_us": 2919.423977533976,
+          "g100_us": 3095.5520470937095,
+          "native_over_device_us": 266.58137639363576,
+          "g100_minus_native_us": 176.12806955973338,
+          "excess_over_ideal_us": 442.70944595336914
+        },
+        {
+          "step": 11,
+          "dominant": "compute",
+          "device_reference_us": 2650.1119136810303,
+          "native_us": 2892.7999337514243,
+          "g100_us": 3079.850673675537,
+          "native_over_device_us": 242.68802007039403,
+          "g100_minus_native_us": 187.0507399241128,
+          "excess_over_ideal_us": 429.73875999450684
+        },
+        {
+          "step": 12,
+          "dominant": "transfer",
+          "device_reference_us": 2648.063898086548,
+          "native_us": 2975.0613371531167,
+          "g100_us": 3330.3893407185874,
+          "native_over_device_us": 326.99743906656886,
+          "g100_minus_native_us": 355.3280035654707,
+          "excess_over_ideal_us": 641.7672607185873
+        },
+        {
+          "step": 13,
+          "dominant": "compute",
+          "device_reference_us": 2652.5012652079263,
+          "native_us": 2954.581340154012,
+          "g100_us": 3174.741347630819,
+          "native_over_device_us": 302.0800749460859,
+          "g100_minus_native_us": 220.16000747680664,
+          "excess_over_ideal_us": 522.2400824228926
+        },
+        {
+          "step": 14,
+          "dominant": "compute",
+          "device_reference_us": 2697.215954462687,
+          "native_us": 2937.8559589385986,
+          "g100_us": 3104.426622390747,
+          "native_over_device_us": 240.6400044759116,
+          "g100_minus_native_us": 166.57066345214844,
+          "excess_over_ideal_us": 407.21066792806005
+        },
+        {
+          "step": 15,
+          "dominant": "compute",
+          "device_reference_us": 2775.381247202555,
+          "native_us": 3010.5599562327066,
+          "g100_us": 3223.893404006958,
+          "native_over_device_us": 235.17870903015137,
+          "g100_minus_native_us": 213.33344777425145,
+          "excess_over_ideal_us": 448.5121568044028
+        },
+        {
+          "step": 16,
+          "dominant": "compute",
+          "device_reference_us": 2469.205300013224,
+          "native_us": 3029.3333530426025,
+          "g100_us": 3167.5733725229898,
+          "native_over_device_us": 560.1280530293784,
+          "g100_minus_native_us": 138.24001948038722,
+          "excess_over_ideal_us": 698.3680725097656
+        },
+        {
+          "step": 17,
+          "dominant": "transfer",
+          "device_reference_us": 2467.4986203511558,
+          "native_us": 3064.8319721221924,
+          "g100_us": 3258.026679356893,
+          "native_over_device_us": 597.3333517710366,
+          "g100_minus_native_us": 193.19470723470067,
+          "excess_over_ideal_us": 768.2244393568931
+        },
+        {
+          "step": 18,
+          "dominant": "transfer",
+          "device_reference_us": 2471.5946515401206,
+          "native_us": 3102.3786067962646,
+          "g100_us": 3376.1279582977295,
+          "native_over_device_us": 630.783955256144,
+          "g100_minus_native_us": 273.74935150146484,
+          "excess_over_ideal_us": 699.1180382977295
+        },
+        {
+          "step": 19,
+          "dominant": "compute",
+          "device_reference_us": 2467.8399562835693,
+          "native_us": 3046.0586547851562,
+          "g100_us": 3202.0479838053384,
+          "native_over_device_us": 578.2186985015869,
+          "g100_minus_native_us": 155.98932902018214,
+          "excess_over_ideal_us": 734.208027521769
+        },
+        {
+          "step": 20,
+          "dominant": "transfer",
+          "device_reference_us": 2482.1759859720864,
+          "native_us": 3140.607992808024,
+          "g100_us": 3453.9520740509033,
+          "native_over_device_us": 658.4320068359375,
+          "g100_minus_native_us": 313.3440812428794,
+          "excess_over_ideal_us": 626.5792740509032
+        },
+        {
+          "step": 21,
+          "dominant": "transfer",
+          "device_reference_us": 2482.1760654449463,
+          "native_us": 3106.4747174580893,
+          "g100_us": 3239.936033884684,
+          "native_over_device_us": 624.298652013143,
+          "g100_minus_native_us": 133.46131642659475,
+          "excess_over_ideal_us": 741.1942738846842
+        },
+        {
+          "step": 22,
+          "dominant": "transfer",
+          "device_reference_us": 2480.4693857828775,
+          "native_us": 3113.3012771606445,
+          "g100_us": 3297.6213296254477,
+          "native_over_device_us": 632.8318913777671,
+          "g100_minus_native_us": 184.3200524648032,
+          "excess_over_ideal_us": 714.9525296254478
+        },
+        {
+          "step": 23,
+          "dominant": "transfer",
+          "device_reference_us": 2483.541409174601,
+          "native_us": 3148.1173833211265,
+          "g100_us": 3347.1147219340005,
+          "native_over_device_us": 664.5759741465254,
+          "g100_minus_native_us": 198.99733861287405,
+          "excess_over_ideal_us": 760.8171219340006
+        },
+        {
+          "step": 24,
+          "dominant": "compute",
+          "device_reference_us": 2515.9680048624673,
+          "native_us": 3121.834675470988,
+          "g100_us": 3245.738744735718,
+          "native_over_device_us": 605.8666706085205,
+          "g100_minus_native_us": 123.90406926472997,
+          "excess_over_ideal_us": 729.7707398732505
+        },
+        {
+          "step": 25,
+          "dominant": "compute",
+          "device_reference_us": 2549.4186878204346,
+          "native_us": 3107.8399817148843,
+          "g100_us": 3226.2825965881348,
+          "native_over_device_us": 558.4212938944497,
+          "g100_minus_native_us": 118.44261487325048,
+          "excess_over_ideal_us": 676.8639087677002
+        },
+        {
+          "step": 26,
+          "dominant": "compute",
+          "device_reference_us": 2589.695930480957,
+          "native_us": 3132.416009902954,
+          "g100_us": 3266.218582789103,
+          "native_over_device_us": 542.7200794219971,
+          "g100_minus_native_us": 133.80257288614894,
+          "excess_over_ideal_us": 676.522652308146
+        },
+        {
+          "step": 27,
+          "dominant": "compute",
+          "device_reference_us": 2652.1599292755127,
+          "native_us": 3152.2133350372314,
+          "g100_us": 3386.026700337728,
+          "native_over_device_us": 500.05340576171875,
+          "g100_minus_native_us": 233.81336530049657,
+          "excess_over_ideal_us": 733.8667710622153
+        },
+        {
+          "step": 28,
+          "dominant": "compute",
+          "device_reference_us": 2653.8666089375815,
+          "native_us": 3097.9413986206055,
+          "g100_us": 3219.1147009531655,
+          "native_over_device_us": 444.07478968302394,
+          "g100_minus_native_us": 121.17330233256007,
+          "excess_over_ideal_us": 565.248092015584
+        },
+        {
+          "step": 29,
+          "dominant": "compute",
+          "device_reference_us": 2655.57328859965,
+          "native_us": 3117.055972417196,
+          "g100_us": 3245.3973293304443,
+          "native_over_device_us": 461.4826838175459,
+          "g100_minus_native_us": 128.34135691324855,
+          "excess_over_ideal_us": 589.8240407307944
+        },
+        {
+          "step": 30,
+          "dominant": "compute",
+          "device_reference_us": 2703.359921773275,
+          "native_us": 3097.9413986206055,
+          "g100_us": 3216.042677561442,
+          "native_over_device_us": 394.5814768473306,
+          "g100_minus_native_us": 118.10127894083644,
+          "excess_over_ideal_us": 512.682755788167
+        },
+        {
+          "step": 31,
+          "dominant": "compute",
+          "device_reference_us": 2751.1465549468994,
+          "native_us": 3091.4560159047446,
+          "g100_us": 3216.7253494262695,
+          "native_over_device_us": 340.3094609578452,
+          "g100_minus_native_us": 125.26933352152491,
+          "excess_over_ideal_us": 465.5787944793701
+        }
+      ]
+    }
+  ]
+}

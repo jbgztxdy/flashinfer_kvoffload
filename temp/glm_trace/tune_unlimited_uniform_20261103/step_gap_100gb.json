@@ -1,0 +1,1239 @@
+{
+  "reference_path": "temp/glm_trace/tune_scatter_20261031/gpu3/raw/reference_base_staged_f24_i64_soff_floor_floor_mtp8_b128.json",
+  "reference_sha256": "e4200253cc88951752676f4cb6c4889a10eada7e9ff9f2bdfb8c5765bd95d8f0",
+  "scope": "existing sameGPU reference first32steps; per-pass per-step max retained, no new timing or reference replacement",
+  "cases": [
+    {
+      "name": "base_g100_l0_f24",
+      "raw_sha256": "3bfbe62c717b32e1e7f61130a0899af6021169629eee5e2bd4114e0a7218e1a6",
+      "mean_us": 3288.3946547905603,
+      "reference_us": 2699.918481141097,
+      "buckets": {
+        "compute": {
+          "steps": 24,
+          "mean_excess_us": 559.516472948922,
+          "contribution_to_full_mean_excess_us": 419.63735471169156
+        },
+        "transfer": {
+          "steps": 8,
+          "mean_excess_us": 675.3552757510884,
+          "contribution_to_full_mean_excess_us": 168.8388189377721
+        }
+      },
+      "steps": [
+        {
+          "step": 0,
+          "mean_us": 6774.101257324219,
+          "compute_us": 2470.5706437428794,
+          "transfer_us": 6210.8352,
+          "stepwise_ideal_us": 6210.8352,
+          "excess_us": 563.2660573242183,
+          "dominant": "transfer"
+        },
+        {
+          "step": 1,
+          "mean_us": 3016.704003016154,
+          "compute_us": 2471.935987472534,
+          "transfer_us": 2245.80864,
+          "stepwise_ideal_us": 2471.935987472534,
+          "excess_us": 544.7680155436196,
+          "dominant": "compute"
+        },
+        {
+          "step": 2,
+          "mean_us": 2989.738623301188,
+          "compute_us": 2466.1332766215005,
+          "transfer_us": 1957.79328,
+          "stepwise_ideal_us": 2466.1332766215005,
+          "excess_us": 523.6053466796875,
+          "dominant": "compute"
+        },
+        {
+          "step": 3,
+          "mean_us": 3016.704003016154,
+          "compute_us": 2464.7679328918457,
+          "transfer_us": 2056.33152,
+          "stepwise_ideal_us": 2464.7679328918457,
+          "excess_us": 551.9360701243081,
+          "dominant": "compute"
+        },
+        {
+          "step": 4,
+          "mean_us": 2989.3972873687744,
+          "compute_us": 2472.618659337362,
+          "transfer_us": 2310.88512,
+          "stepwise_ideal_us": 2472.618659337362,
+          "excess_us": 516.7786280314126,
+          "dominant": "compute"
+        },
+        {
+          "step": 5,
+          "mean_us": 3087.35998471578,
+          "compute_us": 2478.0800342559814,
+          "transfer_us": 2450.89536,
+          "stepwise_ideal_us": 2478.0800342559814,
+          "excess_us": 609.2799504597983,
+          "dominant": "compute"
+        },
+        {
+          "step": 6,
+          "mean_us": 3056.2987327575684,
+          "compute_us": 2479.1040420532227,
+          "transfer_us": 2467.69536,
+          "stepwise_ideal_us": 2479.1040420532227,
+          "excess_us": 577.1946907043457,
+          "dominant": "compute"
+        },
+        {
+          "step": 7,
+          "mean_us": 3067.903916041056,
+          "compute_us": 2482.51740137736,
+          "transfer_us": 2461.39392,
+          "stepwise_ideal_us": 2482.51740137736,
+          "excess_us": 585.3865146636963,
+          "dominant": "compute"
+        },
+        {
+          "step": 8,
+          "mean_us": 2960.042635599772,
+          "compute_us": 2491.3920561472573,
+          "transfer_us": 2224.8768,
+          "stepwise_ideal_us": 2491.3920561472573,
+          "excess_us": 468.65057945251465,
+          "dominant": "compute"
+        },
+        {
+          "step": 9,
+          "mean_us": 3073.70662689209,
+          "compute_us": 2593.791961669922,
+          "transfer_us": 2487.21792,
+          "stepwise_ideal_us": 2593.791961669922,
+          "excess_us": 479.91466522216797,
+          "dominant": "compute"
+        },
+        {
+          "step": 10,
+          "mean_us": 3143.338680267334,
+          "compute_us": 2652.8426011403403,
+          "transfer_us": 2466.6432,
+          "stepwise_ideal_us": 2652.8426011403403,
+          "excess_us": 490.49607912699366,
+          "dominant": "compute"
+        },
+        {
+          "step": 11,
+          "mean_us": 3104.7680377960205,
+          "compute_us": 2650.1119136810303,
+          "transfer_us": 2271.84768,
+          "stepwise_ideal_us": 2650.1119136810303,
+          "excess_us": 454.65612411499023,
+          "dominant": "compute"
+        },
+        {
+          "step": 12,
+          "mean_us": 3329.7065893809,
+          "compute_us": 2648.063898086548,
+          "transfer_us": 2688.29568,
+          "stepwise_ideal_us": 2688.29568,
+          "excess_us": 641.4109093808997,
+          "dominant": "transfer"
+        },
+        {
+          "step": 13,
+          "mean_us": 3109.2052459716797,
+          "compute_us": 2652.5012652079263,
+          "transfer_us": 2195.47392,
+          "stepwise_ideal_us": 2652.5012652079263,
+          "excess_us": 456.7039807637534,
+          "dominant": "compute"
+        },
+        {
+          "step": 14,
+          "mean_us": 3041.9627030690513,
+          "compute_us": 2697.215954462687,
+          "transfer_us": 1754.25024,
+          "stepwise_ideal_us": 2697.215954462687,
+          "excess_us": 344.74674860636424,
+          "dominant": "compute"
+        },
+        {
+          "step": 15,
+          "mean_us": 3164.1599337259927,
+          "compute_us": 2775.381247202555,
+          "transfer_us": 2485.92768,
+          "stepwise_ideal_us": 2775.381247202555,
+          "excess_us": 388.7786865234375,
+          "dominant": "compute"
+        },
+        {
+          "step": 16,
+          "mean_us": 3160.0639820098877,
+          "compute_us": 2469.205300013224,
+          "transfer_us": 2279.95392,
+          "stepwise_ideal_us": 2469.205300013224,
+          "excess_us": 690.8586819966636,
+          "dominant": "compute"
+        },
+        {
+          "step": 17,
+          "mean_us": 3228.671948115031,
+          "compute_us": 2467.4986203511558,
+          "transfer_us": 2489.99808,
+          "stepwise_ideal_us": 2489.99808,
+          "excess_us": 738.6738681150309,
+          "dominant": "transfer"
+        },
+        {
+          "step": 18,
+          "mean_us": 3366.9119675954184,
+          "compute_us": 2471.5946515401206,
+          "transfer_us": 2677.47072,
+          "stepwise_ideal_us": 2677.47072,
+          "excess_us": 689.4412475954186,
+          "dominant": "transfer"
+        },
+        {
+          "step": 19,
+          "mean_us": 3194.8800881703696,
+          "compute_us": 2467.8399562835693,
+          "transfer_us": 2098.11072,
+          "stepwise_ideal_us": 2467.8399562835693,
+          "excess_us": 727.0401318868003,
+          "dominant": "compute"
+        },
+        {
+          "step": 20,
+          "mean_us": 3438.250700632731,
+          "compute_us": 2482.1759859720864,
+          "transfer_us": 2826.41664,
+          "stepwise_ideal_us": 2826.41664,
+          "excess_us": 611.834060632731,
+          "dominant": "transfer"
+        },
+        {
+          "step": 21,
+          "mean_us": 3218.0906931559243,
+          "compute_us": 2482.1760654449463,
+          "transfer_us": 2500.1472,
+          "stepwise_ideal_us": 2500.1472,
+          "excess_us": 717.9434931559244,
+          "dominant": "transfer"
+        },
+        {
+          "step": 22,
+          "mean_us": 3283.626635869344,
+          "compute_us": 2480.4693857828775,
+          "transfer_us": 2580.4608,
+          "stepwise_ideal_us": 2580.4608000000003,
+          "excess_us": 703.1658358693439,
+          "dominant": "transfer"
+        },
+        {
+          "step": 23,
+          "mean_us": 3324.24529393514,
+          "compute_us": 2483.541409174601,
+          "transfer_us": 2587.13856,
+          "stepwise_ideal_us": 2587.13856,
+          "excess_us": 737.1067339351403,
+          "dominant": "transfer"
+        },
+        {
+          "step": 24,
+          "mean_us": 3257.685343424479,
+          "compute_us": 2515.9680048624673,
+          "transfer_us": 2356.47744,
+          "stepwise_ideal_us": 2515.9680048624673,
+          "excess_us": 741.7173385620117,
+          "dominant": "compute"
+        },
+        {
+          "step": 25,
+          "mean_us": 3235.83992322286,
+          "compute_us": 2549.4186878204346,
+          "transfer_us": 2208.57216,
+          "stepwise_ideal_us": 2549.4186878204346,
+          "excess_us": 686.4212354024253,
+          "dominant": "compute"
+        },
+        {
+          "step": 26,
+          "mean_us": 3265.1946544647217,
+          "compute_us": 2589.695930480957,
+          "transfer_us": 2510.29248,
+          "stepwise_ideal_us": 2589.695930480957,
+          "excess_us": 675.4987239837646,
+          "dominant": "compute"
+        },
+        {
+          "step": 27,
+          "mean_us": 3372.0320065816245,
+          "compute_us": 2652.1599292755127,
+          "transfer_us": 2648.30592,
+          "stepwise_ideal_us": 2652.1599292755127,
+          "excess_us": 719.8720773061118,
+          "dominant": "compute"
+        },
+        {
+          "step": 28,
+          "mean_us": 3236.8640104929605,
+          "compute_us": 2653.8666089375815,
+          "transfer_us": 2264.352,
+          "stepwise_ideal_us": 2653.8666089375815,
+          "excess_us": 582.9974015553789,
+          "dominant": "compute"
+        },
+        {
+          "step": 29,
+          "mean_us": 3256.661335627238,
+          "compute_us": 2655.57328859965,
+          "transfer_us": 2271.58656,
+          "stepwise_ideal_us": 2655.57328859965,
+          "excess_us": 601.0880470275879,
+          "dominant": "compute"
+        },
+        {
+          "step": 30,
+          "mean_us": 3233.7920665740967,
+          "compute_us": 2703.359921773275,
+          "transfer_us": 2276.68992,
+          "stepwise_ideal_us": 2703.359921773275,
+          "excess_us": 530.4321448008218,
+          "dominant": "compute"
+        },
+        {
+          "step": 31,
+          "mean_us": 3230.720043182373,
+          "compute_us": 2751.1465549468994,
+          "transfer_us": 2043.52512,
+          "stepwise_ideal_us": 2751.1465549468994,
+          "excess_us": 479.57348823547363,
+          "dominant": "compute"
+        }
+      ]
+    },
+    {
+      "name": "base_g100_l20000_f24",
+      "raw_sha256": "359f56c0af9b94733cb4e411416c8bb42174be6c72d2bf2f31d80fce7f756b2c",
+      "mean_us": 3293.4293374419212,
+      "reference_us": 2699.936841141097,
+      "buckets": {
+        "compute": {
+          "steps": 24,
+          "mean_excess_us": 560.2275927861532,
+          "contribution_to_full_mean_excess_us": 420.17069458961487
+        },
+        "transfer": {
+          "steps": 8,
+          "mean_excess_us": 693.2872068448385,
+          "contribution_to_full_mean_excess_us": 173.32180171120962
+        }
+      },
+      "steps": [
+        {
+          "step": 0,
+          "mean_us": 6804.479916890462,
+          "compute_us": 2470.5706437428794,
+          "transfer_us": 6210.8352,
+          "stepwise_ideal_us": 6210.8352,
+          "excess_us": 593.6447168904615,
+          "dominant": "transfer"
+        },
+        {
+          "step": 1,
+          "mean_us": 2978.816032409668,
+          "compute_us": 2471.935987472534,
+          "transfer_us": 2245.1136,
+          "stepwise_ideal_us": 2471.935987472534,
+          "excess_us": 506.8800449371338,
+          "dominant": "compute"
+        },
+        {
+          "step": 2,
+          "mean_us": 2954.581340154012,
+          "compute_us": 2466.1332766215005,
+          "transfer_us": 1957.74336,
+          "stepwise_ideal_us": 2466.1332766215005,
+          "excess_us": 488.4480635325117,
+          "dominant": "compute"
+        },
+        {
+          "step": 3,
+          "mean_us": 2987.6906077067056,
+          "compute_us": 2464.7679328918457,
+          "transfer_us": 2056.98432,
+          "stepwise_ideal_us": 2464.7679328918457,
+          "excess_us": 522.9226748148599,
+          "dominant": "compute"
+        },
+        {
+          "step": 4,
+          "mean_us": 2991.1040465037026,
+          "compute_us": 2472.618659337362,
+          "transfer_us": 2311.05408,
+          "stepwise_ideal_us": 2472.618659337362,
+          "excess_us": 518.4853871663408,
+          "dominant": "compute"
+        },
+        {
+          "step": 5,
+          "mean_us": 3096.9173113505044,
+          "compute_us": 2478.0800342559814,
+          "transfer_us": 2449.48224,
+          "stepwise_ideal_us": 2478.0800342559814,
+          "excess_us": 618.837277094523,
+          "dominant": "compute"
+        },
+        {
+          "step": 6,
+          "mean_us": 3072.000026702881,
+          "compute_us": 2479.1040420532227,
+          "transfer_us": 2464.93824,
+          "stepwise_ideal_us": 2479.1040420532227,
+          "excess_us": 592.8959846496582,
+          "dominant": "compute"
+        },
+        {
+          "step": 7,
+          "mean_us": 3067.5626595815024,
+          "compute_us": 2482.51740137736,
+          "transfer_us": 2461.31712,
+          "stepwise_ideal_us": 2482.51740137736,
+          "excess_us": 585.0452582041426,
+          "dominant": "compute"
+        },
+        {
+          "step": 8,
+          "mean_us": 2967.8932825724282,
+          "compute_us": 2491.3920561472573,
+          "transfer_us": 2225.05728,
+          "stepwise_ideal_us": 2491.3920561472573,
+          "excess_us": 476.5012264251709,
+          "dominant": "compute"
+        },
+        {
+          "step": 9,
+          "mean_us": 3095.893303553263,
+          "compute_us": 2593.791961669922,
+          "transfer_us": 2486.23872,
+          "stepwise_ideal_us": 2593.791961669922,
+          "excess_us": 502.1013418833413,
+          "dominant": "compute"
+        },
+        {
+          "step": 10,
+          "mean_us": 3095.5520470937095,
+          "compute_us": 2652.8426011403403,
+          "transfer_us": 2467.66464,
+          "stepwise_ideal_us": 2652.8426011403403,
+          "excess_us": 442.70944595336914,
+          "dominant": "compute"
+        },
+        {
+          "step": 11,
+          "mean_us": 3079.850673675537,
+          "compute_us": 2650.1119136810303,
+          "transfer_us": 2270.4768,
+          "stepwise_ideal_us": 2650.1119136810303,
+          "excess_us": 429.73875999450684,
+          "dominant": "compute"
+        },
+        {
+          "step": 12,
+          "mean_us": 3330.3893407185874,
+          "compute_us": 2648.063898086548,
+          "transfer_us": 2688.62208,
+          "stepwise_ideal_us": 2688.62208,
+          "excess_us": 641.7672607185873,
+          "dominant": "transfer"
+        },
+        {
+          "step": 13,
+          "mean_us": 3174.741347630819,
+          "compute_us": 2652.5012652079263,
+          "transfer_us": 2195.1936,
+          "stepwise_ideal_us": 2652.5012652079263,
+          "excess_us": 522.2400824228926,
+          "dominant": "compute"
+        },
+        {
+          "step": 14,
+          "mean_us": 3104.426622390747,
+          "compute_us": 2697.215954462687,
+          "transfer_us": 1755.24864,
+          "stepwise_ideal_us": 2697.215954462687,
+          "excess_us": 407.21066792806005,
+          "dominant": "compute"
+        },
+        {
+          "step": 15,
+          "mean_us": 3223.893404006958,
+          "compute_us": 2775.381247202555,
+          "transfer_us": 2486.13504,
+          "stepwise_ideal_us": 2775.381247202555,
+          "excess_us": 448.5121568044028,
+          "dominant": "compute"
+        },
+        {
+          "step": 16,
+          "mean_us": 3167.5733725229898,
+          "compute_us": 2469.205300013224,
+          "transfer_us": 2280.45696,
+          "stepwise_ideal_us": 2469.205300013224,
+          "excess_us": 698.3680725097656,
+          "dominant": "compute"
+        },
+        {
+          "step": 17,
+          "mean_us": 3258.026679356893,
+          "compute_us": 2467.4986203511558,
+          "transfer_us": 2489.80224,
+          "stepwise_ideal_us": 2489.80224,
+          "excess_us": 768.2244393568931,
+          "dominant": "transfer"
+        },
+        {
+          "step": 18,
+          "mean_us": 3376.1279582977295,
+          "compute_us": 2471.5946515401206,
+          "transfer_us": 2677.00992,
+          "stepwise_ideal_us": 2677.00992,
+          "excess_us": 699.1180382977295,
+          "dominant": "transfer"
+        },
+        {
+          "step": 19,
+          "mean_us": 3202.0479838053384,
+          "compute_us": 2467.8399562835693,
+          "transfer_us": 2098.74048,
+          "stepwise_ideal_us": 2467.8399562835693,
+          "excess_us": 734.208027521769,
+          "dominant": "compute"
+        },
+        {
+          "step": 20,
+          "mean_us": 3453.9520740509033,
+          "compute_us": 2482.1759859720864,
+          "transfer_us": 2827.3728,
+          "stepwise_ideal_us": 2827.3728,
+          "excess_us": 626.5792740509032,
+          "dominant": "transfer"
+        },
+        {
+          "step": 21,
+          "mean_us": 3239.936033884684,
+          "compute_us": 2482.1760654449463,
+          "transfer_us": 2498.74176,
+          "stepwise_ideal_us": 2498.74176,
+          "excess_us": 741.1942738846842,
+          "dominant": "transfer"
+        },
+        {
+          "step": 22,
+          "mean_us": 3297.6213296254477,
+          "compute_us": 2480.4693857828775,
+          "transfer_us": 2582.6688,
+          "stepwise_ideal_us": 2582.6688,
+          "excess_us": 714.9525296254478,
+          "dominant": "transfer"
+        },
+        {
+          "step": 23,
+          "mean_us": 3347.1147219340005,
+          "compute_us": 2483.541409174601,
+          "transfer_us": 2586.2976,
+          "stepwise_ideal_us": 2586.2976,
+          "excess_us": 760.8171219340006,
+          "dominant": "transfer"
+        },
+        {
+          "step": 24,
+          "mean_us": 3245.738744735718,
+          "compute_us": 2515.9680048624673,
+          "transfer_us": 2355.70176,
+          "stepwise_ideal_us": 2515.9680048624673,
+          "excess_us": 729.7707398732505,
+          "dominant": "compute"
+        },
+        {
+          "step": 25,
+          "mean_us": 3226.2825965881348,
+          "compute_us": 2549.4186878204346,
+          "transfer_us": 2208.98304,
+          "stepwise_ideal_us": 2549.4186878204346,
+          "excess_us": 676.8639087677002,
+          "dominant": "compute"
+        },
+        {
+          "step": 26,
+          "mean_us": 3266.218582789103,
+          "compute_us": 2589.695930480957,
+          "transfer_us": 2510.96448,
+          "stepwise_ideal_us": 2589.695930480957,
+          "excess_us": 676.522652308146,
+          "dominant": "compute"
+        },
+        {
+          "step": 27,
+          "mean_us": 3386.026700337728,
+          "compute_us": 2652.1599292755127,
+          "transfer_us": 2648.91648,
+          "stepwise_ideal_us": 2652.1599292755127,
+          "excess_us": 733.8667710622153,
+          "dominant": "compute"
+        },
+        {
+          "step": 28,
+          "mean_us": 3219.1147009531655,
+          "compute_us": 2653.8666089375815,
+          "transfer_us": 2265.32352,
+          "stepwise_ideal_us": 2653.8666089375815,
+          "excess_us": 565.248092015584,
+          "dominant": "compute"
+        },
+        {
+          "step": 29,
+          "mean_us": 3245.3973293304443,
+          "compute_us": 2655.57328859965,
+          "transfer_us": 2271.96672,
+          "stepwise_ideal_us": 2655.57328859965,
+          "excess_us": 589.8240407307944,
+          "dominant": "compute"
+        },
+        {
+          "step": 30,
+          "mean_us": 3216.042677561442,
+          "compute_us": 2703.359921773275,
+          "transfer_us": 2276.8512,
+          "stepwise_ideal_us": 2703.359921773275,
+          "excess_us": 512.682755788167,
+          "dominant": "compute"
+        },
+        {
+          "step": 31,
+          "mean_us": 3216.7253494262695,
+          "compute_us": 2751.1465549468994,
+          "transfer_us": 2045.62944,
+          "stepwise_ideal_us": 2751.1465549468994,
+          "excess_us": 465.5787944793701,
+          "dominant": "compute"
+        }
+      ]
+    },
+    {
+      "name": "staged_g100_l0_f24",
+      "raw_sha256": "544435520bd7208b1c8eeceef07bc911da34f28a6739eb118846cd361fea9d08",
+      "mean_us": 3307.7866633733115,
+      "reference_us": 2699.891841141097,
+      "buckets": {
+        "compute": {
+          "steps": 24,
+          "mean_excess_us": 569.5431431134542,
+          "contribution_to_full_mean_excess_us": 427.1573573350907
+        },
+        "transfer": {
+          "steps": 8,
+          "mean_excess_us": 722.9498595884959,
+          "contribution_to_full_mean_excess_us": 180.73746489712397
+        }
+      },
+      "steps": [
+        {
+          "step": 0,
+          "mean_us": 6919.509251912435,
+          "compute_us": 2470.5706437428794,
+          "transfer_us": 6210.8352,
+          "stepwise_ideal_us": 6210.8352,
+          "excess_us": 708.6740519124342,
+          "dominant": "transfer"
+        },
+        {
+          "step": 1,
+          "mean_us": 3017.3866748809814,
+          "compute_us": 2471.935987472534,
+          "transfer_us": 2246.25792,
+          "stepwise_ideal_us": 2471.935987472534,
+          "excess_us": 545.4506874084473,
+          "dominant": "compute"
+        },
+        {
+          "step": 2,
+          "mean_us": 2990.4212951660156,
+          "compute_us": 2466.1332766215005,
+          "transfer_us": 1957.5936,
+          "stepwise_ideal_us": 2466.1332766215005,
+          "excess_us": 524.2880185445151,
+          "dominant": "compute"
+        },
+        {
+          "step": 3,
+          "mean_us": 3014.9973233540854,
+          "compute_us": 2464.7679328918457,
+          "transfer_us": 2055.52896,
+          "stepwise_ideal_us": 2464.7679328918457,
+          "excess_us": 550.2293904622397,
+          "dominant": "compute"
+        },
+        {
+          "step": 4,
+          "mean_us": 2980.522712071737,
+          "compute_us": 2472.618659337362,
+          "transfer_us": 2311.22688,
+          "stepwise_ideal_us": 2472.618659337362,
+          "excess_us": 507.904052734375,
+          "dominant": "compute"
+        },
+        {
+          "step": 5,
+          "mean_us": 3072.6826985677085,
+          "compute_us": 2478.0800342559814,
+          "transfer_us": 2450.3616,
+          "stepwise_ideal_us": 2478.0800342559814,
+          "excess_us": 594.602664311727,
+          "dominant": "compute"
+        },
+        {
+          "step": 6,
+          "mean_us": 3059.712012608846,
+          "compute_us": 2479.1040420532227,
+          "transfer_us": 2467.41504,
+          "stepwise_ideal_us": 2479.1040420532227,
+          "excess_us": 580.6079705556235,
+          "dominant": "compute"
+        },
+        {
+          "step": 7,
+          "mean_us": 3047.0826625823975,
+          "compute_us": 2482.51740137736,
+          "transfer_us": 2460.58752,
+          "stepwise_ideal_us": 2482.51740137736,
+          "excess_us": 564.5652612050376,
+          "dominant": "compute"
+        },
+        {
+          "step": 8,
+          "mean_us": 2982.229312260946,
+          "compute_us": 2491.3920561472573,
+          "transfer_us": 2224.17408,
+          "stepwise_ideal_us": 2491.3920561472573,
+          "excess_us": 490.83725611368845,
+          "dominant": "compute"
+        },
+        {
+          "step": 9,
+          "mean_us": 3111.5946769714355,
+          "compute_us": 2593.791961669922,
+          "transfer_us": 2485.91616,
+          "stepwise_ideal_us": 2593.791961669922,
+          "excess_us": 517.8027153015137,
+          "dominant": "compute"
+        },
+        {
+          "step": 10,
+          "mean_us": 3155.967950820923,
+          "compute_us": 2652.8426011403403,
+          "transfer_us": 2469.312,
+          "stepwise_ideal_us": 2652.8426011403403,
+          "excess_us": 503.12534968058253,
+          "dominant": "compute"
+        },
+        {
+          "step": 11,
+          "mean_us": 3111.936012903849,
+          "compute_us": 2650.1119136810303,
+          "transfer_us": 2273.37984,
+          "stepwise_ideal_us": 2650.1119136810303,
+          "excess_us": 461.82409922281886,
+          "dominant": "compute"
+        },
+        {
+          "step": 12,
+          "mean_us": 3336.1920515696206,
+          "compute_us": 2648.063898086548,
+          "transfer_us": 2687.4048,
+          "stepwise_ideal_us": 2687.4048,
+          "excess_us": 648.7872515696208,
+          "dominant": "transfer"
+        },
+        {
+          "step": 13,
+          "mean_us": 3106.4746379852295,
+          "compute_us": 2652.5012652079263,
+          "transfer_us": 2196.47616,
+          "stepwise_ideal_us": 2652.5012652079263,
+          "excess_us": 453.9733727773032,
+          "dominant": "compute"
+        },
+        {
+          "step": 14,
+          "mean_us": 3047.423998514811,
+          "compute_us": 2697.215954462687,
+          "transfer_us": 1754.54976,
+          "stepwise_ideal_us": 2697.215954462687,
+          "excess_us": 350.208044052124,
+          "dominant": "compute"
+        },
+        {
+          "step": 15,
+          "mean_us": 3175.0826835632324,
+          "compute_us": 2775.381247202555,
+          "transfer_us": 2485.89312,
+          "stepwise_ideal_us": 2775.381247202555,
+          "excess_us": 399.70143636067723,
+          "dominant": "compute"
+        },
+        {
+          "step": 16,
+          "mean_us": 3186.0053539276123,
+          "compute_us": 2469.205300013224,
+          "transfer_us": 2280.52608,
+          "stepwise_ideal_us": 2469.205300013224,
+          "excess_us": 716.8000539143882,
+          "dominant": "compute"
+        },
+        {
+          "step": 17,
+          "mean_us": 3301.3760248819985,
+          "compute_us": 2467.4986203511558,
+          "transfer_us": 2489.78688,
+          "stepwise_ideal_us": 2489.7868799999997,
+          "excess_us": 811.5891448819989,
+          "dominant": "transfer"
+        },
+        {
+          "step": 18,
+          "mean_us": 3371.0079987843833,
+          "compute_us": 2471.5946515401206,
+          "transfer_us": 2676.79104,
+          "stepwise_ideal_us": 2676.79104,
+          "excess_us": 694.2169587843832,
+          "dominant": "transfer"
+        },
+        {
+          "step": 19,
+          "mean_us": 3216.0425980885825,
+          "compute_us": 2467.8399562835693,
+          "transfer_us": 2096.3136,
+          "stepwise_ideal_us": 2467.8399562835693,
+          "excess_us": 748.2026418050132,
+          "dominant": "compute"
+        },
+        {
+          "step": 20,
+          "mean_us": 3460.437297821045,
+          "compute_us": 2482.1759859720864,
+          "transfer_us": 2825.32608,
+          "stepwise_ideal_us": 2825.32608,
+          "excess_us": 635.1112178210451,
+          "dominant": "transfer"
+        },
+        {
+          "step": 21,
+          "mean_us": 3260.7573668162026,
+          "compute_us": 2482.1760654449463,
+          "transfer_us": 2499.83232,
+          "stepwise_ideal_us": 2499.83232,
+          "excess_us": 760.9250468162027,
+          "dominant": "transfer"
+        },
+        {
+          "step": 22,
+          "mean_us": 3318.1013266245523,
+          "compute_us": 2480.4693857828775,
+          "transfer_us": 2582.42304,
+          "stepwise_ideal_us": 2582.42304,
+          "excess_us": 735.6782866245521,
+          "dominant": "transfer"
+        },
+        {
+          "step": 23,
+          "mean_us": 3376.1279582977295,
+          "compute_us": 2483.541409174601,
+          "transfer_us": 2587.51104,
+          "stepwise_ideal_us": 2587.51104,
+          "excess_us": 788.6169182977296,
+          "dominant": "transfer"
+        },
+        {
+          "step": 24,
+          "mean_us": 3282.9439640045166,
+          "compute_us": 2515.9680048624673,
+          "transfer_us": 2357.07648,
+          "stepwise_ideal_us": 2515.9680048624673,
+          "excess_us": 766.9759591420493,
+          "dominant": "compute"
+        },
+        {
+          "step": 25,
+          "mean_us": 3259.0506871541343,
+          "compute_us": 2549.4186878204346,
+          "transfer_us": 2206.44096,
+          "stepwise_ideal_us": 2549.4186878204346,
+          "excess_us": 709.6319993336997,
+          "dominant": "compute"
+        },
+        {
+          "step": 26,
+          "mean_us": 3283.626635869344,
+          "compute_us": 2589.695930480957,
+          "transfer_us": 2509.42464,
+          "stepwise_ideal_us": 2589.695930480957,
+          "excess_us": 693.9307053883872,
+          "dominant": "compute"
+        },
+        {
+          "step": 27,
+          "mean_us": 3397.632042566935,
+          "compute_us": 2652.1599292755127,
+          "transfer_us": 2647.72224,
+          "stepwise_ideal_us": 2652.1599292755127,
+          "excess_us": 745.4721132914224,
+          "dominant": "compute"
+        },
+        {
+          "step": 28,
+          "mean_us": 3242.666721343994,
+          "compute_us": 2653.8666089375815,
+          "transfer_us": 2265.15456,
+          "stepwise_ideal_us": 2653.8666089375815,
+          "excess_us": 588.8001124064126,
+          "dominant": "compute"
+        },
+        {
+          "step": 29,
+          "mean_us": 3267.9253419240317,
+          "compute_us": 2655.57328859965,
+          "transfer_us": 2273.3376,
+          "stepwise_ideal_us": 2655.57328859965,
+          "excess_us": 612.3520533243818,
+          "dominant": "compute"
+        },
+        {
+          "step": 30,
+          "mean_us": 3252.565304438273,
+          "compute_us": 2703.359921773275,
+          "transfer_us": 2275.46112,
+          "stepwise_ideal_us": 2703.359921773275,
+          "excess_us": 549.2053826649981,
+          "dominant": "compute"
+        },
+        {
+          "step": 31,
+          "mean_us": 3243.6906496683755,
+          "compute_us": 2751.1465549468994,
+          "transfer_us": 2044.47744,
+          "stepwise_ideal_us": 2751.1465549468994,
+          "excess_us": 492.5440947214761,
+          "dominant": "compute"
+        }
+      ]
+    },
+    {
+      "name": "staged_g100_l20000_f24",
+      "raw_sha256": "6c739452ff0dd45f4e7a14514b21bc8d9f9c3c6dc9d58ab9f34d7a64e201cfc1",
+      "mean_us": 3320.501339932283,
+      "reference_us": 2699.9628811410967,
+      "buckets": {
+        "compute": {
+          "steps": 24,
+          "mean_excess_us": 569.9698196517097,
+          "contribution_to_full_mean_excess_us": 427.4773647387823
+        },
+        "transfer": {
+          "steps": 8,
+          "mean_excess_us": 772.244376209615,
+          "contribution_to_full_mean_excess_us": 193.06109405240375
+        }
+      },
+      "steps": [
+        {
+          "step": 0,
+          "mean_us": 7047.168095906575,
+          "compute_us": 2470.5706437428794,
+          "transfer_us": 6210.8352,
+          "stepwise_ideal_us": 6210.8352,
+          "excess_us": 836.3328959065748,
+          "dominant": "transfer"
+        },
+        {
+          "step": 1,
+          "mean_us": 3026.261329650879,
+          "compute_us": 2471.935987472534,
+          "transfer_us": 2245.04064,
+          "stepwise_ideal_us": 2471.935987472534,
+          "excess_us": 554.3253421783447,
+          "dominant": "compute"
+        },
+        {
+          "step": 2,
+          "mean_us": 2980.863889058431,
+          "compute_us": 2466.1332766215005,
+          "transfer_us": 1957.5168,
+          "stepwise_ideal_us": 2466.1332766215005,
+          "excess_us": 514.7306124369306,
+          "dominant": "compute"
+        },
+        {
+          "step": 3,
+          "mean_us": 2979.1573683420816,
+          "compute_us": 2464.7679328918457,
+          "transfer_us": 2057.3376,
+          "stepwise_ideal_us": 2464.7679328918457,
+          "excess_us": 514.3894354502359,
+          "dominant": "compute"
+        },
+        {
+          "step": 4,
+          "mean_us": 2985.642671585083,
+          "compute_us": 2472.618659337362,
+          "transfer_us": 2311.81056,
+          "stepwise_ideal_us": 2472.618659337362,
+          "excess_us": 513.0240122477212,
+          "dominant": "compute"
+        },
+        {
+          "step": 5,
+          "mean_us": 3102.0373503367105,
+          "compute_us": 2478.0800342559814,
+          "transfer_us": 2449.77024,
+          "stepwise_ideal_us": 2478.0800342559814,
+          "excess_us": 623.957316080729,
+          "dominant": "compute"
+        },
+        {
+          "step": 6,
+          "mean_us": 3067.5626595815024,
+          "compute_us": 2479.1040420532227,
+          "transfer_us": 2465.88672,
+          "stepwise_ideal_us": 2479.1040420532227,
+          "excess_us": 588.4586175282798,
+          "dominant": "compute"
+        },
+        {
+          "step": 7,
+          "mean_us": 3058.346668879191,
+          "compute_us": 2482.51740137736,
+          "transfer_us": 2460.25728,
+          "stepwise_ideal_us": 2482.51740137736,
+          "excess_us": 575.829267501831,
+          "dominant": "compute"
+        },
+        {
+          "step": 8,
+          "mean_us": 2968.5760339101157,
+          "compute_us": 2491.3920561472573,
+          "transfer_us": 2222.64192,
+          "stepwise_ideal_us": 2491.3920561472573,
+          "excess_us": 477.1839777628584,
+          "dominant": "compute"
+        },
+        {
+          "step": 9,
+          "mean_us": 3113.3013566335044,
+          "compute_us": 2593.791961669922,
+          "transfer_us": 2486.5536,
+          "stepwise_ideal_us": 2593.791961669922,
+          "excess_us": 519.5093949635825,
+          "dominant": "compute"
+        },
+        {
+          "step": 10,
+          "mean_us": 3172.3519961039224,
+          "compute_us": 2652.8426011403403,
+          "transfer_us": 2467.8144,
+          "stepwise_ideal_us": 2652.8426011403403,
+          "excess_us": 519.509394963582,
+          "dominant": "compute"
+        },
+        {
+          "step": 11,
+          "mean_us": 3132.7573458353677,
+          "compute_us": 2650.1119136810303,
+          "transfer_us": 2271.648,
+          "stepwise_ideal_us": 2650.1119136810303,
+          "excess_us": 482.6454321543374,
+          "dominant": "compute"
+        },
+        {
+          "step": 12,
+          "mean_us": 3366.5706316630044,
+          "compute_us": 2648.063898086548,
+          "transfer_us": 2687.97696,
+          "stepwise_ideal_us": 2687.97696,
+          "excess_us": 678.5936716630044,
+          "dominant": "transfer"
+        },
+        {
+          "step": 13,
+          "mean_us": 3136.8533770243325,
+          "compute_us": 2652.5012652079263,
+          "transfer_us": 2196.83712,
+          "stepwise_ideal_us": 2652.5012652079263,
+          "excess_us": 484.35211181640625,
+          "dominant": "compute"
+        },
+        {
+          "step": 14,
+          "mean_us": 3067.2213236490884,
+          "compute_us": 2697.215954462687,
+          "transfer_us": 1754.52672,
+          "stepwise_ideal_us": 2697.215954462687,
+          "excess_us": 370.00536918640137,
+          "dominant": "compute"
+        },
+        {
+          "step": 15,
+          "mean_us": 3216.042677561442,
+          "compute_us": 2775.381247202555,
+          "transfer_us": 2485.5552,
+          "stepwise_ideal_us": 2775.381247202555,
+          "excess_us": 440.6614303588867,
+          "dominant": "compute"
+        },
+        {
+          "step": 16,
+          "mean_us": 3191.807985305786,
+          "compute_us": 2469.205300013224,
+          "transfer_us": 2280.59136,
+          "stepwise_ideal_us": 2469.205300013224,
+          "excess_us": 722.602685292562,
+          "dominant": "compute"
+        },
+        {
+          "step": 17,
+          "mean_us": 3372.0320065816245,
+          "compute_us": 2467.4986203511558,
+          "transfer_us": 2490.24,
+          "stepwise_ideal_us": 2490.24,
+          "excess_us": 881.7920065816247,
+          "dominant": "transfer"
+        },
+        {
+          "step": 18,
+          "mean_us": 3420.1600551605225,
+          "compute_us": 2471.5946515401206,
+          "transfer_us": 2677.344,
+          "stepwise_ideal_us": 2677.344,
+          "excess_us": 742.8160551605224,
+          "dominant": "transfer"
+        },
+        {
+          "step": 19,
+          "mean_us": 3219.4559574127197,
+          "compute_us": 2467.8399562835693,
+          "transfer_us": 2096.0256,
+          "stepwise_ideal_us": 2467.8399562835693,
+          "excess_us": 751.6160011291504,
+          "dominant": "compute"
+        },
+        {
+          "step": 20,
+          "mean_us": 3528.0213356018066,
+          "compute_us": 2482.1759859720864,
+          "transfer_us": 2826.37824,
+          "stepwise_ideal_us": 2826.37824,
+          "excess_us": 701.6430956018066,
+          "dominant": "transfer"
+        },
+        {
+          "step": 21,
+          "mean_us": 3279.5306046803794,
+          "compute_us": 2482.1760654449463,
+          "transfer_us": 2498.68032,
+          "stepwise_ideal_us": 2498.68032,
+          "excess_us": 780.8502846803794,
+          "dominant": "transfer"
+        },
+        {
+          "step": 22,
+          "mean_us": 3352.9173533121743,
+          "compute_us": 2480.4693857828775,
+          "transfer_us": 2583.00672,
+          "stepwise_ideal_us": 2583.00672,
+          "excess_us": 769.9106333121745,
+          "dominant": "transfer"
+        },
+        {
+          "step": 23,
+          "mean_us": 3373.7386067708335,
+          "compute_us": 2483.541409174601,
+          "transfer_us": 2587.72224,
+          "stepwise_ideal_us": 2587.72224,
+          "excess_us": 786.0163667708334,
+          "dominant": "transfer"
+        },
+        {
+          "step": 24,
+          "mean_us": 3258.3680152893066,
+          "compute_us": 2515.9680048624673,
+          "transfer_us": 2356.44672,
+          "stepwise_ideal_us": 2515.9680048624673,
+          "excess_us": 742.4000104268393,
+          "dominant": "compute"
+        },
+        {
+          "step": 25,
+          "mean_us": 3231.402635574341,
+          "compute_us": 2549.4186878204346,
+          "transfer_us": 2207.66976,
+          "stepwise_ideal_us": 2549.4186878204346,
+          "excess_us": 681.9839477539062,
+          "dominant": "compute"
+        },
+        {
+          "step": 26,
+          "mean_us": 3284.992059071859,
+          "compute_us": 2589.695930480957,
+          "transfer_us": 2508.51072,
+          "stepwise_ideal_us": 2589.695930480957,
+          "excess_us": 695.2961285909018,
+          "dominant": "compute"
+        },
+        {
+          "step": 27,
+          "mean_us": 3394.5600191752114,
+          "compute_us": 2652.1599292755127,
+          "transfer_us": 2648.26752,
+          "stepwise_ideal_us": 2652.1599292755127,
+          "excess_us": 742.4000898996987,
+          "dominant": "compute"
+        },
+        {
+          "step": 28,
+          "mean_us": 3225.9414196014404,
+          "compute_us": 2653.8666089375815,
+          "transfer_us": 2265.12,
+          "stepwise_ideal_us": 2653.8666089375815,
+          "excess_us": 572.0748106638589,
+          "dominant": "compute"
+        },
+        {
+          "step": 29,
+          "mean_us": 3248.1280167897544,
+          "compute_us": 2655.57328859965,
+          "transfer_us": 2271.65568,
+          "stepwise_ideal_us": 2655.57328859965,
+          "excess_us": 592.5547281901045,
+          "dominant": "compute"
+        },
+        {
+          "step": 30,
+          "mean_us": 3226.2826760609946,
+          "compute_us": 2703.359921773275,
+          "transfer_us": 2276.72832,
+          "stepwise_ideal_us": 2703.359921773275,
+          "excess_us": 522.9227542877197,
+          "dominant": "compute"
+        },
+        {
+          "step": 31,
+          "mean_us": 3227.989355723063,
+          "compute_us": 2751.1465549468994,
+          "transfer_us": 2044.90752,
+          "stepwise_ideal_us": 2751.1465549468994,
+          "excess_us": 476.8428007761636,
+          "dominant": "compute"
+        }
+      ]
+    }
+  ]
+}

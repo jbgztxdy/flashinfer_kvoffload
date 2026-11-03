@@ -1,0 +1,5 @@
+# 11/04后续计算和中转实验检查点
+
+六份完整计时raw的实际加载库SHA已核对；104份新增文件的哈希见checkpoint_review_20261104_manifest.json。所有新实现均未胜出，生产三个header保持原SHA。
+
+包含softmax同步、cache写策略/最终目的地、LRU频率及旧100GB逐步分层的正负证据；失败runner和被终止的过宽racecheck均保留。不新增100GB/物理链路/全矩阵结论。
