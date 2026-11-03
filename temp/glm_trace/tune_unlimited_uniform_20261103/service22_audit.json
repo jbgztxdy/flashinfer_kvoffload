@@ -1,0 +1,93 @@
+{
+  "results": {
+    "service22": {
+      "mean_us": 3113.429340223471,
+      "pass_means_us": [
+        3087.8400206565857,
+        3104.960009455681,
+        3147.4879905581474
+      ],
+      "mean_unique": 215258.5625,
+      "staged": true,
+      "header_sha256": "146d5d588f1658fa5795fbfc5ae8b42949c2287208da05488ef34c73dc1fe0bf",
+      "actual_library_sha256": "0476622619081d361e79a84f5ec0fd588a33429a3d796e778048ddb48552fe1e"
+    },
+    "clean_service22_control": {
+      "mean_us": 3130.1866645614305,
+      "pass_means_us": [
+        3102.623976767063,
+        3115.744009613991,
+        3172.192007303238
+      ],
+      "mean_unique": 215258.94791666666,
+      "staged": true,
+      "header_sha256": "29835918684dd24c76e15e27366e7e330268c3dd66c939eaffb1462b54ab2742",
+      "actual_library_sha256": "ccc28bc51265e1233b82ec2c3ce06ebdf718140016370e86a3cc09fe86d8dbc9"
+    },
+    "service22_reverse": {
+      "mean_us": 3101.9840016961098,
+      "pass_means_us": [
+        3101.9840016961098
+      ],
+      "mean_unique": 215272.21875,
+      "staged": true,
+      "header_sha256": "146d5d588f1658fa5795fbfc5ae8b42949c2287208da05488ef34c73dc1fe0bf",
+      "actual_library_sha256": "0476622619081d361e79a84f5ec0fd588a33429a3d796e778048ddb48552fe1e"
+    },
+    "production_service22_control": {
+      "mean_us": 2881.994659701983,
+      "pass_means_us": [
+        2861.4719957113266,
+        2869.471989572048,
+        2915.0399938225746
+      ],
+      "mean_unique": 215374.63541666666,
+      "staged": false,
+      "header_sha256": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
+      "actual_library_sha256": "df09ae5c50e4220b2f78c63c5b35afa18343d26337a50e79a8102ce9410b08c9"
+    },
+    "production_staged_service22_control": {
+      "mean_us": 3039.1466642419496,
+      "pass_means_us": [
+        3026.944011449814,
+        3011.552006006241,
+        3078.9439752697945
+      ],
+      "mean_unique": 215262.5625,
+      "staged": true,
+      "header_sha256": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
+      "actual_library_sha256": "df09ae5c50e4220b2f78c63c5b35afa18343d26337a50e79a8102ce9410b08c9"
+    }
+  },
+  "mean_packets_per_step": {
+    "20": 10763.354166666666,
+    "22": 9785
+  },
+  "packet_reduction_percent": 9.089677358165527,
+  "dispatch": {
+    "grid": [
+      1,
+      108,
+      1
+    ],
+    "block": [
+      32,
+      4,
+      2
+    ],
+    "dynamic_shared_bytes": 165376,
+    "active_blocks_per_SM": 1,
+    "kernel_name": "_ZN10flashinfer3mla26BatchMLACleanServiceKernelINS0_18CleanServiceTraitsI13__nv_bfloat16S3_S3_iEENS0_22CleanServiceHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+  },
+  "probe_max_abs_error": 0.004127860069274902,
+  "focused_tests": 2,
+  "cache_payload_slots": 524288,
+  "production": {
+    "mla_host_batch.cuh": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
+    "mla.cuh": "34afad69da6bafe0a62aa1cd93db798fffe4d846a2d697aa97d6eef535cc83b3",
+    "far_link_emu.cuh": "8507eab01aa705c507d0ee389f1216dfc3c29d50844fbf509a0339fd6023d716"
+  },
+  "retained": false,
+  "new100GB_result": false,
+  "invalid_first_production_control": "host_stage=False hardcoded despite --route staged; raw retained and excluded from staged comparisons"
+}

@@ -16,6 +16,8 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04全CTA最大可行22页包实验：** 依据A100实际166912B/block上限，clean20页dynamic163072/static1152→22页dynamic165376/static1152、总166528；23页预计超限。只改包大小，原全局轮转unique/LRU/真实双写/全8warp数学保留。2定向检查、全最终cache载荷和实际Graph单新kernel108CTA/active1通过；平均包数10763.35→9785.00。正常GPU3 3pass3113.429µs vs随后clean3130.187仅0.535%小信号，反序单pass3101.984与clean首pass3102.624几乎同速；当前生产staged新对照3039.147，仍快2.44%，不装不测100GB。首次“生产对照”误用硬编码direct harness得2881.995，原件保留且config.staged=False，不混作staged；首次正则/缺include失败亦保留。入口SERVICE22_20261104.md及raw/源码/实际库SHA，生产81093不变，runner结束。
+
 **11/04认领行包顺序/写回负载续证：** 同一诊断二进制原轮转3117.760 vs认领行配额3182.176µs，planner约3.57µs，差距主要在后续服务/计算；实际末步cache获准写回CTA间CV0.278，对同一元数据轮转反事实0.053（非GPU计时）。半本地交错CPU模型CV0.182，GPU精确包表/2定向检查通过，却normal3403.595µs；只按包号升序排序恢复至3246.592µs，K65定向racecheck0error，仍慢原配额3200.331和clean。诊断显示交错planner约4.78µs，不把巨大退化全归规划。原波次一CTA一包局部性末步上限11.73%，不做旧pool重映射。两版均拒绝、不测100GB；详见实验目录CLAIMROW_ORDER_20261104.md、原始/库SHA。生产81093保持，runner结束。
 
 **11/04认领行包号查询去重复控制：** quota的base/limit初始化一次、warp0每包查询一次，leader-owned shared packet供issue/stores/release，原同步/精确配额/planner/真实unique载荷保持。2定向检查、实际8877项包表与CPU逐项一致/epoch匹配/全cache载荷通过；新增shared复用K65目标1launch racecheck0error/0warning。normal3213.237µs，随后新clean3124.192µs，慢2.850%且3pass均慢；对旧quota3200.331也未见收益。主函数10638→9942指令，REG255/STACK16不变；停止查询局部变体，不单凭代码数归因，未测100GB/未安装。见CLAIMROW_CACHED_PACKET_20261104.md、audit/raw/实际库SHA。生产81093保持，runner结束。
