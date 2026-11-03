@@ -16,6 +16,8 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04恒等rescale跳过实验：** clean全CTA unique staged仅factor精确等于1跳过O/d乘法，完整QK/softmax/PV及LRU/搬运保持；2定向检查通过，normal3pass3147.851µs，随后新clean3099.381µs，慢1.564%，拒绝不测100GB。REG255/STACK16相同，额外分支实际生成；无动态因子统计，不单归因分支。初构造/控制白名单失败和incomplete raw保留，retry仅补控制。见RESCALE_SKIP_20261104.md、audit和source/实际库SHA。生产81093保持，runner结束。此前第三归档提交1007e898。
+
 **11/04cache直读双写控制：** 相同tile-ahead victim解析/cache读路径，恢复真实stage副本写入，normal3pass3397.984µs；单目的地3320.320约省77.664µs但仍慢clean，跨轮非严格因果。省写不足抵消地址/布局综合代价，停止当前cache直读形式。性能数学采样/全cache载荷通过，复用前驱定向检查，原始/库SHA见`CACHE_READ_CONTROL_20261104.md`及audit。生产未改、runner结束。
 
 **11/04单最终目的地新实现：** 与旧final_destination不同，沿用全CTA提前LRU、原global remap和packet ready，仅tile-ahead页号寄存器解析victim，无新增grid/global重编码/per-page ready；获准页只写cache，其他只写stage。2定向检查通过，normal3pass3320.320µs慢于clean，拒绝不测100GB。省写机会约166MB不等于实测加速/硬件字节证明。证据`SINGLE_DESTINATION_20261104.md`、audit及raw/header/实际库SHA，生产未改、runner结束。

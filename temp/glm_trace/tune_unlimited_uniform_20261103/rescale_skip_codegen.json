@@ -1,0 +1,24 @@
+{
+  "clean": {
+    "library": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_clean/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+    "sha256": "ccc28bc51265e1233b82ec2c3ce06ebdf718140016370e86a3cc09fe86d8dbc9",
+    "resources": "_ZN10flashinfer3mla26BatchMLACleanServiceKernelINS0_18CleanServiceTraitsI13__nv_bfloat16S3_S3_iEENS0_22CleanServiceHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_:\n  REG:255 STACK:16 SHARED:1152 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+    "instructions": 9308,
+    "opcodes": {
+      "BRA": 348,
+      "BSSY": 147,
+      "BSYNC": 147
+    }
+  },
+  "rescale_skip": {
+    "library": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_rescale_skip/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+    "sha256": "0d42c2d41a691231b0e7c844a173221b73c8c2c5cbb4aefe2d1a8a2ab22bfd31",
+    "resources": "_ZN10flashinfer3mla26BatchMLACleanServiceKernelINS0_18CleanServiceTraitsI13__nv_bfloat16S3_S3_iEENS0_22CleanServiceHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_:\n  REG:255 STACK:16 SHARED:1152 LOCAL:0 CONSTANT[0]:672 TEXTURE:0 SURFACE:0 SAMPLER:0",
+    "instructions": 9333,
+    "opcodes": {
+      "BRA": 352,
+      "BSSY": 151,
+      "BSYNC": 151
+    }
+  }
+}

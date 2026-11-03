@@ -1,0 +1,27 @@
+{
+  "pass_means_us": {
+    "rescale_skip": [
+      3140.6080052256584,
+      3132.224015891552,
+      3170.7199960947037
+    ],
+    "clean_rescale_control_retry": [
+      3084.1279849410057,
+      3072.3840072751045,
+      3141.6319981217384
+    ]
+  },
+  "means_us": {
+    "rescale_skip": 3147.850672403971,
+    "clean_rescale_control_retry": 3099.381330112616
+  },
+  "slowdown_percent": 1.5638392675480839,
+  "focused_tests": 2,
+  "header_actual_library_sha_verified": true,
+  "retained": false,
+  "scope": "GPU3 normal same-device farHBM; no100GB or physical link conclusion",
+  "failures": [
+    "initial constructor match-count assertion prevented header creation; downstream compile missing include, preserved failed_setup log",
+    "first fresh clean control failed diagnostics whitelist after timing; incomplete raw retained; retry changed only harness whitelist/output paths"
+  ]
+}

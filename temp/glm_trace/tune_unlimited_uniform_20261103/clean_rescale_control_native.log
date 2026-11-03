@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/bench_clean_rescale_control.py", line 267, in <module>
+    run_perf(SETTINGS[0])
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/bench_clean_rescale_control.py", line 253, in run_perf
+    if VARIANT not in ['base','rescale_skip']:assert all(x[0]==x[1]==(miss+service_rows-1)//service_rows and x[3]==miss for x,miss in zip(row['assist_stats'],row['unique_misses']))
+                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
