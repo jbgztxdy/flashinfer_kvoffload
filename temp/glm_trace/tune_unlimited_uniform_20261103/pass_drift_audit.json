@@ -1,0 +1,85 @@
+{
+  "rows": [
+    {
+      "file": "contiguous_native_unlimited_f24.json",
+      "sha256": "db77f4b689512f229a2aec6e006778cd695b38fb83689613f6831a7234dc49ea",
+      "pass_means_us": [
+        3661.1519902944565,
+        3666.7519956827164,
+        3698.7519785761833
+      ],
+      "last_vs_first_pct": 1.0269988348313053,
+      "last_slowest": true
+    },
+    {
+      "file": "rowlocal_native_unlimited_f24.json",
+      "sha256": "9e6830b268c828833ece6f6718e0b9879349168809708acdfbae03a7e7e61ef6",
+      "pass_means_us": [
+        4167.712032794952,
+        4163.13599050045,
+        4186.592034995556
+      ],
+      "last_vs_first_pct": 0.45300639900358597,
+      "last_slowest": true
+    },
+    {
+      "file": "reverse_packets_native_unlimited_f24.json",
+      "sha256": "2ed2425ae72f5f2740f19c4b6cf7856bc80ffee28f6af72484943a366a3fac32",
+      "pass_means_us": [
+        3426.144003868103,
+        3445.9199979901314,
+        3481.759987771511
+      ],
+      "last_vs_first_pct": 1.6232821457772273,
+      "last_slowest": true
+    },
+    {
+      "file": "service_calls_native_unlimited_f24.json",
+      "sha256": "7afbf273a420113805ba6019dcfcfd3999668ba43225f1ba12584a3e196c59ed",
+      "pass_means_us": [
+        3133.055992424488,
+        3146.879993379116,
+        3219.135969877243
+      ],
+      "last_vs_first_pct": 2.7474765105025334,
+      "last_slowest": true
+    },
+    {
+      "file": "waitvote_native_unlimited_f24.json",
+      "sha256": "a9be6e1926695c710b42b9ffd005b14cf8a091035e1bc5159391b0714b9bc2d3",
+      "pass_means_us": [
+        3115.07198959589,
+        3109.6959859132767,
+        3167.7439883351326
+      ],
+      "last_vs_first_pct": 1.6908758100988797,
+      "last_slowest": true
+    },
+    {
+      "file": "ticketstep_native_unlimited_f24.json",
+      "sha256": "258756472486e30bcf9f8b42e49b942ad9a40635ac35109c1316fdccb11637c8",
+      "pass_means_us": [
+        3092.99199283123,
+        3115.327998995781,
+        3168.1920140981674
+      ],
+      "last_vs_first_pct": 2.431303457662737,
+      "last_slowest": true
+    },
+    {
+      "file": "clean_ticketcontrol_native_unlimited_f24.json",
+      "sha256": "60f62bf5644b8c85d6c9f63563def38949a139fe3f8211c23035612d9bfac9eb",
+      "pass_means_us": [
+        3098.688006401062,
+        3113.184005022049,
+        3171.168029308319
+      ],
+      "last_vs_first_pct": 2.339055198765827,
+      "last_slowest": true
+    }
+  ],
+  "last_slowest_count": 7,
+  "count": 7,
+  "median_last_vs_first_pct": 1.6908758100988797,
+  "scope": "existing normal-build runs; descriptive only; no cause established"
+}

@@ -1,0 +1,13 @@
+{
+  "source_sha256": "29835918684dd24c76e15e27366e7e330268c3dd66c939eaffb1462b54ab2742",
+  "interleavings": 4,
+  "counterexamples_without_trailing_barrier": [
+    [
+      "leader_refill_reads_current",
+      "leader_updates_done",
+      "leader_next_updates_current",
+      "delayed_refill_reads_current"
+    ]
+  ],
+  "conclusion": "Do not remove trailing service_step barrier without changing ticket ownership. Explicit immutable per-invocation ticket is a possible redesign, not validated here."
+}

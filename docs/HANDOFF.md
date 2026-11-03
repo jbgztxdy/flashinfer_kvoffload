@@ -16,6 +16,18 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04 01:32后接续检查点：** 新连续包/连续行/反序包、payload helper noinline、CTA waitvote、不可变ticket等待step、QK后写回均未形成采用信号，生产81093保持。ticketstep3125.504 vs新clean3127.680µs仅0.07%；late_store3143.253µs。新候选共7×2=14项定向检查通过；无新100GB/物理链路/完整矩阵结论。profile/dependency/wait/clock诊断均为限定范围证据，不把低eligible、barrier比例或冲突总数当可回收时间。7轮末pass漂移在增加遥测空隙后未复现，不校正旧时间。所有完整raw实际库SHA12份核验通过，检查点manifest绑定166文件。目录内新增`*_20261104.md`及`checkpoint_20261104_manifest.json`为接续入口；构造器仍非幂等，不覆盖raw。所有runner已结束，GPU3末检空闲。后续不要再换包序/微调等待投票；应设计更低频跨CTA数据共享/状态交接并先证明真实依赖与进度，保留unique字节和单kernel约束。
+
+
+**11/04运行时profile补证：** 正常GPU3小用例实际clean108CTA8warp SM32.83%/DRAM22.03%，scheduler80.42%无eligible；显式stall clean barrier17.86%、long12.62%、short20.50%、wait22.21%。同生成器direct barrier7.27%、long13.03%、short23.34%、wait24.83%。非正式R128热trace，profile降频，准备/字节不同，不将比例差算可回收耗时。优先检查service同步协议，不能凭静态MMA数量判断。原始ncu/日志/CSV及局限见同实验目录`NCU_*_20261104.md`。生产未改，所有profile已结束。
+
+**11/04接续：clean等待诊断及真实payload helper noinline完成。** 正常诊断每步10764.56包、91.03次blocked service step（非纯空等）、389.69行起步时自身任务未结束，发布数逐步正确；不能外推100GB等待。issue/stores noinline候选2定向检查通过，3pass3133.056/3146.880/3219.136µs，均3166.357，无采用信号，未装不测100GB。见实验目录`WAIT_DIAG_20261104.md`、`SERVICE_CALLS_20261104.md`及raw/SHA。runner均terminal。
+
+**11/04后续：实际依赖诊断与反序包候选完成，均未改生产。** 最后一步首对计算tile全部本地；首次far对平均依赖13.53CTA、自搬引用0.96%，仅最后一步非等待因果证明。保留轮转owner仅反转每CTA包序，2定向检查通过，但正常256位置×3pass3451.275µs，慢于历史clean约3129，拒绝不测100GB。详见同实验目录`DEPENDENCY_20261104.md`、`REVERSE_PACKETS_20261104.md`，raw和源码/库SHA齐。runner已结束。
+
+**11/04接续短筛：连续包ownership及匹配连续计算行均失败，未安装。** 两候选各2项GPU定向检查通过；正常GPU3同卡HBM256位置×3pass，连续包3675.552µs，连续包＋连续行4172.480µs，均慢于历史clean3128.949。不是同轮严格配对，不追加100GB模拟。首rowlocal harness替换错误保留，仅补性能。原始/SHA/失败见`temp/glm_trace/tune_unlimited_uniform_20261103/{CONTIGUOUS_20261104.md,ROWLOCAL_20261104.md}`。不能将近似连续区间视为已建立query/unique实际依赖。生产保持81093，GPU runner均结束。
+
+
 **11/04最新：用户明确授权修复/更换带宽模拟，已试“已发请求批量预算＋本地deadline等待”，隔离实验完成，未替换生产模拟器。** `temp/glm_trace/emu_packet_accuracy_20261103/`。旧108CTA10页预约平均53CAS重试、最大>9000，24CTA64页约0.5；退避更慢19/14GB/s拒绝。batch由请求warp临时合并当前已发/已真实读的mailbox，32lane exactmaxplus，个别deadline本地等待，无专用SM、无未来字节/提前消费/静态均分。最终broker有GPUacq_rel fence，初无fence的batch_first与结果分开。semantic24组154368请求、2/24/108CTA×1/8warps×50/100GB×0/20us、混合大小/主动idle/晚到均收费与maxplus正确、early0；另payload逐请求约5万条，载荷相同。
 
 dense copy100GB：原10页34/31→batch98/92GB/s；20页99.26/98.37。原每warp4页的32行stage只有72.8/72.7，显式全CTA汇总“本stage已经发出的实际far字节”后99.43/98.63；50GB接近49.5–49.9。CTA合并改变issue为最晚warp后、加barrier，保守开销明确，不能偷偷视作零开销。更贴近warm-cache32行只有8far行校准100GB91.61/70.01，50GB49.24/47.88；名义双stage在途1.99MB接近20us×100GB2MB无余量，控制成本也在，未严格拆分。稀疏/高延迟适用边界尚未解决。

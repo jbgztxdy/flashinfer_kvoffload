@@ -1,0 +1,7 @@
+# service_step屏障依赖审计
+
+当前clean step四个CTA屏障：1.wait_group之后保证所有线程异步copy完成，并发布leader current；2.真实staging/cache stores之后、leader release ready之前，提供跨writer发布；3.publish_prepare写下一包pages/victims之后、全CTA issue之前；4.refill读取旧current并发出copy/更新done之后，保护下一次step重写current。
+
+不能直接删除末尾屏障：leader next current=done可能抢在落后warp refill读取current前。audit_step_barriers.py枚举4种保留leader内部顺序的交错，找到1个不同warp包号不一致的反例，见step_barrier_audit.json。只是小状态交错模型，不是CUDA完整内存模型或GPU证明。
+
+可继续的实质设计：使每次service调用的ticket不可变、显式传参，避免shared current跨调用覆写。之后才可能将末尾同步吸收到下一次数据消费屏障；仍需保护done的CTA一致退出和metadata生命周期，不能保证省一个屏障就有完整kernel收益。暂未实现/计时，生产未改。
