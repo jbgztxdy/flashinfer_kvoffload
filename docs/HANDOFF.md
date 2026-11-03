@@ -16,6 +16,10 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04认领行并行配额新机制：** 原kernel实际rowprefix诊断认领行owner自用0.90%→49.01%、首far pair producer13.37→5.11，但每CTA30–160包尾部不可直接用。新planner复用resolve shared rowprefix，线程并行owner计数+excess/deficit scan+逆区间映射，无额外grid barrier/串行greedy；180CPU partition通过，实际GPU包表8857项与CPU逐项一致/epoch匹配，严格82/83包，自用42.40%。2定向检查及全cache载荷通过，normal3pass3200.331µs仍慢clean，拒绝不测100GB。区别旧poolquota的规划算法与成本，不能把更高自用当收益；未分离动态成本。见CLAIMROW_QUOTA_20261104.md、audit/model/raw/实际库SHA。生产81093保持，runner结束。
+
+**11/04CTA-owned行计数实验：** prepare_parts1/segment<=2048，warp计数atomicAdd换CTA prefix/direct store；页级CAS/EXCH不动，多分片回退原prepare。384CPU rankcase、2GPU定向通过，normal3095.413µs对近期clean3099.381仅0.13%，unique均值215559.54对215250.02略变，不认定收益/不安装。源/实际库SHA见CTA_ROW_COUNTS_20261104.md及audit，无新100GB结论。
+
 **11/04全线程payload与有界softmax基点实验：** 固定20页包将1440uint4展平给256线程，5完整轮+160线程尾轮；原stage/cache真实写入/unique协议保持，normal3206.048µs。由codegen膨胀补rolled-loop控制3160.512µs，仍未胜近期clean3099.381，各2定向检查通过。另一有界归一化基点原型：仅分数超旧anchor8log2单位才重缩放，完整QK/PV保持；72FP64方程case、5GPU不同Q尺度case通过且容差不变，但normal3172.971µs无收益。三版均拒绝不测100GB；无动态anchor/分支因果计数。报告FLAT_PAYLOAD_20261104.md、BOUNDED_ANCHOR_20261104.md及raw/audit/source/实际库SHA齐。生产81093保持，runner均结束，不重复此映射或anchor阈值扫描。
 
 **11/04恒等rescale跳过实验：** clean全CTA unique staged仅factor精确等于1跳过O/d乘法，完整QK/softmax/PV及LRU/搬运保持；2定向检查通过，normal3pass3147.851µs，随后新clean3099.381µs，慢1.564%，拒绝不测100GB。REG255/STACK16相同，额外分支实际生成；无动态因子统计，不单归因分支。初构造/控制白名单失败和incomplete raw保留，retry仅补控制。见RESCALE_SKIP_20261104.md、audit和source/实际库SHA。生产81093保持，runner结束。此前第三归档提交1007e898。
