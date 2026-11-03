@@ -1,0 +1,454 @@
+--- production
++++ candidate
+@@ -3716 +3716 @@
+-__device__ __forceinline__ void pv_feature_pv(typename KTraits::SharedStorage* smem_storage,
++__device__ __forceinline__ void fetch_assist_pv(typename KTraits::SharedStorage* smem_storage,
+@@ -3808,0 +3809,307 @@
++// Private experimental work exchange. Whole-row partial_o is otherwise unused.
++constexpr uint32_t kAssistCTAs=128,kAssistPairs=128;
++struct alignas(128) AssistControl {
++  uint32_t gen,row,index_base,kv_len,pairs,progress,lease[2];
++  uint32_t helper_done,fetch_done,produced,consumed,canceled,waited;
++  unsigned long long job[kAssistPairs];
++};
++__device__ __forceinline__ void assist_loader_sync(){asm volatile("bar.sync 2,128;":::"memory");}
++__device__ __forceinline__ void assist_math_sync(){asm volatile("bar.sync 3,128;":::"memory");}
++__device__ __forceinline__ unsigned long long assist_ld64(const unsigned long long* p){unsigned long long x;asm volatile("ld.acquire.gpu.global.u64 %0,[%1];":"=l"(x):"l"(p):"memory");return x;}
++__device__ __forceinline__ void assist_st64(unsigned long long* p,unsigned long long x){asm volatile("st.release.gpu.global.u64 [%0],%1;"::"l"(p),"l"(x):"memory");}
++template<typename Params> __device__ __forceinline__ AssistControl* assist_controls(const Params& p){return reinterpret_cast<AssistControl*>(p.partial_o);}
++template<typename Params> __device__ __forceinline__ float* assist_scores(const Params& p,uint32_t owner,uint32_t slot){return reinterpret_cast<float*>(reinterpret_cast<uint8_t*>(p.partial_o)+kAssistCTAs*sizeof(AssistControl))+(owner*2+slot)*4096;}
++__device__ __forceinline__ void assist_copy16(void* dst,const void* src,bool valid=true){uint32_t a=static_cast<uint32_t>(__cvta_generic_to_shared(dst));asm volatile("cp.async.cg.shared.global [%0],[%1],16,%2;"::"r"(a),"l"(src),"r"(valid?16:0));}
++template<typename Params> __device__ __forceinline__ const typename Params::DTypeKV* assist_kv(const Params& p,typename Params::IdType page){return (page<0?p.staging:p.ckv)+((page<0?-static_cast<int64_t>(page)-1:static_cast<int64_t>(page&~kHostBatchOwnerBit))*576);}
++// All128 math lanes execute this helper, with no cross-role shared alias.
++template<typename Params>
++__device__ __forceinline__ void assist_qk32(const Params& p,uint32_t row,uint32_t base,uint32_t len,uint32_t tile,float* out,typename Params::DTypeKV* work){
++ using T=typename Params::DTypeKV;uint32_t t=threadIdx.y*32+threadIdx.x,lane=threadIdx.x,warp=threadIdx.y;
++ T* qs=work;T* ks=work+4096;float s[2][8];
++#pragma unroll 1
++ for(uint32_t b=0;b<9;++b){
++  const auto* q=b==0?p.q_pe+row*p.q_pe_stride_n:p.q_nope+row*p.q_nope_stride_n;
++  const uint32_t stride=b==0?p.q_pe_stride_h:p.q_nope_stride_h,feat=b==0?0:(b-1)*64;
++  for(uint32_t v=t;v<512;v+=128)assist_copy16(qs+(v/8)*64+((v%8)^((v/8)%8))*8,q+(v/8)*stride+feat+(v%8)*8);
++  for(uint32_t v=t;v<256;v+=128){uint32_t key=tile*32+v/8;bool valid=key<len;auto page=valid?p.remap[base+key]:0;assist_copy16(ks+(v/8)*64+((v%8)^((v/8)%8))*8,assist_kv(p,page)+(b==0?512:(b-1)*64)+(v%8)*8,valid);}
++  cp_async::commit_group();cp_async::wait_group<0>();assist_math_sync();
++#pragma unroll
++  for(uint32_t dim=0;dim<4;++dim){uint32_t a[4],k[4];mma::ldmatrix_m8n8x4(a,qs+(warp*16+lane%16)*64+((dim*16+8*(lane/16))^((lane%8)*8)));
++#pragma unroll
++   for(uint32_t g=0;g<2;++g){mma::ldmatrix_m8n8x4(k,ks+(g*16+8*(lane/16)+lane%8)*64+((dim*16+8*((lane%16)/8))^((lane%8)*8)));if(b==0&&dim==0)mma::mma_sync_m16n16k16_row_col_f16f16f32<T,mma::MMAMode::kInit>(s[g],a,k);else mma::mma_sync_m16n16k16_row_col_f16f16f32<T>(s[g],a,k);}
++  }
++  assist_math_sync();
++ }
++#pragma unroll
++ for(uint32_t g=0;g<2;++g)for(uint32_t j=0;j<8;++j)out[(g*128+t)*8+j]=s[g][j];
++}
++// Called only by the worker leader, after its own cp.async wait. Its decision
++// is broadcast by the ORIGINAL pre-QK CTA barrier (no per-pair extra barrier).
++template<typename Params>
++__device__ __forceinline__ void assist_take(const Params& p,uint32_t* scratch,uint32_t row,uint32_t pair){
++ auto* c=assist_controls(p)+blockIdx.y;uint32_t gen=host_batch_ld_acquire(&c->gen);scratch[kHostBatchScratchClaimed]=0;
++ if(!gen)return;
++ c->progress=pair;__threadfence();auto* word=&c->job[pair];unsigned long long prefix=static_cast<unsigned long long>(gen)<<32;
++ bool waited=false;
++ while(true){unsigned long long val=assist_ld64(word),state=val&7;
++  if((val>>32)!=gen)return;
++  if(state==0){if(atomicCAS(word,prefix,prefix|3)==prefix)return;continue;}
++  if(state==1){waited=true;__nanosleep(64);continue;}
++  if(state==2){scratch[kHostBatchScratchClaimed]=static_cast<uint32_t>((val>>3)&1)+1;c->consumed++;c->waited+=waited;return;}
++  return;
++ }
++}
++template<typename Params>
++__device__ __forceinline__ void assist_begin_row(const Params& p,uint32_t row,uint32_t base,uint32_t len){
++ auto* all=assist_controls(p);auto* c=all+blockIdx.y;
++ if(host_batch_ld_acquire(&all->helper_done)>=p.fetch_ctas || !p.state[kHostBatchUnique]){c->gen=0;return;}
++ const uint32_t gen=(p.state[kHostBatchEpoch]+1)*65536+row+1;
++ c->gen=0;__threadfence();c->row=row;c->index_base=base;c->kv_len=len;c->pairs=ceil_div(len,32u)/2;c->progress=0;
++ for(uint32_t i=0;i<c->pairs;++i)c->job[i]=static_cast<unsigned long long>(gen)<<32;
++ __threadfence();asm volatile("st.release.gpu.global.u32 [%0],%1;"::"l"(&c->gen),"r"(gen):"memory");
++}
++template<typename KTraits,typename Params>
++__device__ __forceinline__ void assist_math_service(const Params& p,uint8_t* smem,volatile uint32_t* finished){
++ // Only the four z1 warps enter. Each producer owns a disjoint set of worker
++ // queues; current row's64-bit generation prevents delayed claims on reused rows.
++ const uint32_t t=threadIdx.y*32+threadIdx.x,fetchid=blockIdx.y-(gridDim.y-p.fetch_ctas),workers=gridDim.y-p.fetch_ctas;
++ __shared__ uint32_t job_owner,job_pair,job_slot,job_gen,job_row,job_base,job_len,run,ready[4];
++ auto* all=assist_controls(p);uint32_t scan=0;
++ while(true){
++  if(t==0){run=!*finished;job_owner=0xffffffffu;
++   if(run){uint32_t count=fetchid<workers?ceil_div(workers-fetchid,p.fetch_ctas):0;
++    for(uint32_t n=0;n<count;++n){uint32_t owner=fetchid+((scan+n)%count)*p.fetch_ctas;auto* c=all+owner;uint32_t gen=host_batch_ld_acquire(&c->gen);if(!gen)continue;
++     uint32_t slot=2;if(atomicCAS(&c->lease[0],0u,1u)==0)slot=0;else if(atomicCAS(&c->lease[1],0u,1u)==0)slot=1;if(slot==2)continue;
++     uint32_t first=host_batch_ld_acquire(&c->progress)+4,limit=c->pairs;bool found=false;
++     for(uint32_t pair=first;pair<limit;++pair){unsigned long long expected=static_cast<unsigned long long>(gen)<<32;if(atomicCAS(&c->job[pair],expected,expected|1|(slot<<3))!=expected)continue;
++      job_owner=owner;job_pair=pair;job_slot=slot;job_gen=gen;job_row=c->row;job_base=c->index_base;job_len=c->kv_len;found=true;break;}
++     if(found){scan=(scan+n+1)%count;break;}atomicExch(&c->lease[slot],0u);
++    }
++   }
++  }
++  assist_math_sync();if(!run)break;
++  if(job_owner==0xffffffffu){__nanosleep(64);assist_math_sync();continue;}
++  uint32_t hi=ceil_div(job_len,32u)-1-job_pair*2;bool ok=true;
++  if(t<64){uint32_t key=(hi-1)*32+t;if(key<job_len){auto page=p.remap[job_base+key];uint32_t r=static_cast<uint32_t>(-(page+1));if(page<0&&r>=p.cache_slots){auto* flag=host_batch_flags(p)+(r-p.cache_slots)/64;ok=host_batch_ld_acquire(flag)==p.state[kHostBatchEpoch]+1;}}}
++  bool warp_ok=__all_sync(0xffffffffu,ok);if(threadIdx.x==0)ready[threadIdx.y]=warp_ok;assist_math_sync();
++  if(t==0)run=ready[0]&&ready[1]&&ready[2]&&ready[3];assist_math_sync();
++  auto* c=all+job_owner;auto* word=&c->job[job_pair];unsigned long long prefix=static_cast<unsigned long long>(job_gen)<<32;
++  if(!run){if(t==0){assist_st64(word,prefix);atomicExch(&c->lease[job_slot],0u);c->canceled++;}assist_math_sync();continue;}
++  float* output=assist_scores(p,job_owner,job_slot);
++  assist_qk32(p,job_row,job_base,job_len,hi,output,reinterpret_cast<typename Params::DTypeKV*>(smem+147968));
++  assist_qk32(p,job_row,job_base,job_len,hi-1,output+2048,reinterpret_cast<typename Params::DTypeKV*>(smem+147968));
++  __threadfence();assist_math_sync();
++  if(t==0){assist_st64(word,prefix|2|(job_slot<<3));(all+blockIdx.y)->produced++;}
++  assist_math_sync();
++ }
++ if(t==0)atomicAdd(&all->helper_done,1u);assist_math_sync();
++}
++
++template <typename KTraits, typename Params>
++__device__ __forceinline__ void assist_fetch_pages(const Params& params, uint8_t* smem,
++                                                       uint32_t epoch, uint32_t unique,
++                                                       uint32_t rows) {
++  using DTypeKV = typename Params::DTypeKV;
++  constexpr uint32_t ROW = KTraits::HEAD_DIM_CKV + KTraits::HEAD_DIM_KPE;
++  constexpr uint32_t VECS_PER_ROW = ROW * sizeof(DTypeKV) / 16;
++  constexpr uint32_t CHUNK_VECS = kHostBatchFetchRows * VECS_PER_ROW;
++  constexpr uint32_t BUFFERS =
++      sizeof(typename KTraits::SharedStorage) >= 2 * CHUNK_VECS * 16 ? 2 : 1;
++  static_assert(sizeof(typename KTraits::SharedStorage) >= CHUNK_VECS * 16);
++  static_assert(CHUNK_VECS % 128 == 0);
++  const uint32_t tid = threadIdx.y * blockDim.x + threadIdx.x;
++  const uint32_t fetch_id = blockIdx.y - (gridDim.y - params.fetch_ctas);
++  const uint32_t count = params.stage ? min(unique, params.staging_capacity) : unique;
++  uint32_t* flags = host_batch_flags(params);
++  uint4* buffer = reinterpret_cast<uint4*>(smem);
++
++  const uint32_t chunk_vecs = rows * VECS_PER_ROW;
++  __shared__ int32_t cache_rows[kHostBatchFetchRows];
++  __shared__ typename Params::IdType page_ids[BUFFERS][kHostBatchFetchRows];
++  __shared__ uint32_t deferred[kHostBatchMaxDeferred], deferred_count;
++  if (tid == 0) deferred_count = 0;
++  uint64_t stream_source_policy;
++  asm volatile("createpolicy.fractional.L2::evict_first.b64 %0, 1.0;"
++               : "=l"(stream_source_policy));
++
++  assist_loader_sync();
++  __shared__ uint32_t producer_ready[4];
++  auto issue = [&](uint32_t chunk, uint32_t buf) {
++    if constexpr (Params::shared_fetch_ids) {
++      if (tid < rows && chunk * rows + tid < count) {
++        page_ids[buf][tid] = params.unique_pages[chunk * rows + tid];
++      }
++      // This synchronizes the ordinary ID stores without draining the other buffer's
++      // outstanding KV cp.async group. Every thread then reuses one shared ID per row.
++      assist_loader_sync();
++    }
++#pragma unroll
++    for (uint32_t i = 0; i < CHUNK_VECS / 128; ++i) {
++      const uint32_t v = i * 128 + tid;
++      const uint32_t slot = chunk * rows + v / VECS_PER_ROW;
++      if (v < chunk_vecs && slot < count) {
++        const auto page = [&]() {
++          if constexpr (Params::shared_fetch_ids)
++            return page_ids[buf][v / VECS_PER_ROW];
++          else return params.unique_pages[slot];
++        }();
++        const auto* source = reinterpret_cast<const uint4*>(
++            params.ckv + static_cast<int64_t>(page) * ROW);
++        const uint32_t destination = static_cast<uint32_t>(
++            __cvta_generic_to_shared(buffer + buf * CHUNK_VECS + v));
++        asm volatile("cp.async.cg.shared.global.L2::cache_hint [%0], [%1], 16, %2;"
++                     :: "r"(destination), "l"(source + v % VECS_PER_ROW),
++                        "l"(stream_source_policy));
++      }
++    }
++    FAR_EMU_TILE(2, buf, tid == 0 ? min(rows, count - chunk * rows) : 0, ROW * sizeof(DTypeKV));
++    cp_async::commit_group();
++  };
++
++  uint32_t chunk = fetch_id;
++  if (chunk * rows < count) issue(chunk, 0);
++#pragma unroll 1
++  for (uint32_t k = 0; chunk * rows < count; ++k, chunk += params.fetch_ctas) {
++    const uint32_t next = chunk + params.fetch_ctas;
++    if (BUFFERS == 2 && next * rows < count) {
++      issue(next, (k + 1) % 2);
++      cp_async::wait_group<1>();
++    } else {
++      cp_async::wait_group<0>();
++    }
++#ifdef FLASHINFER_FAR_EMU
++    if (::flashinfer::far_emu::config.enabled) {
++      assist_loader_sync();
++      if(tid==0) {auto c=::flashinfer::far_emu::cta_slot();auto stage=BUFFERS==2?k%2:0;
++        ::flashinfer::far_emu::wait_until(*(volatile unsigned long long*)&::flashinfer::far_emu::pending_ready[c][stage]);
++        ::flashinfer::far_emu::pending_ready[c][stage]=0;}
++    }
++#endif
++    assist_loader_sync();
++    const uint32_t buf = BUFFERS == 2 ? k % 2 : 0;
++    auto* destination = reinterpret_cast<uint4*>(
++        params.staging +
++        (params.cache_slots + static_cast<int64_t>(chunk) * rows) * ROW);
++#pragma unroll
++    for (uint32_t i = 0; i < CHUNK_VECS / 128; ++i) {
++      const uint32_t v = i * 128 + tid;
++      if (params.stage && v < chunk_vecs && chunk * rows + v / VECS_PER_ROW < count) {
++        destination[v] = buffer[buf * CHUNK_VECS + v];
++      }
++    }
++    // The resolve step is done, so the dedup entries can be cleared for the next launch.
++    if (tid < rows && chunk * rows + tid < count) {
++      const auto page = [&]() {
++        if constexpr (Params::shared_fetch_ids)
++          return page_ids[buf][tid];
++        else return params.unique_pages[chunk * rows + tid];
++      }();
++      params.host_slot[page - params.host_page_start] = 0;
++    }
++    if (params.stage) {
++      __threadfence();
++      assist_loader_sync();
++      if (tid == 0) {
++        asm volatile("st.release.gpu.global.u32 [%0], %1;" ::"l"(flags + chunk), "r"(epoch + 1)
++                     : "memory");
++      }
++    }
++    // Fill the LRU cache from the same shared-memory copy, after the attention items waiting on
++    // this chunk were released: one more HBM write per page, and no reread. The victims come from
++    // the pools' LRU items, which workers run first (see run_host_batch_items). A staged chunk
++    // that lands before its victims are chosen is not waited for: blocking here put the LRU
++    // selection (~20 us at 4096 slots) on the PCIe stream's critical path at small batch. Its
++    // index is kept and it is copied from staging after the loop. In place there is no staged
++    // copy, so the loop waits (nothing in this launch waits on these copies).
++    if (host_batch_caching(params)) {
++      bool ready = true;
++      if (tid < rows && chunk * rows + tid < count) {
++        const uint32_t* pool_flag = params.pool_flags + params.slot_pool[chunk * rows + tid];
++        ready = host_batch_ld_acquire(pool_flag) == epoch + 1;
++      }
++      bool warp_ready=__all_sync(0xffffffffu,ready);
++      if(threadIdx.x==0)producer_ready[threadIdx.y]=warp_ready;
++      assist_loader_sync();
++      const bool all_ready=producer_ready[0]&&producer_ready[1]&&producer_ready[2]&&producer_ready[3];
++      const bool defer=params.stage && !all_ready && deferred_count<kHostBatchMaxDeferred;
++      if (defer) {
++        assist_loader_sync();
++        if (tid == 0) deferred[deferred_count++] = chunk;
++      } else {
++        if (tid < rows) {
++          const uint32_t slot = chunk * rows + tid;
++          int32_t victim = -1;
++          if (slot < count) {
++            const uint32_t* pool_flag = params.pool_flags + params.slot_pool[slot];
++            while (host_batch_ld_acquire(pool_flag) != epoch + 1) __nanosleep(64);
++            victim = params.victim_of[slot];
++          }
++          cache_rows[tid] = victim;
++          if constexpr (Params::shared_fetch_ids) {
++            if (victim >= 0) {
++              const auto page = page_ids[buf][tid];
++              const int32_t evicted = params.slot_page[victim];
++              if (evicted >= 0) params.resident[evicted - params.host_page_start] = -1;
++              params.resident[page - params.host_page_start] = victim;
++              params.slot_page[victim] = page;
++            }
++          } else {
++            bind_host_batch_staged_slot(params, slot, victim);
++          }
++        }
++        assist_loader_sync();
++#pragma unroll
++        for (uint32_t i = 0; i < CHUNK_VECS / 128; ++i) {
++          const uint32_t v = i * 128 + tid;
++          const int32_t victim = v < chunk_vecs ? cache_rows[v / VECS_PER_ROW] : -1;
++          if (victim >= 0) {
++            reinterpret_cast<uint4*>(
++                params.staging +
++                static_cast<int64_t>(victim) * ROW)[v % VECS_PER_ROW] =
++                buffer[buf * CHUNK_VECS + v];
++          }
++        }
++      }
++      // The buffer is refilled next.
++      assist_loader_sync();
++    }
++    if (BUFFERS == 1 && next * rows < count) issue(next, 0);
++  }
++  // Deferred staged chunks: their victims are chosen by now; copy staging -> cache, HBM to HBM,
++  // the whole CTA over each chunk.
++  assist_loader_sync();
++#pragma unroll 1
++  for (uint32_t d = 0; d < deferred_count; ++d) {
++    const uint32_t chunk = deferred[d];
++    if (tid < rows) {
++      const uint32_t slot = chunk * rows + tid;
++      int32_t victim = -1;
++      if (slot < count) {
++        const uint32_t* pool_flag = params.pool_flags + params.slot_pool[slot];
++        while (host_batch_ld_acquire(pool_flag) != epoch + 1) __nanosleep(64);
++        victim = params.victim_of[slot];
++      }
++      cache_rows[tid] = victim;
++      bind_host_batch_staged_slot(params, slot, victim);
++    }
++    assist_loader_sync();
++    const auto* source = reinterpret_cast<const uint4*>(
++        params.staging + (params.cache_slots + static_cast<int64_t>(chunk) * rows) * ROW);
++#pragma unroll 4
++    for (uint32_t v = tid; v < chunk_vecs; v += 128) {
++      const int32_t victim = cache_rows[v / VECS_PER_ROW];
++      if (victim >= 0) {
++        reinterpret_cast<uint4*>(params.staging + static_cast<int64_t>(victim) * ROW)[v % VECS_PER_ROW] =
++            source[v];
++      }
++    }
++    assist_loader_sync();
++  }
++  // Overflow pages were never staged; clear their dedup entries too.
++#pragma unroll 1
++  for (uint32_t slot = count + fetch_id * 128 + tid; slot < unique;
++       slot += params.fetch_ctas * 128) {
++    params.host_slot[params.unique_pages[slot] - params.host_page_start] = 0;
++  }
++}
++
+@@ -3810 +4117,3 @@
+-struct PVFeatureTraits : JointQKTraits<Q, KV, O, Id> {};
++struct FetchAssistTraits : JointQKTraits<Q, KV, O, Id> {
++ struct SharedStorage : JointQKTraits<Q,KV,O,Id>::SharedStorage {alignas(128) uint8_t service_work[12288];};
++};
+@@ -3812 +4121 @@
+-struct PVFeatureHostParams : JointQKHostParams<Params> {};
++struct FetchAssistHostParams : JointQKHostParams<Params> {};
+@@ -3818 +4127 @@
+-__device__ __forceinline__ void pv_feature_qk_pair_fragments(
++__device__ __forceinline__ void fetch_assist_qk_pair_fragments(
+@@ -3850 +4159 @@
+-__device__ __forceinline__ void pv_feature_load_query(const Params& params, uint32_t row,
++__device__ __forceinline__ void fetch_assist_load_query(const Params& params, uint32_t row,
+@@ -3865 +4174 @@
+-__device__ __forceinline__ void pv_feature_compute_pe(
++__device__ __forceinline__ void fetch_assist_compute_pe(
+@@ -3891 +4200 @@
+-__device__ __forceinline__ void pv_feature_compute_one(
++__device__ __forceinline__ void fetch_assist_compute_one(
+@@ -3893 +4202 @@
+-  pv_feature_compute_pe<false, KTraits>(storage, 0, 0, qpe, scores, scores);
++  fetch_assist_compute_pe<false, KTraits>(storage, 0, 0, qpe, scores, scores);
+@@ -3901 +4210 @@
+-__device__ __forceinline__ void pv_feature_compute_qk_pair(
++__device__ __forceinline__ void fetch_assist_compute_qk_pair(
+@@ -3904 +4213 @@
+-  pv_feature_compute_pe<true, KTraits>(storage, a, b, qpe, sa, sb);
++  fetch_assist_compute_pe<true, KTraits>(storage, a, b, qpe, sa, sb);
+@@ -3907 +4216 @@
+-  pv_feature_qk_pair_fragments<false,KTraits,KTraits::NUM_MMA_D_CKV,
++  fetch_assist_qk_pair_fragments<false,KTraits,KTraits::NUM_MMA_D_CKV,
+@@ -3916 +4225 @@
+-__device__ __forceinline__ void pv_feature_update_joint_host_mdo(
++__device__ __forceinline__ void fetch_assist_update_joint_host_mdo(
+@@ -3960 +4269 @@
+-__device__ __forceinline__ void pv_feature_attend_joint_host_tiles(
++__device__ __forceinline__ void fetch_assist_attend_joint_host_tiles(
+@@ -3967 +4276 @@
+-  pv_feature_load_query(params, row, qpe);
++  fetch_assist_load_query(params, row, qpe);
+@@ -3968,0 +4278,3 @@
++  const int initial_hi=hi;
++  const uint32_t assist_tid=(threadIdx.z*blockDim.y+threadIdx.y)*blockDim.x+threadIdx.x;
++  if(assist_tid==0)assist_begin_row(params,row,index_base,kv_len);
+@@ -3992,0 +4305 @@
++    if(assist_tid==0)assist_take(params,const_cast<uint32_t*>(scratch),row,(initial_hi-hi)/2);
+@@ -3994 +4307,5 @@
+-    pv_feature_compute_qk_pair<KTraits>(storage, hi%2, lo%2, qpe, scores, scores+1);
++    if(scratch[kHostBatchScratchClaimed]) {
++      float* src=assist_scores(params,blockIdx.y,scratch[kHostBatchScratchClaimed]-1);
++#pragma unroll
++      for(uint32_t j=0;j<8;++j){scores[0][j]=src[assist_tid*8+j];scores[1][j]=src[2048+assist_tid*8+j];}
++    }else fetch_assist_compute_qk_pair<KTraits>(storage, hi%2, lo%2, qpe, scores, scores+1);
+@@ -3997,2 +4314,4 @@
+-    pv_feature_update_joint_host_mdo<KTraits>(&storage, variant, scores, scores+1, o, m, d);
+-    pv_feature_pv<KTraits>(&storage, hi%2, scores, d, o);
++    fetch_assist_update_joint_host_mdo<KTraits>(&storage, variant, scores, scores+1, o, m, d);
++    // First jointMDO barrier guarantees all score loads finished before slot reuse.
++    if(assist_tid==0 && scratch[kHostBatchScratchClaimed])atomicExch(&assist_controls(params)[blockIdx.y].lease[scratch[kHostBatchScratchClaimed]-1],0u);
++    fetch_assist_pv<KTraits>(&storage, hi%2, scores, d, o);
+@@ -4008 +4327 @@
+-    pv_feature_pv<KTraits>(&storage, lo%2, scores+1, d, o);
++    fetch_assist_pv<KTraits>(&storage, lo%2, scores+1, d, o);
+@@ -4020 +4339 @@
+-    pv_feature_compute_one<KTraits>(storage, qpe, scores);
++    fetch_assist_compute_one<KTraits>(storage, qpe, scores);
+@@ -4023 +4342 @@
+-    pv_feature_pv<KTraits>(&storage, 0, scores, d, o);
++    fetch_assist_pv<KTraits>(&storage, 0, scores, d, o);
+@@ -4028 +4347 @@
+-__device__ __forceinline__ void pv_feature_run_joint_host_item(const Params& params,
++__device__ __forceinline__ void fetch_assist_run_joint_host_item(const Params& params,
+@@ -4088 +4407 @@
+-    pv_feature_attend_joint_host_tiles<KTraits>(params, storage, variant, scratch,
++    fetch_assist_attend_joint_host_tiles<KTraits>(params, storage, variant, scratch,
+@@ -4121 +4440 @@
+-__device__ __forceinline__ void pv_feature_run_joint_host_items(const Params& params,
++__device__ __forceinline__ void fetch_assist_run_joint_host_items(const Params& params,
+@@ -4155 +4474 @@
+-    pv_feature_run_joint_host_item<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, item - lru_items, s_frag, o_frag,
++    fetch_assist_run_joint_host_item<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, item - lru_items, s_frag, o_frag,
+@@ -4160 +4479 @@
+-__global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPVFeatureKernel(
++__global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAFetchAssistKernel(
+@@ -4174,0 +4494,3 @@
++  if(tid==0) {auto* c=assist_controls(params)+blockIdx.y;c->gen=0;c->lease[0]=c->lease[1]=0;c->produced=c->consumed=c->canceled=c->waited=0;
++    if(blockIdx.y==0)c->helper_done=c->fetch_done=0;}
++
+@@ -4238,2 +4560,11 @@
+-  if (unique > 0 && from_back && !host_batch_writes_back(params)) fetch_stream_source_pages<KTraits>(params, smem, epoch, unique, fetch_rows);
+-  pv_feature_run_joint_host_items<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, from_back, unique);
++  if (unique > 0 && from_back && !host_batch_writes_back(params)) {
++    __shared__ volatile uint32_t producer_finished;
++    if(tid==0)producer_finished=0;
++    FAR_EMU_INIT(2);FAR_EMU_SYNC();
++    if(threadIdx.z==0) {
++      assist_fetch_pages<KTraits>(params,smem,epoch,unique,fetch_rows);
++      if(tid==0){atomicAdd(&assist_controls(params)->fetch_done,1u);__threadfence_block();producer_finished=1;}
++    }else assist_math_service<KTraits>(params,smem,&producer_finished);
++    __syncthreads();
++  }
++  fetch_assist_run_joint_host_items<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, from_back, unique);
+@@ -4307,4 +4638,4 @@
+-    using PVFeatureKernelTraits = PVFeatureTraits<DTypeQ, DTypeKV, DTypeO, IdType>;
+-    using PVFeatureKernelParams = PVFeatureHostParams<Params>;
+-    constexpr size_t pv_feature_smem = sizeof(typename PVFeatureKernelTraits::SharedStorage);
+-    static_assert(pv_feature_smem == 147968);
++    using FetchAssistKernelTraits = FetchAssistTraits<DTypeQ, DTypeKV, DTypeO, IdType>;
++    using FetchAssistKernelParams = FetchAssistHostParams<Params>;
++    constexpr size_t fetch_assist_smem = sizeof(typename FetchAssistKernelTraits::SharedStorage);
++    static_assert(fetch_assist_smem == 160256);
+@@ -4313 +4644 @@
+-        params.fetch_ctas < num_sms && smem_limit_per_sm >= pv_feature_smem + 4096 &&
++        params.fetch_ctas < num_sms && smem_limit_per_sm >= fetch_assist_smem + 4096 &&
+@@ -4317,7 +4648,7 @@
+-      auto pv_feature_kernel = BatchMLAPVFeatureKernel<PVFeatureKernelTraits, PVFeatureKernelParams, false>;
+-      FLASHINFER_CUDA_CALL(cudaFuncSetAttribute(pv_feature_kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, pv_feature_smem));
+-      int pv_feature_blocks = 0;
+-      FLASHINFER_CUDA_CALL(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&pv_feature_blocks, pv_feature_kernel, 256, pv_feature_smem));
+-      if (pv_feature_blocks >= 1) {
+-        const uint32_t pv_feature_grid = num_sms;
+-        if (params.pool_capacity > kHostBatchMaxPool || 2ull * params.pool_capacity * sizeof(uint32_t) > pv_feature_smem)
++      auto fetch_assist_kernel = BatchMLAFetchAssistKernel<FetchAssistKernelTraits, FetchAssistKernelParams, false>;
++      FLASHINFER_CUDA_CALL(cudaFuncSetAttribute(fetch_assist_kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, fetch_assist_smem));
++      int fetch_assist_blocks = 0;
++      FLASHINFER_CUDA_CALL(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&fetch_assist_blocks, fetch_assist_kernel, 256, fetch_assist_smem));
++      if (fetch_assist_blocks >= 1) {
++        const uint32_t fetch_assist_grid = num_sms;
++        if (params.pool_capacity > kHostBatchMaxPool || 2ull * params.pool_capacity * sizeof(uint32_t) > fetch_assist_smem)
+@@ -4325,2 +4656,2 @@
+-        static_assert(sizeof(PVFeatureKernelParams) == sizeof(Params));
+-        static_assert(alignof(PVFeatureKernelParams) == alignof(Params));
++        static_assert(sizeof(FetchAssistKernelParams) == sizeof(Params));
++        static_assert(alignof(FetchAssistKernelParams) == alignof(Params));
+@@ -4331 +4662 @@
+-        params.prepare_parts = min(ceil_div(pv_feature_grid, max(params.num_rows, 1u)), ceil_div(length, 256u));
++        params.prepare_parts = min(ceil_div(fetch_assist_grid, max(params.num_rows, 1u)), ceil_div(length, 256u));
+@@ -4334 +4665 @@
+-        FLASHINFER_CUDA_CALL(cudaLaunchCooperativeKernel((void*)pv_feature_kernel, dim3(1, pv_feature_grid), dim3(32, 4, 2), args, pv_feature_smem, stream));
++        FLASHINFER_CUDA_CALL(cudaLaunchCooperativeKernel((void*)fetch_assist_kernel, dim3(1, fetch_assist_grid), dim3(32, 4, 2), args, fetch_assist_smem, stream));

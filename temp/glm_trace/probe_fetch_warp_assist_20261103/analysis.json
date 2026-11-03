@@ -1,0 +1,212 @@
+{
+  "complete": true,
+  "serial": [
+    {
+      "latency_ns": 0,
+      "us": {
+        "0": 2490.026611333333,
+        "1": 3944.7893066666666,
+        "2": 5239.125325333333
+      },
+      "plain_GBps": 99.49333668660762,
+      "interleaved_GBps": 62.80210088313699,
+      "decision": "reject serial wholeQK quantum"
+    },
+    {
+      "latency_ns": 20000,
+      "us": {
+        "0": 2514.6027019999997,
+        "1": 3945.1306966666666,
+        "2": 5249.023763
+      },
+      "plain_GBps": 98.52095354982245,
+      "interleaved_GBps": 62.796666333341555,
+      "decision": "reject serial wholeQK quantum"
+    }
+  ],
+  "spatial": [
+    {
+      "latency_ns": 0,
+      "fetch_CTAs": 24,
+      "modes": {
+        "0": {
+          "mean_us": 2491.391927,
+          "samples_us": [
+            2490.36792,
+            2493.439941,
+            2490.36792
+          ],
+          "payload_GBps": 99.4388130246197,
+          "fetch_span_us": 2484.9066666666668,
+          "QK_jobs": 0,
+          "helper_tail_us": 0.0
+        },
+        "1": {
+          "mean_us": 2493.098633,
+          "samples_us": [
+            2492.416016,
+            2495.488037,
+            2491.391846
+          ],
+          "payload_GBps": 99.37073997826062,
+          "fetch_span_us": 2486.272,
+          "QK_jobs": 0,
+          "helper_tail_us": 0.0
+        },
+        "2": {
+          "mean_us": 2496.853271666667,
+          "samples_us": [
+            2498.560059,
+            2497.535889,
+            2494.463867
+          ],
+          "payload_GBps": 99.22131140474711,
+          "fetch_span_us": 2490.7093333333332,
+          "QK_jobs": 3361,
+          "helper_tail_us": 0.0
+        }
+      }
+    },
+    {
+      "latency_ns": 0,
+      "fetch_CTAs": 32,
+      "modes": {
+        "0": {
+          "mean_us": 2492.415934,
+          "samples_us": [
+            2489.343994,
+            2493.439941,
+            2494.463867
+          ],
+          "payload_GBps": 99.39795867153207,
+          "fetch_span_us": 2485.5893333333333,
+          "QK_jobs": 0,
+          "helper_tail_us": 0.0
+        },
+        "1": {
+          "mean_us": 2494.122558666667,
+          "samples_us": [
+            2493.439941,
+            2497.535889,
+            2491.391846
+          ],
+          "payload_GBps": 99.32994476920969,
+          "fetch_span_us": 2486.6133333333332,
+          "QK_jobs": 0,
+          "helper_tail_us": 0.0
+        },
+        "2": {
+          "mean_us": 2493.4399413333335,
+          "samples_us": [
+            2494.463867,
+            2492.416016,
+            2493.439941
+          ],
+          "payload_GBps": 99.35713786132895,
+          "fetch_span_us": 2486.6133333333332,
+          "QK_jobs": 3361,
+          "helper_tail_us": 0.0
+        }
+      }
+    },
+    {
+      "latency_ns": 20000,
+      "fetch_CTAs": 24,
+      "modes": {
+        "0": {
+          "mean_us": 2510.847982,
+          "samples_us": [
+            2509.823975,
+            2509.823975,
+            2512.895996
+          ],
+          "payload_GBps": 98.66828170244837,
+          "fetch_span_us": 2503.68,
+          "QK_jobs": 0,
+          "helper_tail_us": 0.0
+        },
+        "1": {
+          "mean_us": 2516.9921063333336,
+          "samples_us": [
+            2514.944092,
+            2519.040039,
+            2516.992188
+          ],
+          "payload_GBps": 98.42742667989553,
+          "fetch_span_us": 2509.824,
+          "QK_jobs": 0,
+          "helper_tail_us": 0.0
+        },
+        "2": {
+          "mean_us": 2526.8905436666664,
+          "samples_us": [
+            2525.183838,
+            2530.303955,
+            2525.183838
+          ],
+          "payload_GBps": 98.0418628028554,
+          "fetch_span_us": 2519.7226666666666,
+          "QK_jobs": 3361,
+          "helper_tail_us": 0.0
+        }
+      }
+    },
+    {
+      "latency_ns": 20000,
+      "fetch_CTAs": 32,
+      "modes": {
+        "0": {
+          "mean_us": 2512.213379,
+          "samples_us": [
+            2512.895996,
+            2509.823975,
+            2513.920166
+          ],
+          "payload_GBps": 98.61465513674428,
+          "fetch_span_us": 2505.0453333333335,
+          "QK_jobs": 0,
+          "helper_tail_us": 0.0
+        },
+        "1": {
+          "mean_us": 2514.602702,
+          "samples_us": [
+            2514.944092,
+            2515.968018,
+            2512.895996
+          ],
+          "payload_GBps": 98.52095354982244,
+          "fetch_span_us": 2508.1173333333336,
+          "QK_jobs": 0,
+          "helper_tail_us": 0.0
+        },
+        "2": {
+          "mean_us": 2520.7466633333333,
+          "samples_us": [
+            2523.135986,
+            2522.111816,
+            2516.992188
+          ],
+          "payload_GBps": 98.28082274336812,
+          "fetch_span_us": 2513.2373333333335,
+          "QK_jobs": 3361,
+          "helper_tail_us": 0.0
+        }
+      }
+    }
+  ],
+  "resources": {
+    "registers": [
+      32,
+      32,
+      70
+    ],
+    "local_bytes": [
+      0,
+      0,
+      0
+    ],
+    "dynamic_shared": 160256
+  },
+  "production_unchanged": true,
+  "limits": "Microprobe only: no real worker consumes QK, no LRU or simultaneous84workers. Not an end-to-end result. All3361jobs finish during fetch; helper capacity not saturated/measured."
+}

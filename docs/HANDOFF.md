@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-03 16:04 当前v2 fetch-SM诊断完成；生产cab508dc/FAR8507eab0保持，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-03 17:29 fetch内4+4分工与真实QK交接两版完成并拒绝；生产cab508dc/FAR8507eab0保持，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -15,6 +15,16 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**17:29最新：用户已授权在维持带宽下利用fetch CTA冗余计算，支持局部warp分工及有依据地增加fetch SM；本轮两版完整实现及诊断已完成，无新生产加速。** 串行QK穿插探针补完：99.49/98.52→62.80/62.80GB/s，拒绝。新的fetch CTA内4loader+4QK、保留双64行＋12KiB feature工作区，24CTA微探针100GB0/20仍99.22/98.04GB/s并算完3361真实QK块；32CTA相近。payload/采样QK/arrival≥deadline检查通过，FAR header/reserve/tile不改，128loader wait同步适配；微探针不含真实worker消费，不能算端到端收益。
+
+完整pull交接仅改fetch分支，保留原worker完整布局，gen-tagged所有权、每worker2score槽，已就绪KV，worker消费后跳过原QK，produced==consumed、零未释放lease。candidate9583397b用12KiB/两次32KV QK；fused最终SHA见manifest，16KiB共享Q的64KV pair＋预解析KV指针，dynamic164352/static2304/REG255/STACK0/LOCAL0，总166656≤block166912；实际SetAttribute/Occupancy替代不适用的+4096保守guard。普通worker64位状态/进度仍增加开销。GPU3/NUMA1 BF16MTP8R128K2048LRU4096 staged f24/off、256×3新同参base3307.840/3303.360µs；candidate3859.403/3875.499（慢16.67%/17.32%），fused3760.395/3782.347（慢13.68%/14.50%）。全部拒绝不安装。
+
+fused消除约99%的原helper等待，真实分担2333/2440 pairs（7.12%/7.45%），但完整fetch只有95.96/92.64GB/s；32fetch＋20µs恢复97.30GB/s、分担3222（9.83%），总3824.597µs反慢于fused24，同参base32为3430.773。不要继续单靠加fetch数。新同binary100GB20/24CTA关闭控制（一冷32步pass）无交接3482.752、仅维护交接但helper不认领3724.352、完整辅助3774.080µs；交接维护增加241.600µs，辅助的额外读取/score传递与所省QK净效果再慢49.728µs。不是某条指令因果拆分。后续若继续此方向，需要新的粗粒度所有权/交接机制减少普通CTA热循环操作，而非原样重做pull或扫前瞻/warp/fetch数字。
+
+新增长短/fused/f32共5项定向检查（output/LSE、QPE stride80、padding空/单元素/奇尾、3轮cache状态、Graph×2、全有效cache载荷/映射），长case要求非零消费。864次完整kernel计时（8×96＋3×32），另18串行/36空间微探针；原始失败和全部负差保持。无新整套pytest/sanitizers/full1024/FP16/物理链路/H800结论。首uint64ptr编译失败first_compile，空队列broadcast及fused预GPU修订有归档，勿运行这些archive。全部runner terminal，无等待器，GPU3末检0MiB0%；GPU0/1/2及H800不动。生产cab508dc/math34af/FAR8507及原矩阵保持，整体110%仍未完成。[结果报告](mla_host_fetch_qk_assist_results_20261103.md)，原件`temp/glm_trace/tune_fetch_qk_assist_20261103/{README.md,audit.json,manifest.json}`；两个probe目录均completed，勿重跑，构造make脚本非幂等resume。
+
+以下16:31设计与16:04诊断是历史入口；原“probe未GPU运行/唯一待测”已由上文替代。
 
 **当前用户希望优先利用fetch CTA冗余计算，进入新QK辅助设计讨论。** 新方向为保留84worker完整布局和24个64行双buffer，只让fetch算有界已就绪QK，原worker消费score并跳过相应QK，原softmax/PV保持。不同于旧全部CTA role/cofetch/两遍QK；尚未实现真实交接，不能称已有分担或收益。两个前瞻paired槽/worker约2.625MiB，必须有epoch/generation/claim及drain；CLAIMED后不能盲目回退复算或复用。全CTA等待内单纯穿插的显式等待机会折算约0.18–0.19ms，并不保证覆盖目标0.36–0.39ms；后续fetch分支内warp分工需要正确loader组/barrier协议，未实现，FAR模型不能改变。
 

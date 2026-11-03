@@ -1,3 +1,7 @@
+# Continuation: serial probe completed and rejected
+
+Current result.json passes sampledQK/fullpayload checks but bandwidth drops99.49/98.52→62.80/62.80GB/s. See [newreport](../../../docs/mla_host_fetch_qk_assist_results_20261103.md). Originalcompiled/busyGPU notes below are historical; run.py completedthisturn, no waiter. Do not restart.
+
 # Fetch QK assist feasibility probe — compiled, NOT GPU tested
 
 See [design](../../../docs/mla_host_fetch_compute_design_20261103.md).

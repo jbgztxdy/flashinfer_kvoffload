@@ -1,5 +1,7 @@
 # fetch CTA参与必要计算：QK辅助的可检验设计
 
+**接续实测：串行穿插带宽降到约63GB/s，4+4空间分工微探针能维持约98–99GB/s；两版真正交接及32fetch完整试验均慢，未保留。最新[结果报告](mla_host_fetch_qk_assist_results_20261103.md)优先；下文是设计时快照，原“无GPU结果”不再代表当前。**
+
 用户希望优先利用fetch CTA中的冗余计算资源。当前建议是：**保留84个worker的完整attention布局和24个64行双缓冲fetch通道，仅让fetch CTA辅助计算有界、已就绪的QK块，再由原worker消费分数、执行原softmax/PV。** 这是新设计和独立微探针，不是已经有效的优化；生产host/math/FAR及正式参考保持cab508dc/34af/8507eab0。
 
 ## 为何不直接在fetch内调用整行attention

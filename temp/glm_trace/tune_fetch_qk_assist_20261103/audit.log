@@ -1,0 +1,367 @@
+{
+  "timestamp": "2026-11-03T17:28:50+0800",
+  "complete": true,
+  "rows": [
+    {
+      "raw": "base_g100_l0_f24.json",
+      "variant": "base",
+      "setting": "g100_l0",
+      "fetch_ctas": 24,
+      "item": 64,
+      "passes": 3,
+      "mean_us": 3307.8399995962777,
+      "pass_us": [
+        3286.912016570568,
+        3291.6480004787445,
+        3344.959981739521
+      ],
+      "reference_us": 2701.009850887648,
+      "unique_miss_MB": 247.980816,
+      "assisted_pairs": 0,
+      "QK_pair_fraction": 0.0,
+      "worker_waited_jobs": 0,
+      "canceled_before_compute": 0,
+      "over_reference": 0.22466787690878043
+    },
+    {
+      "raw": "base_g100_l20000_f24.json",
+      "variant": "base",
+      "setting": "g100_l20000",
+      "fetch_ctas": 24,
+      "item": 64,
+      "passes": 3,
+      "mean_us": 3303.359975417455,
+      "pass_us": [
+        3275.3919810056686,
+        3295.071981847286,
+        3339.6159633994102
+      ],
+      "reference_us": 2701.264370887648,
+      "unique_miss_MB": 247.95678,
+      "assisted_pairs": 0,
+      "QK_pair_fraction": 0.0,
+      "worker_waited_jobs": 0,
+      "canceled_before_compute": 0,
+      "over_reference": 0.22289399401953225
+    },
+    {
+      "raw": "base_g100_l20000_f32.json",
+      "variant": "base",
+      "setting": "g100_l20000",
+      "fetch_ctas": 32,
+      "item": 64,
+      "passes": 3,
+      "mean_us": 3430.7733376820884,
+      "pass_us": [
+        3398.112006485462,
+        3419.391989707947,
+        3474.8160168528557
+      ],
+      "reference_us": 2701.352210887648,
+      "unique_miss_MB": 247.993788,
+      "assisted_pairs": 0,
+      "QK_pair_fraction": 0.0,
+      "worker_waited_jobs": 0,
+      "canceled_before_compute": 0,
+      "over_reference": 0.2700207414103757
+    },
+    {
+      "raw": "candidate_g100_l0_f24.json",
+      "variant": "candidate",
+      "setting": "g100_l0",
+      "fetch_ctas": 24,
+      "item": 64,
+      "passes": 3,
+      "mean_us": 3859.4026615222297,
+      "pass_us": [
+        3848.7359806895256,
+        3845.6960022449493,
+        3883.7760016322136
+      ],
+      "reference_us": 2701.1642908876483,
+      "unique_miss_MB": 248.001132,
+      "assisted_pairs": 1380.3229166666667,
+      "QK_pair_fraction": 0.04212411244710287,
+      "worker_waited_jobs": 1370.3229166666667,
+      "canceled_before_compute": 89.35416666666667,
+      "over_reference": 0.42879227100028205
+    },
+    {
+      "raw": "candidate_g100_l20000_f24.json",
+      "variant": "candidate",
+      "setting": "g100_l20000",
+      "fetch_ctas": 24,
+      "item": 64,
+      "passes": 3,
+      "mean_us": 3875.498667359352,
+      "pass_us": [
+        3859.7760125994682,
+        3855.9999838471413,
+        3910.720005631447
+      ],
+      "reference_us": 2700.987530887648,
+      "unique_miss_MB": 247.95228,
+      "assisted_pairs": 1394.5833333333333,
+      "QK_pair_fraction": 0.042559305826822914,
+      "worker_waited_jobs": 1375.7604166666667,
+      "canceled_before_compute": 92.875,
+      "over_reference": 0.4348450790832472
+    },
+    {
+      "raw": "controls_g100_l20000_f24_i62.json",
+      "variant": "controls",
+      "setting": "g100_l20000",
+      "fetch_ctas": 24,
+      "item": 62,
+      "passes": 1,
+      "mean_us": 3724.3520095944405,
+      "pass_us": [
+        3724.3520095944405
+      ],
+      "reference_us": 2701.1035708876484,
+      "unique_miss_MB": 247.939128,
+      "assisted_pairs": 0,
+      "QK_pair_fraction": 0.0,
+      "worker_waited_jobs": 0,
+      "canceled_before_compute": 0,
+      "over_reference": 0.3788260656626832,
+      "wait_equivalent_us": 0.0,
+      "max_CTA_wait_us": 0.0,
+      "fetch_span_us": 2545.344,
+      "helper_drain_us": 1.024,
+      "fetch_payload_GBps": 97.40888775741118
+    },
+    {
+      "raw": "controls_g100_l20000_f24_i63.json",
+      "variant": "controls",
+      "setting": "g100_l20000",
+      "fetch_ctas": 24,
+      "item": 63,
+      "passes": 1,
+      "mean_us": 3482.7520102262497,
+      "pass_us": [
+        3482.7520102262497
+      ],
+      "reference_us": 2701.0654108876483,
+      "unique_miss_MB": 247.915116,
+      "assisted_pairs": 0,
+      "QK_pair_fraction": 0.0,
+      "worker_waited_jobs": 0,
+      "canceled_before_compute": 0,
+      "over_reference": 0.2893993593001203,
+      "wait_equivalent_us": 0.0,
+      "max_CTA_wait_us": 0.0,
+      "fetch_span_us": 2546.912,
+      "helper_drain_us": 0.992,
+      "fetch_payload_GBps": 97.33949033182144
+    },
+    {
+      "raw": "controls_g100_l20000_f24_i64.json",
+      "variant": "controls",
+      "setting": "g100_l20000",
+      "fetch_ctas": 24,
+      "item": 64,
+      "passes": 1,
+      "mean_us": 3774.0800231695175,
+      "pass_us": [
+        3774.0800231695175
+      ],
+      "reference_us": 2701.0520908876483,
+      "unique_miss_MB": 247.952484,
+      "assisted_pairs": 2447.96875,
+      "QK_pair_fraction": 0.0747060775756836,
+      "worker_waited_jobs": 0.125,
+      "canceled_before_compute": 204.59375,
+      "over_reference": 0.3972629539066903,
+      "wait_equivalent_us": 0.0011851851851851852,
+      "max_CTA_wait_us": 0.128,
+      "fetch_span_us": 2670.368,
+      "helper_drain_us": 13.92,
+      "fetch_payload_GBps": 92.85330111804815
+    },
+    {
+      "raw": "fused_g100_l0_f24.json",
+      "variant": "fused",
+      "setting": "g100_l0",
+      "fetch_ctas": 24,
+      "item": 64,
+      "passes": 3,
+      "mean_us": 3760.3946725527444,
+      "pass_us": [
+        3754.464015364647,
+        3741.3439974188805,
+        3785.3760048747063
+      ],
+      "reference_us": 2701.174490887648,
+      "unique_miss_MB": 247.97502,
+      "assisted_pairs": 2332.9583333333335,
+      "QK_pair_fraction": 0.0711962381998698,
+      "worker_waited_jobs": 0.21875,
+      "canceled_before_compute": 175.51041666666666,
+      "over_reference": 0.3921331943709494,
+      "wait_equivalent_us": 0.0026666666666666666,
+      "max_CTA_wait_us": 0.288,
+      "fetch_span_us": 2584.128,
+      "helper_drain_us": 14.922666666666666,
+      "fetch_payload_GBps": 95.96081153874731
+    },
+    {
+      "raw": "fused_g100_l20000_f24.json",
+      "variant": "fused",
+      "setting": "g100_l20000",
+      "fetch_ctas": 24,
+      "item": 64,
+      "passes": 3,
+      "mean_us": 3782.3466708262763,
+      "pass_us": [
+        3770.1760083436966,
+        3764.704003930092,
+        3812.16000020504
+      ],
+      "reference_us": 2701.111970887648,
+      "unique_miss_MB": 247.977324,
+      "assisted_pairs": 2440.1458333333335,
+      "QK_pair_fraction": 0.07446734110514323,
+      "worker_waited_jobs": 0.20833333333333334,
+      "canceled_before_compute": 195.32291666666666,
+      "over_reference": 0.40029243940720804,
+      "wait_equivalent_us": 0.0023703703703703703,
+      "max_CTA_wait_us": 0.24533333333333335,
+      "fetch_span_us": 2676.7253333333333,
+      "helper_drain_us": 13.504,
+      "fetch_payload_GBps": 92.64205068481687
+    },
+    {
+      "raw": "fused_g100_l20000_f32.json",
+      "variant": "fused",
+      "setting": "g100_l20000",
+      "fetch_ctas": 32,
+      "item": 64,
+      "passes": 3,
+      "mean_us": 3824.597343802452,
+      "pass_us": [
+        3815.3920099139214,
+        3818.2400166988373,
+        3840.1600047945976
+      ],
+      "reference_us": 2701.1369308876483,
+      "unique_miss_MB": 247.97958,
+      "assisted_pairs": 3221.5208333333335,
+      "QK_pair_fraction": 0.09831301371256511,
+      "worker_waited_jobs": 0.2604166666666667,
+      "canceled_before_compute": 265.1041666666667,
+      "over_reference": 0.41592131078879135,
+      "wait_equivalent_us": 0.002962962962962963,
+      "max_CTA_wait_us": 0.288,
+      "fetch_span_us": 2548.512,
+      "helper_drain_us": 14.890666666666666,
+      "fetch_payload_GBps": 97.30367367310808
+    }
+  ],
+  "comparisons": [
+    {
+      "variant": "candidate",
+      "setting": "g100_l0",
+      "fetch_ctas": 24,
+      "base_us": 3307.8399995962777,
+      "candidate_us": 3859.4026615222297,
+      "slowdown": 0.16674405714704155,
+      "decision": "reject; not installed"
+    },
+    {
+      "variant": "candidate",
+      "setting": "g100_l20000",
+      "fetch_ctas": 24,
+      "base_us": 3303.359975417455,
+      "candidate_us": 3875.498667359352,
+      "slowdown": 0.17319901439733165,
+      "decision": "reject; not installed"
+    },
+    {
+      "variant": "fused",
+      "setting": "g100_l0",
+      "fetch_ctas": 24,
+      "base_us": 3307.8399995962777,
+      "candidate_us": 3760.3946725527444,
+      "slowdown": 0.13681274578326064,
+      "decision": "reject; not installed"
+    },
+    {
+      "variant": "fused",
+      "setting": "g100_l20000",
+      "fetch_ctas": 24,
+      "base_us": 3303.359975417455,
+      "candidate_us": 3782.3466708262763,
+      "slowdown": 0.14499984832815271,
+      "decision": "reject; not installed"
+    },
+    {
+      "variant": "fused",
+      "setting": "g100_l20000",
+      "fetch_ctas": 32,
+      "base_us": 3430.7733376820884,
+      "candidate_us": 3824.597343802452,
+      "slowdown": 0.11479161324788678,
+      "decision": "reject; not installed"
+    }
+  ],
+  "controls": {
+    "no_queue_no_QK_us": 3482.7520102262497,
+    "bookkeeping_no_QK_us": 3724.3520095944405,
+    "full_assist_us": 3774.0800231695175,
+    "bookkeeping_increment_us": 241.59999936819077,
+    "assistance_net_increment_us": 49.72801357507706,
+    "scope": "One cold32step pass, same binary and actual inputs, all math/cache operations retained. Descriptive controlled differences, no instruction/HBM causal split."
+  },
+  "timed_full_launches": 864,
+  "raw_files": [
+    {
+      "path": "base_g100_l0_f24.json",
+      "sha256": "f5a67ff62109bea3c4755f8b7303f50cb47fac36219e5bc326f0fc6d35543ba4"
+    },
+    {
+      "path": "base_g100_l20000_f24.json",
+      "sha256": "7d00c3c81776513e2f7c7851f6d484abd32a7a57525254b7a736d04ca5267845"
+    },
+    {
+      "path": "base_g100_l20000_f32.json",
+      "sha256": "e0aa0689147d41c48eca77398bff5bf5010326ac3b73f9b1a08a350ad5b11a6e"
+    },
+    {
+      "path": "candidate_g100_l0_f24.json",
+      "sha256": "b272ba8ccfd79e397b6966a5e866aaac36f38b22cce8ee7acb86cf608f74989f"
+    },
+    {
+      "path": "candidate_g100_l20000_f24.json",
+      "sha256": "945d2ac67f6abd19d10975d5cc7d91c5e9337660960f6375701299786bfc2cde"
+    },
+    {
+      "path": "controls_g100_l20000_f24_i62.json",
+      "sha256": "00a41bedc33f882ddc2c82c80023df2e6f658b530691d92c25177a28d27e60c5"
+    },
+    {
+      "path": "controls_g100_l20000_f24_i63.json",
+      "sha256": "acdd2eaff1fd874a3cef4747c2a966c78d1af28cd0f035e5b498ae223c5a2686"
+    },
+    {
+      "path": "controls_g100_l20000_f24_i64.json",
+      "sha256": "d2fea451cf45dab8c95bdc18100a16122eca1f5132c4ac55f57e9bf7a1391004"
+    },
+    {
+      "path": "fused_g100_l0_f24.json",
+      "sha256": "a88ff4f4176699121cf6dc1619041ed409219f174f7299bc60d6ce0b0250cf8a"
+    },
+    {
+      "path": "fused_g100_l20000_f24.json",
+      "sha256": "d04e92a4a9fd9cb37392dc17d9a3599a8b269151a13a4fb601214ac83464095c"
+    },
+    {
+      "path": "fused_g100_l20000_f32.json",
+      "sha256": "94e1a9008bc774ec38943c2d0717c6563adbd451776112039026c30d4ba11b59"
+    }
+  ],
+  "production_unchanged": true,
+  "emulator_unchanged": true,
+  "formal_reference_unchanged": true,
+  "limits": "GPU3/NUMA1 same-cardHBM v2 simulation, not NVLink. BF16MTP8R128LRU4096,32steps. No adoption/full1024/H800/nativephysical/FP16/new sanitizers. Timer budgets are overlapping SM service, not independently removable walltime."
+}
