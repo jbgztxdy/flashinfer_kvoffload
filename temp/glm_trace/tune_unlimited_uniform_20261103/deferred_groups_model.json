@@ -1,0 +1,9 @@
+{
+  "complete": true,
+  "cases": 17408,
+  "wait_group_one": 3042,
+  "service_steps": 540425,
+  "header_sha256": "1f78cc7a860a9c48db3595e26c2db447559a94ab07c89339b2cd729f6ae7b48b",
+  "coverage": "1..64 packets; 1..17 KV tiles; 16 deterministic randomized progress schedules each; odd tails; FIFO worst-case completion",
+  "limitation": "serial abstract async groups only, not CUDA memory ordering/races, math/LRU or timing"
+}

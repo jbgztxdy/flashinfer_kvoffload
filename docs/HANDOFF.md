@@ -16,6 +16,8 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04 08:58 deferred候选补依赖审计：** GPU3仍外部VLLM PID123738约37324MiB/100%，没有GPUrunner。新增FIFO异步组模型17408case/540425服务插入、3042次wait_group1，当前两个本地tile ready/奇尾/每包唯一/排空通过；normal/EMU构建目标SASS含DEPBAR wait0与wait1，header/构建库SHA重核通过。仅CPU依赖/构建证据，不是数学/实际派发/性能。报告DEFERRED_PACKET_20261104.md追加，源码未变，准备好的normal runner仍未启动。
+
 **11/04显式待发ticket/本地组先行原型已编译待GPU：** deferred_packet从next_packet_qk_issuebar改为本地两个group后flush远端最新group，QK前有条件wait_group1、QK后wait0再真写回；新增deferred区分ticket已确定/已发出，wait_tile的step必须先flush，实质修复旧迟发包未issue就推进元数据的问题。CPU8320case/1191487转移精确一次issue/store/publish通过，但不是CUDA正确性证明；normal/EMU均独立编译完成，normalREG255/STACK16、EMU255/48。**未上GPU、无新性能/实际派发**：08:52GPU3外部VLLM PID123738约37324MiB/93%，0/1也忙，2不动。准备好run_deferred_packet_normal.py但未启动；下一可用时只先2定向+1pass不限速，勿重跑构造器。源码/构建库SHA/资源快照/模型与限制见实验目录DEFERRED_PACKET_20261104.md。生产三头不变，所有本轮编译terminal，无待poll runner。
 
 **11/04 service deadline未到先算本地KV：** next_packet_qk_issuebar基础上，当前pair本地KV已ready后仅poll当前unique包deadline，未到则跳过本次service stores/refill/publish并继续完整QK/softmax/PV；缺页wait_tile及drain仍阻塞推进真实copy/cache/ready。严格100GB20µs正序4121.440 vs4498.272快8.377%，反序4137.216 vs4492.160快7.901%，各31/32步更快；0µs3971.168无本轮新配对。2带模型定向、全最终cache载荷、单108CTA Graph及实际库broker精确收费通过。重要边界：physical cp.async仍被原wait_group0完成，本轮只解除了虚拟deadline对已ready本地计算的阻塞，不是物理异步流水线已实现；简单加mbarrier无法消除当前分组依赖，未做无效替身。实验候选保留不装，生产三头不变，所有runner结束。详见实验目录SERVICE_POLL_20261104.md，raw/source/实际库SHA及范围俱全。
