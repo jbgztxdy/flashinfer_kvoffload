@@ -13,3 +13,9 @@ CPU状态模型model_deferred_packet.py覆盖0..129包、每种64次随机本地
 下一步待GPU3真正可用：先执行准备好的run_deferred_packet_normal.py，原共享锁/稳定10秒idle/NUMA1预检保持；它先K65/K2048两项定向，再normal256位置1pass。若正确且机制有收益，才补同参数控制、实际Graph、必要收费与100GB。构造/copy不重跑，原失败raw不覆盖。prepared runner本轮未启动；不能把“已编译”当作已经兑现物理重叠或100GB收益。100GB110%目标仍未完成。
 
 08:58续审：GPU3仍是同一外部PID123738、37324MiB、100%，见deferred_groups_preflight.json，未启动runner。新增model_deferred_groups.py在最保守FIFO组完成模型下覆盖1..64包、1..17KV tile、每种16次随机初始/双本地tile边界进度插入，17408case/540425次service step通过，3042次wait_group1均保证两个当前本地tile已ready；奇尾和最终排空也检查。仍不证明CUDA线程内存序、数学/LRU或速度。audit_deferred_build.py重核两个冻结include/header及构建库SHA，锁定BatchMLACleanServiceKernel的实际SASS均存在DEPBAR.LE SB0,0与1，normal静态BAR.SYNC109、EMU133；静态数不能当动态成本或实际派发证明。结果分别deferred_groups_model.json/deferred_build_audit.json，源码未改，不因CPU通过叠加其他候选。
+
+## GPU3释放后实际验证：无不限速采用信号
+
+用户通知GPU3空闲后重新稳定10秒idle、共享锁、NUMA1执行独立run_deferred_gpu3_resume.py，未覆盖此前GPU2或忙卡预检。K65/K2048两项定向检查2passed/1.04s，候选完整256位置32步1冷pass **3107.808µs**，数学采样及最终524288有效cache槽载荷通过；随后相同GPU3/参数原next_packet_qk控制 **3091.904µs**，候选慢15.904µs/0.514%。一pass仅筛选，不作精确因果归因；没有不限速收益信号，故不追加100GB/完整矩阵、不安装生产。
+
+实际Graph节点核对通过：单BatchMLACleanServiceKernel、108CTA、block[32,4,2]、active1，dynamic shared见dispatch_probe_deferred_packet_normal.json；两行数学通过。正式计时实际加载host库SHA256 96ebd80046b60cd70875c0bf345129bede1da7dc61dd8d6d233f0932e217cd26，与先前构建审计一致，源码SHA未变。候选raw为deferred_packet_normal_native_unlimited_f24.json，控制deferred_resume_control_next_packet_qk_native_unlimited_f24.json，均有实际库/源码SHA和逐步unique/时间；末检GPU3空闲。此前“未上GPU”段落是历史状态，以此处完成结果为准。没有新物理PCIe/NVLink/100GB收益结论。待发ticket正确性得到定向支持，但目前额外控制/延后发包未形成端到端优势。

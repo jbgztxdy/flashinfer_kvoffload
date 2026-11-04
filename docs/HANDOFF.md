@@ -16,6 +16,8 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04 GPU3释放后deferred候选已完成短筛：** 用户通知后重新稳定idle/独占锁/NUMA1；K65/K2048 2passed，normal256位置32步1pass3107.808µs，随后同参数next_packet_qk控制3091.904，候选慢0.514%，无不限速采用信号，不测100GB、不安装。完整最终524288有效cache载荷及单目标kernel/108CTA/active1 Graph核对通过，实际加载host库96ebd800与构建审计一致。raw/实际库SHA见DEFERRED_PACKET_20261104.md追加，runner均结束，GPU3末检空闲，生产81093保持。旧“未上GPU/blocked”状态已过时；GPU2获授权仍保留，但本次成绩全部GPU3。
+
 **11/04 GPU2获用户新授权：** GPU2 A100-SXM4/NUMA1可用于本任务，旧禁止GPU2约束被用户撤销；仍须稳定idle/独占锁。迁移harness/独立gpu2输出完成，首次GPU2/GPU3预检均被新外部VLLM占用中断且无CUDA动作。随后GPU2稳定idle开始deferred normal K65/K2048，2passed/exit0，但末检出现外部dlrm_copilot PID207739约1420MiB/100%，保护阻止所有benchmark，**无性能/全程独占结论**。完整状态/通过日志与范围见GPU2_DEFERRED_20261104.md。全部自有runnerterminal；下一空闲时补同GPU2正常短筛及控制，不混GPU3绝对值，生产未改。
 
 **11/04 08:58 deferred候选补依赖审计：** GPU3仍外部VLLM PID123738约37324MiB/100%，没有GPUrunner。新增FIFO异步组模型17408case/540425服务插入、3042次wait_group1，当前两个本地tile ready/奇尾/每包唯一/排空通过；normal/EMU构建目标SASS含DEPBAR wait0与wait1，header/构建库SHA重核通过。仅CPU依赖/构建证据，不是数学/实际派发/性能。报告DEFERRED_PACKET_20261104.md追加，源码未变，准备好的normal runner仍未启动。
