@@ -1,0 +1,225 @@
+{
+  "actions": [
+    {
+      "variant": "retained",
+      "start": "2026-11-04T10:15:18+0800",
+      "command": [
+        "numactl",
+        "-N0",
+        "-m0",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/bench_nvlink_retained.py",
+        "--kind",
+        "lru",
+        "--mtp",
+        "8",
+        "--requests",
+        "128",
+        "--positions",
+        "256",
+        "--passes",
+        "3",
+        "--settings",
+        "native_hbm",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off"
+      ],
+      "preflight": {
+        "timestamp": "2026-11-04T10:15:18+0800",
+        "gpus": [
+          {
+            "index": 0,
+            "uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      "pid": 363926,
+      "exit_code": 0
+    },
+    {
+      "variant": "clean",
+      "start": "2026-11-04T10:15:36+0800",
+      "command": [
+        "numactl",
+        "-N0",
+        "-m0",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/bench_nvlink_clean.py",
+        "--kind",
+        "lru",
+        "--mtp",
+        "8",
+        "--requests",
+        "128",
+        "--positions",
+        "256",
+        "--passes",
+        "3",
+        "--settings",
+        "native_hbm",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off"
+      ],
+      "preflight": {
+        "timestamp": "2026-11-04T10:15:36+0800",
+        "gpus": [
+          {
+            "index": 0,
+            "uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      "pid": 364686,
+      "exit_code": 0
+    },
+    {
+      "variant": "next_packet_qk",
+      "start": "2026-11-04T10:15:54+0800",
+      "command": [
+        "numactl",
+        "-N0",
+        "-m0",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/bench_nvlink_next_packet_qk.py",
+        "--kind",
+        "lru",
+        "--mtp",
+        "8",
+        "--requests",
+        "128",
+        "--positions",
+        "256",
+        "--passes",
+        "3",
+        "--settings",
+        "native_hbm",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off"
+      ],
+      "preflight": {
+        "timestamp": "2026-11-04T10:15:54+0800",
+        "gpus": [
+          {
+            "index": 0,
+            "uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      "pid": 365498,
+      "exit_code": 0
+    },
+    {
+      "variant": "deferred_packet_normal",
+      "start": "2026-11-04T10:16:12+0800",
+      "command": [
+        "numactl",
+        "-N0",
+        "-m0",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/bench_nvlink_deferred_packet_normal.py",
+        "--kind",
+        "lru",
+        "--mtp",
+        "8",
+        "--requests",
+        "128",
+        "--positions",
+        "256",
+        "--passes",
+        "3",
+        "--settings",
+        "native_hbm",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off"
+      ],
+      "preflight": {
+        "timestamp": "2026-11-04T10:16:12+0800",
+        "gpus": [
+          {
+            "index": 0,
+            "uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      "pid": 367042,
+      "exit_code": 0
+    },
+    {
+      "variant": "base",
+      "start": "2026-11-04T10:16:33+0800",
+      "command": [
+        "numactl",
+        "-N0",
+        "-m0",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/bench_nvlink_base.py",
+        "--kind",
+        "lru",
+        "--mtp",
+        "8",
+        "--requests",
+        "128",
+        "--positions",
+        "256",
+        "--passes",
+        "3",
+        "--settings",
+        "native_hbm",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off"
+      ],
+      "preflight": {
+        "timestamp": "2026-11-04T10:16:33+0800",
+        "gpus": [
+          {
+            "index": 0,
+            "uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      "pid": 370329,
+      "exit_code": 0
+    }
+  ],
+  "complete": true
+}

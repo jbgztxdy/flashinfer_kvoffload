@@ -16,6 +16,8 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04真实NVLink复测完成：** 用户释放GPU0/1后，NUMA0/NV12/稳定idle与共享锁，当前direct/staged及clean全warp完成完整1024位置128步3coldpass：2915.435/2967.971/3041.592µs；同轮指定device2454.085µs。direct比旧11/02 NVLink3335.189快12.585%，比当前计算参考高18.80%；全warp仍未胜生产。两近期全warp变体仅短筛无胜出。完整Graph单实际目标108CTA/active1，输出采样及最终全部cache载荷通过。无模拟限速/新链路GBps校准，计算参考不是加入路径字节预算的联合下限。首旧base实际是cab508旧direct而非当前staged，已隔离保留；floor首错误include在CUDA前退出后修正，raw/log保留。生产未改，无runner待poll，详见[真实NVLink新报告](mla_host_nvlink_current_20261104.md)。
+
 **11/04 GPU3释放后deferred候选已完成短筛：** 用户通知后重新稳定idle/独占锁/NUMA1；K65/K2048 2passed，normal256位置32步1pass3107.808µs，随后同参数next_packet_qk控制3091.904，候选慢0.514%，无不限速采用信号，不测100GB、不安装。完整最终524288有效cache载荷及单目标kernel/108CTA/active1 Graph核对通过，实际加载host库96ebd800与构建审计一致。raw/实际库SHA见DEFERRED_PACKET_20261104.md追加，runner均结束，GPU3末检空闲，生产81093保持。旧“未上GPU/blocked”状态已过时；GPU2获授权仍保留，但本次成绩全部GPU3。
 
 **11/04 GPU2获用户新授权：** GPU2 A100-SXM4/NUMA1可用于本任务，旧禁止GPU2约束被用户撤销；仍须稳定idle/独占锁。迁移harness/独立gpu2输出完成，首次GPU2/GPU3预检均被新外部VLLM占用中断且无CUDA动作。随后GPU2稳定idle开始deferred normal K65/K2048，2passed/exit0，但末检出现外部dlrm_copilot PID207739约1420MiB/100%，保护阻止所有benchmark，**无性能/全程独占结论**。完整状态/通过日志与范围见GPU2_DEFERRED_20261104.md。全部自有runnerterminal；下一空闲时补同GPU2正常短筛及控制，不混GPU3绝对值，生产未改。

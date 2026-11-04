@@ -1,0 +1,341 @@
+[
+  {
+    "raw": "nvlink_20261104_clean_nvlink_native_f24.json",
+    "raw_sha256": "bc3cb11b2335ade0615bedb0371f5deaf6a41e5496f8a1e1c7e5746c1e13507e",
+    "mean_us": 2968.8959966103234,
+    "pass_means_us": [
+      2951.4239951968193,
+      2954.7520205378532,
+      3000.511974096298
+    ],
+    "header_sha256": "29835918684dd24c76e15e27366e7e330268c3dd66c939eaffb1462b54ab2742",
+    "libraries": [
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_clean/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "f3d0703e9b1f67274e6089bc43b5d4fed7bbc53545d75a72d8ced8208f2c45a6"
+      },
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_clean/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "ccc28bc51265e1233b82ec2c3ce06ebdf718140016370e86a3cc09fe86d8dbc9"
+      }
+    ],
+    "launches": null,
+    "cache_payload_slots": 524288,
+    "unique_MB_per_step": 248.063148
+  },
+  {
+    "raw": "nvlink_20261104_deferred_packet_normal_nvlink_native_f24.json",
+    "raw_sha256": "129f4e69e25d2af619382ee84633b71e30ff7202b486d6df03da7c7128226c18",
+    "mean_us": 3006.602667272091,
+    "pass_means_us": [
+      2993.695989251137,
+      3004.000000655651,
+      3022.112011909485
+    ],
+    "header_sha256": "1f78cc7a860a9c48db3595e26c2db447559a94ab07c89339b2cd729f6ae7b48b",
+    "libraries": [
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_deferred_packet_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "58a88dca3511e032e03aa12fc26f5668fb96f2ceb648f47ba7e4eea80dba1610"
+      },
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_deferred_packet_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "96ebd80046b60cd70875c0bf345129bede1da7dc61dd8d6d233f0932e217cd26"
+      }
+    ],
+    "launches": null,
+    "cache_payload_slots": 524288,
+    "unique_MB_per_step": 248.011236
+  },
+  {
+    "raw": "nvlink_20261104_floor.json",
+    "raw_sha256": "590efee15dbf1fe6f8a0aad1fc422a05ce7b82895203873e4b4e7b59c6c87567",
+    "mean_us": 2453.557401895523,
+    "pass_means_us": [
+      2453.2160609960556,
+      2452.8320729732513,
+      2454.6240717172623
+    ],
+    "header_sha256": null,
+    "libraries": [
+      {
+        "path": "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/jit_retained/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "20caf1e9dcebb439dd3b2f7985e00d921a8c35d4f5f7a39aaba889d251c08755"
+      }
+    ],
+    "launches": [
+      {
+        "grid": [
+          1,
+          108,
+          1
+        ],
+        "block": [
+          32,
+          4,
+          2
+        ],
+        "dynamic_shared_bytes": 147968,
+        "active_blocks_per_SM": 1,
+        "kernel_name": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+      }
+    ],
+    "cache_payload_slots": null
+  },
+  {
+    "raw": "nvlink_20261104_next_packet_qk_nvlink_native_f24.json",
+    "raw_sha256": "fe7242a0d81d8a512591a48381441b9b5b611125e484c7b31168a25079b2a96b",
+    "mean_us": 2976.831999917825,
+    "pass_means_us": [
+      2955.807998776436,
+      2968.0959954857826,
+      3006.5920054912567
+    ],
+    "header_sha256": "232d410a53cf93adefd3ca83086c415a2d3387e23a7402390bd490e02e7b7d4b",
+    "libraries": [
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_next_packet_qk/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "1c5b893a5f076da36ce198ccf13aea5557eafc5314e973fed4f6246cbcfa68a2"
+      },
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_next_packet_qk/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "77d3ddf218e063a5297881bd16ed1182c3013d4e8efab3610e3a813f06592c85"
+      }
+    ],
+    "launches": null,
+    "cache_payload_slots": 524288,
+    "unique_MB_per_step": 248.070456
+  },
+  {
+    "raw": "nvlink_20261104_retained_nvlink_native_f24.json",
+    "raw_sha256": "c1c405155afecaf5a042d98b72875193209af41201ada1d7857428bd06ba2525",
+    "mean_us": 3013.674666484197,
+    "pass_means_us": [
+      3008.5759982466698,
+      3008.895993232727,
+      3023.552007973194
+    ],
+    "header_sha256": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
+    "libraries": [
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_retained/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "20caf1e9dcebb439dd3b2f7985e00d921a8c35d4f5f7a39aaba889d251c08755"
+      },
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_retained/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "df09ae5c50e4220b2f78c63c5b35afa18343d26337a50e79a8102ce9410b08c9"
+      }
+    ],
+    "launches": null,
+    "cache_payload_slots": 524288,
+    "unique_MB_per_step": 248.16564,
+    "far_MB_per_step": 563.2992
+  },
+  {
+    "raw": "nvlink_20261104_retained_staged_nvlink_native_f24.json",
+    "raw_sha256": "79ad542667327a8b70d0ab85a7cadd0f275295c7c0523576cce3399b932361ec",
+    "mean_us": 2882.5173377990723,
+    "pass_means_us": [
+      2848.5119938850403,
+      2865.5680045485497,
+      2933.472014963627
+    ],
+    "header_sha256": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
+    "libraries": [
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_retained/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "20caf1e9dcebb439dd3b2f7985e00d921a8c35d4f5f7a39aaba889d251c08755"
+      },
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_retained/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "df09ae5c50e4220b2f78c63c5b35afa18343d26337a50e79a8102ce9410b08c9"
+      }
+    ],
+    "launches": null,
+    "cache_payload_slots": 524288,
+    "unique_MB_per_step": 248.03622,
+    "far_MB_per_step": 248.03622
+  },
+  {
+    "raw": "nvlink_full_20261104_clean_nvlink_native_f24.json",
+    "raw_sha256": "88f5561f9bedb273f5d88107a340a77cf7a0afac9535d4c490cace9e336ab18b",
+    "mean_us": 3041.5919988105693,
+    "pass_means_us": [
+      3037.2160021215677,
+      3030.2639957517385,
+      3057.295998558402
+    ],
+    "header_sha256": "29835918684dd24c76e15e27366e7e330268c3dd66c939eaffb1462b54ab2742",
+    "libraries": [
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_clean/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "f3d0703e9b1f67274e6089bc43b5d4fed7bbc53545d75a72d8ced8208f2c45a6"
+      },
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_clean/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "ccc28bc51265e1233b82ec2c3ce06ebdf718140016370e86a3cc09fe86d8dbc9"
+      }
+    ],
+    "launches": [
+      {
+        "grid": [
+          1,
+          108,
+          1
+        ],
+        "block": [
+          32,
+          4,
+          2
+        ],
+        "dynamic_shared_bytes": 163072,
+        "active_blocks_per_SM": 1,
+        "kernel_name": "_ZN10flashinfer3mla26BatchMLACleanServiceKernelINS0_18CleanServiceTraitsI13__nv_bfloat16S3_S3_iEENS0_22CleanServiceHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+      }
+    ],
+    "cache_payload_slots": 524288,
+    "unique_MB_per_step": 259.589322
+  },
+  {
+    "raw": "nvlink_full_20261104_floor.json",
+    "raw_sha256": "78d2bf2ba1046723c1788a38a3bdb04eea4581ddf785bac6d8f3509621f273f7",
+    "mean_us": 2454.085393498341,
+    "pass_means_us": [
+      2454.3440584093332,
+      2454.032063484192,
+      2453.8800586014986
+    ],
+    "header_sha256": null,
+    "libraries": [
+      {
+        "path": "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/jit_retained/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "20caf1e9dcebb439dd3b2f7985e00d921a8c35d4f5f7a39aaba889d251c08755"
+      }
+    ],
+    "launches": [
+      {
+        "grid": [
+          1,
+          108,
+          1
+        ],
+        "block": [
+          32,
+          4,
+          2
+        ],
+        "dynamic_shared_bytes": 147968,
+        "active_blocks_per_SM": 1,
+        "kernel_name": "_ZN10flashinfer3mla28BatchMLAPagedAttentionKernelINS0_12KernelTraitsILb0ELj2ELb1ELj512ELj64ELj64ELj32E13__nv_bfloat16S3_S3_iEENS_9MLAParamsIS3_S3_S3_iEEEEvT0_"
+      }
+    ],
+    "cache_payload_slots": null
+  },
+  {
+    "raw": "nvlink_full_20261104_retained_nvlink_native_f24.json",
+    "raw_sha256": "f1a8584d775bacc28b9358132c75e1035dc63ec398799466aaae5a5e6bd2bb47",
+    "mean_us": 2915.4346622526646,
+    "pass_means_us": [
+      2917.575988918543,
+      2903.4959971904755,
+      2925.2320006489754
+    ],
+    "header_sha256": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
+    "libraries": [
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_retained/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "20caf1e9dcebb439dd3b2f7985e00d921a8c35d4f5f7a39aaba889d251c08755"
+      },
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_retained/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "df09ae5c50e4220b2f78c63c5b35afa18343d26337a50e79a8102ce9410b08c9"
+      }
+    ],
+    "launches": [
+      {
+        "grid": [
+          1,
+          108,
+          1
+        ],
+        "block": [
+          32,
+          4,
+          2
+        ],
+        "dynamic_shared_bytes": 147968,
+        "active_blocks_per_SM": 1,
+        "kernel_name": "_ZN10flashinfer3mla22BatchMLADirectPVKernelINS0_14DirectPVTraitsI13__nv_bfloat16S3_S3_iEENS0_18DirectPVHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+      }
+    ],
+    "cache_payload_slots": 524288,
+    "unique_MB_per_step": 259.865127,
+    "far_MB_per_step": 509.809068
+  },
+  {
+    "raw": "nvlink_full_20261104_retained_staged_nvlink_native_f24.json",
+    "raw_sha256": "ca691685b6995a4e0685a840868d8af8dc43b6fdebc2e7480c3a5a01b5f9ddee",
+    "mean_us": 2967.970674857497,
+    "pass_means_us": [
+      2946.208007633686,
+      2969.7280135005713,
+      2987.9760034382343
+    ],
+    "header_sha256": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
+    "libraries": [
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_retained/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "20caf1e9dcebb439dd3b2f7985e00d921a8c35d4f5f7a39aaba889d251c08755"
+      },
+      {
+        "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_retained/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "df09ae5c50e4220b2f78c63c5b35afa18343d26337a50e79a8102ce9410b08c9"
+      }
+    ],
+    "launches": [
+      {
+        "grid": [
+          1,
+          108,
+          1
+        ],
+        "block": [
+          32,
+          4,
+          2
+        ],
+        "dynamic_shared_bytes": 147968,
+        "active_blocks_per_SM": 1,
+        "kernel_name": "_ZN10flashinfer3mla23BatchMLAPVFeatureKernelINS0_15PVFeatureTraitsI13__nv_bfloat16S3_S3_iEENS0_19PVFeatureHostParamsINS_18MLAHostBatchParamsIS3_S3_S3_iEEEELb0EEEvT0_"
+      }
+    ],
+    "cache_payload_slots": 524288,
+    "unique_MB_per_step": 259.601202,
+    "far_MB_per_step": 259.601202
+  },
+  {
+    "raw": "production_service22_control_nvlink_native_f24.json",
+    "raw_sha256": "aa6d0b642f85b705637f3982793172063ce45f3ee62b46d98522e868a953c686",
+    "mean_us": 3370.698682963848,
+    "pass_means_us": [
+      3382.7840089797974,
+      3400.928020477295,
+      3328.384019434452
+    ],
+    "header_sha256": "cab508dcb6e83b7a953d94a8e54e30e0aaf60bb1d7ba98480fc66893edcf4384",
+    "libraries": [
+      {
+        "path": "temp/glm_trace/emu_fix_20261103/jit_v2_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+        "sha256": "5fd8b991a3f0ac6c26a4a749f96ec43a85cc4b78389c9e78927e0158ef15939e"
+      },
+      {
+        "path": "temp/glm_trace/emu_fix_20261103/jit_v2_normal/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+        "sha256": "c61d0bfdd3369ff1f03e713f2b42c90f8b9f41887f8be5c42b705b982a9de507"
+      }
+    ],
+    "launches": null,
+    "cache_payload_slots": 524288,
+    "unique_MB_per_step": 248.2065,
+    "far_MB_per_step": 563.544864
+  }
+]
