@@ -16,6 +16,8 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04用户授权固定stall校准已完成：** 独立真实payload探针108CTA/双32rowstage，冻结2000ps/B（far8=97.66GB、far32=105.24GB），再原生FA2外部LRU完整128步1pass：disabled2954.160/unlimited3498.360/名义100GB0us10091.752/20us15948.192µs。冷步0us96.73GB，但热步9974.639µs过度节流；不能视为可信物理100GB成绩，不按完整kernel重调凑目标。全部payload/采样输出/128原生Graph核对，source/librarySHA和正负raw保留、生产不变、runner结束。详见[stall校准报告](mla_host_stall_calibration_20261104.md)。
+
 **11/04 native+外部LRU100GB模拟无可信成绩：** GPU3 normal2773.792/device2771.912µs，CAS EMU disabled2969.408/unlimited3284.000/100GB0us88926.312/20us89709.608；实际far509.256MB，逐步参考5092.560µs。每步约25.1万warp小包，89ms不能作为物理预测；不扣时间。固定nanosleep/静态108CTA-share探针也不能覆盖动态并发，明确未采用。原始/源码库SHA俱全、生产不变、runner结束，见[100GB诊断](mla_host_native_lru100_20261104.md)。
 
 **11/04原生FA2+外部LRU对照完成：** 用当前生产direct在计时外生成精确device LRU remap/slot/miss，随后原生BatchMLAPagedAttentionKernel直接读取GPU1 miss与GPU0 cache hit；完整assistant trace/R128/MTP8/LRU4096，原生attention三pass2599.672/2601.080/2609.312，均值2603.355µs，远端约509.523MB/步。配对融合direct一次2907.176µs（LRU/claim/writeback在计时内），同进程native2599.392µs，约快10.59%，差异包含事件边界。输出与每步命中cache槽payload核对通过，生产未改。详见[原生外部LRU报告](mla_host_native_lru_direct_nvlink_20261104.md)。
