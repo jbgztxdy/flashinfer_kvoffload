@@ -1,0 +1,13 @@
+# 显式待发ticket与本地组先行：已实现/编译，未上GPU
+
+2026-11-04约08:52。GPU3被外部VLLM::EngineCore PID123738占37324MiB、93%利用率；GPU0/1也在外部任务中，GPU2不动。deferred_packet_preflight.json是实时资源证据；本轮不提交GPU任务、不抢显存、不终止外部进程。所有CPU编译已结束，无后台GPU runner。
+
+从next_packet_qk_issuebar出发，保留20页unique包、两个32KV计算stage、八mathwarp、双元数据槽、一份真实远端payload buffer、单cooperative kernel。先发本地两个KV组，再在循环尾显式flush下一远端包，使其成为最新group；下次QK前只有确实在两个本地group之后issue的情况才wait_group<1>，QK后wait_group<0>再做真实stage/cache写回。首次/边界/被wait_tile插入服务的情况仍wait_group<0>，不错误假定远端总是最新组。参考NVIDIA PTX ISA cp.async.wait_group/commit_group的每线程提交顺序语义：https://docs.nvidia.com/cuda/parallel-thread-execution/ 。
+
+与此前far_qk_overlap完整trace非法访存的实质区别：新增显式deferred状态，把“下一ticket已经确定”与“该ticket已经issue”分开。数学退休包后仅设置done=current+1、deferred=1；如果wait_tile在预定循环尾之前需要service_step，先flush该待发ticket，再等待并写回，禁止对未发包使用下一元数据。通常循环尾flush下一包，保留current供原MDO发布旧ready；原publish预载下下包双元数据槽。flush在读deferred/issue之后、leader清位之前有全CTA屏障，防止不同warp读到不同issue条件。全部额外屏障计入未来真实时间，不能只凭异步窗口猜测收益。
+
+CPU状态模型model_deferred_packet.py覆盖0..129包、每种64次随机本地tile边界服务插入，共8320case/1191487转移；每包issue/store/publish恰一次、双元数据ticket匹配通过。结果deferred_packet_model.json绑定源码SHA。该模型只检查顺序状态，不证明CUDA跨warp内存序、attention正确性、LRU载荷或性能。
+
+独立normal与严格EMU均编译成功，header SHA256 1f78cc7a860a9c48db3595e26c2db447559a94ab07c89339b2cd729f6ae7b48b。normal构建库SHA256 96ebd80046b60cd70875c0bf345129bede1da7dc61dd8d6d233f0932e217cd26，目标REG255/STACK16/static1152；EMU构建库SHA256 919c06558089933af05e911aabaf4747821e911f3a7e8e9bb80a270c035fa7aa，目标REG255/STACK48/static1152。**这些是构建所得库，不是已实际加载的GPU库；没有GPU正确性、实际派发或新时间。** EMU仍同batch_call 6ad89848，整包issue后屏障、逐包收费不变；生产三header不变。
+
+下一步待GPU3真正可用：先执行准备好的run_deferred_packet_normal.py，原共享锁/稳定10秒idle/NUMA1预检保持；它先K65/K2048两项定向，再normal256位置1pass。若正确且机制有收益，才补同参数控制、实际Graph、必要收费与100GB。构造/copy不重跑，原失败raw不覆盖。prepared runner本轮未启动；不能把“已编译”当作已经兑现物理重叠或100GB收益。100GB110%目标仍未完成。
