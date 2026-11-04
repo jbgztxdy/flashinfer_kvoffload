@@ -1,0 +1,224 @@
+{
+  "source_sha256": "8e69d02ff4288e6ac78e07fdb77171c4814a4cdd6ea455faa031a8b3b690c58a",
+  "binary_sha256": "a8f09193cc8bbdab29ca47b85fa67fee25701fbe16edaf627180fe3a86224a56",
+  "preflight": [
+    {
+      "timestamp": "2026-11-04T10:03:09+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T10:03:11+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T10:03:13+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T10:03:16+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T10:03:18+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T10:03:20+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    }
+  ],
+  "complete": true,
+  "hardware_start": "3, GPU-8e5926b4-7d67-81dd-937a-89f102e0692a, NVIDIA A100-PCIE-40GB, 1410 MHz, 1215 MHz, 75.89 W, 54",
+  "command": [
+    "numactl",
+    "-N1",
+    "-m1",
+    "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/hbm_link_probe_20261104/probe"
+  ],
+  "exit_code": 0,
+  "resources_end": {
+    "timestamp": "2026-11-04T10:03:27+0800",
+    "gpus": [
+      {
+        "index": 3,
+        "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+        "used_mib": 0,
+        "total_mib": 40960,
+        "utilization": 100
+      }
+    ],
+    "foreign": [],
+    "available": false
+  },
+  "hardware_end": "3, GPU-8e5926b4-7d67-81dd-937a-89f102e0692a, NVIDIA A100-PCIE-40GB, 1410 MHz, 1215 MHz, 75.16 W, 55",
+  "measurements": [
+    {
+      "kind": "device",
+      "name": "NVIDIA A100-PCIE-40GB",
+      "sms": 108,
+      "l2_bytes": 41943040
+    },
+    {
+      "kind": "bandwidth",
+      "name": "cudaMemcpyAsync_D2D",
+      "payload_bytes": 301989888,
+      "us": [
+        439.193604,
+        438.98877,
+        439.091217,
+        439.193604,
+        439.193604,
+        439.29599,
+        438.886414
+      ],
+      "median_us": 439.193604,
+      "payload_GBps": 687.6008330940995,
+      "read_plus_write_GBps": 1375.201666188199
+    },
+    {
+      "kind": "bandwidth",
+      "name": "SM_contiguous_copy",
+      "payload_bytes": 301989888,
+      "us": [
+        550.400024,
+        549.27356,
+        549.683228,
+        550.297607,
+        550.400024,
+        550.50238,
+        549.171204
+      ],
+      "median_us": 550.297607,
+      "payload_GBps": 548.7755791749245,
+      "read_plus_write_GBps": 1097.551158349849
+    },
+    {
+      "kind": "bandwidth",
+      "name": "SM_sparse_unique_1152B_64pages_2buffers_24CTA",
+      "payload_bytes": 301989888,
+      "us": [
+        1455.308838,
+        1455.51355,
+        1453.977539,
+        1455.001709,
+        1455.820801,
+        1455.51355,
+        1456.639893
+      ],
+      "median_us": 1455.51355,
+      "payload_GBps": 207.47995647309503,
+      "read_plus_write_GBps": 414.95991294619006
+    },
+    {
+      "kind": "bandwidth",
+      "name": "SM_sparse_unique_1152B_64pages_2buffers_108CTA",
+      "payload_bytes": 301989888,
+      "us": [
+        506.572815,
+        506.265564,
+        506.982422,
+        505.446381,
+        506.163239,
+        506.060791,
+        505.651184
+      ],
+      "median_us": 506.163239,
+      "payload_GBps": 596.6254850838743,
+      "read_plus_write_GBps": 1193.2509701677486
+    },
+    {
+      "kind": "dependent_load_latency",
+      "working_set_bytes": 1048576,
+      "hops": 65536,
+      "ns_per_hop": [
+        229.90625,
+        204.5,
+        203.53125,
+        203.4375,
+        203.53125,
+        203.59375,
+        203.453125
+      ],
+      "median_ns": 203.53125
+    },
+    {
+      "kind": "dependent_load_latency",
+      "working_set_bytes": 268435456,
+      "hops": 2097152,
+      "ns_per_hop": [
+        403.869141,
+        406.342773,
+        406.387207,
+        406.42041,
+        406.383301,
+        406.411621,
+        406.371094
+      ],
+      "median_ns": 406.383301
+    },
+    {
+      "kind": "complete",
+      "payload_checks": true
+    }
+  ]
+}
