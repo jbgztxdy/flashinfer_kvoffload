@@ -1,0 +1,11 @@
+# 原生direct外部LRU在100GB模拟：失败边界
+
+当前完整assistant trace/R128/MTP8/C4096，GPU3同卡HBM/NUMA1，正常构建与EMU私有include/JIT。GPU0/1有外部process，因此未在NVLink重测。完整128步1pass，正常路径先在事件外记录device LRU，EMU重用同一mapping SHA4f31c2fd8ee21ae4a016c5c09815141e96ca7c7e7b245de805bee4e1dec60ae1。miss不预搬运、cache命中payload重建与索引上传在事件外。输出step0/16/127每pass3行reference检查通过，实际Graph128原生FA2，生产头81093/FAR8507不动，资源结束无foreign。
+
+同GPU3 normal native+externalLRU2773.792µs；新纯device2771.912µs。模拟binary runtime disabled2969.408、enabled unlimited0 3284.000、100GB0µs88926.312、100GB20µs89709.608µs。全部原始时间保留，不扣软件成本。EMU.so SHA4f8867856788518a38e910de697f7aa74e6412b72afb6abd2fef70f1eb1d014b。
+
+每步平均far509.256MB，逐步max(device,far/100GB)平均5092.560µs。源码模型warp4行包数约251051/步，向上取整额外161.794µs/步（整数预算5254.354µs）；这是CPU按源码和实际mapping推导，不是runtime reservation trace/counter。无法解释约89ms，CAS小包争用与软件开销已有强烈既有证据，但本轮未新增CAS重试计数，不能精确因果分解。
+
+结论：原CAS模型不适用于该native direct小包形状的可信物理100GB预测；89ms不是算子真实100GB成绩。当前不通过改参考/扣时间/预订未来字节制造结果。后续固定stall小探针也不构成通用共享带宽：见temp/glm_trace/stall_probe_20261104/README.md。
+
+原始目录temp/glm_trace/tune_unlimited_uniform_20261103：native_lru100_normal_gpu3.json、native_lru100_emu_gpu3.json、native_lru100_packet_audit.json、native_lru100_summary.json、normal/EMU harness、runner/log/state。mapping.pt约1.7GB不入git，SHA绑定；正常流程生成冻结harness来源快照。所有runner结束。用户中断后未重跑覆盖raw。无suite/sanitizer/物理/H800新结论。
