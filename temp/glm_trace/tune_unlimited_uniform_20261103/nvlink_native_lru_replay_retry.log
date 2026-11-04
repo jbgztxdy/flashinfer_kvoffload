@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/bench_nvlink_native_lru_replay.py", line 283, in <module>
+    run_replay()
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/bench_nvlink_native_lru_replay.py", line 249, in run_replay
+    assert torch.equal(mapped[~hit],ids[~hit])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

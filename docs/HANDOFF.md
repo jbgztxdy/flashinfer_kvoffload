@@ -16,6 +16,8 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04原生FA2+外部LRU对照完成：** 用当前生产direct在计时外生成精确device LRU remap/slot/miss，随后原生BatchMLAPagedAttentionKernel直接读取GPU1 miss与GPU0 cache hit；完整assistant trace/R128/MTP8/LRU4096，原生attention三pass2599.672/2601.080/2609.312，均值2603.355µs，远端约509.523MB/步。配对融合direct一次2907.176µs（LRU/claim/writeback在计时内），native外部LRU约快10.46%，差异包含事件边界。输出与全部cache payload通过，生产未改。详见[原生外部LRU报告](mla_host_native_lru_direct_nvlink_20261104.md)。
+
 **11/04原生direct真实NVLink完成：** 当前assistant完整1024位置128步R128/MTP8、无LRU/无预搬运、原生FA2直接GPU1 KV，3pass9459.469µs（9460.624/9458.480/9459.304）。每步99.9525%引用远端、按引用2414.772MB，不能与带LRU融合direct约510MB直接归因计算收益。原生.so同device参考20caf1e9、实查128原生108CTA，3step×3row每pass正确；首Graph校验索引错误保留后修复重试成功，实际执行harness SHA恢复对齐。生产未改，runner结束。详见[原生direct报告](mla_host_native_direct_nvlink_20261104.md)。
 
 **11/04 device参考核查：** 当前完整assistant trace原生device连续Graph2459.195µs，原逐步同步2454.085差0.208%；direct比新连续参考高18.55%。旧图2.755ms用旧overlap/script同实际.so可复现，当前输入不能沿用。新完整128步prepared2452.995/驱逐2453.029，否定提前搬运热L2解释0.3ms；重复同少量步骤负载2.63–2.65不替代完整平均。新旧数据页复用/计时流程不同，精确因果份额未证明。同原生库SHA20caf1e9、实际Graph/全部raw与首probe失败保留，生产未改。详见[device参考审计](mla_host_device_reference_audit_20261104.md)。
