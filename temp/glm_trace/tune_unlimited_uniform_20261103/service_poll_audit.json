@@ -1,0 +1,105 @@
+{
+  "complete": true,
+  "raw": [
+    {
+      "raw": "service_poll_g100_l0_f24.json",
+      "raw_sha256": "e727d0b97c56241ab75820f89697f1bcbcbb251ce60d4e2f402cf0c180fa25af",
+      "mean_us": 3971.1679965257645,
+      "mean_unique_pages": 215260.3125,
+      "libraries": [
+        {
+          "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_service_poll/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+          "sha256": "68515f22012ab5db635ce5584935abb4babd2559bd855223f33798ede0f11456"
+        },
+        {
+          "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_service_poll/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+          "sha256": "3d502fb03a80061ca74646922e8a0a5af7423d2e7454f2f08b30db3da4e5fca8"
+        }
+      ]
+    },
+    {
+      "raw": "service_poll_g100_l20000_f24.json",
+      "raw_sha256": "f7ce11e9935bc34afb513397c8cfa5417be0f9ef713d9e8d691899cacf6af8e2",
+      "mean_us": 4121.440023183823,
+      "mean_unique_pages": 215239.4375,
+      "libraries": [
+        {
+          "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_service_poll/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+          "sha256": "68515f22012ab5db635ce5584935abb4babd2559bd855223f33798ede0f11456"
+        },
+        {
+          "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_service_poll/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+          "sha256": "3d502fb03a80061ca74646922e8a0a5af7423d2e7454f2f08b30db3da4e5fca8"
+        }
+      ]
+    },
+    {
+      "raw": "poll_control_next_packet_qk_next100_issuebar_g100_l20000_f24.json",
+      "raw_sha256": "683cbf2fedc4d00d1d9dc6b98757200374d4bace1492f14581c5bdb7c432c2ac",
+      "mean_us": 4498.271964490414,
+      "mean_unique_pages": 215220.40625,
+      "libraries": [
+        {
+          "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_next_packet_qk_next100_issuebar/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+          "sha256": "ff5e68b5a25e1cfd617b164b0761c0349acc62cbd7103983a6f0b8b0429e717f"
+        },
+        {
+          "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_next_packet_qk_next100_issuebar/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+          "sha256": "e64658797ae94911f964bc6697d0289089863775347aa2c0cb3e340a933bd267"
+        }
+      ]
+    },
+    {
+      "raw": "poll_reverse_service_poll_g100_l20000_f24.json",
+      "raw_sha256": "b6c1d50c1009b2ae70e1df235fdc585f499545cfc4490bf4f405278fe2ee2b9e",
+      "mean_us": 4137.216039001942,
+      "mean_unique_pages": 215264.09375,
+      "libraries": [
+        {
+          "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_service_poll/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+          "sha256": "68515f22012ab5db635ce5584935abb4babd2559bd855223f33798ede0f11456"
+        },
+        {
+          "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_service_poll/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+          "sha256": "3d502fb03a80061ca74646922e8a0a5af7423d2e7454f2f08b30db3da4e5fca8"
+        }
+      ]
+    },
+    {
+      "raw": "poll_reverse_next_packet_qk_next100_issuebar_g100_l20000_f24.json",
+      "raw_sha256": "83df9f2e2b6fdc58728e50698d2b4bcc521efb17cb334aadfcdd99cd6d6a1b0c",
+      "mean_us": 4492.160014808178,
+      "mean_unique_pages": 215216.125,
+      "libraries": [
+        {
+          "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_next_packet_qk_next100_issuebar/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False.so",
+          "sha256": "ff5e68b5a25e1cfd617b164b0761c0349acc62cbd7103983a6f0b8b0429e717f"
+        },
+        {
+          "path": "temp/glm_trace/tune_unlimited_uniform_20261103/jit_next_packet_qk_next100_issuebar/.cache/flashinfer/0.6.7/80/cached_ops/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2/batch_mla_attention_dtype_q_bf16_dtype_kv_bf16_dtype_o_bf16_dtype_idx_i32_head_dim_ckv_512_head_dim_kpe_64_profiler_False_host_overlap_v2.so",
+          "sha256": "e64658797ae94911f964bc6697d0289089863775347aa2c0cb3e340a933bd267"
+        }
+      ]
+    }
+  ],
+  "accounting": [
+    {
+      "tick": 0,
+      "request_count": 26957,
+      "charged_ns": 6227009,
+      "actual_far_rows": 539135,
+      "expected_unique_rows": 539135,
+      "actual_far_bytes": 621083520,
+      "recurrence_exact": true
+    },
+    {
+      "tick": 31,
+      "request_count": 16506,
+      "charged_ns": 3812817,
+      "actual_far_rows": 330114,
+      "expected_unique_rows": 330114,
+      "actual_far_bytes": 380291328,
+      "recurrence_exact": true
+    }
+  ]
+}

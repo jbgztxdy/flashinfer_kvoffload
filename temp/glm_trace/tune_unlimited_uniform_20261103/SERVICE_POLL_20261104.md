@@ -1,0 +1,13 @@
+# 未到deadline时继续本地计算：隔离调度证据
+
+从next_packet_qk_issuebar修改：paired tile已经完成本地KV cp.async等待后，leader检查当前唯一远端包deadline并在原CTA屏障发布判断；若尚未到达，只跳过本次service stores/refill/publish，继续对已就绪的本地KV执行全部QK/softmax/PV。wait_tile和drain仍走原阻塞service_step，消费该包前仍执行FAR wait、真实stage/cache写回及release ready。没有减少真实远端读取、cache写入、精确launch LRU或数学工作；单cooperative/108CTA/八mathwarp/双32KVstage/20页unique包不变。模型仅复用batch_call，issuebar仍等全部线程真实发出后才预约，未修改FAR header或参考。
+
+GPU3/A100-PCIE、NUMA1、同卡独立HBM源，BF16/64heads/MTP8R128/K2048/LRU4096，256位置32步，各1冷pass。100GB20µs正序candidate4121.440µs/control4498.272，快8.377%；反序control4492.160/candidate4137.216，快7.901%；两组均31/32步更快，未挑除慢步。0µs candidate3971.168µs，仅历史同模型control约4306–4339µs，没有本轮0µs新配对，不能给精确收益。完整raw记录逐步unique及时间，不假定不同launch缓存tie分配使字节逐步完全相同。
+
+K65/K2048两项带模型定向数学/LSE/padding/QPE stride/Graph/cache载荷通过；全部正式短筛数学采样和最终524288有效cache槽真实载荷通过。Graph节点probe为单BatchMLACleanServiceKernel/108CTA/block[32,4,2]/dynamic163200B/active1；probe runtime模型关闭，只证明编译版目标身份。candidate与原control均REG255/STACK40/static1152，资源相同支持进一步查等待，但不证明全部收益都由等待单项造成。
+
+收费审计在实际加载候选库上读取broker记录：冷tick0有26957请求、539135unique页/621083520B；直接跳tick31有16506请求、330114unique页/380291328B。逐请求max-plus正确，包数ceil(unique/20)、实际收费页数与kernel unique精确相等。两次不是热32步平均，记录拷贝在正式计时外。等待判断只推迟消费，尚未ready时不会清deadline或发布ready。source SHA256 aab7457278cc1acf536c39723e31cb0cac843bc2ab923a00dbbdcab00ff00a08；实际加载host库SHA256 3d502fb03a80061ca74646922e8a0a5af7423d2e7454f2f08b30db3da4e5fca8；FAR batch_call SHA256 6ad898483f510695357d83282c416a4fc97c4d14772147f63a26fa09f453f4df。
+
+**范围与下一步：** 此版本是deadline感知服务调度的隔离实验，不是物理链路优化已完成。当前远端与本地KV共用每线程cp.async组，QK前wait_group<0>仍会等物理远端copy；轮询只避免随后虚拟deadline阻塞。给同一位置简单补mbarrier不能消除已有物理依赖，所以未实现无效的硬件poll替身。官方SM80 mbarrier可跟踪cp.async并test_wait.parity，但仍须重新设计本地/远端异步组依赖；参考 https://docs.nvidia.com/cuda/archive/11.5.1/parallel-thread-execution/index.html 。不能把本轮4.12ms与另一软件模型下生产约3.3ms当同成本比较，不能声称110%或NVLink实测。normal不限速没有新结果；不安装生产、不重扫矩阵。下一轮以本地计算不被未就绪服务包阻塞为具体目标，继续保留真实字节和ready发布协议。
+
+生产81093ba5、canonical34afad69、FAR8507eab0保持；GPU0/1/2不使用，末检0/1重新被外部任务占显存。所有本轮runner已结束，原始正负数据及实际库SHA在service_poll*、poll_control*、poll_reverse*、accounting_service_poll.json和probe_service_poll*；无全suite/sanitizer/物理PCIe/NVLink/H800/full1024新结论。
