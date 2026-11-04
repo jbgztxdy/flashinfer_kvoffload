@@ -16,6 +16,8 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04短时间窗口额度探针验证结束：** 独立GPU3真实4页/warp双outstanding，24/108producerCTA+1专用brokerCTA（仅诊断，不集成生产），无全局CAS/锁；周期批量maxplus，24case共1622016请求payload/收费/截止/消费/idle准确bad0。0us24/108约91.1/88.6GB，20us60.1/88.5GB；关闭记录61.5/88.4等方向一致，未达稳100。扫描实际周期远长500/2000ns目标，24CTA20us在途还不足2MB，不全归broker。不采用、不扩attention、不称物理预测。原始/source/binarySHA和限制见temp/glm_trace/epoch_probe_20261104/README.md。生产不变、runner结束。
+
 **11/04用户授权固定stall校准已完成：** 独立真实payload探针108CTA/双32rowstage，冻结2000ps/B（far8=97.66GB、far32=105.24GB），再原生FA2外部LRU完整128步1pass：disabled2954.160/unlimited3498.360/名义100GB0us10091.752/20us15948.192µs。冷步0us96.73GB，但热步9974.639µs过度节流；不能视为可信物理100GB成绩，不按完整kernel重调凑目标。全部payload/采样输出/128原生Graph核对，source/librarySHA和正负raw保留、生产不变、runner结束。详见[stall校准报告](mla_host_stall_calibration_20261104.md)。
 
 **11/04 native+外部LRU100GB模拟无可信成绩：** GPU3 normal2773.792/device2771.912µs，CAS EMU disabled2969.408/unlimited3284.000/100GB0us88926.312/20us89709.608；实际far509.256MB，逐步参考5092.560µs。每步约25.1万warp小包，89ms不能作为物理预测；不扣时间。固定nanosleep/静态108CTA-share探针也不能覆盖动态并发，明确未采用。原始/源码库SHA俱全、生产不变、runner结束，见[100GB诊断](mla_host_native_lru100_20261104.md)。
