@@ -1,5 +1,7 @@
 # 11/04 当前方法在真实 NVLink 上复测
 
+补充：原生device参考已做同库/新旧输入/驱逐缓存/连续Graph对齐。完整连续参考2459.195µs，与下表原逐步同步2454.085仅差0.208%；当前direct比连续参考高18.55%。旧图2755µs可用旧脚本复现，不能跨输入沿用。提前搬运热L2猜测在新trace控制中无支持。详见[参考审计](mla_host_device_reference_audit_20261104.md)。
+
 GPU0 计算、GPU1 远端 HBM，A100-SXM4-40GB，NV12，NUMA0。不开 FAR 模拟器，无人为带宽或延迟限制；本轮未重新校准链路 GB/s，不把 kernel 字节/耗时称为链路带宽。
 
 BF16、64 heads、KV512+64、topk2048、128 请求、MTP8、每请求 LRU4096；assistant64k 原 trace/seed/bindings，3 cold passes，全部步骤算术平均。短筛256位置32步；正式完整1024位置128步。索引上传、诊断、校验在事件外，attention 和真实必要缓存/中转写入在事件内。进程开始前稳定 idle 10 秒、共享 GPU01 锁，开始/结束没有外部 GPU0/1 进程。

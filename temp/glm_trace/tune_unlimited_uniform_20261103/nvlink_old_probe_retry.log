@@ -1,0 +1,24 @@
+bandwidth {'dma_contiguous_GBps': 281.23013871781154, 'sm_gather_random_GBps': 261.0344417209283}
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/old_exact_probe.py", line 23, in <module>
+    runpy.run_path(sys.argv[0],run_name='__main__')
+  File "<frozen runpy>", line 286, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/mnt/data/rtx/projects/flashinfer/temp/h800/bench_sweep.py", line 302, in <module>
+    main()
+  File "/mnt/data/rtx/projects/flashinfer/temp/h800/bench_sweep.py", line 152, in main
+    result["results"].append(run_batch(args, requests, kv, main_kv, alias, far_cpu, packed, captures, device))
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/h800/bench_sweep.py", line 266, in run_batch
+    replay(graphs[key], repeats[(mode, fraction)])
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/old_exact_probe.py", line 18, in replay
+    record={'launches':inspect_graph(g[0]),'libraries':[dict(path=f,sha256=hashlib.sha256(Path(f).read_bytes()).hexdigest()) for f in {z.split()[-1] for z in Path('/proc/self/maps').read_text().splitlines() if '.so' in z and 'jit_' in z}]}
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/nvlink_graph.py", line 17, in inspect_graph
+    graph=ctypes.c_void_p(g.raw_cuda_graph());count=ctypes.c_size_t()
+                          ^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/mhy-vllm-venv/lib/python3.12/site-packages/torch/cuda/graphs.py", line 172, in raw_cuda_graph
+    return super().raw_cuda_graph()
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: You cannot access the raw cudaGraph_t instance unless CUDAGraph was initialized with keep_graph=true

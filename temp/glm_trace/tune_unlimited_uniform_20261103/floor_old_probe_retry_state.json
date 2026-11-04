@@ -1,0 +1,40 @@
+{
+  "actions": [
+    {
+      "variant": "old_probe",
+      "start": "2026-11-04T14:47:10+0800",
+      "command": [
+        "numactl",
+        "-N0",
+        "-m0",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/old_exact_probe.py"
+      ],
+      "preflight": {
+        "timestamp": "2026-11-04T14:47:10+0800",
+        "gpus": [
+          {
+            "index": 0,
+            "uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          },
+          {
+            "index": 1,
+            "uuid": "GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      "pid": 884240,
+      "exit_code": 0
+    }
+  ],
+  "complete": true
+}

@@ -1,0 +1,64 @@
+{
+  "actions": [
+    {
+      "variant": "old_exact",
+      "start": "2026-11-04T14:45:46+0800",
+      "command": [
+        "numactl",
+        "-N0",
+        "-m0",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/h800/bench_sweep.py",
+        "--tier",
+        "peer",
+        "--device",
+        "0",
+        "--peer",
+        "1",
+        "--mtp",
+        "8",
+        "--requests",
+        "128",
+        "--fractions",
+        "0",
+        "0.05",
+        "0.1",
+        "0.15",
+        "0.2",
+        "0.25",
+        "0.3",
+        "--modes",
+        "attn",
+        "--rounds",
+        "8",
+        "--output",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/floor_old_exact_20261104.json"
+      ],
+      "preflight": {
+        "timestamp": "2026-11-04T14:45:46+0800",
+        "gpus": [
+          {
+            "index": 0,
+            "uuid": "GPU-6e5259ec-3532-b1b2-b0ab-b26231386565",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          },
+          {
+            "index": 1,
+            "uuid": "GPU-da37de5d-2a64-ab4e-c11a-5a0c8d338b81",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      "pid": 881070,
+      "exit_code": 0
+    }
+  ],
+  "complete": true
+}
