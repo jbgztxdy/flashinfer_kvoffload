@@ -287,6 +287,6 @@ def run_replay():
             attention=[x for x in result['launches'] if 'BatchMLAPagedAttentionKernel' in x['kernel_name']]
             assert len(attention)==STEPS and all(x['grid']==[1,108,1] for x in attention)
             assert not any('BatchMLADirectPVKernel' in x['kernel_name'] for x in result['launches'])
-        result['passes'].append(dict(us=times));result['paired_fused_direct_mean_us']=sum(paired[0]['us'])/STEPS;save(target,result);print('NATIVE DIRECT EXACT LRU',rep,sum(times)/len(times),flush=True)
+        result['passes'].append(dict(us=times));save(target,result);print('NATIVE DIRECT EXACT LRU',rep,sum(times)/len(times),flush=True)
     result['libraries']=[dict(path=f,sha256=digest(f)) for f in {z.split()[-1] for z in Path('/proc/self/maps').read_text().splitlines() if '.so' in z and 'jit_' in z}];result['sources']=sources();result['math_checks']=dict(steps=[0,16,127],rows=[0,512,1023],atol=.01,rtol=.01);result['resources_end']=require_exclusive();result['complete']=True;save(target,result)
 run_replay()
