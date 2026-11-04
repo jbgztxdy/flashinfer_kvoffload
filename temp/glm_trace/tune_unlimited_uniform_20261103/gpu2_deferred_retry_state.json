@@ -1,0 +1,152 @@
+{
+  "start": "2026-11-04T09:22:53+0800",
+  "complete": false,
+  "preflight": [
+    {
+      "timestamp": "2026-11-04T09:22:53+0800",
+      "gpus": [
+        {
+          "index": 2,
+          "uuid": "GPU-d8bf9af1-debb-e0c2-2aa9-bdf97c63cbba",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T09:22:55+0800",
+      "gpus": [
+        {
+          "index": 2,
+          "uuid": "GPU-d8bf9af1-debb-e0c2-2aa9-bdf97c63cbba",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T09:22:57+0800",
+      "gpus": [
+        {
+          "index": 2,
+          "uuid": "GPU-d8bf9af1-debb-e0c2-2aa9-bdf97c63cbba",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T09:22:59+0800",
+      "gpus": [
+        {
+          "index": 2,
+          "uuid": "GPU-d8bf9af1-debb-e0c2-2aa9-bdf97c63cbba",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T09:23:02+0800",
+      "gpus": [
+        {
+          "index": 2,
+          "uuid": "GPU-d8bf9af1-debb-e0c2-2aa9-bdf97c63cbba",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T09:23:04+0800",
+      "gpus": [
+        {
+          "index": 2,
+          "uuid": "GPU-d8bf9af1-debb-e0c2-2aa9-bdf97c63cbba",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    }
+  ],
+  "actions": [
+    {
+      "label": "gpu2_correctness_deferred_packet_normal",
+      "variant": "deferred_packet_normal",
+      "start": "2026-11-04T09:23:04+0800",
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-s",
+        "-p",
+        "no:cacheprovider",
+        "-p",
+        "jitpaths",
+        "-p",
+        "candidatepaths",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/test_deferred_packet_normal.py"
+      ],
+      "resources_start": {
+        "timestamp": "2026-11-04T09:23:04+0800",
+        "gpus": [
+          {
+            "index": 2,
+            "uuid": "GPU-d8bf9af1-debb-e0c2-2aa9-bdf97c63cbba",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      "pid": 206583,
+      "exit_code": 0,
+      "end": "2026-11-04T09:24:03+0800",
+      "resources_end": {
+        "timestamp": "2026-11-04T09:24:03+0800",
+        "gpus": [
+          {
+            "index": 2,
+            "uuid": "GPU-d8bf9af1-debb-e0c2-2aa9-bdf97c63cbba",
+            "used_mib": 1427,
+            "total_mib": 40960,
+            "utilization": 100
+          }
+        ],
+        "foreign": [
+          {
+            "gpu_uuid": "GPU-d8bf9af1-debb-e0c2-2aa9-bdf97c63cbba",
+            "pid": 207739,
+            "process": "/home/cyp/work/signal/lab/dlrm_ssd/build/dlrm_copilot",
+            "used_mib": "1420"
+          }
+        ],
+        "available": false
+      }
+    }
+  ]
+}

@@ -16,6 +16,8 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04 GPU2获用户新授权：** GPU2 A100-SXM4/NUMA1可用于本任务，旧禁止GPU2约束被用户撤销；仍须稳定idle/独占锁。迁移harness/独立gpu2输出完成，首次GPU2/GPU3预检均被新外部VLLM占用中断且无CUDA动作。随后GPU2稳定idle开始deferred normal K65/K2048，2passed/exit0，但末检出现外部dlrm_copilot PID207739约1420MiB/100%，保护阻止所有benchmark，**无性能/全程独占结论**。完整状态/通过日志与范围见GPU2_DEFERRED_20261104.md。全部自有runnerterminal；下一空闲时补同GPU2正常短筛及控制，不混GPU3绝对值，生产未改。
+
 **11/04 08:58 deferred候选补依赖审计：** GPU3仍外部VLLM PID123738约37324MiB/100%，没有GPUrunner。新增FIFO异步组模型17408case/540425服务插入、3042次wait_group1，当前两个本地tile ready/奇尾/每包唯一/排空通过；normal/EMU构建目标SASS含DEPBAR wait0与wait1，header/构建库SHA重核通过。仅CPU依赖/构建证据，不是数学/实际派发/性能。报告DEFERRED_PACKET_20261104.md追加，源码未变，准备好的normal runner仍未启动。
 
 **11/04显式待发ticket/本地组先行原型已编译待GPU：** deferred_packet从next_packet_qk_issuebar改为本地两个group后flush远端最新group，QK前有条件wait_group1、QK后wait0再真写回；新增deferred区分ticket已确定/已发出，wait_tile的step必须先flush，实质修复旧迟发包未issue就推进元数据的问题。CPU8320case/1191487转移精确一次issue/store/publish通过，但不是CUDA正确性证明；normal/EMU均独立编译完成，normalREG255/STACK16、EMU255/48。**未上GPU、无新性能/实际派发**：08:52GPU3外部VLLM PID123738约37324MiB/93%，0/1也忙，2不动。准备好run_deferred_packet_normal.py但未启动；下一可用时只先2定向+1pass不限速，勿重跑构造器。源码/构建库SHA/资源快照/模型与限制见实验目录DEFERRED_PACKET_20261104.md。生产三头不变，所有本轮编译terminal，无待poll runner。

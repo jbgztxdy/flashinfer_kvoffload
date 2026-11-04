@@ -1,0 +1,9 @@
+# GPU2授权迁移与定向检查
+
+用户明确通知GPU2空闲，授权本任务使用该卡，取代此前禁止GPU2的会话约束。实时确认GPU2为A100-SXM4-40GB、NUMA1；独立resources_gpu2.py、gpu2_correctness.lock、gpu2_输出前缀与normal harness已准备，使用相同冻结候选及实际JIT，绝不将GPU3-PCIE绝对时间混作GPU2-SXM对照。
+
+首次GPU2预检期间外部VLLM进程重新占约21GB，actions为空，未执行CUDA；只结束本任务runner PID192866。同期GPU3短暂空闲，但其预检期间外部VLLM PID198064再次占约37GB，actions仍为空，只结束本任务runner PID198578。原始预检状态分别gpu2_deferred_state.json、deferred_packet_normal_state.json保留。未终止任何外部进程。
+
+随后GPU2释放，通过10秒稳定空闲预检，独立重试run_gpu2_deferred_retry.py在09:23:04以0MiB/0%且无外部进程开始K65/K2048两项定向检查；pytest显示2 passed in55.63s、exit0。检查覆盖原输出/LSE/padding/QPEstride80/Graph及最终有效cache映射/真实载荷，容差未改。**资源末检09:24:03发现外部dlrm_copilot PID207739约1420MiB/100%，因此独占保护使runner失败并阻止所有性能步骤。** 不将这份通过日志表述为全程独占，不能作为性能或实际派发证据；尚无256位置短筛和同卡新旧对照。
+
+候选deferred_packet.cuh SHA256 1f78cc7a860a9c48db3595e26c2db447559a94ab07c89339b2cd729f6ae7b48b不变。生产三header/默认staged路由未改。GPU2可以继续使用，但每次须重新严格预检；不要以0%利用率或少量占用当可共享计时许可，不覆盖本轮日志/状态，不重跑已完成构造器。下一步空闲时只补normal benchmark与相同GPU2控制；若要重新确认独占数学，另起唯一日志。所有自有runner已结束，无待poll handle。
