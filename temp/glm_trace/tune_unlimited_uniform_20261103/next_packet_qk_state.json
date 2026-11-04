@@ -1,0 +1,304 @@
+{
+  "start": "2026-11-04T06:59:41+0800",
+  "complete": true,
+  "preflight": [
+    {
+      "timestamp": "2026-11-04T06:59:41+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T06:59:43+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T06:59:45+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T06:59:47+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T06:59:50+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T06:59:52+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T06:59:58+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 23
+        }
+      ],
+      "foreign": [],
+      "available": false
+    },
+    {
+      "timestamp": "2026-11-04T07:00:08+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T07:00:10+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T07:00:12+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T07:00:15+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T07:00:17+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    },
+    {
+      "timestamp": "2026-11-04T07:00:19+0800",
+      "gpus": [
+        {
+          "index": 3,
+          "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+          "used_mib": 0,
+          "total_mib": 40960,
+          "utilization": 0
+        }
+      ],
+      "foreign": [],
+      "available": true
+    }
+  ],
+  "actions": [
+    {
+      "label": "correctness_next_packet_qk",
+      "variant": "next_packet_qk",
+      "start": "2026-11-04T06:59:52+0800",
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-s",
+        "-p",
+        "no:cacheprovider",
+        "-p",
+        "jitpaths",
+        "-p",
+        "candidatepaths",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/test_next_packet_qk.py"
+      ],
+      "resources_start": {
+        "timestamp": "2026-11-04T06:59:52+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      "pid": 9570,
+      "exit_code": 0,
+      "end": "2026-11-04T06:59:58+0800",
+      "resources_end": {
+        "timestamp": "2026-11-04T06:59:58+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      }
+    },
+    {
+      "label": "next_packet_qk_native",
+      "variant": "next_packet_qk",
+      "start": "2026-11-04T07:00:19+0800",
+      "command": [
+        "numactl",
+        "-N1",
+        "-m1",
+        "/mnt/data/mhy-vllm-venv/bin/python",
+        "-u",
+        "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/bench_next_packet_qk.py",
+        "--kind",
+        "lru",
+        "--mtp",
+        "8",
+        "--requests",
+        "128",
+        "--positions",
+        "256",
+        "--passes",
+        "3",
+        "--settings",
+        "native_hbm",
+        "--fetch-ctas",
+        "24",
+        "--host-split",
+        "off"
+      ],
+      "resources_start": {
+        "timestamp": "2026-11-04T07:00:19+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 0
+          }
+        ],
+        "foreign": [],
+        "available": true
+      },
+      "pid": 10108,
+      "exit_code": 0,
+      "end": "2026-11-04T07:00:27+0800",
+      "resources_end": {
+        "timestamp": "2026-11-04T07:00:27+0800",
+        "gpus": [
+          {
+            "index": 3,
+            "uuid": "GPU-8e5926b4-7d67-81dd-937a-89f102e0692a",
+            "used_mib": 0,
+            "total_mib": 40960,
+            "utilization": 15
+          }
+        ],
+        "foreign": [],
+        "available": false
+      }
+    }
+  ],
+  "end": "2026-11-04T07:00:27+0800"
+}

@@ -1,6 +1,6 @@
 # 交接：远端 KV sparse MLA kernel 持续优化
 
-更新于 **2026-11-04 全CTA远端copy/QK真并行三版短筛：一版完整trace非法访存、两版正确但不限速明显变慢，均未安装；生产81093ba5/FAR8507eab0保持，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
+更新于 **2026-11-04 全CTA下一20页unique包提前发于QK：严格已发字节100GB模型20µs同布局控制快6.36%，仍未胜生产/达到110%，实验保留未安装；生产81093ba5/FAR8507eab0保持，Asia/Shanghai**。本文是当前入口；旧交接完整保存在 [历史记录](HANDOFF_history_before_20261031.md)。冲突时优先读当前用户要求、本文和实际进程/数据。
 
 ## 1. 任务目标与授权
 
@@ -15,6 +15,8 @@
 **不优化HiSparse**；如需对比，按原生部署接口运行，不替它接入多步去重。当前主任务是我们kernel对Memcpy和纯本地计算的比较，不模拟整个模型其他部分。
 
 ## 2. 当前运行状态与新一轮进度
+
+**11/04 100GB新机制与严格收费复测：** clean全CTA20页unique/双32KV计算stage/八warp数学不变，仅给pages/victims两个轮换元数据槽；当前包真实stage/cache写回后在QK前issue下一包，旧包仍按原MDO release发布。与上一轮错误迟发包不同，wait_tile始终有已issue的next ticket；正常2定向/32步全cache及单新kernel108CTA Graph通过，normal3pass均3108.416µs，仍无生产不限速胜出。首轮batch_call对照发现全包收费可能早于其余warp真实cp.async，**已降级为探索信号**；正式私有版本两边均在全部copy已commit后CTA同步才预约，原模型/字节/参考不改。100GB0µs clean4338.752、同布局迟发4337.888、新4305.984µs；20µs clean4800.288、同布局迟发4789.408、新4484.960µs，较同布局迟发快6.357%，32/32步更快。两项带模型定向、最终全部524288有效cache载荷通过；broker专项冷tick0/直跳tick31分别26957/16505包、539135/330091真实unique页，精确收费及逐请求max-plus通过。提前ready追加版20µs4501.856对4478.784无收益，拒绝。新模拟仍有完整kernel软件成本，4.485ms不是物理100GB预测或110%达成；原生产staged路由及三header不动。全部正负raw、失败宏/旧probe、源码/实际库SHA见 [NEXT_PACKET_QK_100GB_20261104.md](../temp/glm_trace/tune_unlimited_uniform_20261103/NEXT_PACKET_QK_100GB_20261104.md)；所有runner结束，GPU3末检空闲。
 
 **11/04 全CTA unique 搬运与QK真并行短筛：** 旧“QK后写回”已在QK前等远端完成；本轮真正试图让far cp.async跨过QK。迟发包版K65/K2048短检通过，但32步Graph因wait_tile先于issue推进元数据而非法访存，失败原件保留、不计性能。保持原进度协议、同步全部本地KV的修正版2检查/全最终cache载荷通过，3pass3679.360µs；四个计算warp搬运＋混合本地异步载入版同样通过，但3pass6056.437µs。同轮clean控制1pass3096.832µs；两候选第一pass慢18.11%/95.58%，不保留、不测100GB。两版实际Graph均单BatchMLACleanServiceKernel/108CTA/active1，非回落。源码/实际库SHA、失败与完整逐步raw见 [FAR_QK_OVERLAP_20261104.md](../temp/glm_trace/tune_unlimited_uniform_20261103/FAR_QK_OVERLAP_20261104.md)。这不是已获益的新全CTA调度；生产/默认staged路由不变，GPU runner已结束。
 
