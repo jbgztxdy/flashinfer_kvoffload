@@ -16,6 +16,8 @@
 
 ## 2. 当前运行状态与新一轮进度
 
+**11/04原生direct真实NVLink完成：** 当前assistant完整1024位置128步R128/MTP8、无LRU/无预搬运、原生FA2直接GPU1 KV，3pass9459.469µs（9460.624/9458.480/9459.304）。每步99.9525%引用远端、按引用2414.772MB，不能与带LRU融合direct约510MB直接归因计算收益。原生.so同device参考20caf1e9、实查128原生108CTA，3step×3row每pass正确；首Graph校验索引错误保留后修复重试成功，实际执行harness SHA恢复对齐。生产未改，runner结束。详见[原生direct报告](mla_host_native_direct_nvlink_20261104.md)。
+
 **11/04 device参考核查：** 当前完整assistant trace原生device连续Graph2459.195µs，原逐步同步2454.085差0.208%；direct比新连续参考高18.55%。旧图2.755ms用旧overlap/script同实际.so可复现，当前输入不能沿用。新完整128步prepared2452.995/驱逐2453.029，否定提前搬运热L2解释0.3ms；重复同少量步骤负载2.63–2.65不替代完整平均。新旧数据页复用/计时流程不同，精确因果份额未证明。同原生库SHA20caf1e9、实际Graph/全部raw与首probe失败保留，生产未改。详见[device参考审计](mla_host_device_reference_audit_20261104.md)。
 
 **11/04真实NVLink复测完成：** 用户释放GPU0/1后，NUMA0/NV12/稳定idle与共享锁，当前direct/staged及clean全warp完成完整1024位置128步3coldpass：2915.435/2967.971/3041.592µs；同轮指定device2454.085µs。direct比旧11/02 NVLink3335.189快12.585%，比当前计算参考高18.80%；全warp仍未胜生产。两近期全warp变体仅短筛无胜出。完整Graph单实际目标108CTA/active1，输出采样及最终全部cache载荷通过。无模拟限速/新链路GBps校准，计算参考不是加入路径字节预算的联合下限。首旧base实际是cab508旧direct而非当前staged，已隔离保留；floor首错误include在CUDA前退出后修正，raw/log保留。生产未改，无runner待poll，详见[真实NVLink新报告](mla_host_nvlink_current_20261104.md)。

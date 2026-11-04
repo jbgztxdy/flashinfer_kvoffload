@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/bench_nvlink_native_direct.py", line 249, in <module>
+    run_native_direct()
+  File "/mnt/data/rtx/projects/flashinfer/temp/glm_trace/tune_unlimited_uniform_20261103/bench_nvlink_native_direct.py", line 240, in run_native_direct
+    if t in [0,16,127]:expected.append((t,o[[0,512,1023]].float().clone()))
+                                          ~^^^^^^^^^^^^^^
+RuntimeError: Cannot copy between CPU and CUDA tensors during CUDA graph capture unless the CPU tensor is pinned. Please use tensor.pin_memory() or allocate the tensor with pin_memory=True.
