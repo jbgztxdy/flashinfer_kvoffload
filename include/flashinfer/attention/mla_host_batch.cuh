@@ -4140,15 +4140,15 @@ __device__ __forceinline__ void pv_feature_run_joint_host_items(const Params& pa
   float m[2];
   float d[2];
 
+  const uint32_t qtid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
 #pragma unroll 1
-  for (int item = first; item >= 0 && item < items; item += step) {
-    if (!claim_host_batch_item(params, scratch, item)) {
-      if (fetcher) break;
-      continue;
-    }
+  for (;;) {
+    if (qtid == 0) scratch[kHostBatchScratchClaimed] = atomicAdd(params.state + kHostBatchGaps, 1u);
+    __syncthreads();
+    const int item = static_cast<int>(scratch[kHostBatchScratchClaimed]);
+    if (item >= items) break;
     if (item < lru_items) {
       run_host_batch_lru<KTraits>(params, smem, item, scratch[kHostBatchScratchEpoch], unique);
-      // The next item reuses the shared memory the selection scanned into.
       __syncthreads();
       continue;
     }
