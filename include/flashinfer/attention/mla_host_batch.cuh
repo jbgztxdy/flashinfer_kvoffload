@@ -1386,7 +1386,7 @@ __device__ __noinline__ void run_host_batch_lru(const Params& params, uint8_t* s
   const uint32_t first = min(slot_base(params.pool_row_start[pool]), count);
   const uint32_t last = min(slot_base(params.pool_row_start[pool + 1]), count);
   if (first == last) {
-    if (tid == 0 && !row_base) {
+    if (tid == 0) {
       asm volatile("st.release.gpu.global.u32 [%0], %1;" ::"l"(params.pool_flags + pool),
                    "r"(epoch + 1) : "memory");
     }
@@ -1540,7 +1540,7 @@ __device__ __noinline__ void run_host_batch_lru(const Params& params, uint8_t* s
   }
   __threadfence();
   __syncthreads();
-  if (tid == 0 && !row_base) {
+  if (tid == 0) {
     asm volatile("st.release.gpu.global.u32 [%0], %1;" ::"l"(params.pool_flags + pool),
                  "r"(epoch + 1)
                  : "memory");
@@ -4386,8 +4386,8 @@ template <typename Q, typename KV, typename O, typename Id>
 struct DirectPVTraits : JointQKTraits<Q, KV, O, Id> {};
 template <typename Params>
 struct DirectPVHostParams : Params {
- static constexpr bool stage=false,fully_staged=false,whole_rows=true,shared_fetch_ids=true,host_split=false;
- static constexpr uint32_t num_chunks=1;
+ static constexpr bool stage=false,fully_staged=false,whole_rows=false,shared_fetch_ids=true,host_split=false;
+ static constexpr uint32_t num_chunks=4;
 };
 
 // Two different KV tiles share each Q fragment. Each score accumulator keeps the
@@ -4633,7 +4633,7 @@ __device__ __forceinline__ void direct_pv_run_joint_host_item(const Params& para
     head_tile = tile % params.num_head_tiles;
     partial = item - full_items;
     const uint32_t length = host_batch_row_len(params, row);
-    const uint32_t host = host_batch_split_host(params, row);
+    const uint32_t host = host_batch_writes_back(params) ? 0 : host_batch_split_host(params, row);
     const uint32_t chunk_len = round_up(ceil_div(length - host, params.num_chunks), CTA_TILE_KV);
     if (chunk * chunk_len >= length - host) return;
     kv_start = host + chunk * chunk_len;
