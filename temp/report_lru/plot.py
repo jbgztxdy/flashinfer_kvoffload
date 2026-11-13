@@ -98,34 +98,46 @@ def rounds_rows(name, ours, min_requests=0):
     return rows
 
 
-def fig_rounds():
+def fig_rounds(capacity=4096):
+    suffix = "" if capacity == 4096 else f"_c{capacity}"
     panels = [
-        ("rounds_host_mtp8.json", "ours_stage", (4, 16, 32, 64, 128), "PCIe，MTP8"),
-        ("rounds_peer_mtp8.json", "ours_inplace", (8, 16, 32, 64, 128), "NVLink，MTP8"),
-        ("rounds_host_mtp1.json", "ours_stage", (32, 64, 128, 256, 512), "PCIe，MTP1"),
-        ("rounds_peer_mtp1.json", "ours_inplace", (64, 128, 256), "NVLink，MTP1"),
+        ("host", "ours_stage", "PCIe，MTP8"),
+        ("peer", "ours_inplace", "NVLink，MTP8"),
     ]
-    fig, axes = plt.subplots(2, 2, figsize=(12.5, 7.6))
-    for axis, (name, ours, pick, title) in zip(axes.flat, panels):
-        rows = [r for r in rounds_rows(name, ours) if r["req"] in pick]
+    fig, axes = plt.subplots(1, 2, figsize=(12.5, 4.2))
+    for axis, (tier, ours, title) in zip(axes, panels):
+        d = load(f"rounds_{tier}_mtp8{suffix}.json")
+        base = {r["requests"]: r for r in load(f"rounds_{tier}_mtp8.json")["results"]}
+        bw = max(d["bandwidth"]["sm_gather_random_GBps"], d["bandwidth"]["dma_contiguous_GBps"])
+        rows = []
+        for r in d["results"]:
+            if r["requests"] not in (1, 4, 16, 64, 128):
+                continue
+            tail = range(r["steps"] // 2, r["steps"])
+            miss = sum(r["cached_misses"][ours][t] for t in tail) / len(tail)
+            floor = max(steady(base[r["requests"]], "floor_fa2"), miss * ROW / bw / 1e3)
+            rows.append(dict(req=r["requests"], rows=r["query_rows"], floor=floor,
+                             ours=steady(r, ours), memcpy=steady(r, "memcpy_lru"),
+                             direct=steady(r, "direct_lru")))
         grouped(axis, [f"{r['req']} 请求\n{r['rows']} 行" for r in rows], [
             ("Direct + LRU", BLUE, [r["direct"] / 1e3 for r in rows]),
             ("Memcpy + LRU", ORANGE, [r["memcpy"] / 1e3 for r in rows]),
             ("本文 kernel + LRU", GREEN, [r["ours"] / 1e3 for r in rows]),
         ], lambda v: f"{v:.1f}" if v >= 1 else f"{v:.2f}", fontsize=5.8)
         for i, r in enumerate(rows):
-            axis.plot([i - 0.42, i + 0.42], [r["floor"] / 1e3] * 2, color=INK, linestyle=(0, (4, 3)),
-                      linewidth=1.1, zorder=5)
+            axis.plot([i - 0.42, i + 0.42], [r["floor"] / 1e3] * 2,
+                      color=INK, linestyle=(0, (4, 3)), linewidth=1.1, zorder=5)
         axis.set_title(title, loc="left")
         dress(axis, "每步 GPU 耗时 (ms)")
         top = max(max(r["direct"], r["memcpy"], r["ours"]) for r in rows) / 1e3
-        axis.set_ylim(0, top * 1.12)
-    axes[0][0].plot([], [], color=INK, linestyle=(0, (4, 3)), label="参考下限")
-    axes[0][0].legend(loc="upper left", frameon=False, ncol=2)
-    fig.suptitle("跨 decode 稳态（除最新 token 外 KV 全在远端，每请求 4096 槽 LRU），A100：每步耗时，虚线为该 batch 的参考下限",
+        axis.set_ylim(0, top * 1.20)
+    axes[0].plot([], [], color=INK, linestyle=(0, (4, 3)), label="参考下限")
+    axes[0].legend(loc="upper left", frameon=False, ncol=2, fontsize=7)
+    fig.suptitle(f"A100，MTP8，跨 decode 稳态：每请求 {capacity} 槽 LRU，虚线为参考下限",
                  x=0.01, ha="left", fontsize=10)
-    fig.tight_layout(rect=(0, 0, 1, 0.96))
-    fig.savefig(OUT / "rounds_vs_floor.png", dpi=170)
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
+    filename = "rounds_vs_floor.png" if capacity == 4096 else f"rounds_vs_floor_c{capacity}.png"
+    fig.savefig(OUT / filename, dpi=170)
     plt.close(fig)
 
 
@@ -135,7 +147,7 @@ def fig_single_step():
     fig, axes = plt.subplots(1, 2, figsize=(13, 4.4))
     for axis, req in zip(axes, (16, 128)):
         r = next(x for x in d["results"] if x["requests"] == req)
-        cases = r["cases"]
+        cases = [c for c in r["cases"] if c["far_fraction"] <= 0.15]
         labels = [f"{c['far_fraction']:.0%}" for c in cases]
         grouped(axis, labels, [
             ("原生直访 Direct", BLUE, [c["direct"]["median_us"] / 1e3 for c in cases]),
@@ -153,10 +165,10 @@ def fig_single_step():
     rm, rd = [], []
     for req in (16, 128):
         for c in next(x for x in d["results"] if x["requests"] == req)["cases"]:
-            if c["far_fraction"] >= 0.1:
+            if 0.1 <= c["far_fraction"] <= 0.15:
                 rm.append(c["batch"]["median_us"] / c["copy"]["median_us"])
                 rd.append(c["batch"]["median_us"] / c["direct"]["median_us"])
-    fig.suptitle(f"单步、不开缓存，PCIe，A100：远端占比 ≥ 10% 时本文 kernel 耗时是 Memcpy 的 {min(rm):.2f}～{max(rm):.2f} 倍、"
+    fig.suptitle(f"单步、不开缓存，PCIe，A100：远端占比 10%～15% 时本文 kernel 耗时是 Memcpy 的 {min(rm):.2f}～{max(rm):.2f} 倍、"
                  f"Direct 的 {min(rd):.2f}～{max(rd):.2f} 倍", x=0.01, ha="left", fontsize=10)
     fig.tight_layout(rect=(0, 0, 1, 0.94))
     fig.savefig(OUT / "single_step_pcie_mtp8.png", dpi=170)
@@ -164,16 +176,15 @@ def fig_single_step():
 
 
 def fig_single_step_nvlink():
-    d = load("sweep_peer_mtp8_inplace.json")
+    d = load("sweep_peer_mtp8.json")
     bw = max(d["bandwidth"]["sm_gather_random_GBps"], d["bandwidth"]["dma_contiguous_GBps"])
     fig, axes = plt.subplots(1, 2, figsize=(13, 4.4))
-    for axis, req in zip(axes, (16, 128)):
+    for axis, req in zip(axes, (64, 128)):
         r = next(x for x in d["results"] if x["requests"] == req)
         cases = r["cases"]
         grouped(axis, [f"{c['far_fraction']:.0%}" for c in cases], [
-            ("原生直访 Direct", BLUE, [c["direct"]["median_us"] / 1e3 for c in cases]),
             ("提前拷贝 Memcpy", ORANGE, [c["copy"]["median_us"] / 1e3 for c in cases]),
-            ("本文 kernel（原地读，NVLink 配置）", GREEN, [c["batch_inplace"]["median_us"] / 1e3 for c in cases]),
+            ("优化后", GREEN, [c["direct"]["median_us"] / 1e3 for c in cases]),
         ], lambda v: f"{v:.2f}", fontsize=6.0)
         floors = [max(compute_floor(r), sorted(c["far_unique_bytes"])[len(c["far_unique_bytes"]) // 2] / bw / 1e3) / 1e3
                   for c in cases]
@@ -182,13 +193,13 @@ def fig_single_step_nvlink():
         axis.set_xlabel("远端（peer HBM）选中 KV 占比")
         dress(axis, "GPU 耗时 (ms)")
         axis.set_title(f"{req} 请求 × MTP8 = {r['query_rows']} 行", loc="left")
-        top = max(c[k]["median_us"] / 1e3 for c in cases for k in ("direct", "copy", "batch_inplace"))
+        top = max(c[k]["median_us"] / 1e3 for c in cases for k in ("direct", "copy"))
         axis.set_ylim(0, top * 1.30)
     axes[0].legend(loc="upper left", frameon=False, ncol=2, fontsize=7)
     fig.suptitle("单步、不开缓存，NVLink，A100：本文原地读不开缓存时即原生 kernel，与 Direct 相同，远端占比 ≥ 10% 时快于 Memcpy",
                  x=0.01, ha="left", fontsize=10)
     fig.tight_layout(rect=(0, 0, 1, 0.94))
-    fig.savefig(OUT / "single_step_nvlink_mtp8.png", dpi=170)
+    fig.savefig(OUT / "single_step_nvlink_mtp8_inplace.png", dpi=170)
     plt.close(fig)
 
 
@@ -245,32 +256,40 @@ def fig_hisparse():
 
 
 def fig_capacity():
-    fig, axes = plt.subplots(1, 2, figsize=(13, 4.0))
-    for axis, (tier, ours, title) in zip(axes, [("host", "ours_stage", "PCIe"), ("peer", "ours_inplace", "NVLink")]):
-        data = {}
-        for cap, name in ((2048, f"rounds_{tier}_mtp8_c2048.json"), (4096, f"rounds_{tier}_mtp8.json"),
-                          (8192, f"rounds_{tier}_mtp8_c8192.json")):
-            d = load(name)
-            data[cap] = {r["requests"]: r for r in d["results"]}
-        reqs = [16, 64, 128]
-        series = []
-        for cap, color in ((2048, "#b9e6d3"), (4096, "#5cc89f"), (8192, GREEN)):
-            series.append((f"本文 kernel，{cap} 槽", color, [steady(data[cap][q], ours) / 1e3 for q in reqs]))
-        series.append(("朴素较快者，8192 槽", ORANGE,
-                       [min(steady(data[8192][q], "memcpy_lru"), steady(data[8192][q], "direct_lru")) / 1e3 for q in reqs]))
-        grouped(axis, [f"{q} 请求" for q in reqs], series, lambda v: f"{v:.1f}", fontsize=6.2)
-        dress(axis, "每步 GPU 耗时 (ms)")
-        axis.set_title(f"{title}，MTP8", loc="left")
-    axes[0].legend(loc="upper left", frameon=False, ncol=2)
-    fig.suptitle("LRU 容量（每请求槽数）：容量越大未命中越少；8192 槽时本文 kernel 仍快于朴素方法", x=0.01, ha="left", fontsize=10)
-    fig.tight_layout(rect=(0, 0, 1, 0.93))
-    fig.savefig(OUT / "lru_capacity.png", dpi=170)
+    fig, axes = plt.subplots(2, 3, figsize=(13, 7.0))
+    for row, (tier, ours, title) in enumerate([
+            ("host", "ours_stage", "PCIe"), ("peer", "ours_inplace", "NVLink")]):
+        for col, cap in enumerate((2048, 4096, 8192)):
+            suffix = "" if cap == 4096 else f"_c{cap}"
+            data = load(f"rounds_{tier}_mtp8{suffix}.json")
+            rows = [dict(req=r["requests"], ours=steady(r, ours),
+                         memcpy=steady(r, "memcpy_lru"), direct=steady(r, "direct_lru"))
+                    for r in data["results"] if r["requests"] in (1, 4, 16, 64, 128)]
+            axis = axes[row, col]
+            grouped(axis, [str(r["req"]) for r in rows], [
+                ("优化后 + LRU", GREEN, [r["ours"] / 1e3 for r in rows]),
+                ("同容量较快基线", ORANGE,
+                 [min(r["memcpy"], r["direct"]) / 1e3 for r in rows]),
+            ], lambda v: f"{v:.2f}", fontsize=6.0)
+            axis.set_yscale("log")
+            axis.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}"))
+            # Match scales across capacities within each link.
+            axis.set_ylim((0.07, 40) if tier == "host" else (0.04, 10))
+            dress(axis, "每步 GPU 耗时 (ms，对数)")
+            axis.set_xlabel("请求数")
+            axis.set_title(f"{title}，每请求 {cap} 槽", loc="left")
+    axes[0, 0].legend(loc="upper left", frameon=False, fontsize=7)
+    fig.suptitle("A100，MTP8：LRU 容量扫描（跨步稳态，各基线使用相同缓存容量）",
+                 x=0.01, ha="left", fontsize=10)
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
+    fig.savefig(OUT / "lru_capacity_comparison.png", dpi=170)
     plt.close(fig)
 
 
 if __name__ == "__main__":
     style()
     fig_rounds()
+    fig_rounds(8192)
     fig_single_step()
     fig_single_step_nvlink()
     fig_lru_gain()

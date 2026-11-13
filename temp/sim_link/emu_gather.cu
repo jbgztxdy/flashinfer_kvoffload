@@ -1,7 +1,8 @@
 // Experiment-only row gather (dst[i] = src[ids[i]], 1152-byte rows) through the same emulated far
 // link as the kernels (include/flashinfer/attention/far_link_emu.cuh): the Memcpy baselines'
-// gather of missed rows over the emulated link. Settings from FLASHINFER_FAR_EMU; far rows are
-// all rows (the gather only reads the far tier).
+// gather of missed rows over the emulated link. Settings from FLASHINFER_FAR_EMU (plus
+// FLASHINFER_FAR_EMU_ARRIVAL=1 to pay the latency after the real rows arrive); far rows are all
+// rows (the gather only reads the far tier).
 #define FLASHINFER_FAR_EMU
 #include <torch/extension.h>
 #include <c10/cuda/CUDAStream.h>
@@ -17,9 +18,10 @@ __global__ void gather(const uint4* src, const int64_t* ids, uint4* dst, int64_t
   __shared__ unsigned long long ready;
   for (int64_t base = (int64_t)blockIdx.x * ROWS; base < n; base += (int64_t)gridDim.x * ROWS) {
     const int rows = n - base < ROWS ? (int)(n - base) : ROWS;
-    // Match the kernel model: reserve when this packet is issued, before its loads;
-    // real source reads and the virtual serialization/latency then overlap.
-    if (threadIdx.x == 0) ready = flashinfer::far_emu::reserve((unsigned long long)rows * ROW_VECS * 16, flashinfer::far_emu::now_ns());
+    // Match the kernel model: take the token when this packet is issued, before its loads.
+    // Pipelined mode reserves here (reads and the virtual serialization/latency overlap);
+    // arrival mode marks here and pays the latency once the rows are in registers.
+    if (threadIdx.x == 0) ready = flashinfer::far_emu::token((unsigned long long)rows * ROW_VECS * 16);
     uint4 v[PER];
 #pragma unroll
     for (int i = 0; i < PER; ++i) {
@@ -27,7 +29,7 @@ __global__ void gather(const uint4* src, const int64_t* ids, uint4* dst, int64_t
       if (k < rows * ROW_VECS) v[i] = src[ids[base + k / ROW_VECS] * ROW_VECS + k % ROW_VECS];
     }
     __syncthreads();
-    if (threadIdx.x == 0) flashinfer::far_emu::wait_until(ready);
+    if (threadIdx.x == 0) flashinfer::far_emu::wait_token(ready);
     __syncthreads();
 #pragma unroll
     for (int i = 0; i < PER; ++i) {
@@ -45,10 +47,10 @@ __global__ void chase(const uint4* src, const int64_t* ids, int steps, unsigned 
   const unsigned long long t0 = flashinfer::far_emu::now_ns();
   int64_t row = ids[0];
   for (int s = 0; s < steps; ++s) {
-    if (threadIdx.x == 0) ready = flashinfer::far_emu::reserve(ROW_VECS * 16, flashinfer::far_emu::now_ns());
+    if (threadIdx.x == 0) ready = flashinfer::far_emu::token(ROW_VECS * 16);
     if (threadIdx.x < ROW_VECS) sink[threadIdx.x] = src[row * ROW_VECS + threadIdx.x];
     __syncthreads();
-    if (threadIdx.x == 0) flashinfer::far_emu::wait_until(ready);
+    if (threadIdx.x == 0) flashinfer::far_emu::wait_token(ready);
     __syncthreads();
     row = ids[(s + 1 + (sink[0].x & 1)) % steps];  // the next row depends on the data read
   }

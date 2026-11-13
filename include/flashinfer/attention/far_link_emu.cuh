@@ -12,7 +12,9 @@
 // have independent clocks and must not be interpreted as sharing one physical link.
 // Runtime settings come from FLASHINFER_FAR_EMU="<GB/s>:<latency ns>:<far begin>:<far end>"
 // (addresses of the far tier; read by the launcher on eager launches, see configure); bandwidth 0
-// means unlimited.
+// means unlimited. FLASHINFER_FAR_EMU_ARRIVAL=1 moves the latency from issue-relative to
+// arrival-relative (see token/wait_token), which is the only form that is visible on a real link
+// faster than the model.
 #pragma once
 
 #ifdef FLASHINFER_FAR_EMU
@@ -29,6 +31,10 @@ struct Config {
   unsigned long long latency_ns;
   unsigned long long far_lo, far_hi;  // far tier address range (native kernel: reads inside are far)
   int enabled;
+  // 1 = pay `latency_ns` after the real transfer has arrived (see token/wait_token) instead of
+  // after issuing it. With a real link faster than the model, "issue + latency" is already past
+  // by the time a consumer looks, so only arrival-relative latency is visible.
+  int arrival;
 };
 
 __device__ Config config;
@@ -61,6 +67,27 @@ __device__ __forceinline__ void wait_until(unsigned long long t) {
   while (now_ns() < t) __nanosleep(64);
 }
 
+// Token for one packet issued now. Pipelined mode: the deadline itself (issue + serialization +
+// latency). Arrival mode: a marker only, because the deadline is "the real transfer arrived,
+// then latency", which is only known once the consumer has blocked on that transfer.
+__device__ __forceinline__ unsigned long long token(unsigned long long bytes) {
+  if (!config.enabled || bytes == 0) return 0;
+  if (config.arrival) return 1;
+  return reserve(bytes, now_ns());
+}
+
+// Consume a token. In arrival mode the caller has already blocked on the real cp.async group, so
+// the emulated latency starts at that observation. This is deliberately an upper bound: the
+// latency is paid in full per packet instead of being partly hidden by the pipeline depth.
+__device__ __forceinline__ void wait_token(unsigned long long t) {
+  if (!t) return;
+  if (config.arrival) {
+    wait_until(now_ns() + config.latency_ns);
+    return;
+  }
+  wait_until(t);
+}
+
 // Per CTA/stage, the latest deadline of its warp-issued packets. Reserve immediately, not at
 // consume time: retrospective reservations can repay an idle gap with a burst of early data.
 // Warp granularity avoids a block barrier in loaders where only some warps load (e.g. KV16).
@@ -79,7 +106,7 @@ __device__ __forceinline__ void tile(uint32_t stage, uint32_t far_rows, uint32_t
   if (!config.enabled) return;
   const uint32_t rows = __reduce_add_sync(0xffffffffu, far_rows);
   if (threadIdx.x % 32 == 0 && rows) {
-    const auto deadline = reserve(static_cast<unsigned long long>(rows) * row_bytes, now_ns());
+    const auto deadline = token(static_cast<unsigned long long>(rows) * row_bytes);
     atomicMax(&pending_ready[cta_slot()][stage], deadline);
   }
 }
@@ -102,7 +129,7 @@ __device__ __forceinline__ void wait_stage(uint32_t stage, State&) {
   __syncthreads();
   if (waiter()) {
     const uint32_t c = cta_slot();
-    wait_until(*(volatile unsigned long long*)&pending_ready[c][stage]);
+    wait_token(*(volatile unsigned long long*)&pending_ready[c][stage]);
     pending_ready[c][stage] = 0;
   }
 }
@@ -140,21 +167,25 @@ static void configure(cudaStream_t stream) {
   // Copied only when the setting changes: a per-launch copy added a few us to every launch.
   static std::string last = "unset";
   const char* env = std::getenv("FLASHINFER_FAR_EMU");
-  if (last == (env ? env : "")) return;
-  last = env ? env : "";
-  Config c{0, 0, 0, 0, 0};
+  const char* env_arrival = std::getenv("FLASHINFER_FAR_EMU_ARRIVAL");
+  const bool arrival = env_arrival && *env_arrival && *env_arrival != '0';
+  const std::string key = std::string(env ? env : "") + (arrival ? "|arrival" : "");
+  if (last == key) return;
+  last = key;
+  Config c{0, 0, 0, 0, 0, 0};
   if (const char* s = env) {
     double gbps = 0;
     unsigned long long lat = 0, lo = 0, hi = 0;
     if (std::sscanf(s, "%lf:%llu:%llu:%llu", &gbps, &lat, &lo, &hi) == 4) {
-      c = Config{gbps > 0 ? static_cast<unsigned long long>(1000.0 / gbps + 0.5) : 0, lat, lo, hi, 1};
+      c = Config{gbps > 0 ? static_cast<unsigned long long>(1000.0 / gbps + 0.5) : 0, lat, lo, hi, 1,
+                 arrival ? 1 : 0};
     }
   }
   cudaStreamSynchronize(stream);
   cudaMemcpyToSymbol(config, &c, sizeof(c));
   if (std::getenv("FLASHINFER_FAR_EMU_VERBOSE")) {
-    std::fprintf(stderr, "far_emu: %s -> enabled=%d ps/B=%llu latency=%llu ns far=[%llx, %llx)\n",
-                 last.c_str(), c.enabled, c.ps_per_byte, c.latency_ns, c.far_lo, c.far_hi);
+    std::fprintf(stderr, "far_emu: %s -> enabled=%d ps/B=%llu latency=%llu ns far=[%llx, %llx) arrival=%d\n",
+                 last.c_str(), c.enabled, c.ps_per_byte, c.latency_ns, c.far_lo, c.far_hi, c.arrival);
   }
 }
 

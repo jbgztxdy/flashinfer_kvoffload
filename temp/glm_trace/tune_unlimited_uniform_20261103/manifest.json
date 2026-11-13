@@ -74,5 +74,8 @@
   "trycache_pre_gpu_fix": "One leader selects source per8lane group and broadcasts; exact1152B count and leaderacquire->existingCTAbarrier visibility. Previous independently selected perlane version never run onGPU, source archived.",
   "direct_gate_fix": "Removed stagedcapacity condition invalid on direct. Prior raw/core tests ran existingfallback, are not newcandidate evidence, archived failed_direct_gate. New dispatch needs Graph proof.",
   "retained_sha256": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
-  "retained_scope": "Only normal BF16 directcached>=4SMrows/one64headtile/whole row path, same existing guardfor SMshared<200000. EMU/newFP16/staged guardfalse. No routingdefault change."
+  "retained_scope": "Only normal BF16 directcached>=4SMrows/one64headtile/whole row path, same existing guardfor SMshared<200000. EMU/newFP16/staged guardfalse. No routingdefault change.",
+  "direct_diag_sha256": "ba0062245fe09bc7f0dc5a083bde75d61d974bd360aa05a11fb0c99b861fe6b1",
+  "direct_diag_source_sha256": "81093ba5ab33cc5d84b2df04c702975697387b4054ebe8f1991f558f1bd6cdd2",
+  "direct_diag_mechanism": "production retained normal build; 8 globaltimer phase stamps + resolve/LRU split + per-CTA attention item count + fetch flag in unused partial_o (FIELDS=16); no math/routing/staging/LRU changes"
 }
