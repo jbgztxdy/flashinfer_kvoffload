@@ -211,6 +211,9 @@ def get_batch_mla_module(backend, *args, host_prefetch=False):
     ).build_and_load()
 
 
+_SHARED_HOST_STORES = {}
+
+
 class BatchMLAPagedAttentionWrapper:
     r"""Wrapper class for MLA (`Multi-head Latent Attention <https://arxiv.org/abs/2405.04434>`_)
     PagedAttention on DeepSeek models. This kernel can be used in decode, and incremental prefill
@@ -764,6 +767,7 @@ class BatchMLAPagedAttentionWrapper:
         capacity: int,
         pool_ids: Optional[torch.Tensor] = None,
         max_pools: Optional[int] = None,
+        layer_id: Optional[int] = None,
     ) -> None:
         r"""Enable the cross-launch LRU cache of Host pages for the batched Host path, and say
         which request each group of rows belongs to.
@@ -824,6 +828,7 @@ class BatchMLAPagedAttentionWrapper:
             num_rows=int(starts[-1]),
             capacity=int(capacity),
             max_pools=max_pools,
+            layer_id=layer_id,
             store=store,
         )
 
@@ -1001,10 +1006,12 @@ class BatchMLAPagedAttentionWrapper:
         kv = self._host_batch_buffers[1]
         if cache is not None:
             store = cache["store"]
+            layer_id = cache.get("layer_id")
             if store is not None and (
                 store["host_pages"] != host_pages
                 or store["host_page_start"] != host_page_start
                 or store["kv"].dtype != ckv_cache.dtype
+                or store.get("layer_id") != layer_id
             ):
                 store = None
             slots = max_pools * pool_capacity
@@ -1012,22 +1019,35 @@ class BatchMLAPagedAttentionWrapper:
                 if torch.cuda.is_current_stream_capturing():
                     raise RuntimeError("Warm up the Host cache before CUDA Graph capture")
                 # resident (-1) | slot_page (-1) | slot_stamp (0), each with a trailing sink entry.
-                persist = torch.full(
-                    (host_pages + 2 * slots + 3,), -1, dtype=torch.int32, device=self.device
-                )
-                persist[host_pages + slots + 2 :] = 0
-                store = dict(
-                    host_pages=host_pages,
-                    host_page_start=host_page_start,
-                    slots=slots,
-                    persist=persist,
-                    kv=torch.empty(
-                        (max(1, slots + staging_rows), 576), dtype=ckv_cache.dtype, device=self.device
-                    ),
-                )
+                # One store per (layer, device, dtype, layout) for the whole process. The layer is
+                # part of the key because the slots hold that layer's KV: sharing them across
+                # layers would serve a page fetched for layer L as layer L+1's KV. The batch shape
+                # is not part of the key: rows change every step as requests finish, and one store
+                # per shape is what made MTP verify allocate ~0.75 GB per layer per shape.
+                _key = (layer_id, str(self.device), ckv_cache.dtype, host_pages,
+                        host_page_start, slots)
+                store = _SHARED_HOST_STORES.get(_key)
+                if store is None:
+                    persist = torch.full(
+                        (host_pages + 2 * slots + 3,), -1, dtype=torch.int32, device=self.device
+                    )
+                    persist[host_pages + slots + 2 :] = 0
+                    store = dict(
+                        layer_id=layer_id,
+                        host_pages=host_pages,
+                        host_page_start=host_page_start,
+                        slots=slots,
+                        persist=persist,
+                        kv=torch.empty(
+                            (max(1, slots + staging_rows), 576), dtype=ckv_cache.dtype,
+                            device=self.device
+                        ),
+                    )
+                    _SHARED_HOST_STORES[_key] = store
                 cache["store"] = store
-            elif store["kv"].shape[0] < slots + staging_rows:
-                # More staging for a larger batch: keep the cached rows, which come first.
+            if store["kv"].shape[0] < slots + staging_rows:
+                # A larger batch later needs more staging: grow, keeping the cached rows first
+                # (and the LRU state in `persist`, which is sized by slots alone).
                 if torch.cuda.is_current_stream_capturing():
                     raise RuntimeError("Warm up the Host cache at its largest batch before capture")
                 grown = torch.empty(
