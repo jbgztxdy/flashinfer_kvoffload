@@ -245,6 +245,9 @@ __device__ uint64_t make_smem_desc(T* ptr) {
   uint32_t addr = static_cast<uint32_t>(__cvta_generic_to_shared(ptr));
   uint64_t desc = 0x0000000000000000;
   desc |= matrix_descriptor_encode(addr);
+  // The software stores lay out swizzles relative to this matrix. Static
+  // shared memory can shift the dynamic arena away from the pattern boundary.
+  desc |= static_cast<uint64_t>((addr >> 7) & 7u) << 49;
   // leading byte offset
   desc |= matrix_descriptor_encode(leading_byte_offset) << 16;
   // stride byte offset

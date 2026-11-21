@@ -16,9 +16,12 @@
 #ifndef FLASHINFER_MLA_HOST_BATCH_CUH_
 #define FLASHINFER_MLA_HOST_BATCH_CUH_
 
+#include <cub/block/block_radix_sort.cuh>
+#include <cstring>
 #include <queue>
 #include <vector>
 #include "mla.cuh"
+#include "mla_hopper.cuh"
 #include "far_link_emu.cuh"
 
 namespace flashinfer {
@@ -47,6 +50,7 @@ struct MLAHostBatchParams {
   using DTypeO = DTypeO_;
   using IdType = IdType_;
   static constexpr bool fully_staged = false;
+  static constexpr bool hopper_attention = false;
   static constexpr bool whole_rows = false;
   static constexpr bool shared_fetch_ids = false;
 
@@ -135,6 +139,11 @@ struct WholeRowHostBatchParams : FullyStagedHostBatchParams<Params> {
   static constexpr bool whole_rows = true;
   static constexpr bool host_split = false;
   static constexpr uint32_t num_chunks = 1;
+};
+
+template <typename Params>
+struct HopperHostBatchParams : WholeRowHostBatchParams<Params> {
+  static constexpr bool hopper_attention = true;
 };
 
 template <typename Params>
@@ -311,6 +320,51 @@ __device__ __forceinline__ uint32_t host_batch_max_host_items(const Params& para
   return tail_tiles ? params.partial_capacity / tail_tiles - params.num_chunks : 0;
 }
 
+#ifdef FLASHINFER_FAR_EMU
+template <typename Params>
+__device__ __forceinline__ uint32_t* fifo_window_state(const Params& params) {
+  const uint32_t rows = params.num_rows;
+  const uint32_t end = 4 + 4 * rows + 1 + 2 * params.partial_capacity +
+                       ceil_div(params.staging_capacity, 16u) +
+                       rows * params.num_head_tiles + params.num_pools + rows;
+  return params.state + ((end + 1) & ~1u);
+}
+template <typename Params>
+__device__ __forceinline__ bool can_post_fifo(const Params& params, uint32_t count, uint32_t rows) {
+  using namespace ::flashinfer::far_emu;
+  return Params::whole_rows && Params::hopper_attention && params.num_rows == 128 &&
+         ceil_div(count, rows) <= 256 && config.enabled && !config.arrival &&
+         config.ps_per_byte != 0;
+}
+
+template <typename Params>
+__device__ __forceinline__ void post_marked_fifo(
+    const Params& params, uint32_t rows, uint32_t count, uint32_t epoch) {
+  using namespace ::flashinfer::far_emu;
+  constexpr uint32_t bytes_per_row = 576 * sizeof(typename Params::DTypeKV);
+  const uint32_t packets = ceil_div(count, rows);
+  const unsigned long long item_bytes = rows * bytes_per_row;
+  const unsigned long long full_cost = (item_bytes * config.ps_per_byte + 999) / 1000;
+  const unsigned long long last_bytes = (count - (packets - 1) * rows) * bytes_per_row;
+  const unsigned long long last_cost = (last_bytes * config.ps_per_byte + 999) / 1000;
+  const unsigned long long duration = (packets - 1) * full_cost + last_cost;
+  const unsigned long long at = now_ns();
+  auto* marker = fifo_window_state(params);
+  unsigned long long old = atomicAdd(&link_clock, 0ull);
+  for (;;) {
+    const unsigned long long begin = max(old, at);
+    const unsigned long long observed = atomicCAS(&link_clock, old, begin + duration);
+    if (observed == old) {
+      *reinterpret_cast<unsigned long long*>(marker + 2) = begin;
+      asm volatile("st.release.gpu.global.u32 [%0], %1;" :: "l"(marker), "r"(epoch + 1)
+                   : "memory");
+      break;
+    }
+    old = observed;
+  }
+}
+#endif
+
 // Rewrites each row of kv_indices into remap with its Host entries first, as page ids for
 // resolve_host_batch_slots, and its HBM entries after. The first row to CAS a page claims it and records (row,
 // rank among the row's claims) in host_slot; after the grid barrier a page's staging slot is the
@@ -412,6 +466,13 @@ __device__ __forceinline__ void prepare_host_batch_rows(const Params& params, ui
 #pragma unroll
       for (uint32_t i = 0; i < PER_THREAD; ++i) {
         if (fresh_masks[i] >> lane & 1) {
+#ifdef FLASHINFER_FAR_EMU
+          if (Params::whole_rows && Params::hopper_attention && params.num_rows == 128) {
+            const auto sparse_base = params.kv_indptr[params.num_rows];
+            const uint32_t rank = first + __popc(fresh_masks[i] & lower);
+            params.unique_pages[sparse_base + begin + rank] = pages[i];
+          }
+#endif
           const uint32_t rank = first + __popc(fresh_masks[i] & lower);
           atomicExch(params.host_slot + (pages[i] - params.host_page_start),
                      (row << kHostBatchRankBits | rank) + 2);
@@ -561,18 +622,36 @@ __device__ __forceinline__ uint32_t resolve_host_batch_slots(const Params& param
   // No Host page anywhere: nothing to rewrite, and no Host items to list. The caller then skips
   // the second grid barrier and the fetch entirely.
   if (unique == 0) return 0;
+#ifdef FLASHINFER_FAR_EMU
+  const uint32_t count = min(unique, params.staging_capacity);
+  const uint32_t rounds = params.fetch_ctas <= 8 ? 3 : 1;
+  const uint32_t packet_rows =
+      count < rounds * params.fetch_ctas * kHostBatchFetchRows ? kHostBatchMinFetchRows :
+                                                               kHostBatchFetchRows;
+  const bool preposted = can_post_fifo(params, count, packet_rows);
+  if (preposted && blockIdx.y == 0 && tid == 0) {
+    // The prepare barrier made every source descriptor available in the sparse
+    // per-row lists. Link reservations can start before rewriting query indices.
+    post_marked_fifo(params, packet_rows, count, params.state[kHostBatchEpoch]);
+  }
+#endif
   // Same (row, segment) units as the prepare step, so a few rows still spread over the grid. In
   // place with the cache, prepare already marked the claiming entries (no page ids to resolve).
-  const uint32_t units = host_batch_writes_back(params) ? 0 : params.num_rows * params.prepare_parts;
+  // One CTA resolves and orders a small batch's row. The attention loop
+  // walks rows backwards, so the first packets to arrive belong at the end.
+  const bool order_arrivals = Params::whole_rows && params.num_rows <= 128 &&
+                              unique <= params.staging_capacity;
+  const uint32_t parts = order_arrivals ? 1 : params.prepare_parts;
+  const uint32_t units = host_batch_writes_back(params) ? 0 : params.num_rows * parts;
 #pragma unroll 1
   for (uint32_t unit = blockIdx.y; unit < units; unit += gridDim.y) {
-    const uint32_t row = unit / params.prepare_parts;
+    const uint32_t row = unit / parts;
     const IdType begin = params.kv_indptr[row];
     // Host entries fill each row's leading positions, or anywhere when not staging.
     const uint32_t host = params.stage ? params.state[kHostBatchHostCounts + row]
                                        : host_batch_row_len(params, row);
-    const uint32_t part_begin = unit % params.prepare_parts * params.prepare_segment;
-    const uint32_t part_end = min(part_begin + params.prepare_segment, host);
+    const uint32_t part_begin = unit % parts * params.prepare_segment;
+    const uint32_t part_end = order_arrivals ? host : min(part_begin + params.prepare_segment, host);
 #pragma unroll 1
     for (uint32_t j = part_begin + tid; j < part_end; j += THREADS) {
       const IdType page = params.remap[begin + j];
@@ -581,7 +660,16 @@ __device__ __forceinline__ uint32_t resolve_host_batch_slots(const Params& param
       const uint32_t owner = claim >> kHostBatchRankBits;
       const uint32_t slot = row_base[owner] + (claim & ((1u << kHostBatchRankBits) - 1));
       if (owner == row) {
-        params.unique_pages[slot] = page;
+#ifdef FLASHINFER_FAR_EMU
+        if (preposted) {
+          const auto sparse_base = params.kv_indptr[params.num_rows];
+          const uint32_t rank = claim & ((1u << kHostBatchRankBits) - 1);
+          params.unique_pages[slot] = params.unique_pages[sparse_base + begin + rank];
+        } else
+#endif
+        {
+          params.unique_pages[slot] = page;
+        }
         // (In place with the cache prepare already marked the claims; this loop does not run.)
         if (host_batch_caching(params) && slot < params.staging_capacity) {
           params.slot_pool[slot] = params.row_pool[row];
@@ -591,6 +679,31 @@ __device__ __forceinline__ uint32_t resolve_host_batch_slots(const Params& param
         params.remap[begin + j] = host_batch_staged_entry(params, slot);
       }
     }
+    if (order_arrivals && host > 1 && host <= 2048) {
+      using Sort = cub::BlockRadixSort<uint32_t, Params::hopper_attention ? 256 : 32,
+          8, cub::NullType, 4, true, cub::BLOCK_SCAN_WARP_SCANS,
+          cudaSharedMemBankSizeFourByte, Params::hopper_attention ? 1 : 4,
+          Params::hopper_attention ? 1 : 2>;
+      auto& temp = *reinterpret_cast<typename Sort::TempStorage*>(
+          smem + round_up(params.num_rows * 4u, 128u));
+      const uint32_t ceiling = params.staging_capacity;
+      uint32_t keys[8];
+      __syncthreads();
+#pragma unroll
+      for (uint32_t i = 0; i < 8; ++i) {
+        const uint32_t j = tid * 8 + i;
+        keys[i] = j < host ? ceiling - 1 -
+            (static_cast<uint32_t>(-params.remap[begin + j] - 1) - params.cache_slots) : ceiling;
+      }
+      Sort(temp).Sort(keys, 0, 32 - __clz(ceiling));
+#pragma unroll
+      for (uint32_t i = 0; i < 8; ++i) {
+        const uint32_t j = tid * 8 + i;
+        if (j < host) params.remap[begin + j] = host_batch_staged_entry(params, ceiling - 1 - keys[i]);
+      }
+      __syncthreads();
+    }
+
   }
   // CTA 0 lists the Host items of the tail rows, and publishes the row bases that delimit each
   // LRU pool's staged pages.
@@ -700,8 +813,8 @@ __device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uin
   constexpr uint32_t ROW = KTraits::HEAD_DIM_CKV + KTraits::HEAD_DIM_KPE;
   constexpr uint32_t VECS_PER_ROW = ROW * sizeof(DTypeKV) / 16;
   constexpr uint32_t CHUNK_VECS = kHostBatchFetchRows * VECS_PER_ROW;
-  constexpr uint32_t BUFFERS =
-      sizeof(typename KTraits::SharedStorage) >= 2 * CHUNK_VECS * 16 ? 2 : 1;
+  constexpr uint32_t BUFFER_FIT = sizeof(typename KTraits::SharedStorage) / (CHUNK_VECS * 16);
+  constexpr uint32_t BUFFERS = BUFFER_FIT >= 3 ? 3 : BUFFER_FIT;
   static_assert(sizeof(typename KTraits::SharedStorage) >= CHUNK_VECS * 16);
   static_assert(CHUNK_VECS % KTraits::NUM_THREADS == 0);
   const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
@@ -715,8 +828,43 @@ __device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uin
   __shared__ typename Params::IdType page_ids[BUFFERS][kHostBatchFetchRows];
   __shared__ uint32_t deferred[kHostBatchMaxDeferred], deferred_count;
   if (tid == 0) deferred_count = 0;
-  FAR_EMU_INIT(2);
-  FAR_EMU_SYNC();
+#ifdef FLASHINFER_FAR_EMU
+  constexpr uint32_t POSTED = 12;
+  __shared__ unsigned long long ready[POSTED];
+  using namespace ::flashinfer::far_emu;
+  const uint32_t chunks = ceil_div(count, rows);
+  // Within the request-window budget, all packet descriptors can be posted at
+  // once. Reserve the same serialized link time in one operation, in slot order.
+  const bool fifo = can_post_fifo(params, count, rows);
+  const unsigned long long full_cost =
+      (static_cast<unsigned long long>(rows) * ROW * sizeof(DTypeKV) * config.ps_per_byte + 999) / 1000;
+  const unsigned long long last_cost =
+      (static_cast<unsigned long long>(count - (chunks - 1) * rows) *
+       ROW * sizeof(DTypeKV) * config.ps_per_byte + 999) / 1000;
+  unsigned long long fifo_start = 0;
+  if (fifo) {
+    auto* signal = fifo_window_state(params);
+    auto* start = reinterpret_cast<unsigned long long*>(signal + 2);
+    if (tid == 0) {
+      while (host_batch_ld_acquire(signal) != epoch + 1) __nanosleep(64);
+    }
+    __syncthreads();
+    fifo_start = *start;
+  }
+  auto post_request = [&](uint32_t chunk, uint32_t index) {
+    if (tid == 0 && chunk * rows < count) {
+      const uint32_t rows_here = min(rows, count - chunk * rows);
+      ready[index % POSTED] = token(
+          static_cast<unsigned long long>(rows_here) * ROW * sizeof(DTypeKV), epoch, chunk);
+    }
+  };
+  if (!fifo) {
+#pragma unroll 1
+    for (uint32_t i = 0; i < POSTED; ++i) {
+      post_request(fetch_id + i * params.fetch_ctas, i);
+    }
+  }
+#endif
   auto issue = [&](uint32_t chunk, uint32_t buf) {
     if constexpr (Params::shared_fetch_ids) {
       if (tid < rows && chunk * rows + tid < count) {
@@ -742,24 +890,51 @@ __device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uin
                                                        source + v % VECS_PER_ROW);
       }
     }
-    FAR_EMU_TILE(2, buf, tid == 0 ? min(rows, count - chunk * rows) : 0, ROW * sizeof(DTypeKV));
     cp_async::commit_group();
   };
 
   uint32_t chunk = fetch_id;
-  if (chunk * rows < count) issue(chunk, 0);
+#pragma unroll
+  for (uint32_t i = 0; i + 1 < BUFFERS; ++i) {
+    const uint32_t initial = fetch_id + i * params.fetch_ctas;
+    if (initial * rows < count) issue(initial, i);
+  }
 #pragma unroll 1
   for (uint32_t k = 0; chunk * rows < count; ++k, chunk += params.fetch_ctas) {
-    const uint32_t next = chunk + params.fetch_ctas;
-    if (BUFFERS == 2 && next * rows < count) {
-      issue(next, (k + 1) % 2);
-      cp_async::wait_group<1>();
+    const uint32_t next = chunk + (BUFFERS - 1) * params.fetch_ctas;
+    if (next * rows < count) issue(next, (k + BUFFERS - 1) % BUFFERS);
+    if constexpr (BUFFERS == 3) {
+      if (next * rows < count) {
+        cp_async::wait_group<2>();
+      } else if ((chunk + params.fetch_ctas) * rows < count) {
+        cp_async::wait_group<1>();
+      } else {
+        cp_async::wait_group<0>();
+      }
+    } else if constexpr (BUFFERS == 2) {
+      if (next * rows < count) {
+        cp_async::wait_group<1>();
+      } else {
+        cp_async::wait_group<0>();
+      }
     } else {
       cp_async::wait_group<0>();
     }
-    FAR_EMU_WAIT(2, BUFFERS == 2 ? k % 2 : 0);
+    const uint32_t buf = k % BUFFERS;
+#ifdef FLASHINFER_FAR_EMU
+    if (tid == 0) {
+      if (fifo) {
+        const auto delay = config.jitter_steps ?
+            sample_latency(config.jitter_seed, epoch % config.jitter_steps, chunk) : config.latency_ns;
+        const auto cost = chunk + 1 < chunks ? full_cost : last_cost;
+        wait_token(fifo_start + chunk * full_cost + cost + delay);
+      } else {
+        wait_token(ready[k % POSTED]);
+        post_request(chunk + POSTED * params.fetch_ctas, k);
+      }
+    }
+#endif
     __syncthreads();
-    const uint32_t buf = BUFFERS == 2 ? k % 2 : 0;
     auto* destination = reinterpret_cast<uint4*>(
         params.staging +
         (params.cache_slots + static_cast<int64_t>(chunk) * rows) * ROW);
@@ -843,7 +1018,6 @@ __device__ __forceinline__ void fetch_host_batch_pages(const Params& params, uin
       // The buffer is refilled next.
       __syncthreads();
     }
-    if (BUFFERS == 1 && next * rows < count) issue(next, 0);
   }
   // Deferred staged chunks: their victims are chosen by now; copy staging -> cache, HBM to HBM,
   // the whole CTA over each chunk.
@@ -1563,6 +1737,376 @@ __device__ __forceinline__ bool claim_host_batch_item(const Params& params, uint
   return claimed;
 }
 
+// Whole-row adapter for the existing Hopper MLA inner loop. The producer
+// reads the staged entry only after its acquire of the fetcher's ready flag.
+template <typename KTraits, typename Params>
+__device__ __forceinline__ void hopper_host_prefetch(
+    const Params& params, const uint32_t* scratch, uint32_t start, uint32_t bound,
+    typename KTraits::DTypeKV* (*latent)[2], typename KTraits::DTypeKV* (*rotary)[2],
+    const uint32_t* (*ready)[2]) {
+  using DTypeKV = typename KTraits::DTypeKV;
+  const uint32_t lane = cutlass::canonical_lane_idx();
+  const uint32_t warp = cutlass::canonical_warp_idx() % 4;
+#pragma unroll
+  for (uint32_t tile = 0; tile < KTraits::NUM_MMA_KV / 2; ++tile) {
+#pragma unroll
+    for (uint32_t j = 0; j < 2; ++j) {
+      const uint32_t at = start + lane / 8 + (j + tile * 2) * 16 + warp * 4;
+      const auto page = at < bound ? params.remap[at] : 0;
+      const uint32_t row = page < 0 ? -(page + 1) : page;
+      auto* base = page < 0 ? params.staging : params.ckv;
+      const uint32_t features = KTraits::HEAD_DIM_CKV + KTraits::HEAD_DIM_KPE;
+      latent[tile][j] = base + static_cast<int64_t>(row) * features +
+                         (lane % 8) * upcast_size<DTypeKV>();
+      rotary[tile][j] = latent[tile][j] + KTraits::HEAD_DIM_CKV;
+      ready[tile][j] = page < 0 && row >= params.cache_slots ?
+          host_batch_flags(params) + (row - params.cache_slots) / scratch[kHostBatchScratchFetchRows] :
+          nullptr;
+    }
+  }
+}
+
+template <bool predicate, typename KTraits>
+__device__ __forceinline__ void hopper_host_load(typename KTraits::SharedStorage* smem_storage,
+                                        const uint32_t packed_kv_bound,
+                                        const uint32_t packed_block_iter_base,
+                                        const uint32_t stage_idx, typename KTraits::DTypeKV* (*latent)[2],
+                                        typename KTraits::DTypeKV* (*rotary)[2],
+                                        const uint32_t* (*ready)[2], uint32_t epoch) {
+  using DTypeKV = typename KTraits::DTypeKV;
+  constexpr uint32_t UPCAST_STRIDE_CKV = KTraits::UPCAST_STRIDE_CKV;
+  constexpr uint32_t UPCAST_STRIDE_KPE = KTraits::UPCAST_STRIDE_KPE;
+  constexpr uint32_t NUM_MMA_D_CKV = KTraits::NUM_MMA_D_CKV;
+  constexpr uint32_t NUM_MMA_D_KPE = KTraits::NUM_MMA_D_KPE;
+  const uint32_t lane_idx = cutlass::canonical_lane_idx();
+  const uint32_t warp_idx_in_wg = cutlass::canonical_warp_idx() % 4;
+
+  smem_t<KTraits::SWIZZLE_MODE_CKV> ckv_smem(smem_storage->kv_o_smem[stage_idx].ckv);
+  smem_t<KTraits::SWIZZLE_MODE_KPE> kpe_smem(smem_storage->kv_o_smem[stage_idx].kpe);
+
+#pragma unroll
+  for (uint32_t mma_kv = 0; mma_kv < KTraits::NUM_MMA_KV / 2; ++mma_kv) {
+#pragma unroll
+    for (uint32_t j = 0; j < 2; ++j) {
+      uint32_t packed_block_iter =
+          packed_block_iter_base + lane_idx / 8 + (j + mma_kv * 2) * 16 + warp_idx_in_wg * 4;
+
+
+      const uint32_t* flag = ready[mma_kv][j];
+      if (flag != nullptr) {
+        while (host_batch_ld_acquire(flag) != epoch + 1) __nanosleep(64);
+      }
+      DTypeKV* ckv_ptr = latent[mma_kv][j];
+      DTypeKV* kpe_ptr = rotary[mma_kv][j];
+      uint32_t ckv_smem_offset_w = get_swizzle_offset<KTraits::SWIZZLE_MODE_CKV, UPCAST_STRIDE_CKV>(
+          32 * mma_kv + j * 16 + warp_idx_in_wg * 4 + lane_idx / 8, 8 * 0 + lane_idx % 8);
+      uint32_t kpe_smem_offset_w = get_swizzle_offset<KTraits::SWIZZLE_MODE_KPE, UPCAST_STRIDE_KPE>(
+          32 * mma_kv + j * 16 + warp_idx_in_wg * 4 + lane_idx / 8, 8 * 0 + lane_idx % 8);
+
+#pragma unroll
+      for (uint32_t mma_d = 0; mma_d < KTraits::NUM_MMA_D_CKV / 4; ++mma_d) {
+        if constexpr (predicate) {
+          ckv_smem.load_128b_async<SharedMemFillMode::kFillZero>(
+              ckv_smem_offset_w, ckv_ptr, packed_block_iter < packed_kv_bound);
+        } else {
+          ckv_smem.load_128b_async(ckv_smem_offset_w, ckv_ptr);
+        }
+        ckv_smem_offset_w += 64;
+        ckv_ptr += 8 * upcast_size<DTypeKV>();
+      }
+
+#pragma unroll
+      for (uint32_t mma_d = 0; mma_d < KTraits::NUM_MMA_D_KPE / 4; ++mma_d) {
+        if constexpr (predicate) {
+          kpe_smem.load_128b_async<SharedMemFillMode::kFillZero>(
+              kpe_smem_offset_w, kpe_ptr, packed_block_iter < packed_kv_bound);
+        } else {
+          kpe_smem.load_128b_async(kpe_smem_offset_w, kpe_ptr);
+        }
+        kpe_smem_offset_w += 64;
+        kpe_ptr += 8 * upcast_size<DTypeKV>();
+      }
+    }
+  }
+}
+
+template <typename KTraits, typename Params>
+__device__ __forceinline__ void hopper_attend_host_batch_row(
+    const Params& params, uint8_t* smem, const uint32_t* scratch, uint32_t row) {
+  using DTypeKV = typename KTraits::DTypeKV;
+  const uint32_t q_indptr = row;
+  const uint32_t q_len = 1;
+  const uint32_t kv_len = host_batch_row_len(params, row);
+  const uint32_t kv_start = 0;
+  const uint32_t kv_end = kv_len;
+  const uint32_t packed_qo_start = 0;
+  constexpr bool CAUSAL = false;
+  constexpr int32_t NUM_STAGES = KTraits::NUM_STAGES;
+  constexpr uint32_t CTA_TILE_Q = KTraits::CTA_TILE_Q;
+  constexpr uint32_t CTA_TILE_KV = KTraits::CTA_TILE_KV;
+  constexpr uint32_t cluster_tile_q = CTA_TILE_Q;
+  auto& smem_storage = reinterpret_cast<typename KTraits::SharedStorage&>(*smem);
+  typename KTraits::AttentionVariant variant(params, row, smem);
+  const auto& num_heads = params.num_heads;
+  auto* q_nope = params.q_nope;
+  auto* q_pe = params.q_pe;
+  auto* final_o = params.final_o;
+  auto* final_lse = params.final_lse;
+  const auto q_nope_stride_n = params.q_nope_stride_n;
+  const auto q_nope_stride_h = params.q_nope_stride_h;
+  const auto q_pe_stride_n = params.q_pe_stride_n;
+  const auto q_pe_stride_h = params.q_pe_stride_h;
+  const auto o_stride_n = params.o_stride_n;
+  const auto o_stride_h = params.o_stride_h;
+  const auto warp_group_idx = cutlass::canonical_warp_group_idx();
+  const auto lane_idx = cutlass::canonical_lane_idx();
+  const auto warp_idx_in_wg = cutlass::canonical_warp_idx() % 4;
+
+  using hopper::NamedBarriers;
+  using hopper::barrier_sync;
+  using hopper::barrier_arrive;
+  using MainloopPipeline = typename KTraits::MainloopPipeline;
+  using PipelineParams = typename MainloopPipeline::Params;
+  using PipelineState = typename MainloopPipeline::PipelineState;
+  PipelineParams pipeline_params;
+  pipeline_params.role = warp_group_idx == 0 ? MainloopPipeline::ThreadCategory::Producer
+                                             : MainloopPipeline::ThreadCategory::Consumer;
+  pipeline_params.producer_arv_count = 128;
+  pipeline_params.consumer_arv_count = 128;
+  MainloopPipeline pipeline_q(smem_storage.pipeline_q, pipeline_params);
+  pipeline_params.role = warp_group_idx == 0 ? MainloopPipeline::ThreadCategory::ProducerConsumer
+                                             : MainloopPipeline::ThreadCategory::Consumer;
+  pipeline_params.producer_arv_count = 128;
+  pipeline_params.consumer_arv_count = 256;
+  MainloopPipeline pipeline_kv(smem_storage.pipeline_kv, pipeline_params);
+
+  __syncthreads();
+  alignas(16) float o_frag[KTraits::NUM_REGS_O_FRAG];
+  float m[2];
+  float d[2];
+  float o_scale[2];
+  auto consumer_wait = [](auto& pipeline, auto& smem_pipe_read) {
+    auto barrier_token = pipeline.consumer_try_wait(smem_pipe_read);
+    pipeline.consumer_wait(smem_pipe_read, barrier_token);
+  };
+
+  if (warp_group_idx == 0) {
+    // load q & kv, compute pv1
+    PipelineState smem_pipe_write_q = cutlass::make_producer_start_state<MainloopPipeline>();
+    PipelineState smem_pipe_write_kv = cutlass::make_producer_start_state<MainloopPipeline>();
+    PipelineState smem_pipe_read_kv;
+
+    DTypeKV* latent[KTraits::NUM_MMA_KV / 2][2];
+    DTypeKV* rotary[KTraits::NUM_MMA_KV / 2][2];
+    const uint32_t* ready[KTraits::NUM_MMA_KV / 2][2];
+
+    {
+
+      hopper::init_states_<KTraits>(o_frag, m, d, o_scale);
+
+      const uint32_t qo_packed_idx_base = packed_qo_start + blockIdx.x * KTraits::CTA_TILE_Q;
+      const uint32_t qo_upperbound =
+          min(q_len, ceil_div(qo_packed_idx_base + KTraits::CTA_TILE_Q, num_heads));
+
+      uint32_t packed_kv_bound = params.kv_indptr[row] + kv_len;
+      int kv_tile_idx =
+          ceil_div(
+              (CAUSAL ? min(kv_end, kv_len - q_len + (packed_qo_start + cluster_tile_q) / num_heads)
+                      : kv_end),
+              CTA_TILE_KV) -
+          1 - (kv_start / CTA_TILE_KV);
+
+      bool has_kv = kv_tile_idx >= 0;
+
+      const uint32_t block_iter_base = params.kv_indptr[row] + kv_start;
+
+      hopper_host_prefetch<KTraits>(params, scratch, block_iter_base + kv_tile_idx * CTA_TILE_KV, packed_kv_bound,
+                               latent, rotary, ready);
+      if (has_kv) {
+        pipeline_kv.producer_acquire(smem_pipe_write_kv);
+        hopper_host_load<true, KTraits>(&smem_storage, packed_kv_bound,
+                               block_iter_base + kv_tile_idx * CTA_TILE_KV,
+                               smem_pipe_write_kv.index(), latent, rotary, ready,
+                               scratch[kHostBatchScratchEpoch]);
+        pipeline_kv.producer_commit(smem_pipe_write_kv, cutlass::arch::cpasync_barrier_arrive);
+        kv_tile_idx -= 1;
+        ++smem_pipe_write_kv;
+        hopper_host_prefetch<KTraits>(params, scratch, block_iter_base + kv_tile_idx * CTA_TILE_KV, packed_kv_bound,
+                               latent, rotary, ready);
+      }
+
+      pipeline_q.producer_acquire(smem_pipe_write_q);
+      hopper::load_q<KTraits>(&smem_storage, q_nope + q_indptr * q_nope_stride_n,
+                      q_pe + q_indptr * q_pe_stride_n, q_nope_stride_n, q_nope_stride_h,
+                      q_pe_stride_n, q_pe_stride_h, qo_upperbound, qo_packed_idx_base,
+                      params.num_heads);
+      pipeline_q.producer_commit(smem_pipe_write_q, cutlass::arch::cpasync_barrier_arrive);
+      ++smem_pipe_write_q;
+
+#pragma unroll 1
+      for (; kv_tile_idx >= 0; --kv_tile_idx) {
+        pipeline_kv.producer_acquire(smem_pipe_write_kv);
+        hopper_host_load<false, KTraits>(&smem_storage, packed_kv_bound,
+                               block_iter_base + kv_tile_idx * CTA_TILE_KV,
+                               smem_pipe_write_kv.index(), latent, rotary, ready,
+                               scratch[kHostBatchScratchEpoch]);
+        if (kv_tile_idx > 0) {
+          hopper_host_prefetch<KTraits>(params, scratch, block_iter_base + (kv_tile_idx - 1) * CTA_TILE_KV, packed_kv_bound,
+                               latent, rotary, ready);
+        }
+        pipeline_kv.producer_commit(smem_pipe_write_kv, cutlass::arch::cpasync_barrier_arrive);
+        ++smem_pipe_write_kv;
+
+        barrier_sync(KTraits::NUM_THREADS, NamedBarriers::kOScaleReady);
+        hopper::load_o_scale_smem<KTraits>(&smem_storage, o_scale);
+        hopper::rescale_o_<KTraits>(o_scale, o_frag);
+        consumer_wait(pipeline_kv, smem_pipe_read_kv);
+        __syncthreads();
+        hopper::compute_mla_pv<KTraits>(&smem_storage, smem_pipe_read_kv.index(), o_frag);
+        warpgroup_wait<0>();
+        pipeline_kv.consumer_release(smem_pipe_read_kv);
+        ++smem_pipe_read_kv;
+      }
+
+      if (has_kv) {
+        barrier_sync(KTraits::NUM_THREADS, NamedBarriers::kOScaleReady);
+        hopper::load_o_scale_smem<KTraits>(&smem_storage, o_scale);
+        hopper::rescale_o_<KTraits>(o_scale, o_frag);
+        consumer_wait(pipeline_kv, smem_pipe_read_kv);
+        __syncthreads();
+        hopper::compute_mla_pv<KTraits>(&smem_storage, smem_pipe_read_kv.index(), o_frag);
+        warpgroup_wait<0>();
+        pipeline_kv.consumer_release(smem_pipe_read_kv);
+        ++smem_pipe_read_kv;
+      }
+
+      barrier_sync(KTraits::NUM_THREADS, NamedBarriers::kMDReady);
+#pragma unroll
+      for (uint32_t j = 0; j < 2; ++j) {
+        m[j] = smem_storage.m[warp_idx_in_wg * 16 + j * 8 + lane_idx / 4];
+        d[j] = smem_storage.d[warp_idx_in_wg * 16 + j * 8 + lane_idx / 4];
+      }
+      hopper::normalize_d_<KTraits>(&smem_storage, o_frag, m, d);
+      finalize_m_<KTraits>(variant, m);
+      hopper::write_o<false, KTraits>(
+          &smem_storage, smem_pipe_write_kv.index(), final_o + q_indptr * o_stride_n,
+          final_lse ? final_lse + q_indptr * num_heads : nullptr,
+          nullptr, nullptr, o_frag, m, d, o_stride_n,
+          o_stride_h, qo_upperbound, qo_packed_idx_base, num_heads, params.return_lse_base_on_e);
+      __syncthreads();
+    }
+  } else {
+    // compute qk, pv2
+    PipelineState smem_pipe_read_q;
+    PipelineState smem_pipe_read_kv;
+    float s_frag[KTraits::NUM_REGS_S_FRAG];
+    uint32_t p_frag[KTraits::NUM_REGS_P_FRAG];
+
+    {
+      const uint32_t qo_packed_idx_base = packed_qo_start + blockIdx.x * KTraits::CTA_TILE_Q;
+      const uint32_t qo_upperbound =
+          min(q_len, ceil_div(qo_packed_idx_base + KTraits::CTA_TILE_Q, num_heads));
+
+      hopper::init_states_<KTraits>(o_frag, m, d, o_scale);
+
+      int kv_tile_idx =
+          ceil_div(
+              (CAUSAL ? min(kv_end, kv_len - q_len + (packed_qo_start + cluster_tile_q) / num_heads)
+                      : kv_end),
+              CTA_TILE_KV) -
+          1 - (kv_start / CTA_TILE_KV);
+
+      int mask_tile_idx =
+          (CAUSAL ? min(kv_end, kv_len - q_len + static_cast<uint32_t>(packed_qo_start) / num_heads)
+                  : kv_end) /
+              CTA_TILE_KV -
+          (kv_start / CTA_TILE_KV);
+
+      consumer_wait(pipeline_q, smem_pipe_read_q);
+#pragma unroll 1
+      for (; kv_tile_idx >= mask_tile_idx && kv_tile_idx > 0; --kv_tile_idx) {
+        consumer_wait(pipeline_kv, smem_pipe_read_kv);
+        hopper::compute_mla_qk<KTraits>(&smem_storage, smem_pipe_read_kv.index(), s_frag);
+        warpgroup_wait<0>();
+        hopper::logits_mask_<KTraits>(qo_packed_idx_base, kv_start + kv_tile_idx * CTA_TILE_KV, q_len,
+                              kv_len, kv_end, num_heads, s_frag);
+        hopper::update_md_<KTraits>(&smem_storage, variant, s_frag, m, d, o_scale);
+        hopper::write_o_scale_smem<KTraits>(&smem_storage, o_scale);
+
+        hopper::convert_s_to_p<KTraits>(s_frag, p_frag);
+        hopper::write_p_rmem_smem<KTraits>(&smem_storage, smem_pipe_read_kv.index(), p_frag);
+        barrier_arrive(KTraits::NUM_THREADS, NamedBarriers::kOScaleReady);
+        hopper::rescale_o_<KTraits>(o_scale, o_frag);
+        __syncthreads();
+        hopper::compute_mla_pv<KTraits>(&smem_storage, smem_pipe_read_kv.index(), o_frag);
+        warpgroup_wait<0>();
+        pipeline_kv.consumer_release(smem_pipe_read_kv);
+        ++smem_pipe_read_kv;
+      }
+
+#pragma unroll 1
+      for (; kv_tile_idx + 1 > NUM_STAGES; --kv_tile_idx) {
+        consumer_wait(pipeline_kv, smem_pipe_read_kv);
+        hopper::compute_mla_qk<KTraits>(&smem_storage, smem_pipe_read_kv.index(), s_frag);
+        warpgroup_wait<0>();
+        hopper::update_md_<KTraits>(&smem_storage, variant, s_frag, m, d, o_scale);
+        hopper::write_o_scale_smem<KTraits>(&smem_storage, o_scale);
+        hopper::convert_s_to_p<KTraits>(s_frag, p_frag);
+        hopper::write_p_rmem_smem<KTraits>(&smem_storage, smem_pipe_read_kv.index(), p_frag);
+        barrier_arrive(KTraits::NUM_THREADS, NamedBarriers::kOScaleReady);
+        hopper::rescale_o_<KTraits>(o_scale, o_frag);
+        __syncthreads();
+        hopper::compute_mla_pv<KTraits>(&smem_storage, smem_pipe_read_kv.index(), o_frag);
+        warpgroup_wait<0>();
+        pipeline_kv.consumer_release(smem_pipe_read_kv);
+        ++smem_pipe_read_kv;
+      }
+
+#pragma unroll 1
+      for (; kv_tile_idx >= 0; --kv_tile_idx) {
+        consumer_wait(pipeline_kv, smem_pipe_read_kv);
+        hopper::compute_mla_qk<KTraits>(&smem_storage, smem_pipe_read_kv.index(), s_frag);
+        warpgroup_wait<0>();
+        hopper::logits_mask_<KTraits>(qo_packed_idx_base, kv_start + kv_tile_idx * CTA_TILE_KV, q_len,
+                              kv_len, kv_end, num_heads, s_frag);
+        hopper::update_md_<KTraits>(&smem_storage, variant, s_frag, m, d, o_scale);
+        hopper::write_o_scale_smem<KTraits>(&smem_storage, o_scale);
+        hopper::convert_s_to_p<KTraits>(s_frag, p_frag);
+        hopper::write_p_rmem_smem<KTraits>(&smem_storage, smem_pipe_read_kv.index(), p_frag);
+        barrier_arrive(KTraits::NUM_THREADS, NamedBarriers::kOScaleReady);
+        hopper::rescale_o_<KTraits>(o_scale, o_frag);
+        __syncthreads();
+        hopper::compute_mla_pv<KTraits>(&smem_storage, smem_pipe_read_kv.index(), o_frag);
+        warpgroup_wait<0>();
+        pipeline_kv.consumer_release(smem_pipe_read_kv);
+        ++smem_pipe_read_kv;
+      }
+
+      pipeline_q.consumer_release(smem_pipe_read_q);
+      ++smem_pipe_read_q;
+
+#pragma unroll
+      for (uint32_t j = 0; j < 2; ++j) {
+        d[j] += __shfl_xor_sync(0x11111111, d[j], 0x2);
+        d[j] += __shfl_xor_sync(0x11111111, d[j], 0x1);
+        if (lane_idx % 4 == 0) {
+          smem_storage.m[warp_idx_in_wg * 16 + j * 8 + lane_idx / 4] = m[j];
+          smem_storage.d[warp_idx_in_wg * 16 + j * 8 + lane_idx / 4] = d[j];
+        }
+      }
+      hopper::normalize_d_<KTraits>(&smem_storage, o_frag, m, d);
+      finalize_m_<KTraits>(variant, m);
+      barrier_arrive(KTraits::NUM_THREADS, NamedBarriers::kMDReady);
+      hopper::write_o<true, KTraits>(
+          &smem_storage, smem_pipe_read_kv.index(), final_o + q_indptr * o_stride_n,
+          final_lse ? final_lse + q_indptr * num_heads : nullptr,
+          nullptr, nullptr, o_frag, m, d, o_stride_n,
+          o_stride_h, qo_upperbound, qo_packed_idx_base, num_heads, params.return_lse_base_on_e);
+      __syncthreads();
+    }
+  }
+}
+
 // Items: [full rows: one per row tile | tail HBM chunks | tail Host chunks]. Full items cover a
 // whole row and wait only in their leading (Host) tiles.
 template <typename KTraits, typename Params, bool ROW_MERGE>
@@ -1704,8 +2248,15 @@ __device__ __forceinline__ void run_host_batch_items(const Params& params,
       __syncthreads();
       continue;
     }
-    run_host_batch_item<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, item - lru_items, s_frag, o_frag,
-                                 m, d);
+    if constexpr (Params::hopper_attention) {
+      using HopperTraits = hopper::HopperKernelTraits<false, 2, 512, 64, 64, 64,
+          typename KTraits::DTypeQ, typename KTraits::DTypeKV, typename KTraits::DTypeO,
+          typename KTraits::IdType>;
+      hopper_attend_host_batch_row<HopperTraits>(params, smem, scratch, item - lru_items);
+    } else {
+      run_host_batch_item<KTraits, Params, ROW_MERGE>(
+          params, storage, smem, scratch, item - lru_items, s_frag, o_frag, m, d);
+    }
   }
 }
 
@@ -1923,7 +2474,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAHostBatchKernel(
   // ~26 GB/s) and slower HBM tile loads.
   // A distinct name: extern shared arrays are one symbol per translation unit, and the native MLA
   // kernels compiled alongside declare `smem` with 16-byte alignment, which would win.
-  extern __shared__ __align__(128) uint8_t host_batch_smem[];
+  extern __shared__ __align__(1024) uint8_t host_batch_smem[];
   uint8_t* smem = host_batch_smem;
   auto& storage = reinterpret_cast<typename KTraits::SharedStorage&>(*smem);
   __shared__ uint32_t scratch[3];
@@ -3043,8 +3594,8 @@ __device__ __forceinline__ void fetch_stream_source_pages(const Params& params, 
   constexpr uint32_t ROW = KTraits::HEAD_DIM_CKV + KTraits::HEAD_DIM_KPE;
   constexpr uint32_t VECS_PER_ROW = ROW * sizeof(DTypeKV) / 16;
   constexpr uint32_t CHUNK_VECS = kHostBatchFetchRows * VECS_PER_ROW;
-  constexpr uint32_t BUFFERS =
-      sizeof(typename KTraits::SharedStorage) >= 2 * CHUNK_VECS * 16 ? 2 : 1;
+  constexpr uint32_t BUFFER_FIT = sizeof(typename KTraits::SharedStorage) / (CHUNK_VECS * 16);
+  constexpr uint32_t BUFFERS = BUFFER_FIT >= 3 ? 3 : BUFFER_FIT;
   static_assert(sizeof(typename KTraits::SharedStorage) >= CHUNK_VECS * 16);
   static_assert(CHUNK_VECS % KTraits::NUM_THREADS == 0);
   const uint32_t tid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
@@ -3061,8 +3612,21 @@ __device__ __forceinline__ void fetch_stream_source_pages(const Params& params, 
   uint64_t stream_source_policy;
   asm volatile("createpolicy.fractional.L2::evict_first.b64 %0, 1.0;"
                : "=l"(stream_source_policy));
-  FAR_EMU_INIT(2);
-  FAR_EMU_SYNC();
+#ifdef FLASHINFER_FAR_EMU
+  constexpr uint32_t POSTED = 12;
+  __shared__ unsigned long long ready[POSTED];
+  auto post_request = [&](uint32_t chunk, uint32_t index) {
+    if (tid == 0 && chunk * rows < count) {
+      const uint32_t rows_here = min(rows, count - chunk * rows);
+      ready[index % POSTED] = ::flashinfer::far_emu::token(
+          static_cast<unsigned long long>(rows_here) * ROW * sizeof(DTypeKV), epoch, chunk);
+    }
+  };
+#pragma unroll 1
+  for (uint32_t i = 0; i < POSTED; ++i) {
+    post_request(fetch_id + i * params.fetch_ctas, i);
+  }
+#endif
   auto issue = [&](uint32_t chunk, uint32_t buf) {
     if constexpr (Params::shared_fetch_ids) {
       if (tid < rows && chunk * rows + tid < count) {
@@ -3091,24 +3655,44 @@ __device__ __forceinline__ void fetch_stream_source_pages(const Params& params, 
                         "l"(stream_source_policy));
       }
     }
-    FAR_EMU_TILE(2, buf, tid == 0 ? min(rows, count - chunk * rows) : 0, ROW * sizeof(DTypeKV));
     cp_async::commit_group();
   };
 
   uint32_t chunk = fetch_id;
-  if (chunk * rows < count) issue(chunk, 0);
+#pragma unroll
+  for (uint32_t i = 0; i + 1 < BUFFERS; ++i) {
+    const uint32_t initial = fetch_id + i * params.fetch_ctas;
+    if (initial * rows < count) issue(initial, i);
+  }
 #pragma unroll 1
   for (uint32_t k = 0; chunk * rows < count; ++k, chunk += params.fetch_ctas) {
-    const uint32_t next = chunk + params.fetch_ctas;
-    if (BUFFERS == 2 && next * rows < count) {
-      issue(next, (k + 1) % 2);
-      cp_async::wait_group<1>();
+    const uint32_t next = chunk + (BUFFERS - 1) * params.fetch_ctas;
+    if (next * rows < count) issue(next, (k + BUFFERS - 1) % BUFFERS);
+    if constexpr (BUFFERS == 3) {
+      if (next * rows < count) {
+        cp_async::wait_group<2>();
+      } else if ((chunk + params.fetch_ctas) * rows < count) {
+        cp_async::wait_group<1>();
+      } else {
+        cp_async::wait_group<0>();
+      }
+    } else if constexpr (BUFFERS == 2) {
+      if (next * rows < count) {
+        cp_async::wait_group<1>();
+      } else {
+        cp_async::wait_group<0>();
+      }
     } else {
       cp_async::wait_group<0>();
     }
-    FAR_EMU_WAIT(2, BUFFERS == 2 ? k % 2 : 0);
+    const uint32_t buf = k % BUFFERS;
+#ifdef FLASHINFER_FAR_EMU
+    if (tid == 0) {
+      ::flashinfer::far_emu::wait_token(ready[k % POSTED]);
+      post_request(chunk + POSTED * params.fetch_ctas, k);
+    }
+#endif
     __syncthreads();
-    const uint32_t buf = BUFFERS == 2 ? k % 2 : 0;
     auto* destination = reinterpret_cast<uint4*>(
         params.staging +
         (params.cache_slots + static_cast<int64_t>(chunk) * rows) * ROW);
@@ -3192,7 +3776,6 @@ __device__ __forceinline__ void fetch_stream_source_pages(const Params& params, 
       // The buffer is refilled next.
       __syncthreads();
     }
-    if (BUFFERS == 1 && next * rows < count) issue(next, 0);
   }
   // Deferred staged chunks: their victims are chosen by now; copy staging -> cache, HBM to HBM,
   // the whole CTA over each chunk.
@@ -4140,15 +4723,15 @@ __device__ __forceinline__ void pv_feature_run_joint_host_items(const Params& pa
   float m[2];
   float d[2];
 
-  const uint32_t qtid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
 #pragma unroll 1
-  for (;;) {
-    if (qtid == 0) scratch[kHostBatchScratchClaimed] = atomicAdd(params.state + kHostBatchGaps, 1u);
-    __syncthreads();
-    const int item = static_cast<int>(scratch[kHostBatchScratchClaimed]);
-    if (item >= items) break;
+  for (int item = first; item >= 0 && item < items; item += step) {
+    if (!claim_host_batch_item(params, scratch, item)) {
+      if (fetcher) break;
+      continue;
+    }
     if (item < lru_items) {
       run_host_batch_lru<KTraits>(params, smem, item, scratch[kHostBatchScratchEpoch], unique);
+      // The next item reuses the shared memory the selection scanned into.
       __syncthreads();
       continue;
     }
@@ -4723,17 +5306,29 @@ __device__ __forceinline__ void direct_pv_run_joint_host_items(const Params& par
   float m[2];
   float d[2];
 
+  const uint32_t qtid = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
 #pragma unroll 1
-  for (int item = first; item >= 0 && item < items; item += step) {
-    if (!claim_host_batch_item(params, scratch, item)) {
-      if (fetcher) break;
-      continue;
-    }
+  for (;;) {
+    if (qtid == 0) scratch[kHostBatchScratchFetchRows] = atomicAdd(params.state + kHostBatchGaps, 1u);
+    __syncthreads();
+    const int item = scratch[kHostBatchScratchFetchRows];
+    if (item >= items) break;
     if (item < lru_items) {
       run_host_batch_lru<KTraits>(params, smem, item, scratch[kHostBatchScratchEpoch], unique);
-      // The next item reuses the shared memory the selection scanned into.
       __syncthreads();
       continue;
+    }
+    if (unique > 0) {
+      const int ai = item - lru_items;
+      const uint32_t ready_row = ai < params.full_rows * params.num_head_tiles
+          ? ai / params.num_head_tiles
+          : params.full_rows + (ai - params.full_rows * params.num_head_tiles) /
+                (params.num_chunks * params.num_head_tiles);
+      const uint32_t ready_pool = params.row_pool[ready_row];
+      if (qtid == 0) {
+        while (host_batch_ld_acquire(params.pool_flags + ready_pool) != scratch[kHostBatchScratchEpoch] + 1) __nanosleep(64);
+      }
+      __syncthreads();
     }
     direct_pv_run_joint_host_item<KTraits, Params, ROW_MERGE>(params, storage, smem, scratch, item - lru_items, s_frag, o_frag,
                                  m, d);
@@ -4799,17 +5394,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLADirectPVKernel(
   // depend on `unique`: if the back CTAs also walked from the front they would retrace the same
   // items and contend on the claims (0% Host, 512 rows: 1514 -> 1784 us).
   const bool from_back = blockIdx.y >= gridDim.y - params.fetch_ctas;
-  if (unique > 0 || gaps) {
-    // Rows resolved or compacted by other CTAs must be complete before any item or fetch reads them, and fetch
-    // CTAs clear the dedup slots the resolve step reads.
-    cg::this_grid().sync();
-    // Claim counts were read by every CTA's scan; reset them for the next launch.
-    for (uint32_t row = blockIdx.y * KTraits::NUM_THREADS + tid; row < params.num_rows;
-         row += gridDim.y * KTraits::NUM_THREADS) {
-      host_batch_row_claims(params)[row] = 0;
-    }
-
-  }
+  // Per-pool readiness replaces the second grid barrier.
   const uint32_t fetch_rows = host_batch_fetch_rows<ROW_MERGE>(params, unique);
   if (tid == 0) {
     scratch[kHostBatchScratchEpoch] = epoch;
@@ -4852,6 +5437,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLADirectPVKernel(
       for (uint32_t row = tid; row < params.num_rows; row += KTraits::NUM_THREADS) {
         params.state[kHostBatchHostCounts + row] = 0;
         host_batch_local_cursors(params)[row] = 0;
+        host_batch_row_claims(params)[row] = 0;
       }
       if (tid == 0) params.state[kHostBatchGaps] = 0;
     }
@@ -4870,6 +5456,15 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLADirectPVKernel(
 
 
 #endif  // !FLASHINFER_FAR_EMU
+
+// Reuse the existing 32-row attention variants with enough shared memory for
+// the H800's three 64-KV fetch buffers.
+template <typename Base>
+struct H800WideFetchTraits : Base {
+  struct SharedStorage : Base::SharedStorage {
+    uint8_t fetch_padding[221696 - sizeof(typename Base::SharedStorage)];
+  };
+};
 
 // partial_capacity bounds the item states of the tail rows, in 64-head tiles.
 template <uint32_t HEAD_DIM_CKV, uint32_t HEAD_DIM_KPE, typename Params>
@@ -4911,9 +5506,10 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
           return cudaErrorInvalidConfiguration;
         static_assert(sizeof(DirectPVKernelParams) == sizeof(Params));
         static_assert(alignof(DirectPVKernelParams) == alignof(Params));
-        params.full_rows = params.num_rows;
+        const uint32_t chunk_tail = params.num_rows % direct_pv_grid;
+        params.full_rows = params.num_rows - chunk_tail;
         params.partial_capacity = partial_capacity;
-        params.num_chunks = 1;
+        params.num_chunks = 4;
         const uint32_t length = max(max_kv_len, 1u);
         params.prepare_parts = min(ceil_div(direct_pv_grid, max(params.num_rows, 1u)), ceil_div(length, 256u));
         params.prepare_segment = round_up(ceil_div(length, params.prepare_parts), 256u);
@@ -4923,14 +5519,16 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
       }
     }
 #endif  // !FLASHINFER_FAR_EMU
-    using PVFeatureKernelTraits = PVFeatureTraits<DTypeQ, DTypeKV, DTypeO, IdType>;
+    const char* compute_env = std::getenv("H800_TUNE_COMPUTE");
+    const char* compute = compute_env ? compute_env : "";
+    using PVFeatureKernelTraits = H800WideFetchTraits<PVFeatureTraits<DTypeQ, DTypeKV, DTypeO, IdType>>;
     using PVFeatureKernelParams = PVFeatureHostParams<Params>;
     constexpr size_t pv_feature_smem = sizeof(typename PVFeatureKernelTraits::SharedStorage);
-    static_assert(pv_feature_smem == 147968);
-    const bool pv_feature = params.stage && !params.host_split && params.num_head_tiles == 1 &&
-        params.pool_capacity > 0 && params.num_rows >= 4u * num_sms && params.fetch_ctas >= 1 &&
+    static_assert(pv_feature_smem == 221696);
+    const bool pv_feature = std::strcmp(compute, "pv") == 0 && params.stage && !params.host_split && params.num_head_tiles == 1 &&
+        params.pool_capacity > 0 && params.fetch_ctas >= 1 &&
         params.fetch_ctas < num_sms && smem_limit_per_sm >= pv_feature_smem + 4096 &&
-        smem_limit_per_sm < 200000 && static_cast<uint64_t>(params.staging_capacity) >=
+        static_cast<uint64_t>(params.staging_capacity) >=
             static_cast<uint64_t>(params.num_rows) * max_kv_len;
     if (pv_feature) {
       auto pv_feature_kernel = BatchMLAPVFeatureKernel<PVFeatureKernelTraits, PVFeatureKernelParams, false>;
@@ -4954,14 +5552,14 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
         return cudaSuccess;
       }
     }
-    using StreamSourceKernelTraits = StreamSourceTraits<DTypeQ, DTypeKV, DTypeO, IdType>;
+    using StreamSourceKernelTraits = H800WideFetchTraits<StreamSourceTraits<DTypeQ, DTypeKV, DTypeO, IdType>>;
     using StreamSourceKernelParams = StreamSourceHostParams<Params>;
     constexpr size_t stream_source_smem = sizeof(typename StreamSourceKernelTraits::SharedStorage);
-    static_assert(stream_source_smem == 147968);
-    const bool stream_source = params.stage && !params.host_split && params.num_head_tiles == 1 &&
-        params.pool_capacity > 0 && params.num_rows >= 4u * num_sms && params.fetch_ctas >= 1 &&
+    static_assert(stream_source_smem == 221696);
+    const bool stream_source = std::strcmp(compute, "stream") == 0 && params.stage && !params.host_split && params.num_head_tiles == 1 &&
+        params.pool_capacity > 0 && params.fetch_ctas >= 1 &&
         params.fetch_ctas < num_sms && smem_limit_per_sm >= stream_source_smem + 4096 &&
-        smem_limit_per_sm < 200000 && static_cast<uint64_t>(params.staging_capacity) >=
+        static_cast<uint64_t>(params.staging_capacity) >=
             static_cast<uint64_t>(params.num_rows) * max_kv_len;
     if (stream_source) {
       auto stream_source_kernel = BatchMLAStreamSourceKernel<StreamSourceKernelTraits, StreamSourceKernelParams, false>;
@@ -4985,14 +5583,14 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
         return cudaSuccess;
       }
     }
-    using CachedPEKernelTraits = CachedPETraits<DTypeQ, DTypeKV, DTypeO, IdType>;
+    using CachedPEKernelTraits = H800WideFetchTraits<CachedPETraits<DTypeQ, DTypeKV, DTypeO, IdType>>;
     using CachedPEKernelParams = CachedPEHostParams<Params>;
     constexpr size_t cached_pe_smem = sizeof(typename CachedPEKernelTraits::SharedStorage);
-    static_assert(cached_pe_smem == 147968);
-    const bool cached_pe = params.stage && !params.host_split && params.num_head_tiles == 1 &&
-        params.pool_capacity > 0 && params.num_rows >= 4u * num_sms && params.fetch_ctas >= 1 &&
+    static_assert(cached_pe_smem == 221696);
+    const bool cached_pe = std::strcmp(compute, "pe") == 0 && params.stage && !params.host_split && params.num_head_tiles == 1 &&
+        params.pool_capacity > 0 && params.fetch_ctas >= 1 &&
         params.fetch_ctas < num_sms && smem_limit_per_sm >= cached_pe_smem + 4096 &&
-        smem_limit_per_sm < 200000 && static_cast<uint64_t>(params.staging_capacity) >=
+        static_cast<uint64_t>(params.staging_capacity) >=
             static_cast<uint64_t>(params.num_rows) * max_kv_len;
     if (cached_pe) {
       auto cached_pe_kernel = BatchMLACachedPEKernel<CachedPEKernelTraits, CachedPEKernelParams, false>;
@@ -5016,14 +5614,14 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
         return cudaSuccess;
       }
     }
-    using KV64Traits = JointQKTraits<DTypeQ, DTypeKV, DTypeO, IdType>;
+    using KV64Traits = H800WideFetchTraits<JointQKTraits<DTypeQ, DTypeKV, DTypeO, IdType>>;
     using KV64Params = JointQKHostParams<Params>;
     constexpr size_t kv64_smem = sizeof(typename KV64Traits::SharedStorage);
-    static_assert(kv64_smem == 147968);
-    const bool kv64 = params.stage && !params.host_split && params.num_head_tiles == 1 &&
-        params.pool_capacity > 0 && params.num_rows >= 4u * num_sms && params.fetch_ctas >= 1 &&
+    static_assert(kv64_smem == 221696);
+    const bool kv64 = std::strcmp(compute, "joint") == 0 && params.stage && !params.host_split && params.num_head_tiles == 1 &&
+        params.pool_capacity > 0 && params.fetch_ctas >= 1 &&
         params.fetch_ctas < num_sms && smem_limit_per_sm >= kv64_smem + 4096 &&
-        smem_limit_per_sm < 200000 && static_cast<uint64_t>(params.staging_capacity) >=
+        static_cast<uint64_t>(params.staging_capacity) >=
             static_cast<uint64_t>(params.num_rows) * max_kv_len;
     if (kv64) {
       auto kv64_kernel = BatchMLAJointQKKernel<KV64Traits, KV64Params, false>;
@@ -5058,8 +5656,15 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
       // Whole rows avoid partial states and a full-grid merge once enough independent rows
       // fill several waves. host_split=false opts into this schedule; small launches and
       // staging overflow retain the original path.
+      const char* whole_env = std::getenv("H800_TUNE_WHOLE_ROWS");
+      const bool hopper_opt = std::strcmp(compute, "hopper") == 0 &&
+                              CTA_TILE_KV == 64 && params.stage && !params.host_split &&
+                              params.num_head_tiles == 1 && params.pool_capacity > 0 &&
+                              static_cast<uint64_t>(params.staging_capacity) >=
+                                  static_cast<uint64_t>(params.num_rows) * max_kv_len;
+      const bool force_whole = hopper_opt || (whole_env && whole_env[0] == '1');
       const bool whole_rows = params.stage && !params.host_split && params.num_head_tiles == 1 &&
-          (params.num_rows >= 4u * num_sms ||
+          (force_whole || params.num_rows >= 4u * num_sms ||
            (CTA_TILE_KV == 32 && params.num_rows >= 2u * num_sms &&
             host_batch_balanced_whole_rows(params.num_rows, max_kv_len, num_sms,
                                           params.fetch_ctas, partial_capacity))) &&
@@ -5080,7 +5685,19 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
           }
         }
       }
-      const size_t smem_size = sizeof(typename KTraits::SharedStorage);
+      using HopperTraits = hopper::HopperKernelTraits<false, 2, 512, 64, 64, 64,
+                                                        DTypeQ, DTypeKV, DTypeO, IdType>;
+      if constexpr (CTA_TILE_KV == 64) {
+        if (hopper_opt) {
+          using HopperParams = HopperHostBatchParams<Params>;
+          static_assert(sizeof(HopperParams) == sizeof(Params));
+          kernel = reinterpret_cast<decltype(kernel)>(
+              BatchMLAHostBatchKernel<KTraits, HopperParams, false>);
+        }
+      }
+      const size_t smem_size = hopper_opt ?
+          std::max(sizeof(typename KTraits::SharedStorage), sizeof(typename HopperTraits::SharedStorage)) :
+          sizeof(typename KTraits::SharedStorage);
       FLASHINFER_CUDA_CALL(
           cudaFuncSetAttribute(kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, smem_size));
       int blocks_per_sm = 0;
@@ -5147,8 +5764,9 @@ cudaError_t BatchMLAHostBatchAttention(Params params, uint32_t max_kv_len,
         }
       }
       void* args[] = {(void*)&params};
+      const dim3 threads = hopper_opt ? dim3(256) : dim3(32, 4, 2);
       FLASHINFER_CUDA_CALL(cudaLaunchCooperativeKernel((void*)kernel, dim3(1, grid),
-                                                       dim3(32, 4, 2), args, smem_size, stream));
+                                                       threads, args, smem_size, stream));
     });
     return cudaSuccess;
   }
